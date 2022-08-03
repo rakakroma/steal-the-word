@@ -1,0 +1,101 @@
+ [
+    {
+        "alias": "趨勢",
+        "context": "The United States and China are on a collision course in the Taiwan Strait.",
+        "date": "1659103722895",
+        "domain": "cn.nytimes.com",
+        "id": "2BF1oC5YWq63xIsu0b9fA",
+        "meaning": "",
+        "pageTitle": "佩洛西不該在此時訪問台灣 - 紐約時報中文網",
+        "url": "https://cn.nytimes.com/opinion/20220729/china-us-taiwan-pelosi/zh-hant/dual/",
+        "word": "course"
+    },
+    {
+        "alias": "carefulness",
+        "context": "He has been increasing pressure on Taiwan and apparently believes the United States is abandoning its circumspection about Taiwan’s status and may soon formally back the island’s independence.",
+        "date": "1659103783566",
+        "domain": "cn.nytimes.com",
+        "id": "tMRorWVwS-UCtJPYenKQ5",
+        "meaning": "",
+        "pageTitle": "佩洛西不該在此時訪問台灣 - 紐約時報中文網",
+        "url": "https://cn.nytimes.com/opinion/20220729/china-us-taiwan-pelosi/zh-hant/dual/",
+        "word": "circumspection"
+    },
+    {
+        "alias": "點燃",
+        "context": "A single spark could ignite this combustible situation into a crisis that escalates to military conflict.",
+        "date": "1659103894463",
+        "domain": "cn.nytimes.com",
+        "id": "r4sfuZE1-SPfzdziP1XKY",
+        "meaning": "",
+        "pageTitle": "佩洛西不該在此時訪問台灣 - 紐約時報中文網",
+        "url": "https://cn.nytimes.com/opinion/20220729/china-us-taiwan-pelosi/zh-hant/dual/",
+        "word": "ignite"
+    },
+    {
+        "alias": "可燃性の",
+        "context": "A single spark could ignite this combustible situation into a crisis that escalates to military conflict.",
+        "date": "1659103977064",
+        "domain": "cn.nytimes.com",
+        "id": "RE6RWUVEmFszVZbnZ2iHm",
+        "meaning": "",
+        "pageTitle": "佩洛西不該在此時訪問台灣 - 紐約時報中文網",
+        "url": "https://cn.nytimes.com/opinion/20220729/china-us-taiwan-pelosi/zh-hant/dual/",
+        "word": "combustible"
+    },
+    {
+        "alias": "increase repidly",
+        "context": "A single spak could ignitethis combustible situation into a crisis that escalates to military conflict.",
+        "date": "1659104108728",
+        "domain": "cn.nytimes.com",
+        "id": "KClX3XtsNIalQ1JdNWXe6",
+        "meaning": "",
+        "pageTitle": "佩洛西不該在此時訪問台灣 - 紐約時報中文網",
+        "url": "https://cn.nytimes.com/opinion/20220729/china-us-taiwan-pelosi/zh-hant/dual/",
+        "word": "escalate"
+    },
+    {
+        "alias": "persuade against",
+        "context": "Ms. Pelosi and her advisers may think this would have a stabilizing effect: Many in Washington believe that strong demonstrations of U.S. commitment to Taiwan will dissuade China from risking a military adventure.",
+        "date": "1659104184297",
+        "domain": "cn.nytimes.com",
+        "id": "BdtC5wTFz6SWSVlTWQK8a",
+        "meaning": "",
+        "pageTitle": "佩洛西不該在此時訪問台灣 - 紐約時報中文網",
+        "url": "https://cn.nytimes.com/opinion/20220729/china-us-taiwan-pelosi/zh-hant/dual/",
+        "word": "dissuade"
+    },
+    {
+        "alias": "降りる",
+        "context": "Images of her alighting in Taiwan would be seen in China as a serious provocation.",
+        "date": "1659104258756",
+        "domain": "cn.nytimes.com",
+        "id": "iLi2uvjSYVhnAFW5-qRU7",
+        "meaning": "",
+        "pageTitle": "佩洛西不該在此時訪問台灣 - 紐約時報中文網",
+        "url": "https://cn.nytimes.com/opinion/20220729/china-us-taiwan-pelosi/zh-hant/dual/",
+        "word": "alighting"
+    },
+    {
+        "alias": "see as violation",
+        "context": "Mr. Xi, who, like his predecessors, has repeatedly stressed that China will someday reunify Taiwan with the mainland, may take big risks to defend a perceived infringement on China’s territorial integrity and sovereignty.",
+        "date": "1659104343763",
+        "domain": "cn.nytimes.com",
+        "id": "5Iq0vf90A2qKR4Iw0mady",
+        "meaning": "",
+        "pageTitle": "佩洛西不該在此時訪問台灣 - 紐約時報中文網",
+        "url": "https://cn.nytimes.com/opinion/20220729/china-us-taiwan-pelosi/zh-hant/dual/",
+        "word": "perceived infringement"
+    },
+    {
+        "alias": "しょうそう",
+        "context": "このような状況のもとで，国民のなかに不安感や焦燥感の高まりがうかがわれたことも，けつしてゆえたしとしません。",
+        "date": "1659111163741",
+        "domain": "ja.wikisource.org",
+        "id": "l9LxqUeYqX0QsXULJGou3",
+        "meaning": "",
+        "pageTitle": "第68回国会における佐藤内閣総理大臣施政方針演説 - Wikisource",
+        "url": "https://ja.wikisource.org/wiki/%E7%AC%AC68%E5%9B%9E%E5%9B%BD%E4%BC%9A%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E4%BD%90%E8%97%A4%E5%86%85%E9%96%A3%E7%B7%8F%E7%90%86%E5%A4%A7%E8%87%A3%E6%96%BD%E6%94%BF%E6%96%B9%E9%87%9D%E6%BC%94%E8%AA%AC",
+        "word": "焦燥"
+    }
+]

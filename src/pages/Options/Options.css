@@ -1,0 +1,24 @@
+/* .OptionsContainer {
+  width: 100%;
+  height: 50vh;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+} */
+
+body {
+  margin: 0;
+  padding: 0px;
+}
+
+/* 
+a {
+  text-decoration: none;
+  color: blue;
+} */
+
+mark.marked-word {
+  background-color: '';
+  color: '#AC5A5';
+}
