@@ -1,46 +1,46 @@
 const createForm = document.createElement('form')
-createForm.id = 'hooriruby-createform'
-createForm.classList.add('horriruby-create', 'hide-create')
+createForm.id = 'hooliruby-createform'
+createForm.classList.add('hooliruby-create', 'hide-create')
 const vocabularyInput = document.createElement('input')
-vocabularyInput.id = 'hooriruby-vocabulary-input'
-vocabularyInput.classList.add('horriruby-create', 'hide-create')
+vocabularyInput.id = 'hooliruby-vocabulary-input'
+vocabularyInput.classList.add('hooliruby-create', 'hide-create')
 vocabularyInput.name = 'vocabulary'
 vocabularyInput.placeholder = '單字／単語／單詞／vocabulary'
 const pronounceInput = document.createElement('input')
-pronounceInput.id = 'hooriruby-pronounce-input'
-pronounceInput.classList.add('horriruby-create', 'hide-create')
+pronounceInput.id = 'hooliruby-pronounce-input'
+pronounceInput.classList.add('hooliruby-create', 'hide-create')
 pronounceInput.name = 'pronounce'
 pronounceInput.placeholder = '拼音／注音／振り仮名／prnounciation'
 const meaningInput = document.createElement('input')
-meaningInput.id = 'hooriruby-meaning-input'
-meaningInput.classList.add('horriruby-create', 'hide-create')
+meaningInput.id = 'hooliruby-meaning-input'
+meaningInput.classList.add('hooliruby-create', 'hide-create')
 meaningInput.name = 'meaning'
 meaningInput.placeholder = '詞義／meaning／意味'
 const contextDiv = document.createElement('div')
-contextDiv.classList.add('horriruby-create', 'hide-create')
+contextDiv.classList.add('hooliruby-create', 'hide-create')
 contextDiv.contentEditable = 'true'
-contextDiv.id = 'hooriruby-context-div'
+contextDiv.id = 'hooliruby-context-div'
 const submitButton = document.createElement('button')
-submitButton.classList.add('horriruby-create', 'hide-create')
+submitButton.classList.add('hooliruby-create', 'hide-create')
 submitButton.type = 'submit'
 submitButton.textContent = '送'
 
 const sizeControlButton = document.createElement('button')
-sizeControlButton.id = 'hooriruby-size-control-btn'
+sizeControlButton.id = 'hooliruby-size-control-btn'
 sizeControlButton.textContent = '🔶'
-sizeControlButton.classList.add('horriruby-create', 'hide-create')
+sizeControlButton.classList.add('hooliruby-create', 'hide-create')
 sizeControlButton.setAttribute('type', 'button')
 
 
 const searchTaiwaneseButton = document.createElement('button')
-searchTaiwaneseButton.id = 'hooriruby-taiwanese-search-button'
+searchTaiwaneseButton.id = 'hooliruby-taiwanese-search-button'
 searchTaiwaneseButton.textContent = '台'
-searchTaiwaneseButton.classList.add('horriruby-create', 'hide-create')
+searchTaiwaneseButton.classList.add('hooliruby-create', 'hide-create')
 
 const searchHakkaButton = document.createElement('button')
-searchHakkaButton.id = 'hooriruby-hakka-search-button'
+searchHakkaButton.id = 'hooliruby-hakka-search-button'
 searchHakkaButton.textContent = '客'
-searchHakkaButton.classList.add('horriruby-create', 'hide-create')
+searchHakkaButton.classList.add('hooliruby-create', 'hide-create')
 
 
 // const moedictTaiwaneseAPI = (word) => {

@@ -3,13 +3,14 @@ import { Settings } from './components/Settings';
 import './Options.css';
 import ColorThief from '../../../node_modules/colorthief/dist/color-thief.mjs'
 import CustomizedDialogs from './components/CustomizedDialogs';
-import { Box, createTheme, Divider, Input, InputAdornment, Link, List, ListItem, ListItemText, TextField, ThemeProvider, Tooltip, Typography } from '@mui/material';
+import { Box, createTheme, Divider, FormControlLabel, FormGroup, Input, InputAdornment, Link, List, ListItem, ListItemText, Switch, TextField, ThemeProvider, Tooltip, Typography } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import { fontSize } from '@mui/system';
 import { Highlighter } from './components/Highlighter';
-import { formatDate, fullDate } from './components/Date'
-import { groupBy } from './components/groupBy'
-import { countDate } from './components/countDate'
+import { formatDate, fullDate } from './utils/Date'
+import { groupBy } from './utils/groupBy'
+import { countDate } from './utils/countDate'
+import { themeStyle } from './theme.style'
 
 const Options = () => {
 
@@ -17,28 +18,9 @@ const Options = () => {
   const imgRef = useRef(null)
   const [stolenColor, setStolenColor] = useState([])
   const [searchText, setSearchText] = useState("")
+  const [hideAlias, setHideAlias] = useState(true)
 
-
-
-
-  const theme = createTheme({
-    palette: {
-      type: 'light',
-      primary: {
-        main: '#b57b7b',
-      },
-      secondary: {
-        main: '#a23f60',
-      },
-      background: {
-        default: '#f1f0f0',
-      },
-    },
-    spacing: 8,
-    typography: {
-      fontSize: 12,
-    },
-  })
+  const theme = createTheme(themeStyle)
 
   useEffect(() => {
     chrome.storage.local.get("myWordList", function (obj) {
@@ -158,7 +140,7 @@ const Options = () => {
         <Typography variant='h5' sx={{ fontweight: "bold" }}> HolliRuby💫</Typography>
         <div style={{ position: 'relative', width: '50vw' }}>
           <TextField size="small"
-            sx={{ input: { backgroundColor: theme => theme.palette.background.paper } }}
+            sx={{ input: { backgroundColor: theme => theme.palette.primary.light } }}
             variant='outlined'
             value={searchText}
             onChange={handleSearch}
@@ -171,7 +153,6 @@ const Options = () => {
                 </InputAdornment>
               ),
             }}
-
           />
           <div style={{ position: 'absolute', backgroundColor: 'white' }}>
             {Array.isArray(allTextSearchResult(searchText).contextResult) ?
@@ -187,7 +168,13 @@ const Options = () => {
 
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: "flex-end" }}>
         <Typography variant='h6'>{`已存詞彙 ${myList.length}`}</Typography>
+
         {myList && myList.length > 0 ? "" : "現在還沒有東西，請加入詞彙😶‍🌫️"}
+
+        <FormGroup>
+          <FormControlLabel control={<Switch size="small" checked={hideAlias} onChange={() => setHideAlias(!hideAlias)} />} label="註解與背景同色" />
+          {/* <FormControlLabel disabled control={<Switch />} label="Disabled" /> */}
+        </FormGroup>
 
         <List sx={{ width: '100%' }}>
           {Object.entries(groupedList).map(arrayWithDomain => {
@@ -215,66 +202,68 @@ const Options = () => {
                         arrayWithDomain[1][0].pageTitle.split(':').length > 1 ?
                           arrayWithDomain[1][0].pageTitle.split(':')[arrayWithDomain[1][0].pageTitle.split(':').length - 1].trim() :
                           arrayWithDomain[0] : "Local File"}</Typography>
-              {
-                Object.entries(groupBy(arrayWithDomain[1], "url")).map(arrayWithUrl => {
+              {Object.entries(groupBy(arrayWithDomain[1], "url")).map(arrayWithUrl => {
 
-                  {/* const formatedDate = new Date(Number(arrayWithUrl[1][0].date)) */ }
 
-                  return (
-                    <Box key={arrayWithUrl[0]} sx={{
-                      display: "flex",
-                      flexDirection: 'column',
-                      alignItems: "flex-end",
-                      justifyContent: "center"
-                    }}>
-                      <Box>
-                        <Link variant='subtitle1' underline='none' href={arrayWithUrl[0]}>
-                          {arrayWithUrl[1][0].pageTitle}
-                        </Link>
-                        &emsp;
-                        <Tooltip title={fullDate(Number(arrayWithUrl[1][0].date))} placement='top'>
-                          <Typography variant='subtitle1' component={'span'}> {countDate(Number(arrayWithUrl[1][0].date))} </Typography>
-                        </Tooltip>
-                      </Box>
-                      <List sx={{ border: '1px solid', width: '80vw' }}>
-                        {arrayWithUrl[1].map((wordObj, index) => {
-                          return <>
-                            <ListItem
-                              id={wordObj.id}
-                              key={wordObj.id}
-                            >
-                              <ListItemText
-                                disableTypography
-                                primary={<>
-                                  <Typography sx={{ display: 'inline-block' }} variant='h6'>
-                                    {wordObj.phrase || wordObj.word}
-                                  </Typography>
-                                  &emsp;
-                                  <Typography sx={{ display: 'inline-block' }} color="white" variant='subtitle1'>
-                                    {wordObj.alias}
-                                  </Typography>
-                                </>
-                                }
-                                secondary={<Typography component={'div'} >
-                                  <Typography variant='body1' component={'span'}  >
-                                    {/* {wordObj.context} */}
-                                    <Highlighter text={wordObj.context} highlightWord={wordObj.phrase || wordObj.word} />
-                                  </Typography>
-                                </Typography>} />
-                              {/* <span style={{ "padding": "2px", "margin": "2px", 'border': '1px solid' }}>{wordObj.phrase || wordObj.word}</span>
-                          <p style={{ "display": "inline-block" }}>{wordObj.context}</p> */}
-                              {wordObj.phrase ? <button>詞</button> : <button onClick={handleSelectPhrase}>句</button>}
-                              <button onClick={handleEdit}>📝</button>
-                              <button>封</button>
-                              <button onClick={handleDelete}>🕳️</button>
-                            </ListItem>
-                            {index === arrayWithUrl[1].length - 1 ? null : <Divider />}
-                          </>
-                        })}
-                      </List>
+                return (
+                  <Box key={arrayWithUrl[0]} sx={{
+                    display: "flex",
+                    flexDirection: 'column',
+                    alignItems: "flex-end",
+                    justifyContent: "center"
+                  }}>
+                    <Box>
+                      <Link variant='subtitle1' underline='none' href={arrayWithUrl[0]} color='primary.light' >
+                        {arrayWithUrl[1][0].pageTitle}
+                      </Link>
+                      &emsp;
+                      <Tooltip title={fullDate(Number(arrayWithUrl[1][0].date))} placement='top'>
+                        <Typography variant='subtitle1' component={'span'}> {countDate(Number(arrayWithUrl[1][0].date))} </Typography>
+                      </Tooltip>
                     </Box>
-                  )
-                })
+                    <List sx={{ border: '1px solid #c7b4b3', width: '65vw' }}>
+                      {arrayWithUrl[1].map((wordObj, index) => {
+                        return <>
+                          <ListItem
+                            id={wordObj.id}
+                            key={wordObj.id}
+                          >
+                            <ListItemText
+                              disableTypography
+                              primary={<>
+                                <Typography sx={{ display: 'inline-block' }} variant='h6'>
+                                  {wordObj.phrase ?
+                                    <Highlighter highlightWord={wordObj.word} text={wordObj.phrase} /> :
+                                    wordObj.word
+                                  }
+                                  {/* {wordObj.phrase || wordObj.word} */}
+                                </Typography>
+                                &emsp;
+                                <Typography sx={{ display: 'inline-block' }} color={hideAlias ? "white" : 'black'} variant='subtitle1'>
+                                  {wordObj.alias}
+                                </Typography>
+                              </>
+                              }
+                              secondary={<Typography component={'div'} >
+                                <Typography variant='body1' component={'span'}  >
+                                  {/* {wordObj.context} */}
+                                  <Highlighter text={wordObj.context} highlightWord={wordObj.phrase || wordObj.word} />
+                                </Typography>
+                              </Typography>} />
+                            {/* <span style={{ "padding": "2px", "margin": "2px", 'border': '1px solid' }}>{wordObj.phrase || wordObj.word}</span>
+                          <p style={{ "display": "inline-block" }}>{wordObj.context}</p> */}
+                            {wordObj.phrase ? <button>詞</button> : <button onClick={handleSelectPhrase}>句</button>}
+                            <button onClick={handleEdit}>📝</button>
+                            <button>封</button>
+                            <button onClick={handleDelete}>🕳️</button>
+                          </ListItem>
+                          {index === arrayWithUrl[1].length - 1 ? null : <Divider />}
+                        </>
+                      })}
+                    </List>
+                  </Box>
+                )
+              })
               }
             </ListItem>
             )

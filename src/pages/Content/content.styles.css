@@ -1,4 +1,4 @@
-#hooriruby-root {
+#hooliruby-root {
   /* width: 2vw;
   height: 100vh; */
   height: 4vh;
@@ -12,7 +12,7 @@
   color: whitesmoke;
 }
 
-#hooriruby-root.hide-hooriruby {
+#hooliruby-root.hide-hooliruby {
   height: 0vh;
 }
 
@@ -20,11 +20,7 @@
   background-color: palegreen;
 }
 
-.ejrti3 {
-  background-color: cadetblue;
-}
-
-/* #hooriruby-floating-tool {
+/* #hooliruby-floating-tool {
   position: absolute;
   width: 60px;
   height: 30px;
@@ -32,12 +28,12 @@
   z-index: 2147483649;
   font-size: 13px;
 } */
-#hooriruby-floating-tool {
+#hooliruby-floating-tool {
   z-index: 2147483649;
   position: absolute;
 }
 
-#hooriruby-floating-tool-button {
+#hooliruby-floating-tool-button {
   font-size: 10px;
   background-color: antiquewhite;
   color: black;
@@ -45,7 +41,7 @@
   height: 30px;
 }
 
-#hooriruby-context-div {
+#hooliruby-context-div {
   border: 1px black solid;
   display: inline-block;
 }

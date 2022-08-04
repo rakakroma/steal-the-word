@@ -10,12 +10,13 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { FormControl, FormControlLabel, FormLabel, FormGroup, FormHelperText, Checkbox, Box, Tab, Tabs, Input, Link, Divider } from '@mui/material';
+import { FormControl, FormControlLabel, FormLabel, FormGroup, FormHelperText, Checkbox, Box, Tab, Tabs, Input, Link, Divider, Switch, InputLabel, Select, MenuItem } from '@mui/material';
 import { TabsContext } from '@mui/base';
 import ImportExportIcon from '@mui/icons-material/ImportExport';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { TextFormatRounded } from '@mui/icons-material';
 import { display } from '@mui/system';
+import { HexColorPicker } from "react-colorful";
 
 
 
@@ -78,6 +79,28 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
     hakkaRaoping: false
   });
 
+
+  const [customRubyStyle, setCustomRubyStyle] = React.useState({
+    ruby: {
+      backgroundColor: '#dbdbdb',
+      rubyPosition: "",
+      textDecoration: '',
+      color: '#000000',
+      // 'fontSize': '1.5rem',
+      border: ''
+    },
+    rt: {
+      color: '#1c1a1a',
+      textDecoration: '',
+      backgroundColor: '#f0dedd',
+      // fontFamily: "Arial Black"
+      // display: 'none'
+    }
+
+
+  })
+
+
   const handleChange = (event) => {
     console.log(event.target.name);
     setSetting({
@@ -86,7 +109,37 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
     });
   };
 
-  const { buttonAfterSelection, contextMenuButton, showButtonUsingHotKey, taiwanese,
+  const handleChangeRubyStyle = (event, value) => {
+    setCustomRubyStyle({
+      ruby: {
+        ...customRubyStyle.ruby,
+        [event.target.name]: value || event.target.value
+      },
+      rt: {
+        ...customRubyStyle.rt
+      }
+    })
+  }
+
+
+
+
+  const handleChangeRtStyle = (event, value) => {
+    setCustomRubyStyle({
+      ruby: {
+        ...customRubyStyle.ruby
+      },
+      rt: {
+        ...customRubyStyle.rt,
+        [event.target.name]: value || event.target.value
+      }
+    })
+  }
+  const {
+    buttonAfterSelection,
+    contextMenuButton,
+    showButtonUsingHotKey,
+    taiwanese,
     hakkaSixian,
     hakkaHailu,
     hakkaDapu,
@@ -98,24 +151,7 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
   }
 
 
-  const rubyStyle = {
-    backgroundColor: 'aliceblue',
-    rubyPosition: "under",
-    textDecoration: 'underline',
-    color: 'grey',
-    textTransform: 'uppercase',
-    rubyAlign: 'space-between',
-    // 'fontSize': '1.5rem',
-    border: 'solid'
-  }
 
-  const rubyRtStyle = {
-    color: 'green',
-    textDecoration: 'underline',
-    backgroundColor: 'yellow',
-    fontFamily: "Arial Black"
-    // display: 'none'
-  }
 
   return (
     <div >
@@ -209,19 +245,151 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
 
               </TabPanel>
               <TabPanel value="2">
+                {/* <HexColorPicker color={customRubyStyle.ruby.color} onChange={handleChangeRubyStyle} name='color' /> */}
 
-                <Input type='color' />
+                <FormControlLabel control={
+                  <Switch
+                    size="small"
+                    checked={customRubyStyle.ruby.rubyPosition === 'under'}
+                    onChange={(e) => {
+                      customRubyStyle.ruby.rubyPosition === 'under' ?
+                        handleChangeRubyStyle(e, "over") :
+                        handleChangeRubyStyle(e, "under")
+                    }} />} label="小字位置" name='rubyPosition' />
+
+                <FormControlLabel control={
+                  <Switch
+                    size="small"
+                    checked={customRubyStyle.rt.display === 'none'}
+                    onChange={(e) => {
+                      customRubyStyle.rt.display === 'none' ?
+                        handleChangeRtStyle(e, "block") :
+                        handleChangeRtStyle(e, "none")
+                    }} />} label="隱藏小字" name='display' />
+                <Box sx={{ display: 'flex' }}>
+                  <Box>
+                    <Typography variant='h6'>設定rt樣式</Typography>
+                    <FormGroup row>
+                      <FormControlLabel
+                        labelPlacement="bottom"
+                        control={
+                          <Input
+                            sx={{ width: '15px', height: '15px' }}
+                            type='color'
+                            value={customRubyStyle.rt.backgroundColor}
+                            onChange={(e) => handleChangeRtStyle(e)}
+                            name='backgroundColor'
+                          />
+
+                        }
+                        label='背景'
+                      />
+                      <FormControlLabel
+                        labelPlacement="bottom"
+                        control={
+                          <Input
+                            sx={{ width: '15px', height: '15px' }}
+                            type='color'
+                            value={customRubyStyle.rt.color}
+                            onChange={(e) => handleChangeRtStyle(e)}
+                            name='color'
+                          />
+
+                        }
+                        label='顏色'
+                      />
+
+
+                      {/* <InputLabel >underline</InputLabel> */}
+                      <Select
+                        size='small'
+                        // labelId="demo-simple-select-label"
+                        // id="demo-simple-select"
+                        value={customRubyStyle.rt.textDecoration}
+                        // label="Age"
+                        onChange={e => {
+                          handleChangeRtStyle(e)
+                        }}
+                        name='textDecoration'
+                      >
+                        <MenuItem value="">none</MenuItem>
+                        <MenuItem value="underline">underline</MenuItem>
+                        <MenuItem value="underline dotted">dotted</MenuItem>
+                        <MenuItem value="underline wavy">wavy</MenuItem>
+                      </Select>
+
+                    </FormGroup>
+
+                    <Typography variant='h6'>設定ruby樣式</Typography>
+                    <FormGroup row>
+                      <FormControlLabel
+                        labelPlacement="bottom"
+                        control={
+                          <Input
+                            sx={{ width: '20px', height: '15px' }}
+                            type='color'
+                            value={customRubyStyle.ruby.color}
+                            onChange={(e) => handleChangeRubyStyle(e)}
+                            name='color'
+                          />
+
+                        }
+                        label='ruby字體顏色'
+                      />
+                      <FormControlLabel
+                        labelPlacement="bottom"
+                        control={
+                          <Input
+                            sx={{ width: '50px', height: '15px' }}
+                            type='color'
+                            value={customRubyStyle.ruby.backgroundColor}
+                            onChange={(e) => handleChangeRubyStyle(e)}
+                            name='backgroundColor'
+                          />
+
+                        }
+                        label='ruby背景顏色'
+                      />
+                      {/* <InputLabel id="demo-simple-select-label">underline</InputLabel> */}
+                      <Select
+                        size='small'
+                        // labelId="demo-simple-select-label"
+                        // id="demo-simple-select"
+                        value={customRubyStyle.ruby.textDecoration}
+                        // label="Age"
+                        onChange={e => {
+                          handleChangeRubyStyle(e)
+                        }}
+                        name='textDecoration'
+                      >
+                        <MenuItem value="">none</MenuItem>
+                        <MenuItem value="underline">underline</MenuItem>
+                        <MenuItem value="underline dotted">dotted</MenuItem>
+                        <MenuItem value="underline wavy">wavy</MenuItem>
+                      </Select>
+                    </FormGroup>
+
+                  </Box>
+                  <Box sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: '40px'
+                  }}>
+                    <Typography variant='h3'><ruby style={customRubyStyle.ruby}>你好<rt style={customRubyStyle.rt}>lí hó</rt></ruby></Typography>
+                  </Box>
+                </Box>
                 <Divider sx={{ m: 3 }}></Divider>
                 <Typography variant='body1' gutterBottom>
                   食著藥，青草一葉；食毋著藥，
-                  <ruby style={rubyStyle}>人參<rt style={rubyRtStyle}>jîn-sim</rt></ruby>一石。
+                  <ruby style={customRubyStyle.ruby}>人參<rt style={customRubyStyle.rt}>jîn-sim</rt></ruby>一石。
                   Tsia̍h tio̍h io̍h, tshinn-tsháu tsi̍t hio̍h; tsia̍h m̄-tio̍h io̍h,
-                  <ruby style={rubyStyle}>jîn-sim<rt style={rubyRtStyle}>人參</rt></ruby> tsi̍t tsio̍h.
+                  <ruby style={customRubyStyle.ruby}>jîn-sim<rt style={customRubyStyle.rt}>人參</rt></ruby> tsi̍t tsio̍h.
 
-                  鼻は<ruby style={rubyStyle}>人参<rt style={rubyRtStyle}>にんじん</rt></ruby>のようだ。
-                  <ruby style={rubyStyle}>인삼<rt style={rubyRtStyle}>人参</rt></ruby>을 밭에서 대량으로 수확했다.
+                  鼻は<ruby style={customRubyStyle.ruby}>人参<rt style={customRubyStyle.rt}>にんじん</rt></ruby>のようだ。
+                  <ruby style={customRubyStyle.ruby}>인삼<rt style={customRubyStyle.rt}>人参</rt></ruby>을 밭에서 대량으로 수확했다.
                   • The company does not sell its products outside its own stores and buys
-                  <ruby style={rubyStyle}>ginseng<rt style={rubyRtStyle}>root been used in traditional medicine</rt></ruby>
+                  <ruby style={customRubyStyle.ruby}>ginseng<rt style={customRubyStyle.rt}>root been used in traditional medicine</rt></ruby>
                   from wholesalers, Miller said.</Typography>
 
                 {/* <Typography variant='h6' gutterBottom>ruby背景顏色</Typography> */}

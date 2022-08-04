@@ -1,14 +1,22 @@
 import { useTheme } from "@mui/material";
+import { grey } from "@mui/material/colors";
 import React from "react";
 
 
-export const Highlighter = ({ text, highlightWord }) => {
+export const Highlighter = ({ text, highlightWord, reverse }) => {
     const theme = useTheme()
 
     if (!highlightWord.trim() || !text.includes(highlightWord)) return <span>{text}</span>
 
     const regex = new RegExp(`(${highlightWord})`, "gi");
     const parts = text.split(regex);
+
+
+
+    // const greyStyle = {
+    //     backgroundColor: '',
+    //     color: grey[800]
+    // }
 
 
     const markStyle = {

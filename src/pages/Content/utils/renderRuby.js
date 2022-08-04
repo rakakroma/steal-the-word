@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify';
 
-export const renderRuby = (doc, list) => {
+export const renderRuby = (doc, wordList, displayList) => {
 
     const nodeIterator = doc.createNodeIterator(doc.body, NodeFilter.SHOW_TEXT, myGoodFilter);
 
@@ -46,7 +46,7 @@ export const renderRuby = (doc, list) => {
 
     while (textNode = nodeIterator.nextNode()) {
 
-        for (let wordObj of list) {
+        for (let wordObj of wordList) {
             // if (textNode.textContent.split(" ").length > 4) {
             //     if (textNode.textContent.split(" ").includes(wordObj.word)) {
             //         const renderNode = doc.createElement('span');
@@ -62,6 +62,17 @@ export const renderRuby = (doc, list) => {
                 renderNode.innerHTML = textNode.textContent.replaceAll(wordObj.word, `<ruby>${DOMPurify.sanitize(wordObj.word)}<rt>${DOMPurify.sanitize(wordObj.alias)}</rt></ruby>`);
                 textNode.replaceWith(renderNode);
                 console.log('hi');
+
+                if (displayList) {
+                    const theWordInDisplayList = displayList.find(wordObjInDisplay => wordObjInDisplay.id === wordObj.id)
+                    if (theWordInDisplayList) {
+                        displayList.push(wordObj)
+                    } else {
+                        theWordInDisplayList.countInCurrentPage ?
+                            theWordInDisplayList.countInCurrentPage = 1 :
+                            theWordInDisplayList.countInCurrentPage += 1
+                    }
+                }
             }
 
         }

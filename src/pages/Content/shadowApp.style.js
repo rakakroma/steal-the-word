@@ -11,7 +11,7 @@ export const shadowAppTopStyle = `
     background-color: cadetblue;
   }
   
-  #hooriruby-floating-tool {
+  #hooliruby-floating-tool {
     position: absolute;
     width: 50px;
     height: 40px;
@@ -21,13 +21,13 @@ export const shadowAppTopStyle = `
   }
   
   
-  #hooriruby-context-div {
+  #hooliruby-context-div {
     border: 1px black solid;
     display: inline-block;
   }
   
-  div.horriruby-create,
-  input.horriruby-create {
+  div.hooliruby-create,
+  input.hooliruby-create {
     background-color: rgb(55, 55, 55);
     min-width: 162px;
     height: auto;
@@ -38,12 +38,12 @@ export const shadowAppTopStyle = `
     color:white;
   }
   
-  #horriruby-createform {
+  #hooliruby-createform {
     height: 4vh;
   }
   
   
-  button.horriruby-create {
+  button.hooliruby-create {
     border: 1px solid white;
     width: 30px;
     margin-left: 8px;
@@ -52,11 +52,11 @@ export const shadowAppTopStyle = `
     background-color: rgb(98,98,98)
   }
 
-  .horriruby-create.hide-create{
+  .hooliruby-create.hide-create{
     display: none;
   }
   
-  #hooriruby-div-in-app{
+  #hooliruby-div-in-app{
     background-color:'white'
   }
       `

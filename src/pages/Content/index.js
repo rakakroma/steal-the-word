@@ -24,23 +24,25 @@ console.log('Content script works!');
 const app = document.createElement('div')
 const body = document.body
 const divInApp = document.createElement('div');
-divInApp.id = 'hooriruby-div-in-app'
+divInApp.id = 'hooliruby-div-in-app'
 
 const floatingTool = document.createElement('div')
-floatingTool.id = 'hooriruby-floating-tool'
+floatingTool.id = 'hooliruby-floating-tool'
 // floatingTool.textContent = '有東西'
 const buttonOfFloatingTool = document.createElement('button')
 
 buttonOfFloatingTool.textContent = 'ルビ振る'
-buttonOfFloatingTool.id = 'hooriruby-floating-tool-button'
+buttonOfFloatingTool.id = 'hooliruby-floating-tool-button'
 
-
+const reRenderButton = document.createElement('button')
+reRenderButton.id = 'hooliruby-reRenderButton'
+reRenderButton.textContent = 're-render'
 
 const init = () => {
 
-    app.id = "hooriruby-root";
+    app.id = "hooliruby-root";
     app.style.width = '100vw';
-    app.classList.add('hide-hooriruby')
+    app.classList.add('hide-hooliruby')
     body.appendChild(app);
     console.log('init!')
     const shadowApp = app.attachShadow({ mode: 'open' })
@@ -49,7 +51,7 @@ const init = () => {
     style.textContent = shadowAppTopStyle
 
     sizeControlButton.addEventListener('click', () => {
-        shadowApp.querySelectorAll('.horriruby-create').forEach(ele => {
+        shadowApp.querySelectorAll('.hooliruby-create').forEach(ele => {
             ele.classList.add('hide-create')
         })
     })
@@ -60,7 +62,7 @@ const init = () => {
 
     buttonOfFloatingTool.addEventListener('click', (e) => {
         if (document.getSelection().toString().trim()) {
-            shadowApp.querySelectorAll('.horriruby-create').forEach(ele => {
+            shadowApp.querySelectorAll('.hooliruby-create').forEach(ele => {
                 ele.classList.remove('hide-create')
             })
             setTimeout(() => {
@@ -90,14 +92,18 @@ const init = () => {
         }
     })
 
+    reRenderButton.addEventListener('click', () => {
+        renderRuby(document, myList)
+    })
+
     createForm.addEventListener('submit', (e) => {
         e.preventDefault()
         // console.log(e.target)
 
         const newWord = {
-            word: vocabularyInput.value,
-            alias: pronounceInput.value,
-            meaning: meaningInput.value,
+            word: vocabularyInput.value.trim(),
+            alias: pronounceInput.value.trim(),
+            meaning: meaningInput.value.trim(),
             context: contextDiv.textContent.trim(),
             date: Date.now().toString(),
             id: nanoid(),
@@ -106,6 +112,11 @@ const init = () => {
             domain: window.location.host
         }
         console.log(newWord);
+
+        if (myList.find(wordObj => wordObj.word === newWord.word)) {
+            alert('')
+        }
+
         myList.push(newWord);
 
         chrome.storage.local.set({ "myWordList": myList }, function () {
@@ -124,7 +135,7 @@ const init = () => {
         // })
         renderRuby(document, myList)
         setTimeout(() => {
-            shadowApp.querySelectorAll('.horriruby-create').forEach(ele => {
+            shadowApp.querySelectorAll('.hooliruby-create').forEach(ele => {
                 ele.classList.add('hide-create')
             })
         }, 500)
@@ -132,7 +143,7 @@ const init = () => {
 
 
     body.addEventListener('mouseup', (e) => {
-        if (document.querySelector('#hooriruby-floating-tool')) {
+        if (document.querySelector('#hooliruby-floating-tool')) {
             setTimeout(() => {
                 body.removeChild(floatingTool)
             }, 10)
@@ -141,6 +152,7 @@ const init = () => {
             floatingTool.style.left = (e.pageX + 25) + 'px'
             body.appendChild(floatingTool)
             floatingTool.appendChild(buttonOfFloatingTool)
+            floatingTool.appendChild(reRenderButton)
         }
     })
 
@@ -154,6 +166,7 @@ const observer = new MutationObserver((mutations) => {
 })
 
 let myList = [];
+let displayWords = [];
 chrome.storage.local.get("myWordList", function (obj) {
     if (obj.myWordList && obj.myWordList.length > 0) {
         myList = obj.myWordList
