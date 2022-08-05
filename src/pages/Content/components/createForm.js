@@ -105,6 +105,12 @@ languageDiv.appendChild(searchHakkaButton)
 languageDiv.appendChild(searchTaiwaneseButton)
 
 
+createForm.querySelectorAll('div.hooliruby-create, input.hooliruby-create').forEach(ele => {
+    ele.addEventListener('keyup', (e) => e.stopPropagation());
+    ele.addEventListener('keydown', (e) => e.stopPropagation())
+})
+
+
 export {
     languageDiv,
     createForm,

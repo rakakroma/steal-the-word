@@ -239,7 +239,7 @@ const Options = () => {
                                   {/* {wordObj.phrase || wordObj.word} */}
                                 </Typography>
                                 &emsp;
-                                <Typography sx={{ display: 'inline-block' }} color={hideAlias ? "white" : 'black'} variant='subtitle1'>
+                                <Typography sx={{ display: 'inline-block', border: theme => `1px solid ${theme.palette.primary.light}` }} color={hideAlias ? "white" : 'black'} variant='subtitle1'>
                                   {wordObj.alias}
                                 </Typography>
                               </>

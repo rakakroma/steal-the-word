@@ -1,4 +1,20 @@
-// import DOMPurify from 'dompurify';
+const defaultRubyStyle = {
+    ruby: {
+        backgroundColor: '#dbdbdb',
+        rubyPosition: "",
+        textDecoration: '',
+        color: '#000000',
+        // 'fontSize': '1.5rem',
+        border: ''
+    },
+    rt: {
+        color: '#1c1a1a',
+        textDecoration: '',
+        backgroundColor: '#f0dedd',
+        // fontFamily: "Arial Black"
+        // display: 'none'
+    }
+}
 
 export const renderRuby = (doc, wordList, displayList) => {
 
@@ -66,6 +82,20 @@ export const renderRuby = (doc, wordList, displayList) => {
                 rubyElement.textContent = wordObj.word
                 rubyElement.appendChild(rtElement)
                 shadowNode.appendChild(rubyElement)
+
+                rubyElement.style.backgroundColor = defaultRubyStyle.ruby.backgroundColor
+                rubyElement.style.color = defaultRubyStyle.ruby.color
+                rubyElement.style.border = defaultRubyStyle.ruby.border
+                rubyElement.style.textDecoration = defaultRubyStyle.ruby.textDecoration
+                rubyElement.style.rubyPosition = defaultRubyStyle.ruby.rubyPosition
+
+                rtElement.style.textDecoration = defaultRubyStyle.rt.textDecoration
+                rtElement.style.backgroundColor = defaultRubyStyle.rt.backgroundColor
+                rtElement.style.color = defaultRubyStyle.rt.color
+                rtElement.style.display = defaultRubyStyle.rt.display
+                rtElement.style.fontFamily = defaultRubyStyle.rt.fontFamily
+
+
                 const sentenceWithoutWord = textNode.textContent.split(wordObj.word)
                 const fragment = new DocumentFragment()
 

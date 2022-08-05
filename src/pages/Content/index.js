@@ -1,6 +1,5 @@
 import * as cldrSegmentation from 'cldr-segmentation'
 import { nanoid } from 'nanoid'
-import { createFalse } from 'typescript';
 import {
     languageDiv,
     createForm,
@@ -86,7 +85,7 @@ const init = () => {
             })
             setTimeout(() => {
                 pronounceInput.focus()
-            }, 500)
+            }, 200)
             let selectedString = document.getSelection().toString()
             vocabularyInput.value = selectedString
             console.log('shorter', document.getSelection().anchorNode.textContent.length);
@@ -103,8 +102,7 @@ const init = () => {
             contextDiv.textContent = gotSentence[0]
             // console.log(gotSentence[0]);
             document.getSelection().removeAllRanges()
-            console.log('傳了')
-            divInApp.textContent = ""
+            // divInApp.textContent = ""
         } else {
             console.log('沒東西')
         }
@@ -158,8 +156,9 @@ const init = () => {
             shadowApp.querySelectorAll('.hooliruby-create').forEach(ele => {
                 ele.classList.add('hide-create')
             })
-        }, 500)
+        }, 20)
     })
+
 
 
     body.addEventListener('mouseup', (e) => {
@@ -189,7 +188,6 @@ const observer = new MutationObserver((mutations) => {
 })
 let myList = [];
 let whiteList = []
-let turnOn = true
 
 const startFunction = () => {
     chrome.storage.local.get(["myWordList", "whiteDomainList", 'onOff'], function (obj) {
@@ -215,21 +213,7 @@ startFunction()
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log(message);
     console.log(sender);
-    // if (message.onOff === false) {
-    //     turnOn = false;
-    //     chrome.storage.local.set({ "onOff": false }, () => {
-    //         sendResponse({ content: '已關閉HooliRuby' })
-    //     })
-    //     return true;
-    // }
-    // if (message.onOff === true) {
-    //     turnOn = true;
-    //     chrome.storage.local.set({ "onOff": true }, () => {
-    //         sendResponse({ content: '已開啟HooliRuby' })
-    //         startFunction()
-    //     })
-    //     return true;
-    // }
+
     const thisDomain = message.tabInfo.url.split("//")[1].split('/')[0]
     if (message.dynamicRendering) {
         whiteList.push(thisDomain)
@@ -241,6 +225,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     } else if (message.dynamicRendering === false) {
         whiteList = whiteList.filter(domainName => domainName !== thisDomain)
+        console.log(whiteList)
         chrome.storage.local.set({ "whiteDomainList": whiteList }, () => {
             observer.disconnect()
             sendResponse({ content: `已移出white list : ${whiteList}` });

@@ -16,7 +16,7 @@ import ImportExportIcon from '@mui/icons-material/ImportExport';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { TextFormatRounded } from '@mui/icons-material';
 import { display } from '@mui/system';
-import { HexColorPicker } from "react-colorful";
+import { defaultRubyStyle } from './defaultRuby.style'
 
 
 
@@ -80,25 +80,7 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
   });
 
 
-  const [customRubyStyle, setCustomRubyStyle] = React.useState({
-    ruby: {
-      backgroundColor: '#dbdbdb',
-      rubyPosition: "",
-      textDecoration: '',
-      color: '#000000',
-      // 'fontSize': '1.5rem',
-      border: ''
-    },
-    rt: {
-      color: '#1c1a1a',
-      textDecoration: '',
-      backgroundColor: '#f0dedd',
-      // fontFamily: "Arial Black"
-      // display: 'none'
-    }
-
-
-  })
+  const [customRubyStyle, setCustomRubyStyle] = React.useState(defaultRubyStyle)
 
 
   const handleChange = (event) => {
@@ -249,6 +231,7 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
 
                 <FormControlLabel control={
                   <Switch
+                    disabled={customRubyStyle.rt.display === 'none' ? true : false}
                     size="small"
                     checked={customRubyStyle.ruby.rubyPosition === 'under'}
                     onChange={(e) => {
@@ -271,9 +254,10 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
                     <Typography variant='h6'>設定rt樣式</Typography>
                     <FormGroup row>
                       <FormControlLabel
-                        labelPlacement="bottom"
+                        labelPlacement="left"
                         control={
                           <Input
+                            disabled={customRubyStyle.rt.display === 'none' ? true : false}
                             sx={{ width: '15px', height: '15px' }}
                             type='color'
                             value={customRubyStyle.rt.backgroundColor}
@@ -285,9 +269,10 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
                         label='背景'
                       />
                       <FormControlLabel
-                        labelPlacement="bottom"
+                        labelPlacement="left"
                         control={
                           <Input
+                            disabled={customRubyStyle.rt.display === 'none' ? true : false}
                             sx={{ width: '15px', height: '15px' }}
                             type='color'
                             value={customRubyStyle.rt.color}
@@ -302,6 +287,7 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
 
                       {/* <InputLabel >underline</InputLabel> */}
                       <Select
+                        disabled={customRubyStyle.rt.display === 'none' ? true : false}
                         size='small'
                         // labelId="demo-simple-select-label"
                         // id="demo-simple-select"
@@ -323,10 +309,10 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
                     <Typography variant='h6'>設定ruby樣式</Typography>
                     <FormGroup row>
                       <FormControlLabel
-                        labelPlacement="bottom"
+                        labelPlacement="left"
                         control={
                           <Input
-                            sx={{ width: '20px', height: '15px' }}
+                            sx={{ width: '15px', height: '15px' }}
                             type='color'
                             value={customRubyStyle.ruby.color}
                             onChange={(e) => handleChangeRubyStyle(e)}
@@ -334,13 +320,13 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
                           />
 
                         }
-                        label='ruby字體顏色'
+                        label='字體顏色'
                       />
                       <FormControlLabel
-                        labelPlacement="bottom"
+                        labelPlacement="left"
                         control={
                           <Input
-                            sx={{ width: '50px', height: '15px' }}
+                            sx={{ width: '15px', height: '15px' }}
                             type='color'
                             value={customRubyStyle.ruby.backgroundColor}
                             onChange={(e) => handleChangeRubyStyle(e)}
@@ -348,7 +334,7 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
                           />
 
                         }
-                        label='ruby背景顏色'
+                        label='背景顏色'
                       />
                       {/* <InputLabel id="demo-simple-select-label">underline</InputLabel> */}
                       <Select
