@@ -1,5 +1,6 @@
 import * as cldrSegmentation from 'cldr-segmentation'
 import { nanoid } from 'nanoid'
+import { createFalse } from 'typescript';
 import {
     languageDiv,
     createForm,
@@ -20,6 +21,7 @@ import { renderRuby } from './utils/renderRuby';
 
 console.log('Content script works!');
 
+// let displayWords = [];
 
 const app = document.createElement('div')
 const body = document.body
@@ -28,15 +30,29 @@ divInApp.id = 'hooliruby-div-in-app'
 
 const floatingTool = document.createElement('div')
 floatingTool.id = 'hooliruby-floating-tool'
-// floatingTool.textContent = '有東西'
 const buttonOfFloatingTool = document.createElement('button')
 
 buttonOfFloatingTool.textContent = 'ルビ振る'
 buttonOfFloatingTool.id = 'hooliruby-floating-tool-button'
 
-const reRenderButton = document.createElement('button')
-reRenderButton.id = 'hooliruby-reRenderButton'
-reRenderButton.textContent = 're-render'
+// const reRenderButton = document.createElement('button')
+// reRenderButton.id = 'hooliruby-reRenderButton'
+// reRenderButton.textContent = 're-render'
+
+// const infoDiv = document.createElement('div')
+// infoDiv.id = 'hooriruby-info-div'
+
+// const countList = document.createElement('ol')
+// const countListItem = document.createElement('li')
+
+// infoDiv.appendChild(countList)
+// displayWords.forEach(wordObj => {
+//     countListItem.textContent = `${wordObj.word} ${wordObj.countInCurrentPage.toString()}`
+//     countList.appendChild(countListItem)
+// })
+
+
+
 
 const init = () => {
 
@@ -60,6 +76,9 @@ const init = () => {
     shadowApp.appendChild(languageDiv)
     shadowApp.appendChild(divInApp)
 
+    // body.appendChild(infoDiv)
+
+
     buttonOfFloatingTool.addEventListener('click', (e) => {
         if (document.getSelection().toString().trim()) {
             shadowApp.querySelectorAll('.hooliruby-create').forEach(ele => {
@@ -81,7 +100,6 @@ const init = () => {
 
             const gotSentence = splitted.filter(sentence => sentence.includes(selectedString))
 
-            // contextInput.value = gotSentence[0]
             contextDiv.textContent = gotSentence[0]
             // console.log(gotSentence[0]);
             document.getSelection().removeAllRanges()
@@ -92,9 +110,9 @@ const init = () => {
         }
     })
 
-    reRenderButton.addEventListener('click', () => {
-        renderRuby(document, myList)
-    })
+    // reRenderButton.addEventListener('click', () => {
+    //     renderRuby(document, myList, displayWords)
+    // })
 
     createForm.addEventListener('submit', (e) => {
         e.preventDefault()
@@ -134,6 +152,8 @@ const init = () => {
         //     divInApp.appendChild(li)
         // })
         renderRuby(document, myList)
+
+
         setTimeout(() => {
             shadowApp.querySelectorAll('.hooliruby-create').forEach(ele => {
                 ele.classList.add('hide-create')
@@ -152,25 +172,83 @@ const init = () => {
             floatingTool.style.left = (e.pageX + 25) + 'px'
             body.appendChild(floatingTool)
             floatingTool.appendChild(buttonOfFloatingTool)
-            floatingTool.appendChild(reRenderButton)
+            // floatingTool.appendChild(reRenderButton)
         }
     })
 
 }
 
 
-init()
+// init()
 
 const observer = new MutationObserver((mutations) => {
-    // console.log(mutations);
-})
-
-let myList = [];
-let displayWords = [];
-chrome.storage.local.get("myWordList", function (obj) {
-    if (obj.myWordList && obj.myWordList.length > 0) {
-        myList = obj.myWordList
+    mutations.forEach(mutation => {
+        // console.log(mutation);
         renderRuby(document, myList)
-        observer.observe(document, body, { childList: true, subtree: true, characterData: true })
-    }
+    })
 })
+let myList = [];
+let whiteList = []
+let turnOn = true
+
+const startFunction = () => {
+    chrome.storage.local.get(["myWordList", "whiteDomainList", 'onOff'], function (obj) {
+        // turnOn = obj.onOff || true
+        console.log(obj.onOff);
+        if (obj.onOff === false) { return }
+        else {
+            init()
+            if (obj.myWordList && obj.myWordList.length > 0) {
+                myList = obj.myWordList
+                renderRuby(document, myList)
+                whiteList = obj.whiteDomainList || []
+                if (Array.isArray(whiteList) && whiteList.includes(window.location.host)) {
+                    observer.observe(body, { childList: true, subtree: true, characterData: true })
+                }
+            }
+        }
+    })
+}
+
+startFunction()
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    console.log(message);
+    console.log(sender);
+    // if (message.onOff === false) {
+    //     turnOn = false;
+    //     chrome.storage.local.set({ "onOff": false }, () => {
+    //         sendResponse({ content: '已關閉HooliRuby' })
+    //     })
+    //     return true;
+    // }
+    // if (message.onOff === true) {
+    //     turnOn = true;
+    //     chrome.storage.local.set({ "onOff": true }, () => {
+    //         sendResponse({ content: '已開啟HooliRuby' })
+    //         startFunction()
+    //     })
+    //     return true;
+    // }
+    const thisDomain = message.tabInfo.url.split("//")[1].split('/')[0]
+    if (message.dynamicRendering) {
+        whiteList.push(thisDomain)
+        console.log(whiteList)
+        chrome.storage.local.set({ "whiteDomainList": whiteList }, () => {
+            sendResponse({ content: `已加入white list : ${whiteList}` });
+            observer.observe(body, { childList: true, subtree: true, characterData: true })
+        })
+        return true;
+    } else if (message.dynamicRendering === false) {
+        whiteList = whiteList.filter(domainName => domainName !== thisDomain)
+        chrome.storage.local.set({ "whiteDomainList": whiteList }, () => {
+            observer.disconnect()
+            sendResponse({ content: `已移出white list : ${whiteList}` });
+        })
+        return true;
+    } else {
+        sendResponse({ content: 'content script 已收到訊息' })
+    }
+});
+
+

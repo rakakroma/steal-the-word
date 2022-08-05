@@ -45,3 +45,13 @@
   border: 1px black solid;
   display: inline-block;
 }
+
+/* #hooriruby-info-div {
+  width: 50px;
+  height: 100px;
+  background-color: white;
+  position: fixed;
+  top: 50px;
+  right: 20px;
+  z-index: 999999;
+} */

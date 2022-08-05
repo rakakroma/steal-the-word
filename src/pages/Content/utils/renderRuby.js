@@ -1,8 +1,8 @@
-import DOMPurify from 'dompurify';
+// import DOMPurify from 'dompurify';
 
 export const renderRuby = (doc, wordList, displayList) => {
 
-    const nodeIterator = doc.createNodeIterator(doc.body, NodeFilter.SHOW_TEXT, myGoodFilter);
+    const nodeIterator = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, myGoodFilter);
 
     // mygoodfilter: 抄 
     // https://github.com/XQDD/highlight_new_words/blob/12be7a1d79ad209ffffcbfc1038efbb7aa3bbd8c/content_scripts/highlight.js#L329
@@ -57,21 +57,38 @@ export const renderRuby = (doc, wordList, displayList) => {
             //     } break;
             // }
             if (textNode.textContent.includes(wordObj.word)) {
-                const renderNode = doc.createElement('span');
+                const renderNode = document.createElement('span');
                 renderNode.className = 'hooli-textnode';
-                renderNode.innerHTML = textNode.textContent.replaceAll(wordObj.word, `<ruby>${DOMPurify.sanitize(wordObj.word)}<rt>${DOMPurify.sanitize(wordObj.alias)}</rt></ruby>`);
-                textNode.replaceWith(renderNode);
-                console.log('hi');
+                const shadowNode = renderNode.attachShadow({ mode: 'open' })
+                const rubyElement = document.createElement('ruby')
+                const rtElement = document.createElement('rt')
+                rtElement.textContent = wordObj.alias
+                rubyElement.textContent = wordObj.word
+                rubyElement.appendChild(rtElement)
+                shadowNode.appendChild(rubyElement)
+                const sentenceWithoutWord = textNode.textContent.split(wordObj.word)
+                const fragment = new DocumentFragment()
+
+                //不知道為什麼這樣做最後面不會多一個ruby元素，但 it just works。
+                //明明用了shadow DOM但瀏覽器裡他直接被忽略，看不到shadow-root及span，不設shadow的話則會出現奇怪的錯誤結果（ruby元素被提到最後面）。
+                sentenceWithoutWord.forEach(sentence => {
+                    fragment.append(sentence, shadowNode)
+                })
+                // shadowNode.innerHTML = textNode.textContent.replaceAll(wordObj.word, `<ruby>${DOMPurify.sanitize(wordObj.word)}<rt>${DOMPurify.sanitize(wordObj.alias)}</rt></ruby>`);
+                textNode.replaceWith(fragment);
+
+
 
                 if (displayList) {
-                    const theWordInDisplayList = displayList.find(wordObjInDisplay => wordObjInDisplay.id === wordObj.id)
-                    if (theWordInDisplayList) {
-                        displayList.push(wordObj)
+                    let theWordInDisplayList = displayList.find(wordObjInDisplay => wordObjInDisplay.id === wordObj.id)
+                    if (!theWordInDisplayList) {
+                        displayList.push({ ...wordObj, countInCurrentPage: 1 })
                     } else {
-                        theWordInDisplayList.countInCurrentPage ?
-                            theWordInDisplayList.countInCurrentPage = 1 :
-                            theWordInDisplayList.countInCurrentPage += 1
+                        theWordInDisplayList.countInCurrentPage += 1
                     }
+
+                    console.log(displayList)
+
                 }
             }
 
