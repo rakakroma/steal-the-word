@@ -2,14 +2,16 @@ export const themeStyle = {
     palette: {
         type: 'light',
         primary: {
-            light: '#B29D9D',
-            main: '#b57b7b',
+            light: '#787878',
+            dark: '#ae9999',
+            main: '#b38888',
         },
         secondary: {
             main: '#a23f60',
         },
         background: {
-            default: '#f1f0f0',
+            light: '#f1f0f0',
+            default: '#e1dfde',
         },
     },
     spacing: 8,

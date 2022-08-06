@@ -16,6 +16,7 @@ import { shadowAppTopStyle } from './shadowApp.style';
 import { renderRuby } from './utils/renderRuby';
 
 
+
 //第二個重要功能：已上色的ruby要能夠很快的儲存新例句／片語
 
 console.log('Content script works!');
@@ -45,10 +46,6 @@ buttonOfFloatingTool.id = 'hooliruby-floating-tool-button'
 // const countListItem = document.createElement('li')
 
 // infoDiv.appendChild(countList)
-// displayWords.forEach(wordObj => {
-//     countListItem.textContent = `${wordObj.word} ${wordObj.countInCurrentPage.toString()}`
-//     countList.appendChild(countListItem)
-// })
 
 
 
@@ -208,7 +205,15 @@ const startFunction = () => {
     })
 }
 
+// const displayList = []
 startFunction()
+
+// const renderDisplayDiv = () => {
+//     displayList.forEach(wordObj => {
+//         countListItem.textContent = wordObj.word
+//         countList.appendChild(countListItem)
+//     })
+// }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log(message);

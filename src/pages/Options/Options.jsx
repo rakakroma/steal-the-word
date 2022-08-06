@@ -3,7 +3,7 @@ import { Settings } from './components/Settings';
 import './Options.css';
 import ColorThief from '../../../node_modules/colorthief/dist/color-thief.mjs'
 import CustomizedDialogs from './components/CustomizedDialogs';
-import { Box, createTheme, Divider, FormControlLabel, FormGroup, Input, InputAdornment, Link, List, ListItem, ListItemText, Switch, TextField, ThemeProvider, Tooltip, Typography } from '@mui/material';
+import { Box, createTheme, CssBaseline, Divider, FormControlLabel, FormGroup, Input, InputAdornment, Link, List, ListItem, ListItemText, Switch, TextField, ThemeProvider, Tooltip, Typography } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import { fontSize } from '@mui/system';
 import { Highlighter } from './components/Highlighter';
@@ -70,6 +70,7 @@ const Options = () => {
   }
 
   const handleImport = (e) => {
+    console.log('import')
     e.preventDefault()
     if (!file.value.length) return;
     let reader = new FileReader()
@@ -133,6 +134,8 @@ const Options = () => {
 
   return <div className="OptionsContainer">
     <ThemeProvider theme={theme}>
+      <CssBaseline />
+
       <Box sx={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -140,7 +143,7 @@ const Options = () => {
         <Typography variant='h5' sx={{ fontweight: "bold" }}> HolliRuby💫</Typography>
         <div style={{ position: 'relative', width: '50vw' }}>
           <TextField size="small"
-            sx={{ input: { backgroundColor: theme => theme.palette.primary.light } }}
+            sx={{ input: { backgroundColor: theme => theme.palette.primary.dark } }}
             variant='outlined'
             value={searchText}
             onChange={handleSearch}
@@ -212,8 +215,18 @@ const Options = () => {
                     alignItems: "flex-end",
                     justifyContent: "center"
                   }}>
-                    <Box>
-                      <Link variant='subtitle1' underline='none' href={arrayWithUrl[0]} color='primary.light' >
+                    <Box >
+                      <Link sx={{
+                        display: "inline-block",
+                        textOverflow: "ellipsis",
+                        width: " auto",
+                        maxWidth: '50vw',
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textAlign: 'right',
+                        verticalAlign: 'bottom'
+                      }}
+                        variant='subtitle1' underline='none' href={arrayWithUrl[0]} color='primary.light' >
                         {arrayWithUrl[1][0].pageTitle}
                       </Link>
                       &emsp;
@@ -221,7 +234,14 @@ const Options = () => {
                         <Typography variant='subtitle1' component={'span'}> {countDate(Number(arrayWithUrl[1][0].date))} </Typography>
                       </Tooltip>
                     </Box>
-                    <List sx={{ border: '1px solid #c7b4b3', width: '65vw' }}>
+                    <List sx={{
+                      borderWidth: '1px',
+                      borderStyle: 'solid',
+                      borderColor: 'secondary.main',
+                      borderRadius: '15px',
+                      width: '65vw',
+                      backgroundColor: "background.light"
+                    }}>
                       {arrayWithUrl[1].map((wordObj, index) => {
                         return <>
                           <ListItem
@@ -239,7 +259,7 @@ const Options = () => {
                                   {/* {wordObj.phrase || wordObj.word} */}
                                 </Typography>
                                 &emsp;
-                                <Typography sx={{ display: 'inline-block', border: theme => `1px solid ${theme.palette.primary.light}` }} color={hideAlias ? "white" : 'black'} variant='subtitle1'>
+                                <Typography sx={{ display: 'inline-block', border: theme => `1px solid ${theme.palette.primary.light}` }} color={hideAlias ? "background.light" : 'black'} variant='subtitle1'>
                                   {wordObj.alias}
                                 </Typography>
                               </>

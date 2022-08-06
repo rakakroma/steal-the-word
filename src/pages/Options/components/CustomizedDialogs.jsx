@@ -1,16 +1,9 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import Typography from '@mui/material/Typography';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { FormControl, FormControlLabel, FormLabel, FormGroup, FormHelperText, Checkbox, Box, Tab, Tabs, Input, Link, Divider, Switch, InputLabel, Select, MenuItem } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Typography, FormControl, FormControlLabel, FormLabel, FormGroup, FormHelperText, Checkbox, Box, Tab, Tabs, Input, Link, Divider, Switch, InputLabel, Select, MenuItem } from '@mui/material';
 import { TabsContext } from '@mui/base';
 import ImportExportIcon from '@mui/icons-material/ImportExport';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
@@ -42,7 +35,7 @@ const BootstrapDialogTitle = (props) => {
           sx={{
             position: 'absolute',
             right: 8,
-            bottom: 8,
+            top: 8,
             color: (theme) => theme.palette.grey[500],
           }}
         >
@@ -59,7 +52,7 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function CustomizedDialogs({ handleExport, handleImport }) {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -144,6 +137,12 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
         aria-labelledby="customized-dialog-title"
         open={open}
       >
+
+        {/* <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
+          Modal title
+        </BootstrapDialogTitle> */}
+
+
         <DialogContent >
 
           <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -227,7 +226,6 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
 
               </TabPanel>
               <TabPanel value="2">
-                {/* <HexColorPicker color={customRubyStyle.ruby.color} onChange={handleChangeRubyStyle} name='color' /> */}
 
                 <FormControlLabel control={
                   <Switch
@@ -254,7 +252,7 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
                     <Typography variant='h6'>設定rt樣式</Typography>
                     <FormGroup row>
                       <FormControlLabel
-                        labelPlacement="left"
+                        labelPlacement="start"
                         control={
                           <Input
                             disabled={customRubyStyle.rt.display === 'none' ? true : false}
@@ -269,7 +267,7 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
                         label='背景'
                       />
                       <FormControlLabel
-                        labelPlacement="left"
+                        labelPlacement="start"
                         control={
                           <Input
                             disabled={customRubyStyle.rt.display === 'none' ? true : false}
@@ -309,7 +307,7 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
                     <Typography variant='h6'>設定ruby樣式</Typography>
                     <FormGroup row>
                       <FormControlLabel
-                        labelPlacement="left"
+                        labelPlacement="start"
                         control={
                           <Input
                             sx={{ width: '15px', height: '15px' }}
@@ -323,7 +321,7 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
                         label='字體顏色'
                       />
                       <FormControlLabel
-                        labelPlacement="left"
+                        labelPlacement="start"
                         control={
                           <Input
                             sx={{ width: '15px', height: '15px' }}
@@ -383,26 +381,23 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
 
               <TabPanel value="3">
 
-                {/* <h4>匯入與匯出</h4> */}
-                <FormControl sx={{ m: 3 }} component="fieldset" variant='standard'>
-                  <FormLabel component='legend'>匯入</FormLabel>
-
-                  <FormControlLabel
-                    control={
-                      <Input type='file' inputProps={{ accept: '.json' }} />
-                    }
-                  // label='匯入json格式資料'
-                  />
-                  <FormHelperText>⚠️注意：資料格式為json，匯入後將取代原本清單</FormHelperText>
-                </FormControl>
+                {/* <form onSubmit={handleImport}>
+                  <FormControl sx={{ m: 3 }} component="fieldset" variant='standard' >
+                    <FormLabel component='legend'>匯入</FormLabel>
+                    <Input type='file' inputProps={{ accept: '.json' }} />
+                    <FormHelperText>⚠️注意：資料格式為json，匯入後將取代原本清單</FormHelperText>
+                    <Button>匯入</Button>
+                  </FormControl>
+                </form> */}
 
                 <Link href={handleExport().link} download={handleExport().fileName}>下載單字清單</Link>
 
-                {/* <form id='upload' onSubmit={handleImport}>
+                <form id='upload' onSubmit={handleImport}>
                   <label htmlFor="file">上傳資料（json）</label>
                   <input type='file' id='file' accept='.json' />
+                  {/* <Input type='file' inputProps={{ accept: '.json' }} /> */}
                   <button>匯入</button>
-                </form> */}
+                </form>
                 {/* <div>注意：匯入資料將取代原本清單</div> */}
                 {/* <a
                 href={handleExport('href')} 
@@ -413,13 +408,6 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
 
             </TabContext>
           </Box>
-
-          {/* 
-          <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-            設定
-          </BootstrapDialogTitle> */}
-
-
         </DialogContent>
 
         <DialogActions>

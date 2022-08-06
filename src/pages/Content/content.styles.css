@@ -46,12 +46,12 @@
   display: inline-block;
 }
 
-/* #hooriruby-info-div {
-  width: 50px;
-  height: 100px;
+#hooriruby-info-div {
+  width: 200px;
+  height: 300px;
   background-color: white;
   position: fixed;
   top: 50px;
   right: 20px;
   z-index: 999999;
-} */
+}

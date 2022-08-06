@@ -16,9 +16,11 @@ const defaultRubyStyle = {
     }
 }
 
-export const renderRuby = (doc, wordList, displayList) => {
 
-    const nodeIterator = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, myGoodFilter);
+
+export const renderRuby = (doc, wordList, displayList, renderListFunction) => {
+
+    const nodeIterator = doc.createNodeIterator(doc.body, NodeFilter.SHOW_TEXT, myGoodFilter);
 
     // mygoodfilter: 抄 
     // https://github.com/XQDD/highlight_new_words/blob/12be7a1d79ad209ffffcbfc1038efbb7aa3bbd8c/content_scripts/highlight.js#L329
@@ -108,16 +110,16 @@ export const renderRuby = (doc, wordList, displayList) => {
                 textNode.replaceWith(fragment);
 
 
-
                 if (displayList) {
                     let theWordInDisplayList = displayList.find(wordObjInDisplay => wordObjInDisplay.id === wordObj.id)
                     if (!theWordInDisplayList) {
                         displayList.push({ ...wordObj, countInCurrentPage: 1 })
+
                     } else {
                         theWordInDisplayList.countInCurrentPage += 1
                     }
-
-                    console.log(displayList)
+                    renderListFunction()
+                    // console.log(displayList[0].countInCurrentPage)
 
                 }
             }

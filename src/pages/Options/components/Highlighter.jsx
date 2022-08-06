@@ -12,16 +12,11 @@ export const Highlighter = ({ text, highlightWord, reverse }) => {
     const parts = text.split(regex);
 
 
-
-    // const greyStyle = {
-    //     backgroundColor: '',
-    //     color: grey[800]
-    // }
-
-
     const markStyle = {
-        backgroundColor: '',
-        color: theme.palette.primary.main
+        background: `linear-gradient(transparent 60%, #fae4bd 50%)`,
+        backgroundColor: ""
+        // background:`linear-gradient(transparent 60%, #FFFF99 50%)`,
+        // color: theme.palette.primary.main
     }
     return (
         <span>
