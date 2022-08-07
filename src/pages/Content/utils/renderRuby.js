@@ -18,7 +18,7 @@ const defaultRubyStyle = {
 
 
 
-export const renderRuby = (doc, wordList, displayList, renderListFunction) => {
+export const renderRuby = (doc, wordList, displayList) => {
 
     const nodeIterator = doc.createNodeIterator(doc.body, NodeFilter.SHOW_TEXT, myGoodFilter);
 
@@ -115,10 +115,10 @@ export const renderRuby = (doc, wordList, displayList, renderListFunction) => {
                     if (!theWordInDisplayList) {
                         displayList.push({ ...wordObj, countInCurrentPage: 1 })
 
-                    } else {
-                        theWordInDisplayList.countInCurrentPage += 1
                     }
-                    renderListFunction()
+                    // else {
+                    //     theWordInDisplayList.countInCurrentPage += 1
+                    // }
                     // console.log(displayList[0].countInCurrentPage)
 
                 }

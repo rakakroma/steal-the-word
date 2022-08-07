@@ -39,13 +39,19 @@ buttonOfFloatingTool.id = 'hooliruby-floating-tool-button'
 // reRenderButton.id = 'hooliruby-reRenderButton'
 // reRenderButton.textContent = 're-render'
 
-// const infoDiv = document.createElement('div')
-// infoDiv.id = 'hooriruby-info-div'
+const infoDiv = document.createElement('div')
+infoDiv.id = 'hooriruby-info-div'
 
-// const countList = document.createElement('ol')
-// const countListItem = document.createElement('li')
+const countList = document.createElement('ol')
 
-// infoDiv.appendChild(countList)
+const renderInfoDivButton = document.createElement('button')
+renderInfoDivButton.textContent = '重整'
+renderInfoDivButton.addEventListener('click', () => {
+    showWordList()
+
+})
+infoDiv.appendChild(renderInfoDivButton)
+infoDiv.appendChild(countList)
 
 
 
@@ -72,7 +78,6 @@ const init = () => {
     shadowApp.appendChild(languageDiv)
     shadowApp.appendChild(divInApp)
 
-    // body.appendChild(infoDiv)
 
 
     buttonOfFloatingTool.addEventListener('click', (e) => {
@@ -140,13 +145,8 @@ const init = () => {
         pronounceInput.value = ''
         meaningInput.value = ''
         contextDiv.textContent = ""
-        // myList.map(wordObj => {
-        //     const li = document.createElement('li')
-        //     li.textContent = wordObj.word
-        //     // app.appendChild(li)
-        //     divInApp.appendChild(li)
-        // })
-        renderRuby(document, myList)
+
+        renderRuby(document, myList, displayList)
 
 
         setTimeout(() => {
@@ -180,14 +180,15 @@ const init = () => {
 const observer = new MutationObserver((mutations) => {
     mutations.forEach(mutation => {
         // console.log(mutation);
-        renderRuby(document, myList)
+        renderRuby(document, myList, displayList)
     })
 })
 let myList = [];
 let whiteList = []
+// let wordListDisplay = false
 
 const startFunction = () => {
-    chrome.storage.local.get(["myWordList", "whiteDomainList", 'onOff'], function (obj) {
+    chrome.storage.local.get(["myWordList", "whiteDomainList", 'onOff', 'wordListDisplay'], function (obj) {
         // turnOn = obj.onOff || true
         console.log(obj.onOff);
         if (obj.onOff === false) { return }
@@ -195,7 +196,13 @@ const startFunction = () => {
             init()
             if (obj.myWordList && obj.myWordList.length > 0) {
                 myList = obj.myWordList
-                renderRuby(document, myList)
+                renderRuby(document, myList, displayList)
+                if (obj.wordListDisplay === true) {
+                    console.log(obj.wordListDisplay)
+                    setTimeout(() => {
+                        showWordList()
+                    }, 500)
+                }
                 whiteList = obj.whiteDomainList || []
                 if (Array.isArray(whiteList) && whiteList.includes(window.location.host)) {
                     observer.observe(body, { childList: true, subtree: true, characterData: true })
@@ -205,21 +212,29 @@ const startFunction = () => {
     })
 }
 
-// const displayList = []
+const displayList = []
 startFunction()
 
-// const renderDisplayDiv = () => {
-//     displayList.forEach(wordObj => {
-//         countListItem.textContent = wordObj.word
-//         countList.appendChild(countListItem)
-//     })
-// }
+const showWordList = () => {
+    countList.textContent = ''
+    if (displayList.length > 0) {
+        body.appendChild(infoDiv)
+        displayList.forEach(wordObj => {
+            const countListItem = document.createElement('li')
+            countListItem.textContent = `${wordObj.word} ${wordObj.alias}`
+            countList.appendChild(countListItem)
+        })
+    }
+}
+
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log(message);
     console.log(sender);
-
-    const thisDomain = message.tabInfo.url.split("//")[1].split('/')[0]
+    let thisDomain;
+    if (message.tabInfo) {
+        thisDomain = message.tabInfo.url.split("//")[1].split('/')[0]
+    }
     if (message.dynamicRendering) {
         whiteList.push(thisDomain)
         console.log(whiteList)
@@ -236,7 +251,24 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             sendResponse({ content: `已移出white list : ${whiteList}` });
         })
         return true;
-    } else {
+    } else if (message.showWordList === true) {
+        // wordListDisplay = true
+        chrome.storage.local.set({ "wordListDisplay": true }, () => {
+            showWordList()
+            console.log('open')
+            sendResponse({ content: "已顯示wordList" })
+        })
+        return true;
+    } else if (message.showWordList === false) {
+        // wordListDisplay = false
+        chrome.storage.local.set({ 'wordListDisplay': false }, () => {
+            body.removeChild(infoDiv)
+            console.log('close')
+            sendResponse({ content: "已關閉wordList" })
+        })
+        return true;
+    }
+    else {
         sendResponse({ content: 'content script 已收到訊息' })
     }
 });

@@ -8,6 +8,7 @@ const Popup = () => {
   const [turnOnOff, setTurnOnOff] = useState(true)
   const [currentDomain, setCurrentDomain] = useState("")
   const [validPlace, setValidPlace] = useState(true)
+  const [showWordList, setShowWordList] = useState(false)
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -17,13 +18,16 @@ const Popup = () => {
       }
       setCurrentDomain(thisDomain)
 
-      chrome.storage.local.get(['whiteDomainList', 'onOff'], (obj) => {
+      chrome.storage.local.get(['whiteDomainList', 'onOff', 'wordListDisplay'], (obj) => {
         if (obj.onOff === true || obj.onOff === false) {
           setTurnOnOff(obj.onOff)
         }
         const whiteList = obj.whiteDomainList;
         if (Array.isArray(whiteList) && whiteList.includes(thisDomain)) {
           setDynamicRendering(true)
+        }
+        if (obj.wordListDisplay === true) {
+          setShowWordList(true)
         }
       })
     })
@@ -43,16 +47,18 @@ const Popup = () => {
     if (!dynamicRendering) {
       setDynamicRendering(true);
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, { dynamicRendering: true, tabInfo: tabs[0] }, (response) => {
-          console.log(response);
-        });
+        chrome.tabs.sendMessage(tabs[0].id, { dynamicRendering: true, tabInfo: tabs[0] },
+          (response) => {
+            console.log(response);
+          });
       });
     } else {
       setDynamicRendering(false);
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, { dynamicRendering: false, tabInfo: tabs[0] }, (response) => {
-          console.log(response);
-        });
+        chrome.tabs.sendMessage(tabs[0].id, { dynamicRendering: false, tabInfo: tabs[0] },
+          (response) => {
+            console.log(response);
+          });
       });
     }
   }
@@ -66,6 +72,28 @@ const Popup = () => {
     } else {
       setTurnOnOff(true)
       chrome.storage.local.set({ "onOff": true })
+    }
+  }
+
+  const handleShowWordList = () => {
+    if (showWordList === true) {
+      setShowWordList(false)
+      // chrome.storage.local.set({ "wordListDisplay": false })
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, { showWordList: false }, (response) => {
+          console.log(response);
+        });
+      });
+
+    } else {
+      setShowWordList(true)
+      // chrome.storage.local.set({ "wordListDisplay": true })
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, { showWordList: true }, (response) => {
+          console.log(response);
+        });
+      });
+
     }
   }
 
@@ -84,11 +112,15 @@ const Popup = () => {
         <Switch size='small'
           checked={dynamicRendering}
           onChange={handleRenderOption} />
-        <Typography variant='subtitle2'>關閉功能</Typography>
+        <Typography variant='subtitle2'>開啟功能</Typography>
         <Switch size='small'
           checked={turnOnOff}
           onChange={handleTurnOnOff} />
         <h1>パップアップ</h1>
+        <Typography variant='subtitle2'>顯示本頁詞</Typography>
+        <Switch size='small'
+          checked={showWordList}
+          onChange={handleShowWordList} />
         {/* <h1><ruby>Hooli<rt>予你</rt>Ruby</ruby></h1> */}
       </header>
     </div>

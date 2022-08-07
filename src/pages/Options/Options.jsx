@@ -12,6 +12,7 @@ import { groupBy } from './utils/groupBy'
 import { countDate } from './utils/countDate'
 import { themeStyle } from './theme.style'
 
+
 const Options = () => {
 
   const [myList, setMyList] = useState([])
@@ -53,6 +54,7 @@ const Options = () => {
       if (wordObj.id === e.target.parentElement.id) return objToEdit
       return wordObj
     })
+
     setMyList(updatedList)
     window.getSelection().removeAllRanges()
     chrome.storage.local.set({ "myWordList": updatedList });
@@ -66,7 +68,6 @@ const Options = () => {
     console.log('json', json);
     setMyList(json)
     chrome.storage.local.set({ "myWordList": json });
-
   }
 
   const handleImport = (e) => {
@@ -78,16 +79,11 @@ const Options = () => {
     reader.readAsText(file.files[0]);
   }
 
-
-
-
   const exportToJsonFile = (obj) => {
     const dataStr = JSON.stringify(obj);
     const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
     const exportFileDefaultName = `HolliRubyList ${formatDate(new Date())}.json`;
-
     return { uri: dataUri, fileName: exportFileDefaultName }
-
   }
 
   const handleExport = () => {
@@ -99,8 +95,6 @@ const Options = () => {
       fileName: result.fileName
     }
   }
-
-
 
   const reverseList = myList.sort((a, b) => (+b.date) - (+a.date))
 
@@ -167,7 +161,6 @@ const Options = () => {
         </div>
         <CustomizedDialogs handleExport={handleExport} handleImport={handleImport} />
       </Box>
-
 
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: "flex-end" }}>
         <Typography variant='h6'>{`已存詞彙 ${myList.length}`}</Typography>
