@@ -13,6 +13,7 @@ import {
     sizeControlButton
 } from './components/createForm'
 import { shadowAppTopStyle } from './shadowApp.style';
+import { joinTextAndRubyParagraph } from './utils/joinTextAndRubyParagraph';
 import { renderRuby } from './utils/renderRuby';
 
 
@@ -35,24 +36,25 @@ const buttonOfFloatingTool = document.createElement('button')
 buttonOfFloatingTool.textContent = 'ルビ振る'
 buttonOfFloatingTool.id = 'hooliruby-floating-tool-button'
 
-// const reRenderButton = document.createElement('button')
-// reRenderButton.id = 'hooliruby-reRenderButton'
-// reRenderButton.textContent = 're-render'
-
-const infoDiv = document.createElement('div')
-infoDiv.id = 'hooriruby-info-div'
+const infoSection = document.createElement('section')
+infoSection.id = 'hooriruby-info-div'
+// const shadowInfoSection = infoSection.attachShadow({ mode: "open" })
 
 const countList = document.createElement('ol')
 
-const renderInfoDivButton = document.createElement('button')
-renderInfoDivButton.textContent = '重整'
-renderInfoDivButton.addEventListener('click', () => {
+const renderInfoSectionButton = document.createElement('button')
+renderInfoSectionButton.textContent = '重整'
+renderInfoSectionButton.addEventListener('click', () => {
     showWordList()
 
 })
-infoDiv.appendChild(renderInfoDivButton)
-infoDiv.appendChild(countList)
+infoSection.appendChild(renderInfoSectionButton)
+infoSection.appendChild(countList)
 
+// const reRenderButton = document.createElement('button')
+// reRenderButton.id = 'hooliruby-reRenderButton'
+// reRenderButton.textContent = 're'
+// infoSection.appendChild(reRenderButton)
 
 
 
@@ -90,19 +92,35 @@ const init = () => {
             }, 200)
             let selectedString = document.getSelection().toString()
             vocabularyInput.value = selectedString
-            console.log('shorter', document.getSelection().anchorNode.textContent.length);
-            console.log("longer", document.getSelection().anchorNode.parentElement.textContent.length);
-            const biggerParagraph = document.getSelection().anchorNode.parentElement.textContent
+            const currentNode = document.getSelection().anchorNode
+            // console.log('shorter', currentNode.textContent);
+            const shorterParagraph = currentNode.textContent.trim()
+            // console.log("longer", currentNode.parentElement.textContent.length);
+            const biggerParagraph = currentNode.parentElement.textContent.trim()
+            const supp = cldrSegmentation.suppressions.en;
+            const getChosenSentence = (paragraph, option, containString) => {
+                const splittedParagraph = cldrSegmentation.sentenceSplit(paragraph, option)
+                const gotSentenceByParagraph = splittedParagraph.filter(sentence => sentence.includes(paragraph))
+                const gotSentenceByString = splittedParagraph.filter(sentence => sentence.includes(containString))
+                return gotSentenceByParagraph[0] || gotSentenceByString[0]
+            }
 
-            var supp = cldrSegmentation.suppressions.en;
-            const splitted = cldrSegmentation.sentenceSplit(biggerParagraph, supp)
-            console.log(splitted);
-            splitted.forEach((sentence, i) => console.log(i, sentence.length))
+            if (shorterParagraph.split(" ").length > 150) {
+                contextDiv.textContent = getChosenSentence(shorterParagraph, supp, selectedString)
 
-            const gotSentence = splitted.filter(sentence => sentence.includes(selectedString))
+            } else if (shorterParagraph.split(" ").length < 3 &&
+                shorterParagraph.length > 500) {
+                contextDiv.textContent = getChosenSentence(shorterParagraph, supp, selectedString)
 
-            contextDiv.textContent = gotSentence[0]
-            // console.log(gotSentence[0]);
+
+            } else if (biggerParagraph.length < 5000) {
+                contextDiv.textContent = getChosenSentence(biggerParagraph, supp, selectedString)
+            } else if (currentNode.textContent.length < 5000) {
+
+                const currentParagraph = joinTextAndRubyParagraph(currentNode)
+                contextDiv.textContent = getChosenSentence(currentParagraph, supp, selectedString)
+
+            }
             document.getSelection().removeAllRanges()
             // divInApp.textContent = ""
         } else {
@@ -110,8 +128,9 @@ const init = () => {
         }
     })
 
+
     // reRenderButton.addEventListener('click', () => {
-    //     renderRuby(document, myList, displayWords)
+    //     renderRuby(document, myList, displayList)
     // })
 
     createForm.addEventListener('submit', (e) => {
@@ -168,7 +187,6 @@ const init = () => {
             floatingTool.style.left = (e.pageX + 25) + 'px'
             body.appendChild(floatingTool)
             floatingTool.appendChild(buttonOfFloatingTool)
-            // floatingTool.appendChild(reRenderButton)
         }
     })
 
@@ -198,10 +216,11 @@ const startFunction = () => {
                 myList = obj.myWordList
                 renderRuby(document, myList, displayList)
                 if (obj.wordListDisplay === true) {
-                    console.log(obj.wordListDisplay)
+                    // window.addEventListener('load', () => {
                     setTimeout(() => {
                         showWordList()
                     }, 500)
+                    // })
                 }
                 whiteList = obj.whiteDomainList || []
                 if (Array.isArray(whiteList) && whiteList.includes(window.location.host)) {
@@ -218,9 +237,10 @@ startFunction()
 const showWordList = () => {
     countList.textContent = ''
     if (displayList.length > 0) {
-        body.appendChild(infoDiv)
+        body.appendChild(infoSection)
         displayList.forEach(wordObj => {
             const countListItem = document.createElement('li')
+            countListItem.className = 'hooliruby-words-block'
             countListItem.textContent = `${wordObj.word} ${wordObj.alias}`
             countList.appendChild(countListItem)
         })
@@ -262,7 +282,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     } else if (message.showWordList === false) {
         // wordListDisplay = false
         chrome.storage.local.set({ 'wordListDisplay': false }, () => {
-            body.removeChild(infoDiv)
+            body.removeChild(infoSection)
             console.log('close')
             sendResponse({ content: "已關閉wordList" })
         })
