@@ -129,8 +129,10 @@ const Options = () => {
         <CustomizedDialogs handleExport={handleExport} handleImport={handleImport} />
       </Box>
 
+
       <Box sx={{ display: 'flex' }}>
         <Box sx={{ width: '15vw' }}>
+
         </Box>
         <WideList
           myList={myList}

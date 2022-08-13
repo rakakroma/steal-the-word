@@ -15,8 +15,8 @@ import {
 import { shadowAppTopStyle } from './shadowApp.style';
 import { joinTextAndRubyParagraph } from './utils/joinTextAndRubyParagraph';
 import { renderRuby } from './utils/renderRuby';
-
-
+import {infoSection, showWordList, displayList} from './components/infoSection'
+import {floatingTool, buttonOfFloatingTool} from './components/floatingTool'
 
 //第二個重要功能：已上色的ruby要能夠很快的儲存新例句／片語
 
@@ -28,34 +28,6 @@ const app = document.createElement('div')
 const body = document.body
 const divInApp = document.createElement('div');
 divInApp.id = 'hooliruby-div-in-app'
-
-const floatingTool = document.createElement('div')
-floatingTool.id = 'hooliruby-floating-tool'
-const buttonOfFloatingTool = document.createElement('button')
-
-buttonOfFloatingTool.textContent = 'ルビ振る'
-buttonOfFloatingTool.id = 'hooliruby-floating-tool-button'
-
-const infoSection = document.createElement('section')
-infoSection.id = 'hooriruby-info-div'
-// const shadowInfoSection = infoSection.attachShadow({ mode: "open" })
-
-const countList = document.createElement('ol')
-
-const renderInfoSectionButton = document.createElement('button')
-renderInfoSectionButton.textContent = '重整'
-renderInfoSectionButton.addEventListener('click', () => {
-    showWordList()
-
-})
-infoSection.appendChild(renderInfoSectionButton)
-infoSection.appendChild(countList)
-
-// const reRenderButton = document.createElement('button')
-// reRenderButton.id = 'hooliruby-reRenderButton'
-// reRenderButton.textContent = 're'
-// infoSection.appendChild(reRenderButton)
-
 
 
 const init = () => {
@@ -71,6 +43,7 @@ const init = () => {
     style.textContent = shadowAppTopStyle
 
     sizeControlButton.addEventListener('click', () => {
+        app.classList.add('hide-hooliruby')
         shadowApp.querySelectorAll('.hooliruby-create').forEach(ele => {
             ele.classList.add('hide-create')
         })
@@ -84,6 +57,7 @@ const init = () => {
 
     buttonOfFloatingTool.addEventListener('click', (e) => {
         if (document.getSelection().toString().trim()) {
+            app.classList.remove('hide-hooliruby')
             shadowApp.querySelectorAll('.hooliruby-create').forEach(ele => {
                 ele.classList.remove('hide-create')
             })
@@ -97,9 +71,11 @@ const init = () => {
             const shorterParagraph = currentNode.textContent.trim()
             // console.log("longer", currentNode.parentElement.textContent.length);
             const biggerParagraph = currentNode.parentElement.textContent.trim()
+
             const supp = cldrSegmentation.suppressions.en;
             const getChosenSentence = (paragraph, option, containString) => {
                 const splittedParagraph = cldrSegmentation.sentenceSplit(paragraph, option)
+                console.log(splittedParagraph)
                 const gotSentenceByParagraph = splittedParagraph.filter(sentence => sentence.includes(paragraph))
                 const gotSentenceByString = splittedParagraph.filter(sentence => sentence.includes(containString))
                 return gotSentenceByParagraph[0] || gotSentenceByString[0]
@@ -107,19 +83,14 @@ const init = () => {
 
             if (shorterParagraph.split(" ").length > 150) {
                 contextDiv.textContent = getChosenSentence(shorterParagraph, supp, selectedString)
-
             } else if (shorterParagraph.split(" ").length < 3 &&
                 shorterParagraph.length > 500) {
                 contextDiv.textContent = getChosenSentence(shorterParagraph, supp, selectedString)
-
-
             } else if (biggerParagraph.length < 5000) {
                 contextDiv.textContent = getChosenSentence(biggerParagraph, supp, selectedString)
             } else if (currentNode.textContent.length < 5000) {
-
                 const currentParagraph = joinTextAndRubyParagraph(currentNode)
                 contextDiv.textContent = getChosenSentence(currentParagraph, supp, selectedString)
-
             }
             document.getSelection().removeAllRanges()
             // divInApp.textContent = ""
@@ -128,10 +99,6 @@ const init = () => {
         }
     })
 
-
-    // reRenderButton.addEventListener('click', () => {
-    //     renderRuby(document, myList, displayList)
-    // })
 
     createForm.addEventListener('submit', (e) => {
         e.preventDefault()
@@ -169,6 +136,7 @@ const init = () => {
 
 
         setTimeout(() => {
+            app.classList.add('hide-hooliruby')
             shadowApp.querySelectorAll('.hooliruby-create').forEach(ele => {
                 ele.classList.add('hide-create')
             })
@@ -231,22 +199,7 @@ const startFunction = () => {
     })
 }
 
-const displayList = []
 startFunction()
-
-const showWordList = () => {
-    countList.textContent = ''
-    if (displayList.length > 0) {
-        body.appendChild(infoSection)
-        displayList.forEach(wordObj => {
-            const countListItem = document.createElement('li')
-            countListItem.className = 'hooliruby-words-block'
-            countListItem.textContent = `${wordObj.word} ${wordObj.alias}`
-            countList.appendChild(countListItem)
-        })
-    }
-}
-
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log(message);
@@ -282,7 +235,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     } else if (message.showWordList === false) {
         // wordListDisplay = false
         chrome.storage.local.set({ 'wordListDisplay': false }, () => {
+            if(body.querySelector('hooriruby-info-div')){
             body.removeChild(infoSection)
+            }
             console.log('close')
             sendResponse({ content: "已關閉wordList" })
         })

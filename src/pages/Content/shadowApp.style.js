@@ -1,10 +1,17 @@
 export const shadowAppTopStyle = `
-#floating-div {
+:host{
     color: black;
-    background-color: whitesmoke;
+    background-color: rgba(48, 48, 48,0.6);
     position: fixed;
-    width: 20vw;
-    height: 100vh;
+    width: 100vw;
+    height: 4vh;
+    z-index: 2147483647;
+    display: flex;
+    position: fixed;
+    top: 0px;
+    right: 0px;
+  
+    
   }
   
   .ejrti3 {

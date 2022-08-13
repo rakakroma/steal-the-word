@@ -1,6 +1,4 @@
-#hooliruby-root {
-  /* width: 2vw;
-  height: 100vh; */
+/* #hooliruby-root {
   height: 4vh;
   display: flex;
   position: fixed;
@@ -10,7 +8,7 @@
   background-color: rgb(37, 37, 37);
   box-shadow: 0px 0px 5px #0000009e;
   color: whitesmoke;
-}
+} */
 
 #hooliruby-root.hide-hooliruby {
   height: 0vh;
@@ -29,7 +27,7 @@
   font-size: 13px;
 } */
 #hooliruby-floating-tool {
-  z-index: 2147483649;
+  z-index: 999999999999999;
   position: absolute;
 }
 
@@ -46,7 +44,7 @@
   display: inline-block;
 }
 
-#hooriruby-info-div {
+/* #hooriruby-info-div {
   width: 200px;
   height: 200px;
   background-color: white;
@@ -55,4 +53,4 @@
   right: 20px;
   z-index: 999999;
   overflow: scroll;
-}
+} */

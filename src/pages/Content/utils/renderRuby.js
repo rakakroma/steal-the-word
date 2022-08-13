@@ -1,3 +1,5 @@
+import {showWordList} from '../components/infoSection'
+
 const defaultRubyStyle = {
     ruby: {
         backgroundColor: '#dbdbdb',
@@ -77,13 +79,13 @@ export const renderRuby = (doc, wordList, displayList) => {
             if (textNode.textContent.includes(wordObj.word)) {
                 const renderNode = document.createElement('span');
                 renderNode.className = 'hooli-textnode';
-                const shadowNode = renderNode.attachShadow({ mode: 'open' })
+                // const shadowNode = renderNode.attachShadow({ mode: 'open' })
                 const rubyElement = document.createElement('ruby')
                 const rtElement = document.createElement('rt')
                 rtElement.textContent = wordObj.alias
                 rubyElement.textContent = wordObj.word
                 rubyElement.appendChild(rtElement)
-                shadowNode.appendChild(rubyElement)
+                renderNode.appendChild(rubyElement)
 
                 rubyElement.style.backgroundColor = defaultRubyStyle.ruby.backgroundColor
                 rubyElement.style.color = defaultRubyStyle.ruby.color
@@ -100,21 +102,29 @@ export const renderRuby = (doc, wordList, displayList) => {
 
                 const sentenceWithoutWord = textNode.textContent.split(wordObj.word)
                 const fragment = new DocumentFragment()
+                // const theSpan = document.createElement('span')
+                // theSpan.textContent = 'rendernode'
 
-                //不知道為什麼這樣做最後面不會多一個ruby元素，但 it just works。
-                //明明用了shadow DOM但瀏覽器裡他直接被忽略，看不到shadow-root及span，不設shadow的話則會出現奇怪的錯誤結果（ruby元素被提到最後面）。
-                sentenceWithoutWord.forEach(sentence => {
-                    fragment.append(sentence, shadowNode)
+                sentenceWithoutWord.forEach((sentence, i) => {
+                    if (i === sentenceWithoutWord.length - 1) {
+                        fragment.append(sentence)
+                    } else {
+                        fragment.append(sentence, renderNode.cloneNode(true))
+                        // console.log(fragment)
+                    }
                 })
+
                 // shadowNode.innerHTML = textNode.textContent.replaceAll(wordObj.word, `<ruby>${DOMPurify.sanitize(wordObj.word)}<rt>${DOMPurify.sanitize(wordObj.alias)}</rt></ruby>`);
+
                 textNode.replaceWith(fragment);
+
 
 
                 if (displayList) {
                     let theWordInDisplayList = displayList.find(wordObjInDisplay => wordObjInDisplay.id === wordObj.id)
                     if (!theWordInDisplayList) {
                         displayList.push({ ...wordObj, countInCurrentPage: 1 })
-
+                        showWordList()
                     }
                     // else {
                     //     theWordInDisplayList.countInCurrentPage += 1

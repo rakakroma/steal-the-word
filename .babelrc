@@ -4,8 +4,17 @@
     "@babel/preset-react"
     // "react-app"
   ],
+  "assumptions": {
+    "setPublicClassFields": true
+  },  
   "plugins": [
     // "@babel/plugin-proposal-class-properties",
-    "react-hot-loader/babel"
+    "react-hot-loader/babel",
+    ["@babel/plugin-proposal-decorators", {
+      "version": "2018-09",
+      "decoratorsBeforeExport": true
+    }],
+    ["@babel/plugin-proposal-class-properties"]
+  
   ]
 }
