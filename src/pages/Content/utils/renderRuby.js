@@ -20,7 +20,7 @@ const defaultRubyStyle = {
 
 
 
-export const renderRuby = (doc, wordList, displayList) => {
+export const renderRuby = (doc, wordList, displayList,wordListDisplay) => {
 
     const nodeIterator = doc.createNodeIterator(doc.body, NodeFilter.SHOW_TEXT, myGoodFilter);
 
@@ -82,11 +82,16 @@ export const renderRuby = (doc, wordList, displayList) => {
                 // const shadowNode = renderNode.attachShadow({ mode: 'open' })
                 const rubyElement = document.createElement('ruby')
                 const rtElement = document.createElement('rt')
+                const hoverDiv = document.createElement('div')
+                hoverDiv.className='hover-div'
+                
+
                 rtElement.textContent = wordObj.alias
                 rubyElement.textContent = wordObj.word
                 rubyElement.appendChild(rtElement)
                 renderNode.appendChild(rubyElement)
 
+                renderNode.style.position='relative'
                 rubyElement.style.backgroundColor = defaultRubyStyle.ruby.backgroundColor
                 rubyElement.style.color = defaultRubyStyle.ruby.color
                 rubyElement.style.border = defaultRubyStyle.ruby.border
@@ -99,7 +104,17 @@ export const renderRuby = (doc, wordList, displayList) => {
                 rtElement.style.display = defaultRubyStyle.rt.display
                 rtElement.style.fontFamily = defaultRubyStyle.rt.fontFamily
 
+                // hoverDiv.style={
+                //     zIndex:99999999,
+                //     position:"absolute",
+                //     top:"15px",
+                //     width:"auto",
+                //     height:'auto',
+                //     display: "inline-block",
+                //     border: "1px solid black",
+                // }
 
+                console.log(textNode.textContent)
                 const sentenceWithoutWord = textNode.textContent.split(wordObj.word)
                 const fragment = new DocumentFragment()
                 // const theSpan = document.createElement('span')
@@ -114,7 +129,28 @@ export const renderRuby = (doc, wordList, displayList) => {
                     }
                 })
 
-                // shadowNode.innerHTML = textNode.textContent.replaceAll(wordObj.word, `<ruby>${DOMPurify.sanitize(wordObj.word)}<rt>${DOMPurify.sanitize(wordObj.alias)}</rt></ruby>`);
+                const wordSpan = fragment.querySelector('.hooli-textnode')
+                // wordSpan.addEventListener('mouseover',()=>{
+                //     hoverDiv.textContent=wordObj.alias;
+                //     wordSpan.appendChild(hoverDiv)
+                //     console.log(wordObj.alias)
+                //     wordSpan.addEventListener('mouseout',()=>{
+                //         if(wordSpan.querySelector('.hover-div')){
+                //             wordSpan.removeChild(hoverDiv)
+                //         }                        
+                //     })
+                // })
+                wordSpan.addEventListener('click',()=>{
+                    hoverDiv.textContent=wordObj.alias;
+                    wordSpan.appendChild(hoverDiv)
+                    console.log(wordObj.alias)
+                    document.addEventListener('click',(e)=>{
+                        const isClickInside = wordSpan.contains(e.target)
+                        if(!isClickInside && wordSpan.querySelector('.hover-div')){
+                            wordSpan.removeChild(hoverDiv)
+                        }                        
+                    })
+                })
 
                 textNode.replaceWith(fragment);
 
@@ -124,7 +160,9 @@ export const renderRuby = (doc, wordList, displayList) => {
                     let theWordInDisplayList = displayList.find(wordObjInDisplay => wordObjInDisplay.id === wordObj.id)
                     if (!theWordInDisplayList) {
                         displayList.push({ ...wordObj, countInCurrentPage: 1 })
-                        showWordList()
+                        if(wordListDisplay){
+                            showWordList()
+                        }
                     }
                     // else {
                     //     theWordInDisplayList.countInCurrentPage += 1

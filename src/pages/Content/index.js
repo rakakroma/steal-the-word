@@ -132,7 +132,7 @@ const init = () => {
         meaningInput.value = ''
         contextDiv.textContent = ""
 
-        renderRuby(document, myList, displayList)
+        renderRuby(document, myList, displayList,wordListDisplay)
 
 
         setTimeout(() => {
@@ -166,12 +166,12 @@ const init = () => {
 const observer = new MutationObserver((mutations) => {
     mutations.forEach(mutation => {
         // console.log(mutation);
-        renderRuby(document, myList, displayList)
+        renderRuby(document, myList, displayList,wordListDisplay)
     })
 })
 let myList = [];
 let whiteList = []
-// let wordListDisplay = false
+let wordListDisplay = false
 
 const startFunction = () => {
     chrome.storage.local.get(["myWordList", "whiteDomainList", 'onOff', 'wordListDisplay'], function (obj) {
@@ -182,14 +182,15 @@ const startFunction = () => {
             init()
             if (obj.myWordList && obj.myWordList.length > 0) {
                 myList = obj.myWordList
-                renderRuby(document, myList, displayList)
                 if (obj.wordListDisplay === true) {
+                    wordListDisplay=true
                     // window.addEventListener('load', () => {
                     setTimeout(() => {
                         showWordList()
                     }, 500)
                     // })
                 }
+                renderRuby(document, myList, displayList,wordListDisplay)
                 whiteList = obj.whiteDomainList || []
                 if (Array.isArray(whiteList) && whiteList.includes(window.location.host)) {
                     observer.observe(body, { childList: true, subtree: true, characterData: true })
@@ -225,8 +226,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         })
         return true;
     } else if (message.showWordList === true) {
-        // wordListDisplay = true
+        wordListDisplay = true
         chrome.storage.local.set({ "wordListDisplay": true }, () => {
+            if( body.querySelector('#hooriruby-info-div')){
+                body.querySelector('#hooriruby-info-div').classList.remove('hide')
+            }
+            renderRuby(document, myList, displayList,wordListDisplay)
             showWordList()
             console.log('open')
             sendResponse({ content: "已顯示wordList" })
@@ -235,9 +240,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     } else if (message.showWordList === false) {
         // wordListDisplay = false
         chrome.storage.local.set({ 'wordListDisplay': false }, () => {
-            if(body.querySelector('hooriruby-info-div')){
-            body.removeChild(infoSection)
+            wordListDisplay = false
+            if(body.querySelector('#hooriruby-info-div')){
+            // body.removeChild(infoSection)
+            body.querySelector('#hooriruby-info-div').classList.add('hide')
             }
+            renderRuby(document, myList, displayList,wordListDisplay)
             console.log('close')
             sendResponse({ content: "已關閉wordList" })
         })

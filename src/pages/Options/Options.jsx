@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './Options.css';
-import ColorThief from '../../../node_modules/colorthief/dist/color-thief.mjs'
 import CustomizedDialogs from './components/CustomizedDialogs';
 import { Box, createTheme, CssBaseline, Divider, FormControlLabel, FormGroup, Input, InputAdornment, Link, List, ListItem, ListItemText, Switch, TextField, ThemeProvider, Tooltip, Typography } from '@mui/material';
 import { Search } from '@mui/icons-material';

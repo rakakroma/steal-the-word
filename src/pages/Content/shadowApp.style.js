@@ -1,19 +1,5 @@
 export const shadowAppTopStyle = `
-:host{
-    color: black;
-    background-color: rgba(48, 48, 48,0.6);
-    position: fixed;
-    width: 100vw;
-    height: 4vh;
-    z-index: 2147483647;
-    display: flex;
-    position: fixed;
-    top: 0px;
-    right: 0px;
-  
-    
-  }
-  
+
   .ejrti3 {
     background-color: cadetblue;
   }
