@@ -41,14 +41,16 @@
 .hover-div {
   z-index: 99999999;
   position: absolute;
-  top: -40px;
-  right: 0px;
-  height: 30px;
-  width: auto;
+  font-size: 12px;
+  bottom: 30px;
+  /* height: 30px; */
+  width: 350px;
   border: 1px solid black;
   background-color: azure;
   color: black;
-  white-space: nowrap;
+  /* white-space: nowrap; */
+  left: 50%; /* 親に対して中央配置 */
+  transform: translateX(-50%); /* 親に対して中央配置 */
 }
 
 /* #hooliruby-floating-tool {
@@ -87,3 +89,28 @@
   z-index: 999999;
   overflow: scroll;
 } */
+
+.holli-ruby-element::before {
+  content: attr(data-alias);
+  opacity: 0; /* はじめは隠しておく */
+  visibility: hidden; /* はじめは隠しておく */
+  position: absolute; /* 絶対配置 */
+  left: 50%; /* 親に対して中央配置 */
+  transform: translateX(-50%); /* 親に対して中央配置 */
+  top: -25px;
+  display: inline-block;
+  padding: 3px; /* 余白 */
+  white-space: nowrap; /* テキストを折り返さない */
+  font-size: 0.8rem; /* フォントサイズ */
+  line-height: 1.3; /* 行間 */
+  background: rgb(241, 241, 241); /* 背景色 */
+  color: rgb(0, 0, 0); /* 文字色 */
+  border-radius: 3px; /* 角丸 */
+  transition: 0.1s ease-in; /* アニメーション */
+  z-index: 999999;
+}
+
+.holli-ruby-element:hover::before {
+  opacity: 1;
+  visibility: visible;
+}

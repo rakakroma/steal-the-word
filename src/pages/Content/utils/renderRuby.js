@@ -1,26 +1,27 @@
-import {showWordList} from '../components/infoSection'
+import { showWordList } from '../components/infoSection'
 
 const defaultRubyStyle = {
     ruby: {
-        backgroundColor: '#dbdbdb',
+        // backgroundColor: '#dbdbdb',
         rubyPosition: "",
-        textDecoration: '',
-        color: '#000000',
+        // textDecoration: 'underline #62b856',
+        // color: '#000000',
         // 'fontSize': '1.5rem',
-        border: ''
+        background: "linear-gradient(transparent 60%, #5bffba 50%)"
+        // border: '',
     },
     rt: {
+        display: "none",
         color: '#1c1a1a',
         textDecoration: '',
         backgroundColor: '#f0dedd',
         // fontFamily: "Arial Black"
-        // display: 'none'
     }
 }
 
 
 
-export const renderRuby = (doc, wordList, displayList,wordListDisplay) => {
+export const renderRuby = (doc, wordList, displayList, setting) => {
 
     const nodeIterator = doc.createNodeIterator(doc.body, NodeFilter.SHOW_TEXT, myGoodFilter);
 
@@ -78,20 +79,25 @@ export const renderRuby = (doc, wordList, displayList,wordListDisplay) => {
             // }
             if (textNode.textContent.includes(wordObj.word)) {
                 const renderNode = document.createElement('span');
-                renderNode.className = 'hooli-textnode';
+                renderNode.className = 'hooli-span-node';
+
                 // const shadowNode = renderNode.attachShadow({ mode: 'open' })
                 const rubyElement = document.createElement('ruby')
+                rubyElement.className = 'holli-ruby-element'
+                rubyElement.setAttribute('data-alias', wordObj.alias)
                 const rtElement = document.createElement('rt')
                 const hoverDiv = document.createElement('div')
-                hoverDiv.className='hover-div'
-                
+                hoverDiv.className = 'hover-div'
+
 
                 rtElement.textContent = wordObj.alias
                 rubyElement.textContent = wordObj.word
                 rubyElement.appendChild(rtElement)
                 renderNode.appendChild(rubyElement)
 
-                renderNode.style.position='relative'
+                renderNode.style.position = 'relative'
+                rubyElement.style.position = 'relative'
+                rubyElement.style.background = defaultRubyStyle.ruby.background
                 rubyElement.style.backgroundColor = defaultRubyStyle.ruby.backgroundColor
                 rubyElement.style.color = defaultRubyStyle.ruby.color
                 rubyElement.style.border = defaultRubyStyle.ruby.border
@@ -117,8 +123,6 @@ export const renderRuby = (doc, wordList, displayList,wordListDisplay) => {
                 console.log(textNode.textContent)
                 const sentenceWithoutWord = textNode.textContent.split(wordObj.word)
                 const fragment = new DocumentFragment()
-                // const theSpan = document.createElement('span')
-                // theSpan.textContent = 'rendernode'
 
                 sentenceWithoutWord.forEach((sentence, i) => {
                     if (i === sentenceWithoutWord.length - 1) {
@@ -129,7 +133,9 @@ export const renderRuby = (doc, wordList, displayList,wordListDisplay) => {
                     }
                 })
 
-                const wordSpan = fragment.querySelector('.hooli-textnode')
+
+                const allWordSpan = fragment.querySelectorAll('.hooli-span-node')
+
                 // wordSpan.addEventListener('mouseover',()=>{
                 //     hoverDiv.textContent=wordObj.alias;
                 //     wordSpan.appendChild(hoverDiv)
@@ -140,18 +146,19 @@ export const renderRuby = (doc, wordList, displayList,wordListDisplay) => {
                 //         }                        
                 //     })
                 // })
-                wordSpan.addEventListener('click',()=>{
-                    hoverDiv.textContent=wordObj.alias;
-                    wordSpan.appendChild(hoverDiv)
-                    console.log(wordObj.alias)
-                    document.addEventListener('click',(e)=>{
-                        const isClickInside = wordSpan.contains(e.target)
-                        if(!isClickInside && wordSpan.querySelector('.hover-div')){
-                            wordSpan.removeChild(hoverDiv)
-                        }                        
+
+                allWordSpan.forEach(wordSpan => {
+                    wordSpan.addEventListener('click', () => {
+                        hoverDiv.textContent = wordObj.context;
+                        wordSpan.appendChild(hoverDiv)
+                        document.addEventListener('click', (e) => {
+                            const isClickInside = wordSpan.contains(e.target)
+                            if (!isClickInside && wordSpan.querySelector('.hover-div')) {
+                                wordSpan.removeChild(hoverDiv)
+                            }
+                        })
                     })
                 })
-
                 textNode.replaceWith(fragment);
 
 
@@ -159,8 +166,8 @@ export const renderRuby = (doc, wordList, displayList,wordListDisplay) => {
                 if (displayList) {
                     let theWordInDisplayList = displayList.find(wordObjInDisplay => wordObjInDisplay.id === wordObj.id)
                     if (!theWordInDisplayList) {
-                        displayList.push({ ...wordObj, countInCurrentPage: 1 })
-                        if(wordListDisplay){
+                        displayList.push({ ...wordObj, countInCurrentPage: 1, currentContext: textNode.textContent })
+                        if (setting.wordListDisplay) {
                             showWordList()
                         }
                     }

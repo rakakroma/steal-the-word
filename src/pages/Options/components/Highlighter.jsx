@@ -3,7 +3,7 @@ import { grey } from "@mui/material/colors";
 import React from "react";
 
 
-export const Highlighter = ({ text, highlightWord, reverse }) => {
+export const Highlighter = ({ text, highlightWord, styleHighLight }) => {
     const theme = useTheme()
 
     if (!highlightWord.trim() || !text.includes(highlightWord)) return <span>{text}</span>
@@ -22,7 +22,7 @@ export const Highlighter = ({ text, highlightWord, reverse }) => {
         <span>
             {parts.map((part, i) => {
                 return regex.test(part) ? (
-                    <span style={markStyle} className="marked-word" key={i}>{part}</span>
+                    <span style={styleHighLight || markStyle} className="marked-word" key={i}>{part}</span>
                 ) : (
                     <span key={i}>{part}</span>
                 );

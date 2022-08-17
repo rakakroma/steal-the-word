@@ -12,7 +12,7 @@ export const WideList = ({ myList, hideAlias, handleSelectPhrase, handleDelete, 
     const groupedList = groupBy(reverseList, 'domain')
 
 
-    return <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+    return <Box sx={{ display: 'flex', flexDirection: 'column', height:'88vh', overflow:'scroll' }}>
 
         {myList && myList.length > 0 ? "" : "現在還沒有東西，請加入詞彙😶‍🌫️"}
 
@@ -75,13 +75,13 @@ export const WideList = ({ myList, hideAlias, handleSelectPhrase, handleDelete, 
                                         borderStyle: 'solid',
                                         borderColor: 'secondary.main',
                                         borderRadius: '15px',
-                                        width: '65vw',
+                                        width: '70vw',
                                         backgroundColor: "background.light"
                                     }}>
                                         {arrayWithUrl[1].map((wordObj, index) => {
                                             return <>
                                                 <ListItem
-                                                    id={wordObj.id}
+                                                    id={`w-${wordObj.id}`}
                                                     key={wordObj.id}
                                                 >
                                                     <ListItemText

@@ -14,13 +14,13 @@ li{
     font-size:15px;
 }
 
-div{
+#holli-control-bar{
     min-height:15px;
     max-height:15px;
     width:100%;
     background-color:grey;
 }
-div.active{
+#holli-control-bar.active{
     cursor: move;
     user-select: none;  
 }
@@ -28,6 +28,11 @@ span{
     color:#1a4d3b;
     margin-left:8px;
 }
+
+.holli-current-context-div{
+  color: #393d36;
+}
+
 
 </style>
 `
@@ -123,11 +128,16 @@ export const showWordList = () => {
         displayList.forEach(wordObj => {
             const countListItem = document.createElement('li')
             const aliasSpan = document.createElement('span')
+            // const currentContextDiv = document.createElement('div')
+            // currentContextDiv.textContent = wordObj.currentContext
+            // currentContextDiv.className = 'holli-current-context-div'
+
             countListItem.className = 'hooliruby-words-block'
             countListItem.textContent = wordObj.word
             aliasSpan.textContent=wordObj.alias
             countListItem.appendChild(aliasSpan)
             countList.appendChild(countListItem)
+            // countList.appendChild(currentContextDiv)
         })
     }
 }

@@ -15,8 +15,8 @@ import {
 import { shadowAppTopStyle } from './shadowApp.style';
 import { joinTextAndRubyParagraph } from './utils/joinTextAndRubyParagraph';
 import { renderRuby } from './utils/renderRuby';
-import {infoSection, showWordList, displayList} from './components/infoSection'
-import {floatingTool, buttonOfFloatingTool} from './components/floatingTool'
+import { infoSection, showWordList, displayList } from './components/infoSection'
+import { floatingTool, buttonOfFloatingTool } from './components/floatingTool'
 
 //第二個重要功能：已上色的ruby要能夠很快的儲存新例句／片語
 
@@ -132,7 +132,7 @@ const init = () => {
         meaningInput.value = ''
         contextDiv.textContent = ""
 
-        renderRuby(document, myList, displayList,wordListDisplay)
+        renderRuby(document, myList, displayList, { wordListDisplay })
 
 
         setTimeout(() => {
@@ -146,11 +146,16 @@ const init = () => {
 
 
     body.addEventListener('mouseup', (e) => {
+        // const inputFilter = ['input','textarea' ]
+        // const selectInInputElement = inputFilter.some(inputType=> {
+        //     return document.getSelection().anchorNode
+        //     .children?.map(element=>element.localName).includes(inputType)})
         if (document.querySelector('#hooliruby-floating-tool')) {
             setTimeout(() => {
                 body.removeChild(floatingTool)
             }, 10)
-        } else if (document.getSelection().toString().trim()) {
+        } else if (!document.getSelection().anchorNode.children &&
+            document.getSelection().toString().trim()) {
             floatingTool.style.top = (e.pageY - 10) + 'px'
             floatingTool.style.left = (e.pageX + 25) + 'px'
             body.appendChild(floatingTool)
@@ -166,7 +171,7 @@ const init = () => {
 const observer = new MutationObserver((mutations) => {
     mutations.forEach(mutation => {
         // console.log(mutation);
-        renderRuby(document, myList, displayList,wordListDisplay)
+        renderRuby(document, myList, displayList, { wordListDisplay })
     })
 })
 let myList = [];
@@ -183,14 +188,14 @@ const startFunction = () => {
             if (obj.myWordList && obj.myWordList.length > 0) {
                 myList = obj.myWordList
                 if (obj.wordListDisplay === true) {
-                    wordListDisplay=true
+                    wordListDisplay = true
                     // window.addEventListener('load', () => {
                     setTimeout(() => {
                         showWordList()
                     }, 500)
                     // })
                 }
-                renderRuby(document, myList, displayList,wordListDisplay)
+                renderRuby(document, myList, displayList, { wordListDisplay })
                 whiteList = obj.whiteDomainList || []
                 if (Array.isArray(whiteList) && whiteList.includes(window.location.host)) {
                     observer.observe(body, { childList: true, subtree: true, characterData: true })
@@ -228,10 +233,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     } else if (message.showWordList === true) {
         wordListDisplay = true
         chrome.storage.local.set({ "wordListDisplay": true }, () => {
-            if( body.querySelector('#hooriruby-info-div')){
+            if (body.querySelector('#hooriruby-info-div')) {
                 body.querySelector('#hooriruby-info-div').classList.remove('hide')
             }
-            renderRuby(document, myList, displayList,wordListDisplay)
+            renderRuby(document, myList, displayList, { wordListDisplay })
             showWordList()
             console.log('open')
             sendResponse({ content: "已顯示wordList" })
@@ -241,11 +246,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         // wordListDisplay = false
         chrome.storage.local.set({ 'wordListDisplay': false }, () => {
             wordListDisplay = false
-            if(body.querySelector('#hooriruby-info-div')){
-            // body.removeChild(infoSection)
-            body.querySelector('#hooriruby-info-div').classList.add('hide')
+            if (body.querySelector('#hooriruby-info-div')) {
+                // body.removeChild(infoSection)
+                body.querySelector('#hooriruby-info-div').classList.add('hide')
             }
-            renderRuby(document, myList, displayList,wordListDisplay)
+            renderRuby(document, myList, displayList, { wordListDisplay })
             console.log('close')
             sendResponse({ content: "已關閉wordList" })
         })
