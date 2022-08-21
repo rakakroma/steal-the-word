@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './Options.css';
 import CustomizedDialogs from './components/CustomizedDialogs';
-import { Box, createTheme, CssBaseline, Divider, FormControlLabel, FormGroup, IconButton, Input, InputAdornment, Link, List, ListItem, ListItemText, Switch, TextField, ThemeProvider, Tooltip, Typography } from '@mui/material';
+import { Checkbox, Box, createTheme, CssBaseline, Divider, FormControlLabel, FormGroup, IconButton, Input, InputAdornment, Link, List, ListItem, ListItemText, Switch, TextField, ThemeProvider, Tooltip, Typography } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import { formatDate, fullDate } from './utils/Date'
 import { groupBy } from './utils/groupBy'
@@ -12,6 +12,7 @@ import { SearchBar } from './components/SearchBar';
 import { WordCollection } from './components/WordCollection'
 import PersonalVideoIcon from '@mui/icons-material/PersonalVideo';
 import { checkLocalLanguagePossible, checkStringLanguage } from './utils/languageDetection';
+import { WordAnimation } from './components/WordAnimation';
 
 const Options = () => {
 
@@ -22,6 +23,7 @@ const Options = () => {
   const [hideAlias, setHideAlias] = useState(true)
   const [viewMode, setViewMode] = useState(false)
   const [phraseMode, setPhraseMode] = useState(false)
+  const [animationMode, setAnimationMode] = useState(false)
   const [languageFilter, setLanguageFilter] = useState({ taiwanese: true, hakka: true, english: true, chinese: true, japanese: true, korean: true, all: true })
 
 
@@ -136,18 +138,6 @@ const Options = () => {
   }
 
 
-  // const filteredList = languageFilter.english && (!languageFilter.all) ?
-  //   myList.filter(wordObj => checkStringLanguage(wordObj.context) === 'english') :
-  //   (!languageFilter.english) && languageFilter.all ?
-  //     myList.filter(wordObj => checkStringLanguage(wordObj.context) !== 'english') :
-  //     null;
-
-  // const filteredGroupList =
-  //   Object.values(languageFilter).some(value => !value) ?
-  //     groupBy(sortByDate(filteredList), 'domain') : null
-
-  // const hasOnlyOneLanguageFilter = Object.values(languageFilter).reduce((acc, curr) => curr ? acc + 1 : acc, 0) === 1
-
 
   return <div className="OptionsContainer">
     <ThemeProvider theme={theme}>
@@ -180,17 +170,17 @@ const Options = () => {
             <FormControlLabel disabled={getSelectedLanguage().length === 1 && languageFilter.all}
               control={<Switch size="small" checked={languageFilter.all} onChange={() => setLanguageFilter({ ...languageFilter, all: !languageFilter.all })} />} label="顯示全部" />
             <FormControlLabel disabled={getSelectedLanguage().length === 1 && languageFilter.english}
-              control={<Switch size="small" checked={languageFilter.english} onChange={() => setLanguageFilter({ ...languageFilter, english: !languageFilter.english })} />} label="顯示英文詞" />
+              control={<Checkbox size="small" checked={languageFilter.english} onChange={() => setLanguageFilter({ ...languageFilter, english: !languageFilter.english })} />} label="顯示英文詞" />
             <FormControlLabel disabled={getSelectedLanguage().length === 1 && languageFilter.japanese}
-              control={<Switch size="small" checked={languageFilter.japanese} onChange={() => setLanguageFilter({ ...languageFilter, japanese: !languageFilter.japanese })} />} label="顯示日文" />
+              control={<Checkbox size="small" checked={languageFilter.japanese} onChange={() => setLanguageFilter({ ...languageFilter, japanese: !languageFilter.japanese })} />} label="顯示日文" />
             <FormControlLabel disabled={getSelectedLanguage().length === 1 && languageFilter.korean}
-              control={<Switch size="small" checked={languageFilter.korean} onChange={() => setLanguageFilter({ ...languageFilter, korean: !languageFilter.korean })} />} label="顯示韓文" />
+              control={<Checkbox size="small" checked={languageFilter.korean} onChange={() => setLanguageFilter({ ...languageFilter, korean: !languageFilter.korean })} />} label="顯示韓文" />
             <FormControlLabel disabled={getSelectedLanguage().length === 1 && languageFilter.chinese}
-              control={<Switch size="small" checked={languageFilter.chinese} onChange={() => setLanguageFilter({ ...languageFilter, chinese: !languageFilter.chinese })} />} label="顯示中文" />
+              control={<Checkbox size="small" checked={languageFilter.chinese} onChange={() => setLanguageFilter({ ...languageFilter, chinese: !languageFilter.chinese })} />} label="顯示中文" />
             <FormControlLabel disabled={getSelectedLanguage().length === 1 && languageFilter.taiwanese}
-              control={<Switch size="small" checked={languageFilter.taiwanese} onChange={() => setLanguageFilter({ ...languageFilter, taiwanese: !languageFilter.taiwanese })} />} label="顯示台文" />
+              control={<Checkbox size="small" checked={languageFilter.taiwanese} onChange={() => setLanguageFilter({ ...languageFilter, taiwanese: !languageFilter.taiwanese })} />} label="顯示台文" />
             <FormControlLabel disabled={getSelectedLanguage().length === 1 && languageFilter.hakka}
-              control={<Switch size="small" checked={languageFilter.hakka} onChange={() => setLanguageFilter({ ...languageFilter, hakka: !languageFilter.hakka })} />} label="顯示客語" />
+              control={<Checkbox size="small" checked={languageFilter.hakka} onChange={() => setLanguageFilter({ ...languageFilter, hakka: !languageFilter.hakka })} />} label="顯示客語" />
 
             {viewMode === false ?
               <FormControlLabel control={<Switch size="small" checked={phraseMode} onChange={() => setPhraseMode(!phraseMode)} />} label="片語模式" /> :
@@ -200,7 +190,7 @@ const Options = () => {
             {/* <FormControlLabel disabled control={<Switch />} label="Disabled" /> */}
           </FormGroup>
           <IconButton
-            // onClick={handleAnimation}
+            onClick={() => setAnimationMode(!animationMode)}
             sx={{
               color: (theme) => theme.palette.grey[500],
             }}
@@ -211,21 +201,25 @@ const Options = () => {
         {/* <Box sx={{ width: '15vw' }}>
 
         </Box> */}
-        {viewMode === true ?
-          <WideList
+        {animationMode ?
+          <WordAnimation
             myList={languageSelectionFilter(myList)}
-            hideAlias={hideAlias}
-            setHideAlias={setHideAlias}
-            handleSelectPhrase={handleSelectPhrase}
-            handleDelete={handleDelete}
-            handleEdit={handleEdit}
-          />
-          : <WordCollection
-            myList={languageSelectionFilter(myList)}
-            groupedList={groupedList(languageSelectionFilter(myList))}
-            phraseMode={phraseMode}
-            handleSelectPhrase={handleSelectPhrase}
-          />
+          /> :
+          viewMode === true ?
+            <WideList
+              myList={languageSelectionFilter(myList)}
+              hideAlias={hideAlias}
+              setHideAlias={setHideAlias}
+              handleSelectPhrase={handleSelectPhrase}
+              handleDelete={handleDelete}
+              handleEdit={handleEdit}
+            />
+            : <WordCollection
+              myList={languageSelectionFilter(myList)}
+              groupedList={groupedList(languageSelectionFilter(myList))}
+              phraseMode={phraseMode}
+              handleSelectPhrase={handleSelectPhrase}
+            />
         }
 
       </Box>

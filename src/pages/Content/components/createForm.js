@@ -42,6 +42,8 @@ searchHakkaButton.id = 'hooliruby-hakka-search-button'
 searchHakkaButton.textContent = '客'
 searchHakkaButton.classList.add('hooliruby-create', 'hide-create')
 
+const vocabularyInputWrapper = document.createElement('div')
+vocabularyInputWrapper.id = 'hooli-vocab-input-wrapper'
 
 // const moedictTaiwaneseAPI = (word) => {
 //     return `https://www.moedict.tw/t/${word}.json`
@@ -86,9 +88,10 @@ searchHakkaButton.addEventListener('click', (e) => {
         console.log('請輸入詞彙');
     }
 })
-
+vocabularyInputWrapper.appendChild(vocabularyInput)
 createForm.appendChild(sizeControlButton)
-createForm.appendChild(vocabularyInput)
+createForm.appendChild(vocabularyInputWrapper)
+// createForm.appendChild(vocabularyInput)
 createForm.appendChild(pronounceInput)
 createForm.appendChild(meaningInput)
 // createForm.appendChild(contextInput)
@@ -108,10 +111,12 @@ languageDiv.appendChild(searchTaiwaneseButton)
 createForm.querySelectorAll('div.hooliruby-create, input.hooliruby-create').forEach(ele => {
     ele.addEventListener('keyup', (e) => e.stopPropagation());
     ele.addEventListener('keydown', (e) => e.stopPropagation())
+    ele.setAttribute('autocomplete', 'off')
 })
 
 
 export {
+    vocabularyInputWrapper,
     languageDiv,
     createForm,
     vocabularyInput,

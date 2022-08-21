@@ -1,4 +1,4 @@
-import * as cldrSegmentation from 'cldr-segmentation'
+// import * as cldrSegmentation from 'cldr-segmentation'
 import { nanoid } from 'nanoid'
 import {
     languageDiv,
@@ -10,13 +10,15 @@ import {
     searchHakkaButton,
     searchTaiwaneseButton,
     submitButton,
-    sizeControlButton
+    sizeControlButton,
+    vocabularyInputWrapper
 } from './components/createForm'
 import { shadowAppTopStyle } from './shadowApp.style';
-import { joinTextAndRubyParagraph } from './utils/joinTextAndRubyParagraph';
 import { renderRuby } from './utils/renderRuby';
 import { infoSection, showWordList, displayList } from './components/infoSection'
 import { floatingTool, buttonOfFloatingTool } from './components/floatingTool'
+import { getSelectedSentence } from './utils/getSelectedSentence';
+
 
 //第二個重要功能：已上色的ruby要能夠很快的儲存新例句／片語
 
@@ -64,38 +66,98 @@ const init = () => {
             setTimeout(() => {
                 pronounceInput.focus()
             }, 200)
-            let selectedString = document.getSelection().toString()
-            vocabularyInput.value = selectedString
-            const currentNode = document.getSelection().anchorNode
-            // console.log('shorter', currentNode.textContent);
-            const shorterParagraph = currentNode.textContent.trim()
-            // console.log("longer", currentNode.parentElement.textContent.length);
-            const biggerParagraph = currentNode.parentElement.textContent.trim()
-
-            const supp = cldrSegmentation.suppressions.en;
-            const getChosenSentence = (paragraph, option, containString) => {
-                const splittedParagraph = cldrSegmentation.sentenceSplit(paragraph, option)
-                console.log(splittedParagraph)
-                const gotSentenceByParagraph = splittedParagraph.filter(sentence => sentence.includes(paragraph))
-                const gotSentenceByString = splittedParagraph.filter(sentence => sentence.includes(containString))
-                return gotSentenceByParagraph[0] || gotSentenceByString[0]
-            }
-
-            if (shorterParagraph.split(" ").length > 150) {
-                contextDiv.textContent = getChosenSentence(shorterParagraph, supp, selectedString)
-            } else if (shorterParagraph.split(" ").length < 3 &&
-                shorterParagraph.length > 500) {
-                contextDiv.textContent = getChosenSentence(shorterParagraph, supp, selectedString)
-            } else if (biggerParagraph.length < 5000) {
-                contextDiv.textContent = getChosenSentence(biggerParagraph, supp, selectedString)
-            } else if (currentNode.textContent.length < 5000) {
-                const currentParagraph = joinTextAndRubyParagraph(currentNode)
-                contextDiv.textContent = getChosenSentence(currentParagraph, supp, selectedString)
-            }
+            vocabularyInput.value = document.getSelection().toString()
+            const selection = document.getSelection()
+            contextDiv.textContent = getSelectedSentence(selection)
             document.getSelection().removeAllRanges()
-            // divInApp.textContent = ""
+        }
+        setTimeout(() => {
+            if (document.querySelector('#hooliruby-floating-tool')) body.removeChild(floatingTool)
+        }, 1)
+
+    })
+
+    vocabularyInput.addEventListener('input', (e) => {
+        const vocabularyInputValue = e.target.value.trim()
+
+        if (vocabularyInputValue[vocabularyInputValue.length - 1] === '@') {
+            connect = true
+        }
+        if (connect) {
+            if (!vocabularyInputValue.includes("@")) {
+                connect = false
+                vocabularyInputWrapper.removeChild(shadowApp.querySelector('#hooli-auto-suggestion-div'))
+                // autoSuggestionList?.textContent = ""
+            }
+            if (shadowApp.querySelector('#hooli-auto-suggestion-div')) {
+                vocabularyInputWrapper.removeChild(shadowApp.querySelector('#hooli-auto-suggestion-div'))
+            }
+            const autoSuggestionDiv = document.createElement('div')
+            autoSuggestionDiv.id = 'hooli-auto-suggestion-div'
+            const autoSuggestionList = document.createElement('ol')
+            autoSuggestionList.id = 'hooli-auto-suggestion-list'
+            autoSuggestionList.textContent = ""
+            autoSuggestionDiv.appendChild(autoSuggestionList)
+            const matchingKeyword = vocabularyInputValue.split('@')[1]
+
+            if (matchingKeyword.length > 0) {
+                const matchedArray = myList.filter(wordObj => wordObj.word.startsWith(matchingKeyword))
+                matchedArray.forEach((wordObj, i) => {
+                    const autoSuggestionListItem = document.createElement('li')
+                    autoSuggestionListItem.class = 'hooli-auto-suggestion-item'
+                    autoSuggestionListItem.textContent = wordObj.word
+                    autoSuggestionListItem.id = `a-${i}`
+                    autoSuggestionListItem.tabIndex = 0
+                    // listItem.addEventListener('focus',(e)=>console.log("focused",e.target.id))
+
+                    autoSuggestionListItem.addEventListener('keydown', (e) => {
+                        e.preventDefault();
+                        if (e.code === 'Enter') {
+                            console.log(e.target.textContent)
+                            const associatedWords = document.createElement('ul')
+                            associatedWords.id = 'associated-words'
+                            const associatedWordItem = document.createElement('li')
+                            associatedWordItem.className = 'associated-word-item'
+                            associatedWordItem.textContent = e.target.textContent
+                            associatedWords.appendChild(associatedWordItem)
+                            autoSuggestionDiv.prepend(associatedWords)
+                            autoSuggestionList.textContent = ""
+                            vocabularyInput.value = ""
+                            setTimeout(() => { vocabularyInput.focus() }, 0)
+                        }
+                        if (e.code === 'ArrowDown') {
+                            if (shadowApp.querySelector(`#a-${+e.target.id.slice(2) + 1}`)) {
+                                shadowApp.querySelector(`#a-${+e.target.id.slice(2) + 1}`).focus()
+                            }
+                        }
+                        if (e.code === 'ArrowUp') {
+                            if (e.target.id === 'a-0') {
+                                vocabularyInput.focus()
+                            }
+                            if (shadowApp.querySelector(`#a-${+e.target.id.slice(2) - 1}`)) {
+                                e.stopPropagation()
+                                shadowApp.querySelector(`#a-${+e.target.id.slice(2) - 1}`).focus()
+                            }
+                        }
+                    }
+                    )
+                    autoSuggestionList.appendChild(autoSuggestionListItem)
+                    autoSuggestionDiv.appendChild(autoSuggestionList)
+                    vocabularyInputWrapper.appendChild(autoSuggestionDiv)
+                })
+            }
+
+
+            vocabularyInput.addEventListener('keydown', (e) => {
+                console.log(e.code)
+                if (e.code === 'ArrowDown') {
+                    shadowApp.querySelector('#a-0')?.focus()
+                    // console.log(document.activeElement.localName)
+                }
+            })
+
         } else {
-            console.log('沒東西')
+            //   autoSuggestionList.innerHTML = ""
         }
     })
 
@@ -146,37 +208,46 @@ const init = () => {
 
 
     body.addEventListener('mouseup', (e) => {
-        // const inputFilter = ['input','textarea' ]
-        // const selectInInputElement = inputFilter.some(inputType=> {
-        //     return document.getSelection().anchorNode
-        //     .children?.map(element=>element.localName).includes(inputType)})
+        if (document.getSelection().toString().trim()) {
+            if (document.getSelection().anchorNode?.children) return
+            floatingTool.style.top = (e.pageY - 10) + 'px'
+            floatingTool.style.left = (e.pageX + 25) + 'px'
+            if (document.querySelector('#hooliruby-floating-tool')) {
+                return
+            }
+            body.appendChild(floatingTool)
+            floatingTool.appendChild(buttonOfFloatingTool)
+            return
+        }
         if (document.querySelector('#hooliruby-floating-tool')) {
             setTimeout(() => {
                 body.removeChild(floatingTool)
             }, 10)
-        } else if (!document.getSelection().anchorNode.children &&
-            document.getSelection().toString().trim()) {
-            floatingTool.style.top = (e.pageY - 10) + 'px'
-            floatingTool.style.left = (e.pageX + 25) + 'px'
-            body.appendChild(floatingTool)
-            floatingTool.appendChild(buttonOfFloatingTool)
         }
     })
-
 }
 
 
-// init()
-
+// throttle
+let coldTime = false
+let timeout = null
 const observer = new MutationObserver((mutations) => {
-    mutations.forEach(mutation => {
-        // console.log(mutation);
+    if (!coldTime) {
+        clearTimeout(timeout)
+        coldTime = true
         renderRuby(document, myList, displayList, { wordListDisplay })
-    })
-})
+        timeout = setTimeout(() => {
+            coldTime = false
+        }, 2000)
+    }
+}
+)
+
 let myList = [];
 let whiteList = []
 let wordListDisplay = false
+let connect = false
+
 
 const startFunction = () => {
     chrome.storage.local.get(["myWordList", "whiteDomainList", 'onOff', 'wordListDisplay'], function (obj) {

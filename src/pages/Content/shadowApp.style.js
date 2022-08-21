@@ -52,4 +52,30 @@ export const shadowAppTopStyle = `
   #hooliruby-div-in-app{
     background-color:'white'
   }
+
+#hooli-auto-suggestion-div{
+  background-color: rgb(55,55,55);
+  color: white;
+  max-height:300px;
+  overflow:scroll;
+  position:absolute;
+  width:100%;
+}
+
+#hooli-auto-suggestion-list{
+  list-style-type: none;
+  padding:0px
+}
+
+#hooli-vocab-input-wrapper{
+  position:relative;
+  display:inline-block;
+  width:162px;
+}
+.hooli-auto-suggestion-item:hover{
+  background-color:white;
+  color:black
+}
+
       `
+

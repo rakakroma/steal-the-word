@@ -9,6 +9,10 @@ shadowInfoSection.innerHTML = `
 <style>
 
 
+ol{
+  padding:0;
+  list-style-type:none;
+}
 
 li{
     font-size:15px;
@@ -33,14 +37,20 @@ span{
   color: #393d36;
 }
 
+.hooliruby-pin-button{
+  display:none;
+}
 
+.hooliruby-words-block:hover .hooliruby-pin-button{
+  display:inline-block;
+}
 </style>
 `
 
 export const countList = document.createElement('ol')
 const controlBar = document.createElement('div')
 controlBar.id = 'holli-control-bar'
-controlBar.draggable=true
+controlBar.draggable = true
 
 // function onDrag({movementX, movementY}){
 //     let getStyle = window.getComputedStyle(infoSection);
@@ -60,84 +70,90 @@ shadowInfoSection.appendChild(countList)
 export const displayList = []
 
 export const showWordList = () => {
-    countList.textContent = ''
-    if (displayList.length > 0) {
-        document.body.appendChild(infoSection)
-        // infoSection.shadowRoot.querySelector('button')
-        // .addEventListener('click',()=>{
-        //     showWordList()
-        // })
-        const topBar = shadowInfoSection.querySelector('#holli-control-bar')
+  countList.textContent = ''
+  if (displayList.length > 0) {
+    document.body.appendChild(infoSection)
+    // infoSection.shadowRoot.querySelector('button')
+    // .addEventListener('click',()=>{
+    //     showWordList()
+    // })
+    const topBar = shadowInfoSection.querySelector('#holli-control-bar')
 
-        // topBar.addEventListener('dragstart',()=>{
-        //     console.log("dragstart")
-        //     topBar.classList.add('active')
-        //     topBar.addEventListener('mousemove', onDrag)
-        //   })
-        //   document.addEventListener('mouseup',()=>{
-        //     console.log("mouseup")
-        //     topBar.classList.remove('active')
-        //     topBar.removeEventListener('mousemove', onDrag)
-        //   })
-        const position = { x: 0, y: 0 }
-        interact(topBar)
-        .draggable({
-            // modifiers: [
-            //     interact.modifiers.restrict({
-            //       restriction: 'parent',
-            //       endOnly: true
-            //     })
-            //   ],            
-            listeners: {
-            //   start (event) {
-            //     console.log(event.type, event.target)
-            //   },
-              move (event) {
-                console.log(event)
-                position.x += event.dx
-                position.y += event.dy
-          
-                infoSection.style.transform =
-                  `translate(${position.x}px, ${position.y}px)`
-              },
-            }
-          })
+    // topBar.addEventListener('dragstart',()=>{
+    //     console.log("dragstart")
+    //     topBar.classList.add('active')
+    //     topBar.addEventListener('mousemove', onDrag)
+    //   })
+    //   document.addEventListener('mouseup',()=>{
+    //     console.log("mouseup")
+    //     topBar.classList.remove('active')
+    //     topBar.removeEventListener('mousemove', onDrag)
+    //   })
+    const position = { x: 0, y: 0 }
+    interact(topBar)
+      .draggable({
+        // modifiers: [
+        //     interact.modifiers.restrict({
+        //       restriction: 'parent',
+        //       endOnly: true
+        //     })
+        //   ],            
+        listeners: {
+          //   start (event) {
+          //     console.log(event.type, event.target)
+          //   },
+          move(event) {
+            console.log(event)
+            position.x += event.dx
+            position.y += event.dy
 
-          interact(infoSection)
-          .resizable({
-            edges: { bottom: true },
-            listeners: {
-              move: function (event) {
-                console.log(event.target.dataset, event.rect)
-                let { x, y } = event.target.dataset
-                x = (parseFloat(x) || 0) + event.deltaRect.left
-                y = (parseFloat(y) || 0) + event.deltaRect.top
-        
-                Object.assign(event.target.style, {
-                  width: `${event.rect.width}px`,
-                  height: `${event.rect.height}px`,
-                //   transform: `translate(${x}px, ${y}px)`
-                })
-        
-                Object.assign(event.target.dataset, { x, y })
-              }
-            }
-          })
-        
+            infoSection.style.transform =
+              `translate(${position.x}px, ${position.y}px)`
+          },
+        }
+      })
 
-        displayList.forEach(wordObj => {
-            const countListItem = document.createElement('li')
-            const aliasSpan = document.createElement('span')
-            // const currentContextDiv = document.createElement('div')
-            // currentContextDiv.textContent = wordObj.currentContext
-            // currentContextDiv.className = 'holli-current-context-div'
+    interact(infoSection)
+      .resizable({
+        edges: { bottom: true },
+        listeners: {
+          move: function (event) {
+            console.log(event.target.dataset, event.rect)
+            let { x, y } = event.target.dataset
+            x = (parseFloat(x) || 0) + event.deltaRect.left
+            y = (parseFloat(y) || 0) + event.deltaRect.top
 
-            countListItem.className = 'hooliruby-words-block'
-            countListItem.textContent = wordObj.word
-            aliasSpan.textContent=wordObj.alias
-            countListItem.appendChild(aliasSpan)
-            countList.appendChild(countListItem)
-            // countList.appendChild(currentContextDiv)
-        })
-    }
+            Object.assign(event.target.style, {
+              width: `${event.rect.width}px`,
+              height: `${event.rect.height}px`,
+              //   transform: `translate(${x}px, ${y}px)`
+            })
+
+            Object.assign(event.target.dataset, { x, y })
+          }
+        }
+      })
+
+
+    displayList.forEach(wordObj => {
+      const countListItem = document.createElement('li')
+      const pinButton = document.createElement('button')
+      const wordSpan = document.createElement('span')
+      const aliasSpan = document.createElement('span')
+      // const currentContextDiv = document.createElement('div')
+      // currentContextDiv.textContent = wordObj.currentContext
+      // currentContextDiv.className = 'holli-current-context-div'
+
+      countListItem.className = 'hooliruby-words-block'
+      pinButton.className = 'hooliruby-pin-button'
+      pinButton.textContent = '📌'
+      wordSpan.textContent = `${wordObj.word} `
+      aliasSpan.textContent = wordObj.alias
+      countListItem.appendChild(pinButton)
+      countListItem.appendChild(wordSpan)
+      countListItem.appendChild(aliasSpan)
+      countList.appendChild(countListItem)
+      // countList.appendChild(currentContextDiv)
+    })
+  }
 }
