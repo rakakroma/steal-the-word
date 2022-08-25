@@ -10,3 +10,5 @@ export const fullDate = (date) => {
     const theDate = new Date(date)
     return theDate.toString()
 }
+
+export const sortByDate = (wordList) => wordList.sort((a, b) => (+b.date) - (+a.date))

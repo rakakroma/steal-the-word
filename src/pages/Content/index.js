@@ -1,4 +1,3 @@
-// import * as cldrSegmentation from 'cldr-segmentation'
 import { nanoid } from 'nanoid'
 import {
     languageDiv,
@@ -18,6 +17,7 @@ import { renderRuby } from './utils/renderRuby';
 import { infoSection, showWordList, displayList } from './components/infoSection'
 import { floatingTool, buttonOfFloatingTool } from './components/floatingTool'
 import { getSelectedSentence } from './utils/getSelectedSentence';
+import { getParagraphFromSelection, getSentenceFromSelection } from 'get-selection-more';
 
 
 //第二個重要功能：已上色的ruby要能夠很快的儲存新例句／片語
@@ -68,7 +68,22 @@ const init = () => {
             }, 200)
             vocabularyInput.value = document.getSelection().toString()
             const selection = document.getSelection()
-            contextDiv.textContent = getSelectedSentence(selection)
+
+            const clearRubyText = (displayList, sentence) => {
+                const displayingWordsArray = displayList.map(wordObj => {
+                    return { combined: wordObj.word + wordObj.alias, cleared: wordObj.word }
+                })
+                let result = sentence
+                displayingWordsArray.forEach(pair => {
+                    result = result.replace(pair.combined, pair.cleared)
+                })
+                return result
+            }
+            contextDiv.textContent = clearRubyText(displayList, getSentenceFromSelection(selection))
+
+            // contextDiv.textContent = getSelectedSentence(selection)
+            // console.log([getSelectedSentence(selection),
+            // getSentenceFromSelection(selection)])
             document.getSelection().removeAllRanges()
         }
         setTimeout(() => {
@@ -208,6 +223,11 @@ const init = () => {
 
 
     body.addEventListener('mouseup', (e) => {
+        setTimeout(() => {
+            if (!document.getSelection().toString().trim() &&
+                document.querySelector('#hooliruby-floating-tool')) body.removeChild(floatingTool)
+        }, 10)
+
         if (document.getSelection().toString().trim()) {
             if (document.getSelection().anchorNode?.children) return
             floatingTool.style.top = (e.pageY - 10) + 'px'
@@ -218,11 +238,6 @@ const init = () => {
             body.appendChild(floatingTool)
             floatingTool.appendChild(buttonOfFloatingTool)
             return
-        }
-        if (document.querySelector('#hooliruby-floating-tool')) {
-            setTimeout(() => {
-                body.removeChild(floatingTool)
-            }, 10)
         }
     })
 }

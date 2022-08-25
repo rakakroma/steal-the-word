@@ -95,9 +95,9 @@ export const renderRuby = (doc, wordList, displayList, setting) => {
                 rubyElement.appendChild(rtElement)
                 renderNode.appendChild(rubyElement)
 
-                renderNode.style.all = 'initial'
-                renderNode.style.color = 'inherit'
-                renderNode.style.font = 'inherit'
+                // renderNode.style.all = 'initial'
+                // renderNode.style.color = 'inherit'
+                // renderNode.style.font = 'inherit'
                 renderNode.style.position = 'relative'
                 rubyElement.style.position = 'relative'
                 rubyElement.style.background = defaultRubyStyle.ruby.background

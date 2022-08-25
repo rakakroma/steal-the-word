@@ -1,4 +1,4 @@
-import { Slider, Box, createTheme, CssBaseline, Divider, FormControlLabel, FormGroup, Input, InputAdornment, Link, List, ListItem, ListItemText, Switch, TextField, ThemeProvider, Tooltip, Typography, Button, IconButton } from '@mui/material';
+import { Slider, Box, createTheme, CssBaseline, Divider, FormControlLabel, FormGroup, Input, InputAdornment, Link, List, ListItem, ListItemText, Switch, TextField, ThemeProvider, Tooltip, Typography, Button, IconButton, Collapse, Grow, Slide, Fade } from '@mui/material';
 import PauseIcon from '@mui/icons-material/Pause';
 import React, { useEffect, useState, useRef } from 'react';
 import { shuffle } from '../utils/shuffle';
@@ -16,7 +16,7 @@ export const WordAnimation = ({ myList }) => {
     const [changeSpeed, setChangeSpeed] = useState(5000)
     const [kaomojiStrPosition, setKaomojiStrPosition] = useState(0)
     const [kaomoji, setKaomoji] = useState("☆゜･:*:･｡,★゜･:*:･ヽ(*゜▽゜*)ノ｡･:*:･ﾟ★,｡･:*:･ﾟ☆")
-
+    const [fadeIn, setFadeIn] = useState(false)
 
     useEffect(() => {
         const intervalId = startAndPauseInterval()
@@ -40,9 +40,12 @@ export const WordAnimation = ({ myList }) => {
                 }
                 if (kaomojiStrPosition < kaomoji.length - 1) {
                     console.log('set')
+                    if (kaomojiStrPosition === kaomoji.length / 2) setFadeIn(true)
+                    if (kaomojiStrPosition === kaomoji.length - 2) setFadeIn(false)
                     setKaomojiStrPosition(kaomojiStrPosition + 1)
                 } else {
                     console.log('reset')
+                    // setFadeIn(false)
                     setKaomojiStrPosition(0)
                     intervalCounter < myList.length - 1 ?
                         setIntervalCounter(intervalCounter + 1) :
@@ -65,15 +68,31 @@ export const WordAnimation = ({ myList }) => {
     }
 
 
+    // const handleAnimationIn = () => {
+    //     let status = false
+    //     setTimeout(() => {
+    //         status = true
+    //     }, 1000)
+    //     return status
+    // }
+
     return <Box sx={{ height: '80vh', display: 'flex', width: '90vw', flexDirection: 'column', padding: '30px' }}>
-        <Box sx={{ backgroundColor: 'white', height: '30vh' }}>
+        <Box sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column',
+            backgroundColor: 'white', height: '30vh'
+        }}>
             {/* <Typography variant='h4'>{animatingList[intervalCounter].phrase || animatingList[intervalCounter].word}</Typography> */}
             <Typography variant='h4'>
                 <Highlighter
                     highlightWord={animatingList[intervalCounter].word}
                     text={animatingList[intervalCounter].context} />
             </Typography>
-            <Typography variant='h5'>{animatingList[intervalCounter].alias}</Typography>
+            <Fade in={fadeIn}>
+                <Typography variant='h5'>{animatingList[intervalCounter].alias}</Typography>
+            </Fade>
 
         </Box>
 

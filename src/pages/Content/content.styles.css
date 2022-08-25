@@ -32,6 +32,7 @@
 
 #hooliruby-root.hide-hooliruby {
   height: 0vh;
+  display: none;
 }
 
 .hooli-textnode > ruby {

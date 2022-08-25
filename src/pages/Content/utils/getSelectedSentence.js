@@ -6,12 +6,15 @@ const clearHooliRtFromParagraph = (targetElement) => {
         const rubyAndRt = []
         targetElement.querySelectorAll('.hooli-span-node')
             .forEach(ele => {
-                if (rubyAndRt.some(pair => pair[0] === ele.textContent)) return
+                if (rubyAndRt.some(pair => pair.combined === ele.textContent)) return
                 const rtText = ele.querySelector('rt').textContent
-                rubyAndRt.push([ele.textContent, ele.textContent.replace(rtText, "")])
+                rubyAndRt.push({
+                    combined: ele.textContent,
+                    cleaned: ele.textContent.replace(rtText, "")
+                })
             })
         rubyAndRt.forEach(pair => {
-            p = p.replace(pair[0], pair[1])
+            p = p.replace(pair.combined, pair.cleaned)
         })
 
     } return p
@@ -86,34 +89,34 @@ export const getSelectedSentence = (selection) => {
         console.log(splittedParagraph)
 
         const getAdjacentText = (direction) => {
-            let lastWordOffset;
-            let firstWordOffset;
-            if (selection.anchorOffset < selection.extentOffset) {
-                firstWordOffset = selection.anchorOffset
-                lastWordOffset = selection.extentOffset
-            } else {
-                firstWordOffset = selection.extentOffset
-                lastWordOffset = selection.anchorOffset
-            }
+            const startOffset = selection.getRangeAt(0).startOffset
+            const endOffset = selection.getRangeAt(0).endOffset
+            const pastTextOffset = startOffset > 5 ? startOffset - 5 : 0
+            const forwardTextOffset = currentNode.textContent.length > endOffset + 5 ?
+                endOffset + 5 : currentNode.textContent.length
 
-            const pastTextOffset = firstWordOffset > 5 ? firstWordOffset - 5 : 0
-            const forwardTextOffset = currentNode.textContent.length > lastWordOffset + 5 ?
-                lastWordOffset + 5 : currentNode.textContent.length
-            if (direction === 'both') return currentNode.textContent.substring(pastTextOffset, forwardTextOffset)
-            if (direction === 'past') return currentNode.textContent.substring(pastTextOffset, lastWordOffset)
-            if (direction === 'forward') return currentNode.textContent.substring(firstWordOffset, forwardTextOffset)
-            return
+            switch (direction) {
+                case 'both':
+                    return currentNode.textContent.substring(pastTextOffset, forwardTextOffset)
+                case 'past':
+                    return currentNode.textContent.substring(pastTextOffset, endOffset)
+                case 'forward':
+                    return currentNode.textContent.substring(startOffset, forwardTextOffset)
+                default:
+                    return
+            }
         }
         const firstSentenceIncludesString = (testString) => {
             const result = splittedParagraph.filter(sentence => sentence.includes(testString))
             if (result.length > 0) return result[0]
             return null
         }
-        return firstSentenceIncludesString(getAdjacentText("both")) ||
+        return (firstSentenceIncludesString(getAdjacentText("both")) ||
             firstSentenceIncludesString(getAdjacentText("forward")) ||
             firstSentenceIncludesString(getAdjacentText("past")) ||
             firstSentenceIncludesString(paragraph) ||
-            firstSentenceIncludesString(selectedString)
+            firstSentenceIncludesString(selectedString) ||
+            splittedParagraph[0]).trim()
     }
 
     if (paragraphFromNode(currentNode).split(" ").length > 150) {
