@@ -10,7 +10,7 @@ import { WideListWordBlock } from "./WideListWordBlock";
 
 
 
-export const WideListPageBlock = ({ url, hideAlias, handleDelete, handleEdit, handleSelectPhrase, wordsFromThisPage, editWord, setEditWord }) => {
+export const WideListPageBlock = ({ setShowNotification, url, hideAlias, handleDelete, handleEdit, handleSelectPhrase, wordsFromThisPage, editWord, setEditWord }) => {
 
 
 
@@ -60,6 +60,7 @@ export const WideListPageBlock = ({ url, hideAlias, handleDelete, handleEdit, ha
                         handleEdit={handleEdit}
                         handleSelectPhrase={handleSelectPhrase}
                         wordsFromThisPage={wordsFromThisPage}
+                        setShowNotification={setShowNotification}
                     />
                 })}
             </List>

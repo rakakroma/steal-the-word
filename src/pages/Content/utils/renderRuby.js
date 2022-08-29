@@ -77,7 +77,7 @@ export const renderRuby = (doc, wordList, displayList, setting) => {
             //         console.log('有2')
             //     } break;
             // }
-            if (textNode.textContent.includes(wordObj.word)) {
+            if (textNode.textContent.includes(wordObj.stem || wordObj.word)) {
                 const renderNode = document.createElement('span');
                 renderNode.className = 'hooli-span-node';
 
@@ -91,7 +91,7 @@ export const renderRuby = (doc, wordList, displayList, setting) => {
 
 
                 rtElement.textContent = wordObj.alias
-                rubyElement.textContent = wordObj.word
+                rubyElement.textContent = wordObj.stem || wordObj.word
                 rubyElement.appendChild(rtElement)
                 renderNode.appendChild(rubyElement)
 
@@ -124,7 +124,7 @@ export const renderRuby = (doc, wordList, displayList, setting) => {
                 // }
 
                 console.log(textNode.textContent)
-                const sentenceWithoutWord = textNode.textContent.split(wordObj.word)
+                const sentenceWithoutWord = textNode.textContent.split(wordObj.stem || wordObj.word)
                 const fragment = new DocumentFragment()
 
                 sentenceWithoutWord.forEach((sentence, i) => {

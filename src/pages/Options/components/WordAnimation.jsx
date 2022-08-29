@@ -68,13 +68,23 @@ export const WordAnimation = ({ myList }) => {
     }
 
 
-    // const handleAnimationIn = () => {
-    //     let status = false
-    //     setTimeout(() => {
-    //         status = true
-    //     }, 1000)
-    //     return status
-    // }
+
+    const handleNextWord = () => {
+        setKaomojiStrPosition(0)
+        setFadeIn(false)
+        intervalCounter < myList.length - 1 ?
+            setIntervalCounter(intervalCounter + 1) :
+            setIntervalCounter(0)
+    }
+
+    const handleLastWord = () => {
+        setKaomojiStrPosition(0)
+        setFadeIn(false)
+        intervalCounter === 0 ?
+            setIntervalCounter(myList.length - 1) :
+            setIntervalCounter(intervalCounter - 1)
+
+    }
 
     return <Box sx={{ height: '80vh', display: 'flex', width: '90vw', flexDirection: 'column', padding: '30px' }}>
         <Box sx={{
@@ -110,11 +120,6 @@ export const WordAnimation = ({ myList }) => {
             min={500} max={60000}
             onChange={handleSpeedChange} />
 
-
-
-
-        <Typography variant='subtitle1'>{kaomojiAnimation(kaomoji, kaomojiStrPosition)}</Typography>
-
         <Box >
             <IconButton onClick={() => setPause(!pause)}>
                 {pause ? <PlayArrow /> : <PauseIcon />}
@@ -128,5 +133,10 @@ export const WordAnimation = ({ myList }) => {
                 {shuffleMode ? <ShuffleOn /> : <Shuffle />}
             </IconButton>
         </Box>
+        <Box>
+            <button onClick={handleLastWord}>上一個</button>
+            <button onClick={handleNextWord}>下一個</button>
+        </Box>
+        <Typography variant='subtitle1'>{kaomojiAnimation(kaomoji, kaomojiStrPosition)}</Typography>
     </Box>
 }

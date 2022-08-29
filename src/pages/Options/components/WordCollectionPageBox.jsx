@@ -3,7 +3,7 @@ import { Box } from "@mui/system";
 import React from "react";
 
 
-export const WordCollectionPageBox = ({ arrayWithUrl, showingWord, handleWordClick }) => {
+export const WordCollectionPageBox = ({ arrayWithUrl, showingWord, targetWordRef, handleWordClick }) => {
 
     return <Box sx={{
         border: '1px solid black',
@@ -35,6 +35,7 @@ export const WordCollectionPageBox = ({ arrayWithUrl, showingWord, handleWordCli
             return <Box key={wordObj.id} id={wordObj.id}>
                 <Box
                     component='span'
+                    ref={showingWord?.id === wordObj.id ? targetWordRef : null}
                     sx={{ color: showingWord?.id === wordObj.id ? 'primary.dark' : "" }}
                     className='small-word-span'
                     onClick={() => handleWordClick(wordObj.id)}>

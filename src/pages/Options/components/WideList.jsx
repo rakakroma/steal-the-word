@@ -8,7 +8,7 @@ import { WideListPageBlock } from './WideListPageBlock';
 
 
 
-export const WideList = ({ myList, hideAlias, handleSelectPhrase, handleDelete, handleEdit }) => {
+export const WideList = ({ setShowNotification, myList, hideAlias, handleSelectPhrase, handleDelete, handleEdit }) => {
 
     const reverseList = myList.sort((a, b) => (+b.date) - (+a.date))
     const groupedList = groupBy(reverseList, 'domain')
@@ -58,6 +58,7 @@ export const WideList = ({ myList, hideAlias, handleSelectPhrase, handleDelete, 
                                     handleEdit={handleEdit}
                                     handleSelectPhrase={handleSelectPhrase}
                                     wordsFromThisPage={arrayWithUrl[1]}
+                                    setShowNotification={setShowNotification}
                                 />
                             )
                         })

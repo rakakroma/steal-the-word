@@ -1,4 +1,4 @@
-import { Chip, Divider, Input, Link, List, ListItem, ListItemText, TextareaAutosize, TextField, Tooltip, Typography } from "@mui/material"
+import { Chip, Divider, Input, Link, List, ListItem, ListItemText, Slide, TextareaAutosize, TextField, Tooltip, Typography } from "@mui/material"
 import { Box, fontSize } from "@mui/system"
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from "@mui/icons-material/Close";
@@ -6,8 +6,10 @@ import { Highlighter } from "./Highlighter"
 import React, { useState } from "react"
 
 
-export const WideListWordBlock = ({ wordObj, index, editWord, setEditWord, hideAlias, handleDelete, handleEdit, handleSelectPhrase, wordsFromThisPage }) => {
 
+export const WideListWordBlock = ({ setShowNotification, wordObj, index, editWord, setEditWord, hideAlias, handleDelete, handleEdit, handleSelectPhrase, wordsFromThisPage }) => {
+
+    const [stem, setStem] = useState(wordObj.stem || '')
     const [word, setWord] = useState(wordObj.word)
     const [alias, setAlias] = useState(wordObj.alias)
     const [context, setContext] = useState(wordObj.context)
@@ -17,13 +19,14 @@ export const WideListWordBlock = ({ wordObj, index, editWord, setEditWord, hideA
     const handleTagDelete = (e) => {
         console.log(e.target.parentElement)
     }
-    const handleEditSubmit = (wordId) => {
-        console.log({
-            word: word,
-            alias: alias,
-            context: context
-        })
-    }
+    // const handleEditSubmit = (wordId) => {
+    //     console.log({
+    //         word: word,
+    //         alias: alias,
+    //         context: context
+    //     })
+    // }
+
 
     if (editWord === wordObj.id) return <React.Fragment>
         <ListItem>
@@ -50,10 +53,10 @@ export const WideListWordBlock = ({ wordObj, index, editWord, setEditWord, hideA
                             sx={{ margin: '4px' }}
                             InputProps={{
                                 style: {
-                                    fontSize: '1.1rem',
+                                    fontSize: '1.0rem',
                                 }
                             }}
-                            required
+
                             variant="standard"
                             value={alias}
                             onChange={(e) => setAlias(e.target.value)}
@@ -67,18 +70,57 @@ export const WideListWordBlock = ({ wordObj, index, editWord, setEditWord, hideA
                             resize: 'none',
                             backgroundColor: 'transparent'
                         }}
-                        required
+
                         variant="standard"
                         value={context}
                         onChange={(e) => setContext(e.target.value)}
                     // defaultValue={wordObj.context}
                     />
+                    {stem ?
+                        <TextField
+                            sx={{
+                                margin: '4px',
+                            }}
+                            InputProps={{
+                                style: {
+                                    fontWeight: 500,
+                                    fontSize: '0.8rem',
+                                }
+                            }}
+                            label='stem'
+                            variant="standard"
+                            value={stem}
+                            onChange={(e) => setStem(e.target.value)}
+                        />
+                        : null}
                     {/* <button onClick={() => handleEdit(wordObj.id)}><DoneIcon /></button> */}
                 </Box>
             </Box>
             <Box>
-                <button onClick={() => handleEditSubmit(wordObj.id)}><DoneIcon /></button>
-                <button onClick={() => setEditWord(null)}><CloseIcon /></button>
+                <button onClick={() => setStem(wordObj.word)}>幹</button>
+                <button onClick={() => {
+                    const editedResult = {}
+                    const properties =
+                        [{ name: 'stem', text: stem.trim() },
+                        { name: 'word', text: word.trim() },
+                        { name: 'alias', text: alias.trim() },
+                        { name: 'context', text: context.trim() }]
+                    properties.forEach(property => {
+                        if (property.text && property.text !== wordObj[property.name]) editedResult[property.name] = property.text
+                        else if (!property.text && wordObj[property.name]) editedResult[property.name] = ''
+                    })
+                    handleEdit(wordObj.id, editedResult)
+                    setEditWord(null)
+                    setShowNotification({ message: `已修改 ${wordObj.word}` })
+                }}><DoneIcon /></button>
+                <button onClick={() => {
+                    setEditWord(null)
+                    setWord(wordObj.word)
+                    setAlias(wordObj.alias)
+                    setContext(wordObj.context)
+                    setStem(wordObj.stem || '')
+                    setShowNotification({ message: `${wordObj.word} 的修改已經取消` })
+                }}><CloseIcon /></button>
             </Box>
         </ListItem>
         {index === wordsFromThisPage.length - 1 ? null : <Divider />}

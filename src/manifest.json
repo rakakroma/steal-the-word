@@ -23,7 +23,9 @@
     {
       "matches": ["http://*/*", "https://*/*", "<all_urls>"],
       "js": ["contentScript.bundle.js"],
-      "css": ["content.styles.css"]
+      "css": ["content.styles.css"],
+      "all_frames": true
+
     }
   ],
   "web_accessible_resources": [

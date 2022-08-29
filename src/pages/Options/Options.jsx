@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, createContext } from 'react';
 import './Options.css';
 import CustomizedDialogs from './components/CustomizedDialogs';
-import { Checkbox, Box, createTheme, CssBaseline, Divider, FormControlLabel, FormGroup, IconButton, Input, InputAdornment, Link, List, ListItem, ListItemText, Switch, TextField, ThemeProvider, Tooltip, Typography, FormControl, InputLabel, Select, OutlinedInput, MenuItem } from '@mui/material';
+import { Checkbox, Box, createTheme, CssBaseline, Divider, FormControlLabel, FormGroup, IconButton, Input, InputAdornment, Link, List, ListItem, ListItemText, Switch, TextField, ThemeProvider, Tooltip, Typography, FormControl, InputLabel, Select, OutlinedInput, MenuItem, Snackbar, Slide } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import { formatDate, fullDate, sortByDate } from './utils/Date'
 import { groupBy } from './utils/groupBy'
@@ -15,19 +15,27 @@ import { checkLocalLanguagePossible, checkStringLanguage } from './utils/languag
 import { WordAnimation } from './components/WordAnimation';
 import MultipleSelectCheckmarks from './components/MultiSelectionCheckmarks';
 
+
+
+function TransitionUp(props) {
+  return <Slide {...props} direction="up" />;
+}
+
+
+
 const Options = () => {
 
   const [myList, setMyList] = useState([])
-  const imgRef = useRef(null)
+  // const imgRef = useRef(null)
   // const [stolenColor, setStolenColor] = useState([])
   const [searchText, setSearchText] = useState("")
   const [hideAlias, setHideAlias] = useState(true)
   const [viewMode, setViewMode] = useState(false)
   const [phraseMode, setPhraseMode] = useState(false)
-  const [arrangementMode, setArrangementMode] = useState(false)
   const [animationMode, setAnimationMode] = useState(false)
   const [languageFilter, setLanguageFilter] = useState({ taiwanese: true, hakka: true, english: true, chinese: true, japanese: true, korean: true, all: true })
   const [timeMode, setTimeMode] = useState(false)
+  const [showNotification, setShowNotification] = useState(false)
 
 
   const theme = createTheme(themeStyle)
@@ -49,16 +57,17 @@ const Options = () => {
     chrome.storage.local.set({ "myWordList": updatedList });
   }
 
-  const handleEdit = (id) => {
-    // const targetId = id
-    // const objToEdit = myList.find(wordObj => wordObj.id === targetId)
+  const handleEdit = (id, updatedInfo) => {
+    const targetId = id
+    let objToEdit = myList.find(wordObj => wordObj.id === targetId)
+    objToEdit = { ...objToEdit, ...updatedInfo }
 
-    // const updatedList = myList.map(wordObj => {
-    //   if (wordObj.id === id) return objToEdit
-    //   return wordObj
-    // })
-    // setMyList(updatedList)
-    // chrome.storage.local.set({ "myWordList": updatedList });
+    const updatedList = myList.map(wordObj => {
+      if (wordObj.id === id) return objToEdit
+      return wordObj
+    })
+    setMyList(updatedList)
+    chrome.storage.local.set({ "myWordList": updatedList });
   }
 
 
@@ -150,7 +159,14 @@ const Options = () => {
   return <div className="OptionsContainer">
     <ThemeProvider theme={theme}>
       <CssBaseline />
-
+      <Snackbar
+        TransitionComponent={TransitionUp}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        open={Boolean(showNotification)}
+        autoHideDuration='4000'
+        onClose={() => setShowNotification(false)}
+        message={showNotification.message}
+      />
       <Box sx={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -196,7 +212,6 @@ const Options = () => {
             {viewMode === false ?
               <>
                 <FormControlLabel control={<Switch size="small" checked={phraseMode} onChange={() => setPhraseMode(!phraseMode)} />} label="片語模式" />
-                <FormControlLabel control={<Switch size="small" checked={arrangementMode} onChange={() => setArrangementMode(!arrangementMode)} />} label="網頁模式" />
                 <FormControlLabel control={<Switch size="small" checked={timeMode} onChange={() => setTimeMode(!timeMode)} />} label="時間模式" />
               </> :
               null
@@ -228,19 +243,18 @@ const Options = () => {
               handleSelectPhrase={handleSelectPhrase}
               handleDelete={handleDelete}
               handleEdit={handleEdit}
+              setShowNotification={setShowNotification}
             />
             : <WordCollection
               myList={languageSelectionFilter(myList)}
               groupedList={groupedList(languageSelectionFilter(myList))}
               phraseMode={phraseMode}
               handleSelectPhrase={handleSelectPhrase}
-              arrangementMode={arrangementMode}
               timeMode={timeMode}
             />
         }
 
       </Box>
-
     </ThemeProvider>
   </div >
 };
