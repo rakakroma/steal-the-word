@@ -7,6 +7,7 @@ import { fullDate } from "../utils/Date"
 import { Highlighter } from "./Highlighter"
 import React, { useState } from "react"
 import { WideListWordBlock } from "./WideListWordBlock";
+import { getMatchedContextInfos } from "../utils/transformData";
 
 
 
@@ -33,7 +34,7 @@ export const WideListPageBlock = ({ setShowNotification, url, hideAlias, handleD
                     verticalAlign: 'bottom'
                 }}
                     variant='subtitle1' underline='none' href={url} color='primary.light' >
-                    {wordsFromThisPage[0].pageTitle}
+                    {getMatchedContextInfos(wordsFromThisPage[0], url)[0].pageTitle}
                 </Link>
                 &emsp;
                 <Tooltip title={fullDate(Number(wordsFromThisPage[0].date))} placement='top'>
@@ -50,6 +51,7 @@ export const WideListPageBlock = ({ setShowNotification, url, hideAlias, handleD
             }}>
                 {wordsFromThisPage.map((wordObj, index) => {
                     return <WideListWordBlock
+                        url={url}
                         key={wordObj.id}
                         wordObj={wordObj}
                         index={index}

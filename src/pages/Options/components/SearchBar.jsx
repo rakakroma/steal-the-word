@@ -6,7 +6,7 @@ import React from "react"
 export const SearchBar = ({ searchText, handleSearch, myList }) => {
 
     const allTextSearchResult = (str, list) => {
-        console.log(Array.isArray(list))
+        // console.log(Array.isArray(list))
         if (str.length > 1) {
             const wordResult = list.filter(wordObj => wordObj.word.toLowerCase().includes(str.trim().toLowerCase()))
             const contextResult = list.filter(wordObj => wordObj.context.toLowerCase().includes(str.trim().toLowerCase()))

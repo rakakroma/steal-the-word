@@ -4,15 +4,16 @@ import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from "@mui/icons-material/Close";
 import { Highlighter } from "./Highlighter"
 import React, { useState } from "react"
+import { getAllPhrasesInThisContext, getMatchedContextInfos } from "../utils/transformData";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 
-
-export const WideListWordBlock = ({ setShowNotification, wordObj, index, editWord, setEditWord, hideAlias, handleDelete, handleEdit, handleSelectPhrase, wordsFromThisPage }) => {
+export const WideListWordBlock = ({ url, setShowNotification, wordObj, index, editWord, setEditWord, hideAlias, handleDelete, handleEdit, handleSelectPhrase, wordsFromThisPage }) => {
 
     const [stem, setStem] = useState(wordObj.stem || '')
     const [word, setWord] = useState(wordObj.word)
-    const [alias, setAlias] = useState(wordObj.alias)
-    const [context, setContext] = useState(wordObj.context)
+    const [definitionGroups, setDefinitionGroups] = useState(wordObj.definitionGroups)
+    const [contextInfos, setContextInfos] = useState(wordObj.contextInfos)
     const [chips, setChips] = useState([{ label: 'hello', id: '1' }, { label: 'cool', id: '2' }])
 
 
@@ -27,6 +28,17 @@ export const WideListWordBlock = ({ setShowNotification, wordObj, index, editWor
     //     })
     // }
 
+    const handleEditAlias = (e, id, index) => {
+        const result = JSON.parse(JSON.stringify(definitionGroups))
+        result.find(definitionGroup => definitionGroup.definitionId === id).aliases[index] = e.target.value
+        setDefinitionGroups(result)
+    }
+
+    const handleEditContext = (e, date) => {
+        const result = JSON.parse(JSON.stringify(contextInfos))
+        result.find(definitionGroup => definitionGroup.date === date).context = e.target.value
+        setContextInfos(result)
+    }
 
     if (editWord === wordObj.id) return <React.Fragment>
         <ListItem>
@@ -49,33 +61,50 @@ export const WideListWordBlock = ({ setShowNotification, wordObj, index, editWor
                             onChange={(e) => setWord(e.target.value)}
 
                         />
-                        <TextField
-                            sx={{ margin: '4px' }}
-                            InputProps={{
-                                style: {
-                                    fontSize: '1.0rem',
-                                }
-                            }}
+                        {definitionGroups.map((definitionGroup, groupsIndex) => {
+                            return <React.Fragment key={definitionGroup.definitionId}>
+                                <Box>
+                                    {definitionGroup.aliases.map((alias, aliasesIndex) => {
+                                        return <React.Fragment key={aliasesIndex}>
+                                            <TextField
+                                                sx={{ margin: '4px' }}
+                                                InputProps={{
+                                                    style: {
+                                                        fontSize: '1.0rem',
+                                                    }
+                                                }}
 
-                            variant="standard"
-                            value={alias}
-                            onChange={(e) => setAlias(e.target.value)}
-                        />
+                                                variant="standard"
+                                                value={alias}
+                                                onChange={(e) => handleEditAlias(e, definitionGroup.definitionId, aliasesIndex)}
+                                            />
+                                            {aliasesIndex === definitionGroup.aliases.length - 1 ? <AddCircleIcon /> : null}
+                                        </React.Fragment>
+                                    })
+                                    }
+                                </Box>
+                                {groupsIndex === definitionGroups.length - 1 ? <AddCircleIcon /> : null}
+                            </React.Fragment>
+                        })}
                     </Box>
-                    <TextareaAutosize
-                        style={{
-                            fontFamily: 'inherit',
-                            margin: '4px',
-                            width: '100%',
-                            resize: 'none',
-                            backgroundColor: 'transparent'
-                        }}
+                    {contextInfos.map((contextInfo, i) => {
+                        return <Box key={contextInfo.date + i}>
+                            <TextareaAutosize
+                                style={{
+                                    fontFamily: 'inherit',
+                                    margin: '4px',
+                                    width: '100%',
+                                    resize: 'none',
+                                    backgroundColor: 'transparent'
+                                }}
 
-                        variant="standard"
-                        value={context}
-                        onChange={(e) => setContext(e.target.value)}
-                    // defaultValue={wordObj.context}
-                    />
+                                variant="standard"
+                                value={contextInfo.context}
+                                onChange={(e) => handleEditContext(e, contextInfo.date)}
+                            />
+                        </Box>
+                    })}
+
                     {stem ?
                         <TextField
                             sx={{
@@ -116,8 +145,10 @@ export const WideListWordBlock = ({ setShowNotification, wordObj, index, editWor
                 <button onClick={() => {
                     setEditWord(null)
                     setWord(wordObj.word)
-                    setAlias(wordObj.alias)
-                    setContext(wordObj.context)
+                    // setAlias(wordObj.alias)
+                    setDefinitionGroups(wordObj.definitionGroups)
+                    // setContext(wordObj.context)
+                    setContextInfos(wordObj.contextInfos)
                     setStem(wordObj.stem || '')
                     setShowNotification({ message: `${wordObj.word} 的修改已經取消` })
                 }}><CloseIcon /></button>
@@ -138,8 +169,8 @@ export const WideListWordBlock = ({ setShowNotification, wordObj, index, editWor
                 disableTypography
                 primary={<>
                     <Typography sx={{ display: 'inline-block' }} variant='h6'>
-                        {wordObj.phrase ?
-                            <Highlighter highlightWord={wordObj.word} text={wordObj.phrase} /> :
+                        {getAllPhrasesInThisContext(wordObj, url) ?
+                            <Highlighter highlightWord={wordObj.word} text={getAllPhrasesInThisContext(wordObj, url)[0]} /> :
                             wordObj.word
                         }
                         {/* {wordObj.phrase || wordObj.word} */}
@@ -150,14 +181,14 @@ export const WideListWordBlock = ({ setShowNotification, wordObj, index, editWor
                         border: theme => `1px solid ${theme.palette.primary.light}`
                     }}
                         color={hideAlias ? "background.light" : 'black'} variant='subtitle1'>
-                        {wordObj.alias}
+                        {wordObj.definitionGroups.find(group => group.definitionId === getMatchedContextInfos(wordObj, url)[0].definitionRef).aliases[0]}
                     </Typography>
                 </>
                 }
                 secondary={<Typography component={'div'} >
                     <Typography variant='body1' component={'span'}  >
                         {/* {wordObj.context} */}
-                        <Highlighter text={wordObj.context} highlightWord={wordObj.phrase || wordObj.word} />
+                        <Highlighter text={getMatchedContextInfos(wordObj, url)[0].context} highlightWord={getAllPhrasesInThisContext(wordObj, url) ? getAllPhrasesInThisContext(wordObj, url)[0] : wordObj.word} />
                     </Typography>
                 </Typography>} />
         </Box>

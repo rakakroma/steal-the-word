@@ -5,14 +5,17 @@ import { fullDate } from '../utils/Date';
 import { countDate } from '../utils/countDate';
 import { Highlighter } from './Highlighter';
 import { WideListPageBlock } from './WideListPageBlock';
+import { domainPageWords } from '../utils/transformData';
 
 
 
-export const WideList = ({ setShowNotification, myList, hideAlias, handleSelectPhrase, handleDelete, handleEdit }) => {
+export const WideList = ({ allWords, setShowNotification, myList, hideAlias, handleSelectPhrase, handleDelete, handleEdit }) => {
 
-    const reverseList = myList.sort((a, b) => (+b.date) - (+a.date))
-    const groupedList = groupBy(reverseList, 'domain')
+    // const reverseList = myList.sort((a, b) => (+b.date) - (+a.date))
+    // const groupedList = groupBy(reverseList, 'domain')
     const [editWord, setEditWord] = useState(null)
+
+    // console.log(allWords)
 
 
     return <Box sx={{ display: 'flex', flexDirection: 'column', height: '88vh', overflow: 'scroll' }}>
@@ -20,7 +23,7 @@ export const WideList = ({ setShowNotification, myList, hideAlias, handleSelectP
         {myList && myList.length > 0 ? "" : "現在還沒有東西，請加入詞彙😶‍🌫️"}
 
         <List sx={{ width: '100%' }}>
-            {Object.entries(groupedList).map(arrayWithDomain => {
+            {domainPageWords(allWords).map(arrayWithDomain => {
                 return (
                     <ListItem sx={{ flexDirection: 'column' }} key={arrayWithDomain[0]}>
                         <Typography variant='h6'>
@@ -35,8 +38,7 @@ export const WideList = ({ setShowNotification, myList, hideAlias, handleSelectP
                                     currentTarget.onerror = null;
                                     currentTarget.src = "https://s2.googleusercontent.com/s2/favicons?domain=" + arrayWithDomain[0];
                                 }} />
-                            {/* <button onClick={handleColorThief}>偷</button> */}
-                            {arrayWithDomain[0] ?
+                            {/* {arrayWithDomain[0] ?
                                 arrayWithDomain[1][0].pageTitle.split('-').length > 1 ?
                                     arrayWithDomain[1][0].pageTitle.split('-')[arrayWithDomain[1][0].pageTitle.split('-').length - 1].trim() :
                                     arrayWithDomain[1][0].pageTitle.split('|').length > 1 ?
@@ -45,19 +47,20 @@ export const WideList = ({ setShowNotification, myList, hideAlias, handleSelectP
                                             arrayWithDomain[1][0].pageTitle.split('/')[arrayWithDomain[1][0].pageTitle.split('/').length - 1].trim() :
                                             arrayWithDomain[1][0].pageTitle.split(':').length > 1 ?
                                                 arrayWithDomain[1][0].pageTitle.split(':')[arrayWithDomain[1][0].pageTitle.split(':').length - 1].trim() :
-                                                arrayWithDomain[0] : "Local File"}</Typography>
-                        {Object.entries(groupBy(arrayWithDomain[1], "url")).map(arrayWithUrl => {
+                                                arrayWithDomain[0] : "Local File"} */}
+                        </Typography>
+                        {arrayWithDomain[1].map(arrayWithUrl => {
                             return (
                                 <WideListPageBlock
                                     editWord={editWord}
                                     setEditWord={setEditWord}
-                                    key={arrayWithUrl[0]}
-                                    url={arrayWithUrl[0]}
+                                    key={arrayWithUrl.url}
+                                    url={arrayWithUrl.url}
                                     hideAlias={hideAlias}
                                     handleDelete={handleDelete}
                                     handleEdit={handleEdit}
                                     handleSelectPhrase={handleSelectPhrase}
-                                    wordsFromThisPage={arrayWithUrl[1]}
+                                    wordsFromThisPage={arrayWithUrl.words}
                                     setShowNotification={setShowNotification}
                                 />
                             )

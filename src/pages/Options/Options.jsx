@@ -14,6 +14,7 @@ import PersonalVideoIcon from '@mui/icons-material/PersonalVideo';
 import { checkLocalLanguagePossible, checkStringLanguage } from './utils/languageDetection';
 import { WordAnimation } from './components/WordAnimation';
 import MultipleSelectCheckmarks from './components/MultiSelectionCheckmarks';
+import { dataTransform } from './utils/transformData';
 
 
 
@@ -37,6 +38,7 @@ const Options = () => {
   const [timeMode, setTimeMode] = useState(false)
   const [showNotification, setShowNotification] = useState(false)
 
+  const transformedData = dataTransform(myList)
 
   const theme = createTheme(themeStyle)
 
@@ -156,6 +158,7 @@ const Options = () => {
 
   const languages = ['english', 'japanese', 'korean', 'taiwanese', 'hakka', 'chinese']
 
+
   return <div className="OptionsContainer">
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -238,6 +241,7 @@ const Options = () => {
           viewMode === true ?
             <WideList
               myList={languageSelectionFilter(myList)}
+              allWords={transformedData}
               hideAlias={hideAlias}
               setHideAlias={setHideAlias}
               handleSelectPhrase={handleSelectPhrase}
@@ -246,6 +250,7 @@ const Options = () => {
               setShowNotification={setShowNotification}
             />
             : <WordCollection
+              allWords={transformedData}
               myList={languageSelectionFilter(myList)}
               groupedList={groupedList(languageSelectionFilter(myList))}
               phraseMode={phraseMode}

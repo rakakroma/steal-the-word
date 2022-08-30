@@ -8,24 +8,42 @@ import { sortByDate } from '../utils/Date';
 import dayjs from 'dayjs';
 // import relativeTime from 'dayjs/plugin/relativeTime'
 import { WordCollectionPageBox } from './WordCollectionPageBox';
+import { domainPageWords, getAllPhrasesInThisContext, getLatestDateInContextInfos, pagesWords } from '../utils/transformData';
 // import groupBy from 'lodash/groupBy'
 
-export const WordCollection = ({ myList, groupedList, handleSelectPhrase, phraseMode, timeMode }) => {
+
+
+export const WordCollection = ({ allWords, myList, groupedList, handleSelectPhrase, phraseMode, timeMode }) => {
 
     const [showingWord, setShowingWord] = useState(false)
     const [dateArrangement, setDateArrangement] = useState('date')
 
-    const groupedByPageList = (wordList) => groupBy(sortByDate(wordList), 'url')
+    // const groupedByPageList = (wordList) => groupBy(sortByDate(wordList), 'url')
 
     const handleWordClick = (wordId) => {
         setShowingWord(myList.find(wordObj => wordObj.id === wordId))
     }
 
-    const arrayWithUrls = Object.entries(groupedByPageList(myList))
+    // const arrayWithUrls = Object.entries(groupedByPageList(myList))
 
-    const arrayWithUrlsByDateType = (datetype) => {
-        return arrayWithUrls.reduce((acc, currentValue) => {
-            const dateData = dayjs(+currentValue[1][0].date).startOf(datetype).format('YYYY/MM/DD')
+    // const arrayWithUrlsByDateType = (datetype) => {
+    //     return arrayWithUrls.reduce((acc, currentValue) => {
+    //         const dateData = dayjs(+currentValue[1][0].date).startOf(datetype).format('YYYY/MM/DD')
+    //         if (!acc.some(sortByDateData => sortByDateData.dateData === dateData)) {
+    //             return acc.concat({ dateData: dateData, sortByUrlData: [currentValue] })
+    //         }
+    //         return acc.map(sortByDateData => {
+    //             if (sortByDateData.dateData === dateData) {
+    //                 sortByDateData.sortByUrlData = sortByDateData.sortByUrlData.concat([currentValue])
+    //             }
+    //             return sortByDateData
+    //         })
+    //     }, [])
+    // }
+
+    const arrayWithUrlsByDateType = (datetype, words) => {
+        return pagesWords(words).reduce((acc, currentValue) => {
+            const dateData = dayjs(getLatestDateInContextInfos(currentValue.words[0], currentValue.url)).startOf(datetype).format('YYYY/MM/DD')
             if (!acc.some(sortByDateData => sortByDateData.dateData === dateData)) {
                 return acc.concat({ dateData: dateData, sortByUrlData: [currentValue] })
             }
@@ -38,6 +56,10 @@ export const WordCollection = ({ myList, groupedList, handleSelectPhrase, phrase
         }, [])
     }
 
+    // console.log(arrayWithUrls);
+    // console.log(pagesWords);
+    // console.log(arrayWithUrlsByDateType(dateArrangement))
+
     const handleDateArrangementChange = (e, newValue) => {
         const sliderValue =
             newValue === 0 ? 'date' :
@@ -47,58 +69,60 @@ export const WordCollection = ({ myList, groupedList, handleSelectPhrase, phrase
         setDateArrangement(sliderValue)
     }
 
-    const wordListInDateOrder = arrayWithUrlsByDateType('date').reduce((acc, currentValue) => {
-        const wordListInCurrentValue = currentValue.sortByUrlData.map(arrayWithUrl => {
-            return arrayWithUrl[1]
-        })
-        return acc.concat(wordListInCurrentValue.flat())
-    }, [])
+    // const wordListInDateOrder = arrayWithUrlsByDateType('date').reduce((acc, currentValue) => {
+    //     const wordListInCurrentValue = currentValue.sortByUrlData.map(arrayWithUrl => {
+    //         return arrayWithUrl[1]
+    //     })
+    //     return acc.concat(wordListInCurrentValue.flat())
+    // }, [])
 
-    const wordListInGroupedListOrder = Object.values(groupedList).flat()
+    // const wordListInGroupedListOrder = Object.values(groupedList).flat()
 
-    const handleToNextWord = useCallback(() => {
-        const orderList = timeMode ? wordListInDateOrder : wordListInGroupedListOrder
-        if (showingWord) {
-            const currentOrderIndex = orderList.findIndex(wordObj => wordObj.id === showingWord.id)
-            const nextOrderIndex = currentOrderIndex === orderList.length - 1 ?
-                0 : currentOrderIndex + 1
-            setShowingWord(orderList[nextOrderIndex])
-        } else {
-            setShowingWord(orderList[0])
-        }
-    }, [showingWord, timeMode, wordListInDateOrder, wordListInGroupedListOrder])
+    // const handleToNextWord = useCallback(() => {
+    //     const orderList = timeMode ? wordListInDateOrder : wordListInGroupedListOrder
+    //     if (showingWord) {
+    //         const currentOrderIndex = orderList.findIndex(wordObj => wordObj.id === showingWord.id)
+    //         const nextOrderIndex = currentOrderIndex === orderList.length - 1 ?
+    //             0 : currentOrderIndex + 1
+    //         setShowingWord(orderList[nextOrderIndex])
+    //     } else {
+    //         setShowingWord(orderList[0])
+    //     }
+    // }, [showingWord, timeMode, wordListInDateOrder, wordListInGroupedListOrder])
 
-    const handleToLastWord = useCallback(() => {
-        const orderList = timeMode ? wordListInDateOrder : wordListInGroupedListOrder
-        if (showingWord) {
-            const currentOrderIndex = orderList.findIndex(wordObj => wordObj.id === showingWord.id)
-            const lastOrderIndex = currentOrderIndex === 0 ?
-                orderList.length - 1 : currentOrderIndex - 1
-            setShowingWord(orderList[lastOrderIndex])
-        } else {
-            setShowingWord(orderList[0])
-        }
-    }, [showingWord, timeMode, wordListInDateOrder, wordListInGroupedListOrder])
+    // const handleToLastWord = useCallback(() => {
+    //     const orderList = timeMode ? wordListInDateOrder : wordListInGroupedListOrder
+    //     if (showingWord) {
+    //         const currentOrderIndex = orderList.findIndex(wordObj => wordObj.id === showingWord.id)
+    //         const lastOrderIndex = currentOrderIndex === 0 ?
+    //             orderList.length - 1 : currentOrderIndex - 1
+    //         setShowingWord(orderList[lastOrderIndex])
+    //     } else {
+    //         setShowingWord(orderList[0])
+    //     }
+    // }, [showingWord, timeMode, wordListInDateOrder, wordListInGroupedListOrder])
 
-    const handleKeyDown = useCallback((e) => {
-        if (e.key === 'ArrowRight') {
-            handleToNextWord()
-        } else if (e.key === 'ArrowLeft') {
-            handleToLastWord()
-        } else return
-    }, [handleToNextWord, handleToLastWord])
+    // const handleKeyDown = useCallback((e) => {
+    //     if (e.key === 'ArrowRight') {
+    //         handleToNextWord()
+    //     } else if (e.key === 'ArrowLeft') {
+    //         handleToLastWord()
+    //     } else return
+    // }, [handleToNextWord, handleToLastWord])
 
 
-    useEffect(() => {
-        document.addEventListener('keydown', handleKeyDown)
-        return () => document.removeEventListener('keydown', handleKeyDown)
-    }, [handleKeyDown])
+    // useEffect(() => {
+    //     document.addEventListener('keydown', handleKeyDown)
+    //     return () => document.removeEventListener('keydown', handleKeyDown)
+    // }, [handleKeyDown])
 
-    const targetWordRef = useRef(null)
+    // const targetWordRef = useRef(null)
 
-    useEffect(() => {
-        targetWordRef.current?.scrollIntoView({ block: "center", inline: "nearest" })
-    }, [showingWord])
+    // useEffect(() => {
+    //     targetWordRef.current?.scrollIntoView({ block: "center", inline: "nearest" })
+    // }, [showingWord])
+
+
 
 
     return <Box sx={{ display: 'flex', height: '90vh', width: '90vw', flexDirection: 'column', px: '25px', py: '10px' }}>
@@ -159,8 +183,8 @@ export const WordCollection = ({ myList, groupedList, handleSelectPhrase, phrase
                     onChange={handleDateArrangementChange}
                 />
                 <Box>
-                    <button onClick={handleToLastWord} >上一個</button>
-                    <button onClick={handleToNextWord} >下一個</button>
+                    {/* <button onClick={handleToLastWord} >上一個</button>
+                    <button onClick={handleToNextWord} >下一個</button> */}
                 </Box>
             </> : null
         }
@@ -175,13 +199,13 @@ export const WordCollection = ({ myList, groupedList, handleSelectPhrase, phrase
             {timeMode ?
                 <Box>
                     {dateArrangement ?
-                        arrayWithUrlsByDateType(dateArrangement).map(sortByDateData => {
+                        arrayWithUrlsByDateType(dateArrangement, allWords).map(sortByDateData => {
                             return <Masonry spacing={2} columns={phraseMode ? 4 : 6} key={sortByDateData.dateData}>
                                 <Typography variant='h5'>{sortByDateData.dateData.slice(5)}</Typography>
                                 {sortByDateData.sortByUrlData.map(arrayWithUrl => {
                                     return <WordCollectionPageBox
-                                        targetWordRef={targetWordRef}
-                                        key={arrayWithUrl[0]}
+                                        // targetWordRef={targetWordRef}
+                                        key={arrayWithUrl.url}
                                         arrayWithUrl={arrayWithUrl}
                                         showingWord={showingWord}
                                         handleWordClick={handleWordClick}
@@ -189,10 +213,10 @@ export const WordCollection = ({ myList, groupedList, handleSelectPhrase, phrase
                                 })}
                             </Masonry>
                         }) : <Masonry spacing={2} columns={phraseMode ? 4 : 6} >
-                            {arrayWithUrls.map(arrayWithUrl => {
+                            {pagesWords(allWords).map(arrayWithUrl => {
                                 return <WordCollectionPageBox
-                                    targetWordRef={targetWordRef}
-                                    key={arrayWithUrl[0]}
+                                    // targetWordRef={targetWordRef}
+                                    key={arrayWithUrl.url}
                                     arrayWithUrl={arrayWithUrl}
                                     showingWord={showingWord}
                                     handleWordClick={handleWordClick}
@@ -202,9 +226,8 @@ export const WordCollection = ({ myList, groupedList, handleSelectPhrase, phrase
                     }
                 </Box>
                 :
-
                 <Masonry spacing={2} columns={phraseMode ? 4 : 6}>
-                    {Object.entries(groupedList).map(arrayWithDomain => {
+                    {domainPageWords(allWords).map(arrayWithDomain => {
                         return <Box sx={{
                             border: '1px solid black',
                             padding: '5px',
@@ -212,33 +235,34 @@ export const WordCollection = ({ myList, groupedList, handleSelectPhrase, phrase
                             borderRadius: '3px'
                         }} key={arrayWithDomain[0]}>
                             <img width='20px' height='20px' loading="lazy"
-                                src={arrayWithDomain[0] ?
+                                src={!arrayWithDomain[0].includes('file') ?
                                     "https://s2.googleusercontent.com/s2/favicons?domain=" + arrayWithDomain[0] :
                                     "https://findicons.com/files/icons/1504/kidcon_alpine_os/32/local_file_address.png"} alt={"logo of " + arrayWithDomain[0]}
                                 onError={({ currentTarget }) => {
                                     currentTarget.onerror = null;
-                                    currentTarget.src = "https://" + arrayWithDomain[0] + '/favicon.ico';
+                                    currentTarget.src = "https://" + arrayWithDomain[0] + '/favicon.ico' || ''
                                 }} />
-                            {Object.entries(groupBy(arrayWithDomain[1], "url")).map((arrayWithUrl, i) => {
-                                return <Box key={arrayWithUrl[0]}>
-                                    {arrayWithUrl[1].map(wordObj => {
+                            {arrayWithDomain[1].map((arrayWithUrl, i) => {
+                                return <Box key={arrayWithUrl.url}>
+                                    {arrayWithUrl.words.map(wordObj => {
                                         return <Box key={wordObj.id} id={wordObj.id}>
                                             {phraseMode ?
                                                 <Box
                                                     component='span'
-                                                    ref={showingWord?.id === wordObj.id ? targetWordRef : null}
+                                                    // ref={showingWord?.id === wordObj.id ? targetWordRef : null}
                                                     sx={{ color: showingWord?.id === wordObj.id ? 'primary.dark' : "" }}
                                                     className='small-word-span'
                                                     onClick={() => handleWordClick(wordObj.id)}>
-                                                    {wordObj.phrase ?
+
+                                                    {getAllPhrasesInThisContext(wordObj, arrayWithUrl.url) ?
                                                         <Highlighter colorStyle={{ color: "#e06666" }}
-                                                            highlightWord={wordObj.word} text={wordObj.phrase} />
+                                                            highlightWord={wordObj.word} text={getAllPhrasesInThisContext(wordObj, arrayWithUrl.url)[0]} />
                                                         : wordObj.word}
                                                 </Box>
                                                 :
                                                 <Box
                                                     component='span'
-                                                    ref={showingWord?.id === wordObj.id ? targetWordRef : null}
+                                                    // ref={showingWord?.id === wordObj.id ? targetWordRef : null}
                                                     sx={{ color: showingWord?.id === wordObj.id ? 'primary.dark' : "" }}
                                                     className='small-word-span'
                                                     onClick={() => handleWordClick(wordObj.id)}>
@@ -248,7 +272,7 @@ export const WordCollection = ({ myList, groupedList, handleSelectPhrase, phrase
                                         </Box>
                                     })
                                     }
-                                    {i === Object.entries(groupBy(arrayWithDomain[1], "url")).length - 1 ? null : <Divider />}
+                                    {i === arrayWithDomain[1].length - 1 ? null : <Divider />}
 
                                 </Box>
 
