@@ -99,6 +99,10 @@ export const renderRuby = (doc, wordList, displayList, setting) => {
                 // renderNode.style.color = 'inherit'
                 // renderNode.style.font = 'inherit'
                 renderNode.style.position = 'relative'
+                renderNode.style.display = 'inline'
+                renderNode.style.fontSize = 'inherit'
+                renderNode.style.fontStyle = 'inherit'
+                renderNode.style.fontWeight = 'inherit'
                 rubyElement.style.position = 'relative'
                 rubyElement.style.background = defaultRubyStyle.ruby.background
                 rubyElement.style.backgroundColor = defaultRubyStyle.ruby.backgroundColor

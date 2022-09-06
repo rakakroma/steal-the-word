@@ -2,18 +2,19 @@ import { Divider, Input, Link, List, ListItem, ListItemText, TextareaAutosize, T
 import { Box, fontSize } from "@mui/system"
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from "@mui/icons-material/Close";
-import { countDate } from "../utils/countDate"
-import { fullDate } from "../utils/Date"
+// import { countDate } from "../utils/countDate"
+// import { fullDate } from "../utils/Date"
 import { Highlighter } from "./Highlighter"
 import React, { useState } from "react"
 import { WideListWordBlock } from "./WideListWordBlock";
-import { getMatchedContextInfos } from "../utils/transformData";
-
+import { getLatestDateInContextInfos, getMatchedContextInfos } from "../utils/transformData";
+import relativeTime from 'dayjs/plugin/relativeTime'
+import dayjs from "dayjs";
 
 
 export const WideListPageBlock = ({ setShowNotification, url, hideAlias, handleDelete, handleEdit, handleSelectPhrase, wordsFromThisPage, editWord, setEditWord }) => {
 
-
+    dayjs.extend(relativeTime)
 
     return (
         <Box sx={{
@@ -37,8 +38,8 @@ export const WideListPageBlock = ({ setShowNotification, url, hideAlias, handleD
                     {getMatchedContextInfos(wordsFromThisPage[0], url)[0].pageTitle}
                 </Link>
                 &emsp;
-                <Tooltip title={fullDate(Number(wordsFromThisPage[0].date))} placement='top'>
-                    <Typography variant='subtitle1' component={'span'}> {countDate(Number(wordsFromThisPage[0].date))} </Typography>
+                <Tooltip title={dayjs(getLatestDateInContextInfos(wordsFromThisPage[0], url)).format('YYYY-MM-DD HH:MM ddd')} placement='top'>
+                    <Typography variant='subtitle1' component={'span'}> {dayjs(getLatestDateInContextInfos(wordsFromThisPage[0], url)).toNow()} </Typography>
                 </Tooltip>
             </Box>
             <List sx={{

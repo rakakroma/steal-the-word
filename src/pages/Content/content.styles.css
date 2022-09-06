@@ -37,6 +37,7 @@
 
 .hooli-textnode > ruby {
   background-color: palegreen;
+  position: relative;
 }
 
 .hover-div {

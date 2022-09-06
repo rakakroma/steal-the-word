@@ -253,7 +253,7 @@ const observer = new MutationObserver((mutations) => {
         renderRuby(document, myList, displayList, { wordListDisplay })
         timeout = setTimeout(() => {
             coldTime = false
-        }, 2000)
+        }, 500)
     }
 }
 )

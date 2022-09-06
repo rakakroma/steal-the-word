@@ -56,9 +56,6 @@ export const WordCollection = ({ allWords, myList, groupedList, handleSelectPhra
         }, [])
     }
 
-    // console.log(arrayWithUrls);
-    // console.log(pagesWords);
-    // console.log(arrayWithUrlsByDateType(dateArrangement))
 
     const handleDateArrangementChange = (e, newValue) => {
         const sliderValue =
