@@ -1,5 +1,6 @@
 import { Link, Switch, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+// import { getDomain } from '../Options/utils/transformData';
 import './Popup.css';
 
 const Popup = () => {
@@ -12,7 +13,7 @@ const Popup = () => {
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const thisDomain = tabs[0].url.split("//")[1].split('/')[0];
+      const thisDomain = new URL(tabs[0].url).hostname
       if (tabs[0].url.split("//")[0].includes('extension')) {
         setValidPlace(false)
       }

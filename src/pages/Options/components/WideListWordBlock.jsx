@@ -4,16 +4,16 @@ import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from "@mui/icons-material/Close";
 import { Highlighter } from "./Highlighter"
 import React, { useState } from "react"
-import { getAllPhrasesInThisContext, getMatchedContextInfos } from "../utils/transformData";
+// import { getAllPhrasesInThisContext, getMatchedContextInfos } from "../utils/transformData";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 
-export const WideListWordBlock = ({ url, setShowNotification, wordObj, index, editWord, setEditWord, hideAlias, handleDelete, handleEdit, handleSelectPhrase, wordsFromThisPage }) => {
+export const WideListWordBlock = ({ contextObj, url, setShowNotification, wordObj, index, editWord, setEditWord, hideAlias, handleDelete, handleEdit, handleSelectPhrase, contextsFromThisPage }) => {
 
     const [stem, setStem] = useState(wordObj.stem || '')
     const [word, setWord] = useState(wordObj.word)
-    const [definitionGroups, setDefinitionGroups] = useState(wordObj.definitionGroups)
-    const [contextInfos, setContextInfos] = useState(wordObj.contextInfos)
+    const [definitions, setDefinitions] = useState(wordObj.definitions)
+    const [contextInfo, setContextInfo] = useState(contextObj)
     const [chips, setChips] = useState([{ label: 'hello', id: '1' }, { label: 'cool', id: '2' }])
 
 
@@ -29,15 +29,15 @@ export const WideListWordBlock = ({ url, setShowNotification, wordObj, index, ed
     // }
 
     const handleEditAlias = (e, id, index) => {
-        const result = JSON.parse(JSON.stringify(definitionGroups))
+        const result = JSON.parse(JSON.stringify(definitions))
         result.find(definitionGroup => definitionGroup.definitionId === id).aliases[index] = e.target.value
-        setDefinitionGroups(result)
+        setDefinitions(result)
     }
 
     const handleEditContext = (e, date) => {
-        const result = JSON.parse(JSON.stringify(contextInfos))
+        const result = JSON.parse(JSON.stringify(contextInfo))
         result.find(definitionGroup => definitionGroup.date === date).context = e.target.value
-        setContextInfos(result)
+        setContextInfo(result)
     }
 
     if (editWord === wordObj.id) return <React.Fragment>
@@ -61,10 +61,10 @@ export const WideListWordBlock = ({ url, setShowNotification, wordObj, index, ed
                             onChange={(e) => setWord(e.target.value)}
 
                         />
-                        {definitionGroups.map((definitionGroup, groupsIndex) => {
-                            return <React.Fragment key={definitionGroup.definitionId}>
+                        {definitions.map((definition, groupsIndex) => {
+                            return <React.Fragment key={definition.definitionId}>
                                 <Box>
-                                    {definitionGroup.aliases.map((alias, aliasesIndex) => {
+                                    {definition.aliases.map((alias, aliasesIndex) => {
                                         return <React.Fragment key={aliasesIndex}>
                                             <TextField
                                                 sx={{ margin: '4px' }}
@@ -76,18 +76,18 @@ export const WideListWordBlock = ({ url, setShowNotification, wordObj, index, ed
 
                                                 variant="standard"
                                                 value={alias}
-                                                onChange={(e) => handleEditAlias(e, definitionGroup.definitionId, aliasesIndex)}
+                                                onChange={(e) => handleEditAlias(e, definition.definitionId, aliasesIndex)}
                                             />
-                                            {aliasesIndex === definitionGroup.aliases.length - 1 ? <AddCircleIcon /> : null}
+                                            {aliasesIndex === definition.aliases.length - 1 ? <AddCircleIcon /> : null}
                                         </React.Fragment>
                                     })
                                     }
                                 </Box>
-                                {groupsIndex === definitionGroups.length - 1 ? <AddCircleIcon /> : null}
+                                {groupsIndex === definitions.length - 1 ? <AddCircleIcon /> : null}
                             </React.Fragment>
                         })}
                     </Box>
-                    {contextInfos.map((contextInfo, i) => {
+                    {/* {contextInfo.map((contextInfo, i) => {
                         return <Box key={contextInfo.date + i}>
                             <TextareaAutosize
                                 style={{
@@ -103,7 +103,7 @@ export const WideListWordBlock = ({ url, setShowNotification, wordObj, index, ed
                                 onChange={(e) => handleEditContext(e, contextInfo.date)}
                             />
                         </Box>
-                    })}
+                    })} */}
 
                     {stem ?
                         <TextField
@@ -146,15 +146,15 @@ export const WideListWordBlock = ({ url, setShowNotification, wordObj, index, ed
                     setEditWord(null)
                     setWord(wordObj.word)
                     // setAlias(wordObj.alias)
-                    setDefinitionGroups(wordObj.definitionGroups)
+                    setDefinitions(wordObj.definitionGroups)
                     // setContext(wordObj.context)
-                    setContextInfos(wordObj.contextInfos)
+                    setContextInfo(wordObj.contextInfo)
                     setStem(wordObj.stem || '')
                     setShowNotification({ message: `${wordObj.word} 的修改已經取消` })
                 }}><CloseIcon /></button>
             </Box>
         </ListItem>
-        {index === wordsFromThisPage.length - 1 ? null : <Divider />}
+        {index === contextsFromThisPage.length - 1 ? null : <Divider />}
     </React.Fragment>
 
     return <React.Fragment >
@@ -169,11 +169,11 @@ export const WideListWordBlock = ({ url, setShowNotification, wordObj, index, ed
                 disableTypography
                 primary={<>
                     <Typography sx={{ display: 'inline-block' }} variant='h6'>
-                        {getAllPhrasesInThisContext(wordObj, url) ?
+                        {/* {getAllPhrasesInThisContext(wordObj, url) ?
                             <Highlighter highlightWord={wordObj.word} text={getAllPhrasesInThisContext(wordObj, url)[0]} /> :
                             wordObj.word
-                        }
-                        {/* {wordObj.phrase || wordObj.word} */}
+                        } */}
+                        {contextObj.phrase || contextObj.word}
                     </Typography>
                     &emsp;
                     <Typography sx={{
@@ -181,14 +181,14 @@ export const WideListWordBlock = ({ url, setShowNotification, wordObj, index, ed
                         border: theme => `1px solid ${theme.palette.primary.light}`
                     }}
                         color={hideAlias ? "background.light" : 'black'} variant='subtitle1'>
-                        {wordObj.definitionGroups.find(group => group.definitionId === getMatchedContextInfos(wordObj, url)[0].definitionRef).aliases[0]}
+                        {definitions.find(group => group.definitionId === contextInfo.definitionRef).aliases[0]}
                     </Typography>
                 </>
                 }
                 secondary={<Typography component={'div'} >
                     <Typography variant='body1' component={'span'}  >
                         {/* {wordObj.context} */}
-                        <Highlighter text={getMatchedContextInfos(wordObj, url)[0].context} highlightWord={getAllPhrasesInThisContext(wordObj, url) ? getAllPhrasesInThisContext(wordObj, url)[0] : wordObj.word} />
+                        <Highlighter text={contextInfo.context} highlightWord={contextInfo.phrase || contextInfo.word} />
                     </Typography>
                 </Typography>} />
         </Box>
@@ -210,7 +210,7 @@ export const WideListWordBlock = ({ url, setShowNotification, wordObj, index, ed
 
         </ListItem>
 
-        {index === wordsFromThisPage.length - 1 ? null : <Divider />}
+        {index === contextsFromThisPage.length - 1 ? null : <Divider />}
     </React.Fragment>
 
 }

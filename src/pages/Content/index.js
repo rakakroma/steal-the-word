@@ -17,12 +17,28 @@ import { renderRuby } from './utils/renderRuby';
 import { infoSection, showWordList, displayList } from './components/infoSection'
 import { floatingTool, buttonOfFloatingTool } from './components/floatingTool'
 import { getSelectedSentence } from './utils/getSelectedSentence';
-import { getParagraphFromSelection, getSentenceFromSelection } from 'get-selection-more';
+import { getSentenceFromSelection } from './utils/get-selection-more'
+import './components/HolliText';
 
 
 //第二個重要功能：已上色的ruby要能夠很快的儲存新例句／片語
 
 console.log('Content script works!');
+
+
+const testing = document.querySelector('div.k1zIA')
+if (testing) {
+    const renderNode = document.createElement('hooli-text')
+    renderNode.alias = 'hahaha'
+    renderNode.textContent = '7777777'
+    const textNode = document.createTextNode('haha')
+    testing.appendChild(textNode)
+    const parent = textNode.parentNode
+    parent.removeChild(textNode)
+    parent.append(renderNode)
+    // textNode.replaceWith(renderNode)
+    // testing.replaceWith(renderNode)
+}
 
 // let displayWords = [];
 
@@ -180,36 +196,101 @@ const init = () => {
     createForm.addEventListener('submit', (e) => {
         e.preventDefault()
         // console.log(e.target)
+        // const newWord = {
+        //     word: vocabularyInput.value.trim(),
+        //     alias: pronounceInput.value.trim(),
+        //     meaning: meaningInput.value.trim(),
+        //     context: contextDiv.textContent.trim(),
+        //     date: Date.now(),
+        //     id: nanoid(),
+        //     url: window.location.hash ?
+        //         window.location.href.slice(0, window.location.href.lastIndexOf(window.location.hash)) :
+        //         window.location.href,
+        //     lang: document.documentElement.lang,
+        //     pageTitle: document.title,
+        // }
 
-        const newWord = {
-            word: vocabularyInput.value.trim(),
-            alias: pronounceInput.value.trim(),
-            meaning: meaningInput.value.trim(),
-            context: contextDiv.textContent.trim(),
-            date: Date.now().toString(),
+        const theNewWord = {
             id: nanoid(),
-            url: window.location.href,
+            word: vocabularyInput.value.trim(),
+            associationWOrdIds: [],
+            definitionCount: 1,
+            definitions: [{
+                aliases: [pronounceInput.value.trim()],
+                definitionId: '0',
+                note: '',
+                pronunciation: '',
+                tags: []
+            }],
+            lang: [],
+            matchRule: '',
+            pronunciation: '',
+            stem: '',
+            variants: []
+        }
+
+        const theNewContext = {
+            // context: theWordObj.context,
+            context: contextDiv.textContent.trim(),
+            // date: theWordObj.date,
+            date: Date.now(),
+            definitionRef: '0',
+            note: '',
+            // pageTitle: theWordObj.pageTitle,
             pageTitle: document.title,
-            domain: window.location.host
+            phrase: '',
+            // url: theWordObj.url,
+            url: window.location.hash ?
+                window.location.href.slice(0, window.location.href.lastIndexOf(window.location.hash)) :
+                window.location.href,
+            // word: theWordObj.word,
+            word: theNewWord.word,
+            wordId: theNewWord.id
+            // wordId: theWordObj.id
+
         }
-        console.log(newWord);
+        // console.log(newWord);
 
-        if (myList.find(wordObj => wordObj.word === newWord.word)) {
-            alert('')
+        if (myList.find(wordObj => wordObj.word === theNewWord.word)) {
+            alert('stop!')
+            return
+        }
+        if (!theNewContext.context) {
+            alert('stop')
+            return
         }
 
-        myList.push(newWord);
+        chrome.runtime.sendMessage({
+            newWord: theNewWord,
+            newContext: theNewContext
+        }, (response) => {
 
-        chrome.storage.local.set({ "myWordList": myList }, function () {
-            // console.log(' myList);
+            if (response.message) {
+                // if (response.message === 'success') {
+                //     myList.push(newWord);
+                // }
+                // if (response.message === 'failure') {
+                //     alert('failure')
+                //     return
+                // }
+                console.log(response);
+                myList.push(theNewWord);
+                renderRuby(document, myList, displayList, { wordListDisplay })
+
+            }
         });
+
+
+
+        // chrome.storage.local.set({ "myWordList": myList }, function () {
+        //     // console.log(' myList);
+        // });
 
         vocabularyInput.value = ''
         pronounceInput.value = ''
         meaningInput.value = ''
         contextDiv.textContent = ""
 
-        renderRuby(document, myList, displayList, { wordListDisplay })
 
 
         setTimeout(() => {
@@ -258,21 +339,27 @@ const observer = new MutationObserver((mutations) => {
 }
 )
 
+
+
+
 let myList = [];
 let whiteList = []
 let wordListDisplay = false
 let connect = false
-
+let listFromDB = [];
 
 const startFunction = () => {
-    chrome.storage.local.get(["myWordList", "whiteDomainList", 'onOff', 'wordListDisplay'], function (obj) {
-        // turnOn = obj.onOff || true
-        console.log(obj.onOff);
-        if (obj.onOff === false) { return }
-        else {
-            init()
-            if (obj.myWordList && obj.myWordList.length > 0) {
-                myList = obj.myWordList
+
+    chrome.storage.local.get([
+        // "myWordList",
+        "whiteDomainList", 'onOff', 'wordListDisplay'], function (obj) {
+            // turnOn = obj.onOff || true
+            console.log(obj.onOff);
+            if (obj.onOff === false) { return }
+            else {
+                init()
+                // if (obj.myWordList && obj.myWordList.length > 0) {
+                //     myList = obj.myWordList
                 if (obj.wordListDisplay === true) {
                     wordListDisplay = true
                     // window.addEventListener('load', () => {
@@ -281,14 +368,27 @@ const startFunction = () => {
                     }, 500)
                     // })
                 }
-                renderRuby(document, myList, displayList, { wordListDisplay })
+                // renderRuby(document, myList, displayList, { wordListDisplay })
+                chrome.runtime.sendMessage({ message: 'give me word list' }, (response) => {
+                    console.log(response)
+                    if (response.wordList.length > 0) {
+                        listFromDB = response.wordList
+                        listFromDB = listFromDB.sort((a, b) => b.word.length - a.word.length)
+                        // console.log(listFromDB)
+                        myList = listFromDB
+                        renderRuby(document, myList, displayList, { wordListDisplay })
+                        // console.log(myList)
+                    } else {
+                        console.log('nothing');
+                    }
+                });
                 whiteList = obj.whiteDomainList || []
-                if (Array.isArray(whiteList) && whiteList.includes(window.location.host)) {
-                    observer.observe(body, { childList: true, subtree: true, characterData: true })
-                }
+                // if (Array.isArray(whiteList) && whiteList.includes(window.location.host)) {
+                observer.observe(body, { childList: true, subtree: true, characterData: true })
+                // }
+                // }
             }
-        }
-    })
+        })
 }
 
 startFunction()

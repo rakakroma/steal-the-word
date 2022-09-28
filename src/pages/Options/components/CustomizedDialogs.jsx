@@ -1,16 +1,154 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Typography, FormControl, FormControlLabel, FormLabel, FormGroup, FormHelperText, Checkbox, Box, Tab, Tabs, Input, Link, Divider, Switch, InputLabel, Select, MenuItem } from '@mui/material';
+import LinkIcon from '@mui/icons-material/Link';
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Typography, FormControl, FormControlLabel, FormLabel, FormGroup, FormHelperText, Checkbox, Box, Tab, Tabs, Input, Link, Divider, Switch, InputLabel, Select, MenuItem, Autocomplete, Chip, TextField, Modal, Icon } from '@mui/material';
 import { TabsContext } from '@mui/base';
 import ImportExportIcon from '@mui/icons-material/ImportExport';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { TextFormatRounded } from '@mui/icons-material';
 import { display } from '@mui/system';
 import { defaultRubyStyle } from './defaultRuby.style'
+import { db } from '../../Background/database';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { getDataInTableFromIndexedDB } from '../utils/getDataFromDB';
+// import { getDomain } from '../utils/transformData';
+import { formatBytes } from '../utils/formatBytes';
+import RemoveCircleOutlineRoundedIcon from '@mui/icons-material/RemoveCircleOutlineRounded';
 
+const ChildModal = ({ params }) => {
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    pt: 2,
+    px: 4,
+    pb: 3,
+  };
+  const [open, setOpen] = useState(false);
+  const [uploadedImg, setUploadedImg] = useState(null)
+  const [uploadedImgSize, setUploadedImgSize] = useState(null)
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+    setUploadedImg(null)
+  };
+
+  const logFile = (event) => {
+    let str = event.target.result;
+    // let json = JSON.parse(str);
+    // console.log('string', str);
+    // console.log('json', json);
+    // db.wordList.bulkAdd(json)
+    // setMyList(json)
+    // chrome.storage.local.set({ "myWordList": json });
+  }
+
+  const handleImageUpload = (e) => {
+    // console.log('ha')
+    // // e.preventDefault()
+    // // if (!file.value.length) return;
+    // let reader = new FileReader()
+    // let file = e.target.files[0]
+    // if (!e.target.files[0]) return
+    // // reader.onload = e.target.result;
+    // // reader.readAsText(file.files[0]);
+    // reader.onloadend = () => {
+    //   reader.readAsDataURL(file)
+    // }
+
+    if (e.target.files && e.target.files.length > 0) {
+      const uploadedFile = e.target.files[0]
+      setUploadedImg(URL.createObjectURL(uploadedFile));
+      setUploadedImgSize(uploadedFile.size)
+    }
+  }
+  return (
+    <React.Fragment>
+      <img
+        onClick={handleOpen}
+        width='20px'
+        height='20px'
+        loading="lazy"
+        src={params.value}
+      />
+      {/* <Button onClick={handleOpen}>Open Child Modal</Button> */}
+      <Modal
+        hideBackdrop
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="child-modal-title"
+        aria-describedby="child-modal-description"
+      >
+        <Box sx={{ ...style, width: 200 }}>
+          <Typography variant='h6' id="child-modal-title">原圖</Typography>
+          <Box sx={{
+            width: '64px',
+            height: '64px'
+          }}>
+            {params.value ? <img
+              width='64px'
+              height='64px'
+              src={params.value}
+              alt='無法顯示'
+            /> : '無'}
+          </Box>
+          <Typography variant='h6' id="child-modal-title">上傳圖<Typography variant='subtitle2' component="span">{uploadedImgSize ? formatBytes(uploadedImgSize) : ''}</Typography> </Typography>
+          <Box sx={{
+            width: '64px',
+            height: '64px',
+            position: 'relative'
+          }}>
+            {
+              uploadedImg ? <> <img
+                width='64px'
+                height='64px'
+                src={uploadedImg}
+                alt='尚未上傳'
+              />
+                <IconButton
+                  aria-label="delete this pic"
+                  onClick={() => {
+                    setUploadedImg(null)
+                    setUploadedImgSize(null)
+                  }}
+                  sx={{
+                    position: 'absolute',
+                    right: '-8px',
+                    top: '-8px',
+                    backgroundColor: (theme) => theme.palette.grey[500],
+                    padding: 0,
+                    color: 'white',
+                  }}
+                ><RemoveCircleOutlineRoundedIcon />
+                </IconButton>
+              </>
+                : '無'}
+          </Box>
+          {/* <p id="child-modal-description">
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+          </p> */}
+          {uploadedImg ? "" : <Input name='img-upload' type='file'
+            inputProps={{ accept: "image/*" }}
+            onChange={(e) => handleImageUpload(e)} />}
+          <Button variant='outlined' onClick={handleClose}>取消</Button>
+          <Button variant='contained' onClick={handleClose}>確認</Button>
+
+        </Box>
+      </Modal>
+    </React.Fragment>
+  );
+}
 
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -51,8 +189,9 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-export default function CustomizedDialogs({ handleExport, handleImport }) {
-  const [open, setOpen] = React.useState(false);
+export default function CustomizedDialogs({ wordList, domainAndLinkList, handleExport, handleImport, contextList, setMyList }) {
+  const [open, setOpen] = useState(false);
+  // const [domainAndLinkListFromLS, setDomainAndLinkListFromLS] = useState([])
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -61,7 +200,7 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
     setOpen(false);
   };
 
-  const [setting, setSetting] = React.useState({
+  const [setting, setSetting] = useState({
     buttonAfterSelection: true,
     contextMenuButton: true,
     showButtonUsingHotKey: false,
@@ -73,7 +212,7 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
   });
 
 
-  const [customRubyStyle, setCustomRubyStyle] = React.useState(defaultRubyStyle)
+  const [customRubyStyle, setCustomRubyStyle] = useState(defaultRubyStyle)
 
 
   const handleChange = (event) => {
@@ -120,12 +259,169 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
     hakkaDapu,
     hakkaRaoping } = setting;
 
-  const [currentTab, setCurrentTab] = React.useState("2");
+  const [currentTab, setCurrentTab] = useState("2");
   const handleChangeTab = (e, newTab) => {
     setCurrentTab(newTab)
   }
 
 
+  // const handleSaveLocalStorageWordsToIndexedDB = () => {
+  //   const listInDbFormat = contextList.sort((a, b) => +a.date - +b.date)
+  //   db.wordList.bulkAdd(listInDbFormat)
+  //   console.log('done save');
+  // }
+
+
+
+
+
+  const allDomains = contextList.reduce((acc, curr) => {
+    const currentDomain = new URL(curr.url).hostname
+    if (!acc.includes(new URL(curr.url).hostname)) {
+      acc.push(currentDomain)
+    }
+    return acc
+  }, [])
+
+
+
+  const getFaviconFromDomain = async (domain) => {
+    if (domain[domain.length - 1] === ':') return null
+
+    const domainFaviconUrl = (domain) => {
+      return `https://${domain}/favicon.ico`
+    }
+    const googleFavicon = (domain) => {
+      return `https://s2.googleusercontent.com/s2/favicons?domain=${domain}`
+    }
+
+    let res;
+    let blob;
+    try {
+      res = await fetch(domainFaviconUrl(domain))
+      blob = await res.blob()
+      if (!res.ok || res.status === 404 || !blob.type.includes('image')) {
+        res = await fetch(googleFavicon(domain))
+        blob = await res.blob()
+        if (!res.ok || res.status === 404 || !blob.type.includes('image')) {
+          res = ''
+          blob = ''
+        }
+      }
+
+    } catch (err) {
+      console.log('1', err)
+    }
+    // if (!res) {
+    //   blob = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAhZJREFUaEPt2M/rTFEYx/HXV34lJSs2/gBC7NlY8RcoVgqxsBClpFB+pJBsSFgh/4OF2LMjhZWsLZTfoafu1HTdmXvu3JkzfXXOarr3PD/ez+c55545Cxb5WFjk+SsA81awKFAU6FmB0kI9C9jbPFWBCziBlb0jpjn4hms40zY9BWAHnjOXb8YuPB0H0QawFC+wta0SM3r/Gtvwc5T/NoBom6uV8WdsxMcZJTtwux5vsKZ6EDlcnwSgk6MpQyUXbpwCD7GvSqxVyikD1Fv3EfY3xRgFUF+4rYtpygDhbieeDW0ejTk0ASzDS2yukvqAO9iEqEyO8Quh+mFsqAK+wvb6gm4CCKke5MhyghiHcHfYrglgLx5P4DyHyUHcawOI9wERcg3GqaHfV2ac6ahY0VLRGb9TAOo5/hl60Pbt6MvXKVZqMp2c9iToFKsA9Kx2k3kWBdbhCbYkALzHbrzDpepYvrxmNzwnC8AB3E9IfjDlNC4jDoSrR9gNDm1ZAI7gVgeA8ziHiziJugJvsQehRHaA2zjaABMJn62eDwBSmAtAys4w3EJFgVrFSguVFqoqUHahlLuoSQ9zZRca80Uru9B/vwt9wgqsSjnYVHPitvlr4vy1Xf6+pi7iH4j7opwjLnTrp9Z/4qcC3MAxLMlEEDcPN3G8LV4qQPiJlonWyTG+40tKoC4AKf6yzykA2UteC1gUmLcCfwGZvpsxpvvc8AAAAABJRU5ErkJggg=='
+    // }
+
+    console.log(blob)
+
+
+    return blob
+
+  }
+
+
+
+  const handleDomainsToIndexedDB = async () => {
+
+    const arraysToAdd = await Promise.all(allDomains.map(async (domain) => {
+      return {
+        url: domain,
+        dynamicRendering: 'O',
+        showTabWords: null,
+        icon: await getFaviconFromDomain(domain),
+        tags: null,
+      }
+    }))
+    // db.domainAndLink.bulkAdd(arraysToAdd)
+    // console.log(arraysToAdd);
+    return arraysToAdd
+  }
+
+
+
+  const domainAndLinkCols = [
+    {
+      field: 'url', headerName: 'url', width: 200, renderCell: (params) => <a
+        target="_blank"
+        rel='noreferrer'
+        href={'https://' + params.value}
+      >{params.value}</a>
+    },
+    { field: 'dynamicRendering', headerName: '動態更新', width: 50, type: 'boolean', editable: true },
+    {
+
+      field: 'imgUri', headerName: '圖示', width: 50,
+      renderCell: (params) => <ChildModal
+        params={params}
+      />
+      ,
+      getApplyQuickFilterFn: undefined
+    },
+    {
+      field: 'tags',
+      headerName: 'tags',
+      width: 1000,
+      // flex: 0.2,
+      // minWidth: 150,
+      renderCell: (params) => <Autocomplete
+        multiple
+        // id="tags-filled"
+        options={['a', 'b', 'c']}
+        defaultValue={['a']}
+        freeSolo
+        renderTags={(value, getTagProps) =>
+          value.map((option, index) => (
+            <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+          ))
+        }
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="filled"
+            // label="ok"
+            placeholder="tags"
+          />
+        )}
+      />
+    }
+  ];
+
+
+  const deleteAllWordsInDB = () => {
+    if (window.confirm(`確定刪除共${contextList.length}個詞彙？`)) {
+      db.wordList.clear()
+      // setMyList(null)
+    }
+    // db.contextList.clear()
+
+  }
+
+  const handleSaveImagesToIndexedDB = async () => {
+    console.log('start')
+    // const k = async () => {console.log('hi', await domainWithIcon(allDomains))}
+    // let result = await domainWithIcon(allDomains)
+    let result = await handleDomainsToIndexedDB()
+    console.log(result)
+    console.log('end')
+    db.domainAndLink.bulkAdd(result)
+    console.log('added')
+  }
+
+  const saveCurrentWordsListToDB = () => {
+
+    // const editedList = wordList.map(wordObj => {
+    //   const findWord = oldData.find(oldWordObj => oldWordObj.id === wordObj.id)
+    //   wordObj.definitions[0].aliases = [findWord.alias]
+    //   return wordObj
+    // })
+    // console.log(editedList)
+    // db.wordList.bulkAdd(editedList)
+    // console.log('added')
+  }
 
 
   return (
@@ -133,6 +429,9 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
       <Button sx={{ color: 'whitesmoke', borderColor: 'whitesmoke' }} variant="outlined" onClick={handleClickOpen}>
         <SettingsIcon />    </Button>
       <BootstrapDialog
+
+        fullWidth
+        maxWidth='md'
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
@@ -152,6 +451,8 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
                   <Tab label="設定" icon={<SettingsIcon />} iconPosition='end' value='1' />
                   <Tab label="樣式" icon={<TextFormatRounded />} iconPosition='end' value='2' />
                   <Tab label="匯入／匯出" icon={<ImportExportIcon />} iconPosition='end' value='3' />
+                  <Tab label="網域／包含網址片段設定" icon={<LinkIcon />} iconPosition='end' value='4' />
+
                 </TabList>
               </Box>
               <TabPanel value="1">
@@ -390,8 +691,8 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
                   </FormControl>
                 </form> */}
 
-                <Link href={handleExport().link} download={handleExport().fileName}>下載單字清單</Link>
-
+                <Link href={handleExport(contextList).link} download={handleExport(contextList).fileName}>下載單字清單</Link>
+                <button onClick={deleteAllWordsInDB}>刪除所有words</button>
                 <form id='upload' onSubmit={handleImport}>
                   <label htmlFor="file">上傳資料（json）</label>
                   <input type='file' id='file' accept='.json' />
@@ -404,7 +705,45 @@ export default function CustomizedDialogs({ handleExport, handleImport }) {
                 download={handleExport('download')}
                 >下載單字清單</a> */}
 
+                {/* <button onClick={handleSaveImagesToIndexedDB}>把圖存到IndexedDB</button> */}
+                <button onClick={saveCurrentWordsListToDB}>把新words存到IndexedDB</button>
+
+                {/* <button onClick={handleSaveLocalStorageWordsToIndexedDB}>把LocalStorage的單字存到IndexedDB</button> */}
+                {/* <button onClick={handleDomainsToIndexedDB}>把加好的網域存到IndexedDB</button> */}
+                {/* <Link href={handleExport(domainWithIcon).link}
+                  // download={handleExport(domainWithIcon).fileName}
+                  download={'test123'}
+
+                >下載網域和圖</Link> */}
+
+
+
               </TabPanel>
+
+              <TabPanel value="4">
+                {/* <button onClick={getDomainAndLinkListFromIndexedDB}>顯示indexedDB裡的</button> */}
+                <Typography>hihi</Typography>
+                <Link href={handleExport(domainAndLinkList).link} download={'domainAndLinkList HolliRuby'}>下載domainAndLinkList</Link>
+
+                <div style={{ height: 500, width: '100%' }}>
+                  <DataGrid
+                    experimentalFeatures={{ newEditingApi: true }}
+                    components={{ Toolbar: GridToolbar }}
+                    componentsProps={{
+                      toolbar: {
+                        showQuickFilter: true,
+                        quickFilterProps: { debounceMs: 500 },
+                      },
+                    }}
+                    rows={domainAndLinkList.map(domainObj => {
+                      domainObj.imgUri = domainObj.icon ? URL.createObjectURL(domainObj.icon) : ''
+                      return domainObj
+                    })}
+                    columns={domainAndLinkCols} />
+                </div>
+
+              </TabPanel>
+
 
             </TabContext>
           </Box>

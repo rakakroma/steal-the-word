@@ -1,23 +1,41 @@
 import { showWordList } from '../components/infoSection'
+import '../components/HolliText';
+import { getSentenceFromSelection } from './get-selection-more';
+// import { getDomain } from '../../Options/utils/transformData';
 
-const defaultRubyStyle = {
-    ruby: {
-        // backgroundColor: '#dbdbdb',
-        rubyPosition: "",
-        // textDecoration: 'underline #62b856',
-        // color: '#000000',
-        // 'fontSize': '1.5rem',
-        background: "linear-gradient(transparent 60%, #5bffba 50%)"
-        // border: '',
-    },
-    rt: {
-        display: "none",
-        color: '#1c1a1a',
-        textDecoration: '',
-        backgroundColor: '#f0dedd',
-        // fontFamily: "Arial Black"
-    }
-}
+// const defaultRubyStyle = {
+//     ruby: {
+//         // backgroundColor: '#dbdbdb',
+//         rubyPosition: "",
+//         // textDecoration: 'underline #62b856',
+//         // color: '#000000',
+//         // 'fontSize': '1.5rem',
+//         background: "linear-gradient(transparent 60%, #5bffba 50%)"
+//         // border: '',
+//     },
+//     rt: {
+//         display: "none",
+//         color: '#1c1a1a',
+//         textDecoration: '',
+//         backgroundColor: '#f0dedd',
+//         // fontFamily: "Arial Black"
+//     }
+// }
+
+//IntersectionObserver オブジェクト（オブザーバー）を生成  
+const observerForIntersection = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+
+        if (entry.isIntersecting) {
+            //監視対象の要素（entry.target）の textContent を使ってメッセージを出力
+            console.log(entry.target.textContent + 'が見えています');
+        }
+    });
+});
+
+//要素を監視
+//   document.querySelectorAll('hooli-text').forEach(node=>{observer.observe(node)}
+//   )
 
 
 
@@ -68,66 +86,19 @@ export const renderRuby = (doc, wordList, displayList, setting) => {
     while (textNode = nodeIterator.nextNode()) {
 
         for (let wordObj of wordList) {
-            // if (textNode.textContent.split(" ").length > 4) {
-            //     if (textNode.textContent.split(" ").includes(wordObj.word)) {
-            //         const renderNode = doc.createElement('span');
-            //         renderNode.className = 'hooli-textnode'
-            //         renderNode.innerHTML = textNode.textContent.replaceAll(wordObj.word, `<ruby>${wordObj.word}<rt>${wordObj.alias}</rt></ruby>`)
-            //         textNode.replaceWith(renderNode)
-            //         console.log('有2')
-            //     } break;
-            // }
+
             if (textNode.textContent.includes(wordObj.stem || wordObj.word)) {
-                const renderNode = document.createElement('span');
-                renderNode.className = 'hooli-span-node';
 
-                // const shadowNode = renderNode.attachShadow({ mode: 'open' })
-                const rubyElement = document.createElement('ruby')
-                rubyElement.className = 'holli-ruby-element'
-                rubyElement.setAttribute('data-alias', wordObj.alias)
-                const rtElement = document.createElement('rt')
-                const hoverDiv = document.createElement('div')
-                hoverDiv.className = 'hover-div'
+                const createTheWordNode = (wordObj) => {
+                    const word = wordObj.stem || wordObj.word
+                    const alias = wordObj.pronounce || wordObj.definitions[0].aliases[0]
+                    const renderNode = document.createElement('hooli-text')
+                    renderNode.alias = alias
+                    renderNode.textContent = word
+                    return renderNode
+                }
 
 
-                rtElement.textContent = wordObj.alias
-                rubyElement.textContent = wordObj.stem || wordObj.word
-                rubyElement.appendChild(rtElement)
-                renderNode.appendChild(rubyElement)
-
-                // renderNode.style.all = 'initial'
-                // renderNode.style.color = 'inherit'
-                // renderNode.style.font = 'inherit'
-                renderNode.style.position = 'relative'
-                renderNode.style.display = 'inline'
-                renderNode.style.fontSize = 'inherit'
-                renderNode.style.fontStyle = 'inherit'
-                renderNode.style.fontWeight = 'inherit'
-                rubyElement.style.position = 'relative'
-                rubyElement.style.background = defaultRubyStyle.ruby.background
-                rubyElement.style.backgroundColor = defaultRubyStyle.ruby.backgroundColor
-                rubyElement.style.color = defaultRubyStyle.ruby.color
-                rubyElement.style.border = defaultRubyStyle.ruby.border
-                rubyElement.style.textDecoration = defaultRubyStyle.ruby.textDecoration
-                rubyElement.style.rubyPosition = defaultRubyStyle.ruby.rubyPosition
-
-                rtElement.style.textDecoration = defaultRubyStyle.rt.textDecoration
-                rtElement.style.backgroundColor = defaultRubyStyle.rt.backgroundColor
-                rtElement.style.color = defaultRubyStyle.rt.color
-                rtElement.style.display = defaultRubyStyle.rt.display
-                rtElement.style.fontFamily = defaultRubyStyle.rt.fontFamily
-
-                // hoverDiv.style={
-                //     zIndex:99999999,
-                //     position:"absolute",
-                //     top:"15px",
-                //     width:"auto",
-                //     height:'auto',
-                //     display: "inline-block",
-                //     border: "1px solid black",
-                // }
-
-                console.log(textNode.textContent)
                 const sentenceWithoutWord = textNode.textContent.split(wordObj.stem || wordObj.word)
                 const fragment = new DocumentFragment()
 
@@ -135,38 +106,83 @@ export const renderRuby = (doc, wordList, displayList, setting) => {
                     if (i === sentenceWithoutWord.length - 1) {
                         fragment.append(sentence)
                     } else {
-                        fragment.append(sentence, renderNode.cloneNode(true))
-                        // console.log(fragment)
+                        // fragment.append(sentence, renderNode.cloneNode(true))
+                        fragment.append(sentence, createTheWordNode(wordObj))
+
                     }
                 })
 
 
-                const allWordSpan = fragment.querySelectorAll('.hooli-span-node')
+                const allHooliText = fragment.querySelectorAll('hooli-text')
 
-                // wordSpan.addEventListener('mouseover',()=>{
-                //     hoverDiv.textContent=wordObj.alias;
-                //     wordSpan.appendChild(hoverDiv)
-                //     console.log(wordObj.alias)
-                //     wordSpan.addEventListener('mouseout',()=>{
-                //         if(wordSpan.querySelector('.hover-div')){
-                //             wordSpan.removeChild(hoverDiv)
-                //         }                        
-                //     })
-                // })
+                allHooliText.forEach(hooliText => {
 
-                allWordSpan.forEach(wordSpan => {
-                    wordSpan.addEventListener('click', () => {
-                        hoverDiv.textContent = wordObj.context;
-                        wordSpan.appendChild(hoverDiv)
-                        document.addEventListener('click', (e) => {
-                            const isClickInside = wordSpan.contains(e.target)
-                            if (!isClickInside && wordSpan.querySelector('.hover-div')) {
-                                wordSpan.removeChild(hoverDiv)
-                            }
+
+                    hooliText.addEventListener('click', () => {
+                        const wordBlock = document.createElement('hooli-wordinfo-block')
+                        // let context = '...'
+                        let contextHere = ''
+                        chrome.runtime.sendMessage({ wordId: wordObj.id }, (response) => {
+                            wordBlock.contexts = response.contexts
+                            // console.log(response.contexts)
+                            const allDomains = response.contexts.map(contextObj => {
+                                return new URL(contextObj.url).hostname
+                            })
+                            chrome.runtime.sendMessage({ domains: allDomains }, (response) => {
+                                wordBlock.imgSrcs = response.domainData
+                            })
                         })
+
+                        wordBlock.alias = wordObj.pronounce || wordObj.definitions[0].aliases[0];
+                        wordBlock.word = wordObj.word
+                        wordBlock.context = ''
+                        wordBlock.contextHere = contextHere
+
+                        const range = document.createRange()
+                        range.selectNode(hooliText)
+                        window.getSelection().removeAllRanges()
+                        window.getSelection().addRange(range)
+                        wordBlock.contextHere = getSentenceFromSelection(document.getSelection())
+                        window.getSelection().removeAllRanges()
+
+                        if (['absolute', 'relative'].includes(window.getComputedStyle(document.body).position)) {
+                            //some bug in 'absolute'
+                            // wordBlock.style.bottom = `${window.innerHeight - hooliText.getBoundingClientRect().top + 4}px`
+                            wordBlock.style.bottom = `${parseFloat(window.getComputedStyle(document.body).height) -
+                                window.scrollY - hooliText.getBoundingClientRect().top + 20}px`
+                            wordBlock.style.left = `${hooliText.getBoundingClientRect().left + hooliText.offsetWidth / 2}px`
+                        } else {
+                            wordBlock.style.bottom = `${window.innerHeight - window.scrollY - hooliText.getBoundingClientRect().top + 2}px`
+                            wordBlock.style.left = `${window.scrollX + hooliText.getBoundingClientRect().left + hooliText.offsetWidth / 2}px`
+
+                        }
+                        // document.addEventListener('mousedown', e => {
+                        //     if (e.composedPath()[0].tagName === 'HOOLI-HIGHLIGHTER') {
+                        //         console.log(e.composedPath()[1].id)
+                        //         wordBlock.phraseSelectionTarget = e.composedPath()[1].id
+                        //     }
+                        //     // if (e.composedPath()[0] !== 'HOOLI-WORDINFO-BLOCK') return
+                        //     // document.addEventListener('selectionchange', () => {
+                        //     //     console.log(document.getSelection().toString())
+                        //     // })
+                        // })
+
+                        const handleClose = (e) => {
+                            if (e.composedPath().includes(wordBlock)) return
+                            document.body.removeChild(wordBlock)
+                            window.removeEventListener('mouseup', handleClose)
+                        }
+                        window.addEventListener('mouseup', handleClose)
+                        document.body.appendChild(wordBlock)
                     })
+
+                    observerForIntersection.observe(hooliText)
                 })
-                textNode.replaceWith(fragment);
+
+
+                const span = document.createElement('span')
+                textNode.replaceWith(span);
+                span.replaceWith(fragment)
 
 
 

@@ -45,6 +45,8 @@ searchHakkaButton.classList.add('hooliruby-create', 'hide-create')
 const vocabularyInputWrapper = document.createElement('div')
 vocabularyInputWrapper.id = 'hooli-vocab-input-wrapper'
 
+
+
 // const moedictTaiwaneseAPI = (word) => {
 //     return `https://www.moedict.tw/t/${word}.json`
 // }
