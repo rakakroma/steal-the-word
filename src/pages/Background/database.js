@@ -5,7 +5,7 @@ db.version(11).stores({
     // wordList: "id, word, alias, date, pageTitle, url",
     wordList: "&id, &word, stem, variants, *lang, *associationWordIds", //definitions, definitionCount, matchRule:'independent', 'noPrefix', 'noSuffix','jpVerb'
     //[[definitionId:, aliases:[], note:, tags:[]]]
-    domainAndLink: 'id++, url, dynamicRendering, showTabWords, tags, *lang',
+    domainAndLink: 'id++, &url, tags, *lang', //dynamicRendering, floatingWindow, activate
     contextList: "id++, word, date, pageTitle, url, wordId, definitionRef" //phrase, note
 });
 

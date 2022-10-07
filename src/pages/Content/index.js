@@ -14,7 +14,7 @@ import {
 } from './components/createForm'
 import { shadowAppTopStyle } from './shadowApp.style';
 import { renderRuby } from './utils/renderRuby';
-import { infoSection, showWordList, displayList } from './components/infoSection'
+import { infoSection, showWordList, wordInPageList } from './components/infoSection'
 import { floatingTool, buttonOfFloatingTool } from './components/floatingTool'
 import { getSelectedSentence } from './utils/getSelectedSentence';
 import { getSentenceFromSelection } from './utils/get-selection-more'
@@ -26,27 +26,14 @@ import './components/HolliText';
 console.log('Content script works!');
 
 
-const testing = document.querySelector('div.k1zIA')
-if (testing) {
-    const renderNode = document.createElement('hooli-text')
-    renderNode.alias = 'hahaha'
-    renderNode.textContent = '7777777'
-    const textNode = document.createTextNode('haha')
-    testing.appendChild(textNode)
-    const parent = textNode.parentNode
-    parent.removeChild(textNode)
-    parent.append(renderNode)
-    // textNode.replaceWith(renderNode)
-    // testing.replaceWith(renderNode)
-}
-
-// let displayWords = [];
-
 const app = document.createElement('div')
 const body = document.body
 const divInApp = document.createElement('div');
 divInApp.id = 'hooliruby-div-in-app'
 
+const currentURL = window.location.hash ?
+    window.location.href.slice(0, window.location.href.lastIndexOf(window.location.hash)) :
+    window.location.href
 
 const init = () => {
 
@@ -85,8 +72,8 @@ const init = () => {
             vocabularyInput.value = document.getSelection().toString()
             const selection = document.getSelection()
 
-            const clearRubyText = (displayList, sentence) => {
-                const displayingWordsArray = displayList.map(wordObj => {
+            const clearRubyText = (wordInPageList, sentence) => {
+                const displayingWordsArray = wordInPageList.map(wordObj => {
                     return { combined: wordObj.word + wordObj.alias, cleared: wordObj.word }
                 })
                 let result = sentence
@@ -95,7 +82,7 @@ const init = () => {
                 })
                 return result
             }
-            contextDiv.textContent = clearRubyText(displayList, getSentenceFromSelection(selection))
+            contextDiv.textContent = clearRubyText(wordInPageList, getSentenceFromSelection(selection))
 
             // contextDiv.textContent = getSelectedSentence(selection)
             // console.log([getSelectedSentence(selection),
@@ -104,7 +91,7 @@ const init = () => {
         }
         setTimeout(() => {
             if (document.querySelector('#hooliruby-floating-tool')) body.removeChild(floatingTool)
-        }, 1)
+        })
 
     })
 
@@ -195,20 +182,6 @@ const init = () => {
 
     createForm.addEventListener('submit', (e) => {
         e.preventDefault()
-        // console.log(e.target)
-        // const newWord = {
-        //     word: vocabularyInput.value.trim(),
-        //     alias: pronounceInput.value.trim(),
-        //     meaning: meaningInput.value.trim(),
-        //     context: contextDiv.textContent.trim(),
-        //     date: Date.now(),
-        //     id: nanoid(),
-        //     url: window.location.hash ?
-        //         window.location.href.slice(0, window.location.href.lastIndexOf(window.location.hash)) :
-        //         window.location.href,
-        //     lang: document.documentElement.lang,
-        //     pageTitle: document.title,
-        // }
 
         const theNewWord = {
             id: nanoid(),
@@ -230,26 +203,17 @@ const init = () => {
         }
 
         const theNewContext = {
-            // context: theWordObj.context,
             context: contextDiv.textContent.trim(),
-            // date: theWordObj.date,
             date: Date.now(),
             definitionRef: '0',
             note: '',
-            // pageTitle: theWordObj.pageTitle,
             pageTitle: document.title,
             phrase: '',
-            // url: theWordObj.url,
-            url: window.location.hash ?
-                window.location.href.slice(0, window.location.href.lastIndexOf(window.location.hash)) :
-                window.location.href,
-            // word: theWordObj.word,
+            url: currentURL,
             word: theNewWord.word,
             wordId: theNewWord.id
-            // wordId: theWordObj.id
 
         }
-        // console.log(newWord);
 
         if (myList.find(wordObj => wordObj.word === theNewWord.word)) {
             alert('stop!')
@@ -266,25 +230,13 @@ const init = () => {
         }, (response) => {
 
             if (response.message) {
-                // if (response.message === 'success') {
-                //     myList.push(newWord);
-                // }
-                // if (response.message === 'failure') {
-                //     alert('failure')
-                //     return
-                // }
                 console.log(response);
                 myList.push(theNewWord);
-                renderRuby(document, myList, displayList, { wordListDisplay })
+                renderRuby(document, myList, { floatingWindow })
 
             }
         });
 
-
-
-        // chrome.storage.local.set({ "myWordList": myList }, function () {
-        //     // console.log(' myList);
-        // });
 
         vocabularyInput.value = ''
         pronounceInput.value = ''
@@ -328,13 +280,25 @@ const init = () => {
 let coldTime = false
 let timeout = null
 const observer = new MutationObserver((mutations) => {
+    // if (coldTime) {
+    //     clearTimeout(timeout)
+    //     timeout = setTimeout(() => {
+    //         renderRuby(document, myList, { floatingWindow })
+    //         coldTime = false
+    //     }, 2000)
+    // }
     if (!coldTime) {
-        clearTimeout(timeout)
-        coldTime = true
-        renderRuby(document, myList, displayList, { wordListDisplay })
-        timeout = setTimeout(() => {
-            coldTime = false
-        }, 500)
+        if (mutations.length === 1 && mutations[0].type === 'childList') {
+            if (mutations[0].addedNodes.length === 0) return
+            if (mutations[0].addedNodes[0].tagName.includes('HOOLI')) return
+        }
+        console.log(mutations)
+        // clearTimeout(timeout)
+        // coldTime = true
+        setTimeout(() => { renderRuby(document, myList, { floatingWindow }) })
+        // timeout = setTimeout(() => {
+        //     coldTime = false
+        // }, 2000)
     }
 }
 )
@@ -344,50 +308,59 @@ const observer = new MutationObserver((mutations) => {
 
 let myList = [];
 let whiteList = []
-let wordListDisplay = false
+let floatingWindow = false
 let connect = false
-let listFromDB = [];
 
 const startFunction = () => {
 
     chrome.storage.local.get([
-        // "myWordList",
-        "whiteDomainList", 'onOff', 'wordListDisplay'], function (obj) {
-            // turnOn = obj.onOff || true
-            console.log(obj.onOff);
-            if (obj.onOff === false) { return }
-            else {
-                init()
-                // if (obj.myWordList && obj.myWordList.length > 0) {
-                //     myList = obj.myWordList
-                if (obj.wordListDisplay === true) {
-                    wordListDisplay = true
+        'activate', 'mouseTool', 'floatingWindow'], function (obj) {
+            console.log(obj)
+            if (obj.activate === false) {
+                // console.log('not working here')
+                chrome.runtime.sendMessage({ action: 'notWorking' })
+                return
+            }
+            chrome.runtime.sendMessage({ action: 'getStart', url: currentURL }, (res) => {
+                console.log(res)
+                if (res.activate === false) {
+                    chrome.runtime.sendMessage({ action: 'notWorking' })
+                    return
+                }
+                if (obj.floatingWindow) {
+                    floatingWindow = true
+                    // console.log("I'm here")
                     // window.addEventListener('load', () => {
-                    setTimeout(() => {
-                        showWordList()
-                    }, 500)
+                    // setTimeout(() => {
+                    showWordList()
+                    // })
                     // })
                 }
-                // renderRuby(document, myList, displayList, { wordListDisplay })
-                chrome.runtime.sendMessage({ message: 'give me word list' }, (response) => {
-                    console.log(response)
-                    if (response.wordList.length > 0) {
-                        listFromDB = response.wordList
-                        listFromDB = listFromDB.sort((a, b) => b.word.length - a.word.length)
-                        // console.log(listFromDB)
-                        myList = listFromDB
-                        renderRuby(document, myList, displayList, { wordListDisplay })
-                        // console.log(myList)
-                    } else {
-                        console.log('nothing');
+                if (res.wordList.length > 0) {
+                    myList = res.wordList
+                    let loadEvent = false
+                    const startAfterLoaded = ()=>{
+                        console.log('page loaded')
+                        loadEvent = true
+                        renderRuby(document, myList, { floatingWindow },true)
+                        observer.observe(body, { childList: true, subtree: true, characterData: true })
+                                                    window.removeEventListener('load', startAfterLoaded())
                     }
-                });
-                whiteList = obj.whiteDomainList || []
-                // if (Array.isArray(whiteList) && whiteList.includes(window.location.host)) {
-                observer.observe(body, { childList: true, subtree: true, characterData: true })
-                // }
-                // }
-            }
+                    window.addEventListener('load',startAfterLoaded())
+                    setTimeout(()=>{
+                        if(!loadEvent){
+                            renderRuby(document, myList, { floatingWindow },true)
+                            observer.observe(body, { childList: true, subtree: true, characterData: true })  
+                             
+                            window.removeEventListener('load', startAfterLoaded())
+                        }
+                    },2500)
+                } else {
+                    console.log('nothing');
+                }
+                init()
+
+            })
         })
 }
 
@@ -417,26 +390,26 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         })
         return true;
     } else if (message.showWordList === true) {
-        wordListDisplay = true
-        chrome.storage.local.set({ "wordListDisplay": true }, () => {
+        floatingWindow = true
+        chrome.storage.local.set({ "floatingWindow": true }, () => {
             if (body.querySelector('#hooriruby-info-div')) {
                 body.querySelector('#hooriruby-info-div').classList.remove('hide')
             }
-            renderRuby(document, myList, displayList, { wordListDisplay })
+            renderRuby(document, myList, { floatingWindow })
             showWordList()
             console.log('open')
             sendResponse({ content: "已顯示wordList" })
         })
         return true;
     } else if (message.showWordList === false) {
-        // wordListDisplay = false
-        chrome.storage.local.set({ 'wordListDisplay': false }, () => {
-            wordListDisplay = false
+        // floatingWindow = false
+        chrome.storage.local.set({ 'floatingWindow': false }, () => {
+            floatingWindow = false
             if (body.querySelector('#hooriruby-info-div')) {
                 // body.removeChild(infoSection)
                 body.querySelector('#hooriruby-info-div').classList.add('hide')
             }
-            renderRuby(document, myList, displayList, { wordListDisplay })
+            renderRuby(document, myList, { floatingWindow })
             console.log('close')
             sendResponse({ content: "已關閉wordList" })
         })

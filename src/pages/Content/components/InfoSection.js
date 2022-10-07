@@ -7,7 +7,11 @@ infoSection.id = 'hooriruby-info-div'
 const shadowInfoSection = infoSection.attachShadow({ mode: "open" })
 shadowInfoSection.innerHTML = `
 <style>
+:host{
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+  'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 
+}
 
 ol{
   padding:0;
@@ -44,6 +48,15 @@ span{
 .hooliruby-words-block:hover .hooliruby-pin-button{
   display:inline-block;
 }
+
+h3,h6{
+  display:inline-block;
+  margin-top:0;
+  margin-bottom:0;
+  margin-left:5px;
+
+}
+
 </style>
 `
 
@@ -52,15 +65,6 @@ const controlBar = document.createElement('div')
 controlBar.id = 'holli-control-bar'
 controlBar.draggable = true
 
-// function onDrag({movementX, movementY}){
-//     let getStyle = window.getComputedStyle(infoSection);
-//     let leftVal = parseInt(getStyle.left);
-//     let topVal = parseInt(getStyle.top);
-//     console.log(leftVal, topVal)
-//     infoSection.style.left = leftVal>0?`${leftVal + movementX}px`:"0px";
-//     infoSection.style.top = topVal>0?`${topVal + movementY}px`:"0px";
-//   }
-
 
 
 
@@ -68,10 +72,39 @@ shadowInfoSection.appendChild(controlBar)
 shadowInfoSection.appendChild(countList)
 
 export const displayList = []
+export const wordInPageList = []
+let showingMode
+
+const modeButton = document.createElement('button')
+modeButton.textContent = '😅'
+modeButton.addEventListener('click', () => {
+  if (showingMode === 'displaying') {
+    showingMode = 'inPage'
+    showWordList()
+    return
+  }
+  showingMode = 'displaying'
+  showWordList()
+
+})
+controlBar.appendChild(modeButton)
+
+const clearButton = document.createElement('button')
+clearButton.textContent = 'clear'
+clearButton.addEventListener('click', () => {
+  wordInPageList.length = 0
+  showWordList()
+}
+)
+controlBar.appendChild(clearButton)
+
 
 export const showWordList = () => {
+  let mode = showingMode || 'inPage'
+  console.log('showWordList')
+
   countList.textContent = ''
-  if (displayList.length > 0) {
+  if (wordInPageList.length > 0) {
     document.body.appendChild(infoSection)
     const topBar = shadowInfoSection.querySelector('#holli-control-bar')
 
@@ -90,7 +123,7 @@ export const showWordList = () => {
           //     console.log(event.type, event.target)
           //   },
           move(event) {
-            console.log(event)
+            // console.log(event)
             position.x += event.dx
             position.y += event.dy
 
@@ -105,7 +138,7 @@ export const showWordList = () => {
         edges: { bottom: true },
         listeners: {
           move: function (event) {
-            console.log(event.target.dataset, event.rect)
+            // console.log(event.target.dataset, event.rect)
             let { x, y } = event.target.dataset
             x = (parseFloat(x) || 0) + event.deltaRect.left
             y = (parseFloat(y) || 0) + event.deltaRect.top
@@ -121,22 +154,36 @@ export const showWordList = () => {
         }
       })
 
-
-    displayList.forEach(wordObj => {
-      const countListItem = document.createElement('li')
-      const pinButton = document.createElement('button')
-      const wordSpan = document.createElement('span')
-      const aliasSpan = document.createElement('span')
-
-      countListItem.className = 'hooliruby-words-block'
-      pinButton.className = 'hooliruby-pin-button'
-      pinButton.textContent = '📌'
-      wordSpan.textContent = `${wordObj.word} `
-      aliasSpan.textContent = wordObj.pronounce || wordObj.definitions[0].aliases[0]
-      countListItem.appendChild(pinButton)
-      countListItem.appendChild(wordSpan)
-      countListItem.appendChild(aliasSpan)
-      countList.appendChild(countListItem)
+    const displayingList = Array.from(new Set(displayList)).map(wordId => {
+      return wordInPageList.find(wordObj => wordObj.id === wordId)
     })
+
+    if (mode === 'displaying') {
+      displayingList.forEach(wordObj => {
+        const countListItem = document.createElement('li')
+        const wordH3 = document.createElement('h3')
+        const aliasH6 = document.createElement('h6')
+        countListItem.className = 'hooliruby-words-block'
+        wordH3.textContent = wordObj.word
+        aliasH6.textContent = wordObj.pronounce || wordObj.definitions[0].aliases[0]
+        countListItem.appendChild(wordH3)
+        countListItem.appendChild(aliasH6)
+        countList.appendChild(countListItem)
+      })
+    } else if (mode === 'inPage') {
+      wordInPageList.forEach(wordObj => {
+        const countListItem = document.createElement('li')
+        const wordH3 = document.createElement('h3')
+        const aliasH6 = document.createElement('h6')
+
+        countListItem.className = 'hooliruby-words-block'
+        wordH3.textContent = wordObj.word
+        aliasH6.textContent = wordObj.pronounce || wordObj.definitions[0].aliases[0]
+        countListItem.appendChild(wordH3)
+        countListItem.appendChild(aliasH6)
+        countList.appendChild(countListItem)
+      })
+    }
+
   }
 }

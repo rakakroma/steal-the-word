@@ -14,7 +14,7 @@ import PersonalVideoIcon from '@mui/icons-material/PersonalVideo';
 import { checkLocalLanguagePossible, checkStringLanguage } from './utils/languageDetection';
 import { WordAnimation } from './components/WordAnimation';
 import MultipleSelectCheckmarks from './components/MultiSelectionCheckmarks';
-import { dataTransform, getDomain } from './utils/transformData';
+// import { dataTransform, getDomain } from './utils/transformData';
 import { getDataInTableFromIndexedDB } from './utils/getDataFromDB'
 import { db } from '../Background/database';
 import LaptopChromebookIcon from '@mui/icons-material/LaptopChromebook';

@@ -30,5 +30,5 @@
 }()
 
     //custom youtube subtitle style
-    - webkit - text - stroke: 0.3px #000000
-font - weight: 900
+//     - webkit - text - stroke: 0.3px #000000
+// font - weight: 900

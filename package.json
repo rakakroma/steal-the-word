@@ -19,6 +19,7 @@
     "@mui/lab": "^5.0.0-alpha.92",
     "@mui/material": "^5.9.2",
     "@mui/x-data-grid": "^5.17.2",
+    "@spectrum-web-components/icons-workflow": "^0.9.0",
     "@webcomponents/custom-elements": "^1.5.0",
     "cldr-segmentation": "^2.2.0",
     "dayjs": "^1.11.5",

@@ -1,4 +1,3 @@
-import { gridColumnsTotalWidthSelector } from "@mui/x-data-grid";
 import { getDataInTableFromIndexedDB } from "../Options/utils/getDataFromDB";
 // import { getDomain } from "../Options/utils/transformData";
 import { db } from "./database";
@@ -16,9 +15,46 @@ console.log('This is the background page.');
 console.log('Put the background scripts here.');
 
 
+const getCurrentTab = async () => {
+    let queryOptions = { active: true, lastFocusedWindow: true };
+    // `tab` will either be a `tabs.Tab` instance or `undefined`.
+    let [tab] = await chrome.tabs.query(queryOptions);
+    return tab;
+}
+chrome.action.setBadgeBackgroundColor({ color: '#4f4f4f' })
+
 chrome.runtime.onMessage.addListener(
     (request, sender, sendResponse) => {
-        if (request.message === "hi") sendResponse({ message: "hi to you" });
+        console.log(request, sender.tab.id)
+        if (request.action === 'sendResponse') {
+            sendResponse({ message: 'ok I sent it' })
+        }
+        if (request.action === 'notWorking') {
+            chrome.action.setBadgeText({ text: 'STOP', tabId: sender.tab.id })
+        }
+        if (request.action === 'updateWordCount' && request.count) {
+            chrome.action.setBadgeText({ text: `${request.count}`, tabId: sender.tab.id })
+        }
+        if (request.action === 'getStart' && request.url) {
+            (async () => {
+                console.log('getstart')
+                const currentDomain = new URL(request.url).hostname
+                const sortedWordList = await getDataInTableFromIndexedDB('wordList').then(wordList => {
+                    return wordList.sort((a, b) => b.word.length - a.word.length)
+                })
+                const domainData = await db.domainAndLink.get({ url: currentDomain })
+                if (!domainData) {
+                    sendResponse({ wordList: sortedWordList })
+                    return
+                }
+                if (domainData.activate === false) {
+                    sendResponse({ activate: false })
+                    return
+                }
+
+                sendResponse({ wordList: sortedWordList, domainData })
+            })()
+        }
         if (request.domains) {
             const getDomainDataByUrls = async (domains) => {
                 const domainData = await Promise.all(domains.map(async (domain) => {
@@ -42,25 +78,13 @@ chrome.runtime.onMessage.addListener(
             }
             getContextByWordId(request.wordId)
         }
-        if (request.message === 'give me word list') {
-            const sendDBdata = async () => {
-                const allWordList = await getDataInTableFromIndexedDB('wordList')
-                sendResponse({ wordList: allWordList })
-            }
-            sendDBdata()
-        }
+
         // if (request.message === 'i give you') sendResponse({ message: 'ok i know' })
         if (request.newWord && request.newContext) {
             const theWordObj = { ...request.newWord }
             const theContextObj = { ...request.newContext }
             const currentDomain = new URL(theContextObj.url).hostname
 
-            const getCurrentTab = async () => {
-                let queryOptions = { active: true, lastFocusedWindow: true };
-                // `tab` will either be a `tabs.Tab` instance or `undefined`.
-                let [tab] = await chrome.tabs.query(queryOptions);
-                return tab;
-            }
 
             const saveDomainData = async () => {
                 const { favIconUrl } = await getCurrentTab()
@@ -101,12 +125,10 @@ chrome.runtime.onMessage.addListener(
                     return
                 }
 
-
                 db.wordList.add(theWordObj)
                 db.contextList.add(theContextObj)
                 // console.log(theWordObjToAdd)
                 // console.log(contextToAdd)
-
 
             }
             const sendSomeResponse = async () => {
@@ -121,4 +143,3 @@ chrome.runtime.onMessage.addListener(
     });
 
 
-// console.log("theList", theList)
