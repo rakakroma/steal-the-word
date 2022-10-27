@@ -29,6 +29,21 @@ chrome.runtime.onMessage.addListener(
         if (request.action === 'sendResponse') {
             sendResponse({ message: 'ok I sent it' })
         }
+        if(request.action === 'getFaviconThisSite'){
+            // const { favIconUrl } = await getCurrentTab()
+            // if (favIconUrl) {
+            //     let res;
+            //     let blob;
+            //     const domainInDB = await db.domainAndLink.get({ url: currentDomain }) //and the custom url
+            //         res = await fetch(favIconUrl)
+            //         blob = await res.blob()
+            // }
+            let iconUrl ;
+            getCurrentTab().then(tabInfo=> {
+                iconUrl = tabInfo.favIconUrl}).then(()=>{
+                    sendResponse({iconUrl})
+                })
+        }
         if (request.action === 'notWorking') {
             chrome.action.setBadgeText({ text: 'STOP', tabId: sender.tab.id })
         }

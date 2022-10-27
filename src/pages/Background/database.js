@@ -1,7 +1,7 @@
 import Dexie from "dexie";
 
 export const db = new Dexie("hooliRuby");
-db.version(11).stores({
+db.version(113).stores({
     // wordList: "id, word, alias, date, pageTitle, url",
     wordList: "&id, &word, stem, variants, *lang, *associationWordIds", //definitions, definitionCount, matchRule:'independent', 'noPrefix', 'noSuffix','jpVerb'
     //[[definitionId:, aliases:[], note:, tags:[]]]

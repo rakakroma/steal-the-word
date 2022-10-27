@@ -82,7 +82,7 @@ export const CurrentSiteToggleOptions = ({
     // setCurrentSiteActivateToggle
 }) => {
 
-    console.log(domainData)
+    // console.log(domainData)
 
     const [openCurrentSiteFloatingWindow, setOpenCurrentSiteFloatingWindow] = useState(false)
     const [openCurrentSiteMouseTool, setOpenCurrentSiteMouseTool] = useState(false)
@@ -105,40 +105,70 @@ export const CurrentSiteToggleOptions = ({
     const handleCurrentSiteOptionChange = async (option) => {
         switch (option) {
             case 'customSettingToggle':
-                db.transaction("rw", db.domainAndLink, async () => {
-                    if (!domainData) {
-                        const domainObj = {
-                            url: currentDomain,
-                            activate: true,
-                            floatingWindow: openFloatingWindow,
-                            mouseTool: openMouseTool,
-                            icon: null,
-                            tags: null,
-                            lang: null
-                        }
-                        await db.domainAndLink.add(domainObj)
+
+                if (!domainData) {
+                    const domainObj = {
+                        url: currentDomain,
+                        activate: true,
+                        floatingWindow: openFloatingWindow,
+                        mouseTool: openMouseTool,
+                        icon: null,
+                        tags: null,
+                        lang: null
+                    }
+                        db.domainAndLink.add(domainObj)
+                        .then(()=>{
                         setDomainData(domainObj)
                         setOpenCurrentSiteFloatingWindow(domainData.floatingWindow)
                         setOpenCurrentSiteMouseTool(domainData.mouseTool)
                         setCurrentSiteActivateToggle(domainData.activate)
+                        setCustomSettingToggle(!customSettingToggle)
 
-                    }
+                    })
+                        .catch(err=>console.error(err))
+                }
+                // db.transaction("rw", db.domainAndLink, async () => {
+                //     if (!domainData) {
+                //         const domainObj = {
+                //             url: currentDomain,
+                //             activate: true,
+                //             floatingWindow: openFloatingWindow,
+                //             mouseTool: openMouseTool,
+                //             icon: null,
+                //             tags: null,
+                //             lang: null
+                //         }
+                //         await db.domainAndLink.add(domainObj)
+                //         // const data = await db.domainAndLink.get({ url: currentDomain })
+                //         // console.log(data || 'no data')
+                //         // console.log('data in db')
+                //         setDomainData(domainObj)
+                //         setOpenCurrentSiteFloatingWindow(domainData.floatingWindow)
+                //         setOpenCurrentSiteMouseTool(domainData.mouseTool)
+                //         setCurrentSiteActivateToggle(domainData.activate)
+
+                //     }
                     if (customSettingToggle === true) {
-                        db.domainAndLink.update(domainData, { floatingWindow: null, activate: null, mouseTool: null })
-                        setDomainData({ ...domainData, floatingWindow: null, activate: null, mouseTool: null })
-                        setOpenCurrentSiteFloatingWindow(openFloatingWindow)
-                        setOpenCurrentSiteMouseTool(openMouseTool)
-                        setCurrentSiteActivateToggle(activate)
+                        db.domainAndLink.update(domainData, { floatingWindow: null, activate: null, mouseTool: null }).then(()=>{
+                            setDomainData({ ...domainData, floatingWindow: null, activate: null, mouseTool: null })
+                            setOpenCurrentSiteFloatingWindow(openFloatingWindow)
+                            setOpenCurrentSiteMouseTool(openMouseTool)
+                            setCurrentSiteActivateToggle(activate)    
+                            setCustomSettingToggle(!customSettingToggle)
+                        })
 
                     } else {
+                        db.domainAndLink.update(domainData, { floatingWindow: openFloatingWindow, activate: true, mouseTool: openMouseTool }).then(()=>{
                         setDomainData({ ...domainData, floatingWindow: openFloatingWindow, activate: true, mouseTool: openMouseTool })
-                        setCurrentSiteActivateToggle(true)
-                        setOpenCurrentSiteFloatingWindow(openFloatingWindow)
-                        setOpenCurrentSiteMouseTool(openMouseTool)
-                    }
-                    setCustomSettingToggle(!customSettingToggle)
+                            setCurrentSiteActivateToggle(true)
+                            setOpenCurrentSiteFloatingWindow(openFloatingWindow)
+                            setOpenCurrentSiteMouseTool(openMouseTool)    
+                            setCustomSettingToggle(!customSettingToggle)
 
-                })
+                        })
+                    }
+
+                // })
                 break;
             case 'openCurrentSiteFloatingWindow':
                 db.transaction("rw", db.domainAndLink, async () => {
@@ -176,6 +206,10 @@ export const CurrentSiteToggleOptions = ({
                         await db.domainAndLink.update(domainData, {
                             floatingWindow: false, activate: false, mouseTool: false
                         })
+                        const data = await db.domainAndLink.get({ url: currentDomain })
+                        console.log(data || 'no data')
+                        console.log('data in db')
+
                         setDomainData({ ...domainData, floatingWindow: false, activate: false, mouseTool: false })
                         setCurrentSiteActivateToggle(false)
                         setOpenCurrentSiteFloatingWindow(false)
@@ -190,7 +224,7 @@ export const CurrentSiteToggleOptions = ({
                     }
 
                     // setCurrentSiteActivateToggle(!currentSiteActivateToggle)
-                })
+                }).then()
                 break;
             default:
 

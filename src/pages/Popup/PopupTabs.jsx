@@ -5,7 +5,7 @@ import { buttonUnstyledClasses } from '@mui/base/ButtonUnstyled';
 import TabsListUnstyled from '@mui/base/TabUnstyled';
 import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import TabsUnstyled from '@mui/base/TabsUnstyled';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { styled } from '@mui/system';
 import { AllSitesToggleOptions, CurrentSiteToggleOptions, ToggleOptions } from './ToggleOptions';
 
@@ -111,10 +111,23 @@ export function PopupTabs({
     setDomainData
 }) {
 
+ 
+    const [currentTab, setCurrentTab] = useState(1)
 
 
+        useEffect(()=>{
+        if(!domainData)   return
+        if([ domainData.activate , domainData.floatingWindow , domainData.mouseTool]
+            .some(setting=> typeof setting === 'boolean')){
+                setCurrentTab(0)
+            }
+    },[domainData])
+
+    const handleChange = (value) => {
+        setCurrentTab(value)
+      };
     return (
-        <Tabs defaultValue={1}>
+        <Tabs value={currentTab} onChange={(e,value)=>handleChange(value)}>
             <TabsList >
                 {activate ? <Tab component="span" value={0}>current Site</Tab> : ''}
                 <Tab component="span" value={1} disabled={!activate}>All Sites</Tab>

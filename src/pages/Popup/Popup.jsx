@@ -52,6 +52,7 @@ const Popup = () => {
       setCurrentDomain(thisDomain)
 
       db.domainAndLink.get({ url: thisDomain }).then((gotDomainData) => {
+      
         if (gotDomainData) {
           //delete this after update all data in db
           // if (!gotDomainData.floatingWindow) {
@@ -62,6 +63,8 @@ const Popup = () => {
           //
           console.log(gotDomainData)
           setDomainData(gotDomainData)
+        }else{
+          console.log('no current data')
         }
         if ([typeof gotDomainData.floatingWindow, typeof gotDomainData.mouseTool, typeof gotDomainData.activate].includes('boolean')) {
           setCustomSettingToggle(true)

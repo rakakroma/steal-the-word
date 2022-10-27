@@ -1,5 +1,5 @@
 import interact from 'interactjs'
-import './HolliText'
+// import './customElements/HolliText'
 
 export const infoSection = document.createElement('section')
 infoSection.id = 'hooriruby-info-div'
@@ -56,6 +56,13 @@ h3,h6{
   margin-left:5px;
 
 }
+a {
+  color:inherit;
+}
+
+#scroll-navigation-bar{
+  display:flex;
+}
 
 </style>
 `
@@ -65,10 +72,32 @@ const controlBar = document.createElement('div')
 controlBar.id = 'holli-control-bar'
 controlBar.draggable = true
 
+const testLanguageDetectInput = document.createElement('input')
+const submitButton = document.createElement('button')
+submitButton.textContent = '🤔'
+const container  = document.createElement('div')
+submitButton.addEventListener('click', ()=>{
+  const text = testLanguageDetectInput.value
+  if(text){
+  let detectingLanguages = chrome.i18n.detectLanguage(text)
+  detectingLanguages.then(result=>{
+    console.log('text:',text)
+    console.log('isReliable:', result.isReliable)
+    console.log('langs:', result.languages.map(lang=> `${lang.language} ${lang.percentage}%`))
+  })
+  }else{
+    console.log('no text!')
+  }
+})
 
+container.appendChild(testLanguageDetectInput)
+container.appendChild(submitButton)
 
 
 shadowInfoSection.appendChild(controlBar)
+
+//
+shadowInfoSection.appendChild(container)
 shadowInfoSection.appendChild(countList)
 
 export const displayList = []
@@ -175,10 +204,22 @@ export const showWordList = () => {
         const countListItem = document.createElement('li')
         const wordH3 = document.createElement('h3')
         const aliasH6 = document.createElement('h6')
+        const wordTotalCount = document.createElement('h6')
+        wordTotalCount.textContent = `${wordObj.countInCurrentPage}`
 
+        // wordH3.addEventListener('click',()=>{
+        //   const lastElement = document.querySelector(`#h-${wordObj.id}-${wordObj.countInCurrentPage}`)
+        //   if(lastElement)  lastElement.scrollIntoView({ behavior: 'smooth' });
+
+        // })
+        wordTotalCount.addEventListener('click',()=>{
+          startScrollToElement(wordObj)
+        })
         countListItem.className = 'hooliruby-words-block'
         wordH3.textContent = wordObj.word
         aliasH6.textContent = wordObj.pronounce || wordObj.definitions[0].aliases[0]
+        // anchor.appendChild(wordH3)
+        countListItem.appendChild(wordTotalCount)
         countListItem.appendChild(wordH3)
         countListItem.appendChild(aliasH6)
         countList.appendChild(countListItem)
@@ -187,3 +228,24 @@ export const showWordList = () => {
 
   }
 }
+
+const startScrollToElement = (wordObj)=>{
+
+  const scrollNavigationBar = document.createElement('div')
+const prevButton = document.createElement('button')
+const nextButton = document.createElement('button')
+const targetWord = document.createElement('h5')
+const closeScrollNavigationBar = document.createElement('button')
+
+const currentTarget = document.createElement('h5')
+currentTarget.textContent = `${wordObj.countInCurrentPage}`
+scrollNavigationBar.id = 'scroll-navigation-bar'
+prevButton.textContent = '⬆'
+nextButton.textContent = '⬇'
+targetWord.textContent = wordObj.word
+closeScrollNavigationBar.textContent = 'X'
+
+scrollNavigationBar.append(closeScrollNavigationBar, targetWord, prevButton, nextButton)
+shadowInfoSection.appendChild(scrollNavigationBar)
+}
+

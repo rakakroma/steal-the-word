@@ -1,8 +1,10 @@
 import { showWordList, wordInPageList } from '../components/infoSection'
-import '../components/HolliText';
+import '../components/customElements/HolliText';
+import '../components/customElements/HooliWordInfoBlock'
 import { getSentenceFromSelection } from './get-selection-more';
-import { breadcrumbsClasses } from '@mui/material';
 import { observerForIntersection } from './observerForIntersection';
+import {setWordBlockPosition} from './setWordBlockPosition'
+
 // import { getDomain } from '../../Options/utils/transformData';
 
 // const defaultRubyStyle = {
@@ -30,6 +32,9 @@ let timeout = null
 
 export const renderRuby = (doc, wordList, setting, isStart) => {
 
+
+
+    
     const doJob = ()=>{
 
         console.log('renderRuby execute', setting)
@@ -85,6 +90,7 @@ export const renderRuby = (doc, wordList, setting, isStart) => {
             //further reading: https://www.w3.org/International/articles/typography/linebreak
     
             for (let wordObj of wordList) {
+                
                 let matchText = (wordObj.stem || wordObj.word)
     
                 const langRegex = new RegExp(/\p{sc=Hani}|\p{sc=Hira}|\p{sc=Kana}|\p{sc=Hang}/, 'um')
@@ -98,6 +104,36 @@ export const renderRuby = (doc, wordList, setting, isStart) => {
                     } else {
                         // console.log("passed", matchText, textNode)
                     }
+
+                    const theWordInList = wordInPageList.find(wordObjInDisplay => wordObjInDisplay.id === wordObj.id)
+                    if (!theWordInList) {
+                        wordInPageList.push({ ...wordObj, countInCurrentPage: 1, currentContext: textNode.textContent })
+                        wordInPageList.forEach(wordObjInList=>{
+                            console.log(wordObjInList.word, wordObjInList.countInCurrentPage)
+                        })
+                        chrome.runtime.sendMessage({ action: 'updateWordCount', count: wordInPageList.length })
+                        if (setting.floatingWindow) {
+                            // showWordList()
+                            const wordListEle = document.querySelector('hooli-floating-word-list')
+                            // wordListEle.wordListInThisPage = [...wordInPageList]
+                            // wordListEle.testText += 'お'
+                            wordListEle.requestUpdate()
+                            // console.log(wordListEle.testText)
+                            // console.log(wordListEle.wordListInThisPage.map(wordObj=>wordObj.word))
+                            
+                        }
+                    }else{
+                        wordInPageList.map(wordObjInList=>{
+                           if(wordObj.id === wordObjInList.id){
+                            wordObjInList.countInCurrentPage ++
+                            return wordObjInList
+                           }
+
+                           return wordObjInList
+                        })
+                    }
+    
+
                     const createTheWordNode = (wordObj) => {
                         const word = matchText
                         const alias = wordObj.pronounce || wordObj.definitions[0].aliases[0]
@@ -105,6 +141,7 @@ export const renderRuby = (doc, wordList, setting, isStart) => {
                         renderNode.alias = alias
                         renderNode.textContent = word
                         renderNode.wordId = wordObj.id
+                        renderNode.id = `h-${wordObj.id}-${theWordInList?.countInCurrentPage|| 1}`
                         return renderNode
                     }
     
@@ -152,36 +189,13 @@ export const renderRuby = (doc, wordList, setting, isStart) => {
                             window.getSelection().addRange(range)
                             wordBlock.contextHere = getSentenceFromSelection(document.getSelection())
                             window.getSelection().removeAllRanges()
-    
-                            if (['absolute', 'relative'].includes(window.getComputedStyle(document.body).position)) {
-                                //some bug in 'absolute'
-                                // wordBlock.style.bottom = `${window.innerHeight - hooliText.getBoundingClientRect().top + 4}px`
-                                wordBlock.style.bottom = `${parseFloat(window.getComputedStyle(document.body).height) -
-                                    window.scrollY - hooliText.getBoundingClientRect().top + 20}px`
-                                wordBlock.style.left = `${hooliText.getBoundingClientRect().left + hooliText.offsetWidth / 2}px`
-                            } else {
-                                wordBlock.style.bottom = `${window.innerHeight - window.scrollY - hooliText.getBoundingClientRect().top + 2}px`
-                                wordBlock.style.left = `${window.scrollX + hooliText.getBoundingClientRect().left + hooliText.offsetWidth / 2}px`
-    
-                            }
-                            // document.addEventListener('mousedown', e => {
-                            //     if (e.composedPath()[0].tagName === 'HOOLI-HIGHLIGHTER') {
-                            //         console.log(e.composedPath()[1].id)
-                            //         wordBlock.phraseSelectionTarget = e.composedPath()[1].id
-                            //     }
-                            //     // if (e.composedPath()[0] !== 'HOOLI-WORDINFO-BLOCK') return
-                            //     // document.addEventListener('selectionchange', () => {
-                            //     //     console.log(document.getSelection().toString())
-                            //     // })
-                            // })
-    
-                            const handleClose = (e) => {
-                                if (e.composedPath().includes(wordBlock)) return
-                                document.body.removeChild(wordBlock)
-                                window.removeEventListener('mouseup', handleClose)
-                            }
-                            window.addEventListener('mouseup', handleClose)
-                            document.body.appendChild(wordBlock)
+                            
+                            // const holliTextClientRect = hooliText.getBoundingClientRect()
+
+                           
+                            setWordBlockPosition(hooliText, wordBlock)
+
+                                       document.body.appendChild(wordBlock)
                         })
     
                         observerForIntersection.observe(hooliText)
@@ -195,15 +209,7 @@ export const renderRuby = (doc, wordList, setting, isStart) => {
     
     
                     // if (wordInPageList) {
-                    let theWordInList = wordInPageList.find(wordObjInDisplay => wordObjInDisplay.id === wordObj.id)
-                    if (!theWordInList) {
-                        wordInPageList.push({ ...wordObj, countInCurrentPage: 1, currentContext: textNode.textContent })
-                        chrome.runtime.sendMessage({ action: 'updateWordCount', count: wordInPageList.length })
-                        if (setting.floatingWindow) {
-                            showWordList()
-                        }
-                    }
-    
+              
                     // else {
                     //     theWordInDisplayList.countInCurrentPage += 1
                     // }
@@ -216,7 +222,7 @@ export const renderRuby = (doc, wordList, setting, isStart) => {
         }
     
         const performanceEnd = performance.now()
-        console.log(`RenderRuby time ${performanceEnd - performanceStart} ms`)
+        console.log(`RenderRuby time ${(performanceEnd - performanceStart).toFixed(2)} ms`)
     }
 
 
