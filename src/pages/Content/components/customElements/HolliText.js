@@ -1,26 +1,38 @@
 import '@webcomponents/custom-elements'
 import { AssetsAddedIcon, EditIcon, CheckmarkIcon, CloseIcon, BoxAddIcon, MoreIcon } from '@spectrum-web-components/icons-workflow';
-// import { CheckmarkIcon } from '@spectrum-web-components/icons-workflow/src/icons.js';
-
-import { LitElement, html, css, unsafeCSS } from 'lit';
-// import dayjs from "dayjs";
+import { LitElement, html, css } from 'lit';
 import { getSentenceFromSelection } from '../../utils/get-selection-more.ts'
 import './HooliWordInfoBlock.js'
 import { setWordBlockPosition } from '../../utils/setWordBlockPosition'
-import { Numbers } from '@mui/icons-material';
+
+export const openAddNewWord = ()=>{
+    if(!document.getSelection().toString().trim()) return
+    const existingWordBlock = document.querySelector('hooli-wordinfo-block')
+    existingWordBlock?.remove()
+    const wordBlock = document.createElement('hooli-wordinfo-block')
+    wordBlock.mode = 'newWord'
+    wordBlock.newWord = document.getSelection().toString().trim()
+    wordBlock.contextHere = getSentenceFromSelection(document.getSelection())
+
+    setWordBlockPosition(window.getSelection().getRangeAt(0), wordBlock)
+    document.getSelection()?.removeAllRanges()
+    document.body.appendChild(wordBlock)
+}
 
 class HooliText extends LitElement {
     static get properties() {
         return {
             ruby: { type: Boolean },
-            alias: { type: String },
+            // alias: { type: String },
+            wordObj: {type: Object}
         }
     }
 
     constructor() {
         super();
         this.ruby = false;
-        this.alias = '';
+        // this.alias = '';
+        this.wordObj = null;
     }
 
     static styles = [
@@ -36,7 +48,7 @@ class HooliText extends LitElement {
         if (this.ruby) {
             return html`<ruby class='container'>${this.text}<rt>${this.alias}</rt></ruby>`
         }
-        return html`<span class='span container' data-alias=${this.alias}><slot></slot></span>`
+        return html`<span @click="${this.openWordBlock}" class='span container' data-alias=${this.alias}><slot></slot></span>`
     }
 
     render() {
@@ -44,7 +56,7 @@ class HooliText extends LitElement {
     }
     _showHoverTip() {
         const smallTip = document.createElement('hooli-smalltip')
-        smallTip.alias = this.alias
+        smallTip.alias = this.wordObj.definitions[0].aliases[0]
         smallTip.style.bottom = `${window.innerHeight - this.getBoundingClientRect().top + 4}px`
         smallTip.style.left = `${this.getBoundingClientRect().left + this.offsetWidth / 2}px`
         this.addEventListener('mouseout', () => {
@@ -52,6 +64,42 @@ class HooliText extends LitElement {
             if (tip) document.body.removeChild(tip)
         })
         document.body.appendChild(smallTip)
+    }
+    openWordBlock(){
+            const wordBlock = document.createElement('hooli-wordinfo-block')
+            let contextHere = ''
+            chrome.runtime.sendMessage({ wordId: this.wordObj.id }, (response) => {
+                wordBlock.contexts = response.contexts
+                // console.log(response.contexts)
+                const allDomains = response.contexts.map(contextObj => {
+                    return new URL(contextObj.url).hostname
+                })
+                chrome.runtime.sendMessage({ domains: allDomains }, (response) => {
+                    wordBlock.imgSrcs = response.domainData
+                })
+            })
+            wordBlock.wordObj = this.wordObj
+            wordBlock.context = ''
+            wordBlock.contextHere = contextHere
+
+            const range = document.createRange()
+            range.selectNode(this)
+            window.getSelection().removeAllRanges()
+            window.getSelection().addRange(range)
+            wordBlock.contextHere = getSentenceFromSelection(document.getSelection())
+            window.getSelection().removeAllRanges()
+            
+           
+            setWordBlockPosition(this, wordBlock)
+
+             document.body.appendChild(wordBlock)
+             const floatingWordList = document.querySelector('hooli-floating-word-list')
+       if(floatingWordList){
+        const idSplitByDash = this.id.split('-')
+        const currentFocusCount = +idSplitByDash[idSplitByDash.length-1]
+        floatingWordList.gotLookingWord(this.wordObj.id, currentFocusCount)
+        // floatingWordList.lookingWord = {...this.wordObj, currentFocusCount}
+       }
     }
     connectedCallback() {
         super.connectedCallback()
@@ -245,11 +293,11 @@ class hooliHighlighter extends LitElement {
 customElements.define('hooli-highlighter', hooliHighlighter)
 
 class HooliAddingTool extends LitElement {
-    static get properties() {
-        return {
+    // static get properties() {
+    //     return {
 
-        }
-    }
+    //     }
+    // }
 
     // constructor(){
     //     super()
@@ -291,20 +339,7 @@ class HooliAddingTool extends LitElement {
     _handleAddText(e) {
         e.preventDefault()
         e.stopPropagation()
-        console.log('show block')
-        const wordBlock = document.createElement('hooli-wordinfo-block')
-        wordBlock.mode = 'newWord'
-        wordBlock.newWord = document.getSelection().toString().trim()
-        wordBlock.contextHere = getSentenceFromSelection(document.getSelection())
-
-        // setWordBlockPosition(this._thisElementOnBody, wordBlock)
-        setWordBlockPosition(window.getSelection().getRangeAt(0), wordBlock)
-        // wordBlock.style.bottom = `${window.innerHeight - window.scrollY - this._thisElementOnBody.getBoundingClientRect().top + 2}px`
-        // wordBlock.style.left = `${window.scrollX + this._thisElementOnBody.getBoundingClientRect().left + this._thisElementOnBody.offsetWidth / 2}px`
-
-
-        document.getSelection()?.removeAllRanges()
-        document.body.appendChild(wordBlock)
+       openAddNewWord()
         setTimeout(() => this._thisElementOnBody.remove())
         return
     }

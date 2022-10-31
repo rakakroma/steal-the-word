@@ -10,7 +10,8 @@
     "tabs",
     "activeTab",
     "background",
-    "scripting"
+    "scripting",
+    "contextMenus"
   ],
   "background": {
     "service_worker": "background.bundle.js"

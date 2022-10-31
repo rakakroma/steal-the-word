@@ -99,9 +99,18 @@ var options = {
           {
             loader: 'source-map-loader',
           },
-          {
-            loader: 'babel-loader',
-          },
+          // {
+          //   loader: 'babel-loader',
+          // },
+            {
+                    // test: /\.js$/,
+             loader: 'esbuild-loader',
+              options: {                
+               loader: 'jsx',  // Remove this if you're not using JSX
+                target: 'es2015'  // Syntax to compile to (see options below for possible values)
+                     }
+             },
+            
         ],
         exclude: /node_modules/,
       },

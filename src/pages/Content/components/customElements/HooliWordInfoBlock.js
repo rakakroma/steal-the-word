@@ -8,50 +8,8 @@ import { getSentenceFromSelection } from '../../utils/get-selection-more.ts'
 import { nanoid } from 'nanoid'
 import { myList, floatingWindow } from '../../index'
 import { renderRuby } from '../../utils/renderRuby'
+import {fetchPronInfo} from '../../utils/fetchPronInfo'
 
-
-// if kanji learning is only one language , once target word contains kanji, call API to get that 
-//if = 2 && includes japanese, check if it is japanese, call its API to get it
-//if > 2 && includes japanese, check if it is japanese, if so call API, otherwise show button
-
-let kanjiLearningLangs = ['ja','bopomofo','pinyin','nan-tw','hak-sixian', 'hak-hailu', 'hak-dabu', 'hak-raoping', 'hak-zhaoan', 'hak-nansixian']
-
-const moedictAPI = (word, lang) => {
-    return `https://www.moedict.tw/${lang}/${word}.json`
-}
-
-// fetch(moedictAPI(vocabularyInput.value, 't'))
-// .then(response => response.json())
-// .then(data => {
-//     // console.log(data)
-//     pronounceInput.value = data.h[0].T
-// })
-// .catch(err => console.error(err));
-
-
-const languageDetectionForPronSearch = async(targetWord, context)=>{
-
-
-    const regexKanji = new RegExp(/\p{sc=Hani}/gu)
-    const includesKanji = targetWord.match(regexKanji)
-
-    if(includesKanji){
-    if(context) {
-    let contextLangs;
-     await chrome.i18n.detectLanguage(context).then(result=>{
-        if(result.languages.length > 0) contextLangs = result.languages
-    })
-    if(contextLangs.map(lang=>lang.language).includes('ja')) return 'ja'
-    return 
-    }
-
-    let wordLangs;
-     await chrome.i18n.detectLanguage(targetWord).then(result=>{
-        if(result.languages.length > 0) wordLangs = result.languages
-    })
-    if(wordLangs.map(lang=>lang.language).includes('ja')) return 'ja'
-    }
-}
 
 
 
@@ -126,7 +84,6 @@ class HooliWordInfoBlock extends LitElement {
             border:1px solid black;
             box-shadow: 3.0px 6.1px 6.1px hsl(0deg 0% 0% / 0.41);
             border-radius: 5px;
-            padding:6px;
         }
         #container::-webkit-scrollbar {
   display: none;
@@ -135,13 +92,14 @@ class HooliWordInfoBlock extends LitElement {
 
         h3{
             font-size:20px;
+            max-width:260px;
         }
         h3, h6{
             display:inline-block;
             margin:0;
         }
         p{
-            font-size:13px;
+            font-size:12px;
             margin:0;
         }
         img{
@@ -155,7 +113,7 @@ class HooliWordInfoBlock extends LitElement {
         }
         .page-title{
             width:340px;
-            height:15px;
+            height:21px;
             display:flex;
         }
         .page-title>h6{
@@ -248,10 +206,13 @@ class HooliWordInfoBlock extends LitElement {
         }
         #submit-button{
             width:fit-content;
+            color:black;
+            background-color:white;
         }
         #heading-container{
             display:flex;
             justify-content:space-between;   
+            padding:4px;
         }
         #submit-section{
             display:flex;
@@ -260,7 +221,6 @@ class HooliWordInfoBlock extends LitElement {
         .editable{
             background:#efeeee;
             border-radius:4px;
-            margin:3px;
             position:relative;
 
         }
@@ -273,8 +233,8 @@ class HooliWordInfoBlock extends LitElement {
             background:white;
         }
         .editable.editable-valid{
-            outline:2px solid #b5ffe0;
-background: linear-gradient(143deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 20%, rgba(247,254,252,1) 90%, rgba(189,255,233,1) 94%, rgba(138,255,217,1) 100%);        }
+            background:white;
+         }
 
         .editable.editable-valid:focus{
             outline:2px solid #7bffc8;
@@ -287,45 +247,69 @@ background: linear-gradient(143deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 
             bottom:5px;
             right:-30px;
         }
-        .
+        #action-bar{
+            width:35%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        h3.editable-valid:after{
+            content: url("data:image/svg+xml,%3Csvg height='15px' viewBox='0 0 18 18' width='15px' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cstyle%3E .fill %7B fill: %23464646; %7D %3C/style%3E%3C/defs%3E%3Ctitle%3ES Checkmark 18 N%3C/title%3E%3Crect id='Canvas' fill='%23ff13dc' opacity='0' width='18' height='18'/%3E%3Cpath class='fill' d='M15.656,3.8625l-.7275-.5665a.5.5,0,0,0-.7.0875L7.411,12.1415,4.0875,8.8355a.5.5,0,0,0-.707,0L2.718,9.5a.5.5,0,0,0,0,.707l4.463,4.45a.5.5,0,0,0,.75-.0465L15.7435,4.564A.5.5,0,0,0,15.656,3.8625Z' style='fill: rgb(98, 222, 170);'/%3E%3C/svg%3E");
+            position: absolute;
+            bottom: 4px;
+            right: -17px;
+        }
+        hooli-textarea.editable-valid:after{
+            content: url("data:image/svg+xml,%3Csvg height='15px' viewBox='0 0 18 18' width='15px' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cstyle%3E .fill %7B fill: %23464646; %7D %3C/style%3E%3C/defs%3E%3Ctitle%3ES Checkmark 18 N%3C/title%3E%3Crect id='Canvas' fill='%23ff13dc' opacity='0' width='18' height='18'/%3E%3Cpath class='fill' d='M15.656,3.8625l-.7275-.5665a.5.5,0,0,0-.7.0875L7.411,12.1415,4.0875,8.8355a.5.5,0,0,0-.707,0L2.718,9.5a.5.5,0,0,0,0,.707l4.463,4.45a.5.5,0,0,0,.75-.0465L15.7435,4.564A.5.5,0,0,0,15.656,3.8625Z' style='fill: rgb(98, 222, 170);'/%3E%3C/svg%3E");
+            position: absolute;
+            bottom: 1px;
+            right: 10px;
+        }
+        #context-textarea{
+            outline:1px solid grey;
+        }
+        .single-context-container{
+            margin:12px;
+            padding:2px;
+            border-radius:7px;
+        }
+        .inner-context-container{
+            display:flex;
+
+        }
+        .count-context-num{
+            font-size:14px;
+            margin-right:10px;
+        }
+        #context-section{
+        }
         `
     ]
 
-    get _contextTextarea() {
-        return this.renderRoot.querySelector('#context-textarea')
-    }
-    get _newDefinitionInputSpan() {
-        return this.renderRoot.querySelector('.editing-definition')
-    }
-    // get _phraseInput (){
-    //     return this.renderRoot.querySelector('#new-context-phrase-input')
-    // }
 
-    //     <button class='icon-button'>
-    // ${MoreIcon({ width: 14, height: 14 })}
-    // </button>
+
 
     _actionBar() {
 
         const searchLinkButton =()=> html`<a href=https://www.google.com/search?q=${this.newWord || this.wordObj.word} target="_blank" >       
-        ${GlobeSearchIcon({ width: 14, height: 14 })}
+        ${GlobeSearchIcon({ width: 15, height: 15 })}
 </a>
 `
 
         if (['edit', 'newContext', 'newWord'].includes(this.mode)) return html` <div id='action-bar'>
         ${searchLinkButton()}
 <button class='icon-button' id='add-variants-and-stem' >
-${TextAddIcon({width:14, height:14})}
+${TextAddIcon({width:15, height:15})}
 </button>
 </div>`
 
         if (this.mode === 'lookUp') return html` <div id='action-bar'>
         ${searchLinkButton()}
 <button class='icon-button' id='add-new-context' @click="${this._handleNewContext}"
->${BoxAddIcon({ width: 14, height: 14 })}
+>${BoxAddIcon({ width: 15, height: 15 })}
 </button>
 <button class='icon-button'>
-${EditIcon({ width: 14, height: 14 })}
+${EditIcon({ width: 15, height: 15 })}
 </button>
 <hooli-menu>
 <li>hi</li>
@@ -339,30 +323,25 @@ ${EditIcon({ width: 14, height: 14 })}
 
     _headingElement() {
 
-        if (this.mode === 'newWord' || this.mode === 'edit') return html`<div id='heading-container'>
+        if (this.mode === 'newWord' || this.mode === 'edit') return html`
     <div id="heading-left">
 
         <h3 contenteditable='true' id='word-contenteditable' class='editable' @input="${this._handleValidInput}">${this.newWord}</h3>
     </div>
-        ${this._actionBar()}
-    </div>`
+        ${this._actionBar()}`
 
         if (this.mode === 'newContext') return html`
-        <div id='heading-container'>
         <div id="heading-left">
          <h3>${this.wordObj.word}</h3>
          </div>
-         ${this._actionBar()}
-         </div>`
+         ${this._actionBar()}`
 
         if (this.mode === 'lookUp' || !this.mode) return html`
-        <div id='heading-container'>
         <div id="heading-left">
          <h3>${this.wordObj.word}</h3>
         <h6>${this.wordObj.definitions[0].aliases[0]}</h6>
         </div>
-        ${this._actionBar()}
-        </div>`
+        ${this._actionBar()}`
     }
 
     _newDefinitionElement() {
@@ -383,7 +362,7 @@ ${EditIcon({ width: 14, height: 14 })}
         `}
             if (['edit', 'newContext'].includes(this.mode)) {
 
-                setTimeout(() => { this.renderRoot.querySelector('.editing-definition').focus() }, 0)
+                setTimeout(() => { this.renderRoot.querySelector('.editing-definition').focus() })
 
                 return html`
         <span  class='edit-word-alias'>
@@ -397,12 +376,7 @@ ${EditIcon({ width: 14, height: 14 })}
         `}
         }
         return html`<button class='icon-button' @click="${this._handleNewDefinition}">
-        ${AssetsAddedIcon({
-            width: 18, // number outlining the width to deliver the SVG element with
-            height: 18, // number outlining the height to delivery the SVG element with
-            // hidden: false, // boolean representing whether to apply the `aria-hidden` attribute
-            // title: 'Icon title', // string of the title to deliver the icon with
-        })}
+        ${AssetsAddedIcon({width: 18,height: 18 })}
         </button>`
     }
 
@@ -436,10 +410,6 @@ ${EditIcon({ width: 14, height: 14 })}
 
     _contextSection() {
 
-        //     const currentURL = window.location.hash ?
-        //     window.location.href.slice(0, window.location.href.lastIndexOf(window.location.hash)) :
-        //     window.location.href
-        // let src = ''
         const pageTitle = document.title
         const submitButtonText = () => {
             const texts = {
@@ -472,16 +442,6 @@ ${EditIcon({ width: 14, height: 14 })}
     </div>
     `
         }
-        // if(this.mode === 'newWord'){
-        //     return html`
-        //     <input id='new-context-phrase-input' @change="${this._handleSelectPhrase}"></input>
-        //      <hooli-textarea id='context-textarea' value=${this.contextHere}></hooli-textarea>
-        //     <div class='page-title'>
-        //     <a href=${currentURL}><img src=${src}></a>
-        //     <h6>${pageTitle}</h6>
-        //     </div>
-        //     <button @click="${this._handleFormSubmit}">submit</button>`
-        // }
 
         if (this.mode === 'lookUp' && this.contexts) {
 
@@ -493,11 +453,16 @@ ${EditIcon({ width: 14, height: 14 })}
                     }).img
                 }
                 return html`
+                <div class='single-context-container'>
+                <div class='inner-context-container'>
+                <div class='count-context-num'>${index+1}</div>
             <p id=${index}><hooli-highlighter text=${contextObj.context} matchword=${contextObj.phrase || contextObj.word}></hooli-highlighter>
                         <span class='date'>${dayjs(contextObj.date).isSame(dayjs(), 'year') ? dayjs(contextObj.date).format('M.D') : dayjs(contextObj.date).format('YY.M.D')}</span></p>
+                        </div>
                 <div class='page-title'>
                 <a href=${contextObj.url}><img src=${src}></a>
                 <h6>${contextObj.pageTitle}</h6>
+                </div>
                 </div>
                 `
             })}`
@@ -509,9 +474,13 @@ ${EditIcon({ width: 14, height: 14 })}
 
     render() {
         return html`<div id='container'>
+        <div id='heading-container'>
         ${this._headingElement()}
+        </div>
         <hr class='divider'></hr>
+        <div id='context-section'> 
         ${this._contextSection()}
+        </div>
         </div>`
     }
 
@@ -549,12 +518,13 @@ ${EditIcon({ width: 14, height: 14 })}
     }
 
     _handleFormSubmit() {
+
         if (this.mode === 'newWord') {
             const word = this.renderRoot.querySelector('#word-contenteditable').innerText.trim()
             // const pronunciation = this.renderRoot.querySelector('#pron-contenteditable').innerText.trim()
             const annotation = this.renderRoot.querySelector('#annotation-input').value.trim()
             const wordNote = this.renderRoot.querySelector('#long-note-textarea').value.trim()
-            const context = this._contextTextarea.value.trim()
+            const context = this.renderRoot.querySelector('#context-textarea').value.trim()
 
             if (!word) {
                 console.log('word!')
@@ -601,14 +571,6 @@ ${EditIcon({ width: 14, height: 14 })}
                 url: currentURL
             }
 
-            // const newDataEvent = new CustomEvent('new-data-event',{
-            //     detail:{
-            //         newWord:theNewWord,
-            //         newContext:theNewContext
-            //     }
-            // })
-            // this.dispatchEvent(newDataEvent)
-
             if (myList.find(wordObj => wordObj.word === theNewWord.word)) {
                 alert('stop!')
                 return
@@ -622,26 +584,57 @@ ${EditIcon({ width: 14, height: 14 })}
                 if (response.message) {
                     console.log(response);
                     myList.push(theNewWord);
-                    renderRuby(document, myList, { floatingWindow }, true)
+                    renderRuby(document.body, myList, { floatingWindow }, true)
                 }
             });
         }
 
 
+        if (this.mode === 'newContext'){
+            const context = this.renderRoot.querySelector('#context-textarea').value.trim()
+            const word = this.wordObj.word
+            const wordId = this.wordObj.id
+            if(!context) {
+                console.log('please fill the context')
+                return
+            }
+            const theNewContext = {
+                context,
+                word,
+                wordId,
+                date: Date.now(),
+                definitionRef: '0',
+                note: '',
+                pageTitle: document.title,
+                phrase: '',
+                url: currentURL
+            }
 
-        let definitionId;
-        let alias;
-        if (this._selectedWordAlias !== 'new') {
-            definitionId = this._selectedWordAlias
-        } else {
-            alias = this._newDefinitionInputSpan.textContent.trim()
+            console.log(theNewContext)
+            chrome.runtime.sendMessage({
+                action:'addNewContextForSavedWord',
+                newContext: theNewContext
+            }, (response) => {
+                if (response.message) {
+                    console.log(response.message);
+                }
+            });
         }
+
+
+        // let definitionId;
+        // let alias;
+        // if (this._selectedWordAlias !== 'new') {
+        //     definitionId = this._selectedWordAlias
+        // } else {
+        //     alias = this._newDefinitionInputSpan.textContent.trim()
+        // }
 
         // chrome.runtime.sendMessage({ action: 'sendResponse' }, (res) => {
         //     console.log(res)
         // })
         // this._phraseSelection = 'ok from submit'
-        console.log(this._phraseSelection, '_phraseSelection')
+        // console.log(this._phraseSelection, '_phraseSelection')
     }
 
     _handleNewDefinition() {
@@ -712,139 +705,14 @@ ${EditIcon({ width: 14, height: 14 })}
     }
 
     _pronSearch = async(language)=>{
-
-        const targetWord = this.newWord;
-        let lang;
-        // let lang = 'pinyin';
-
-        let pronounceDataResult;
-        
-        if(kanjiLearningLangs.length === 1 ){
-            lang = kanjiLearningLangs[0]
-        }else{
-            if(kanjiLearningLangs.includes('ja')){
-        const langDetectionResult = await languageDetectionForPronSearch(targetWord, this.contextHere)
-        lang = langDetectionResult
-            }
-        }
-
-        let fetchingData = true
-
-        setTimeout(()=>{
-            fetchingData = false
-        },3500)
-
-        if(lang === 'ja'){
-        let urlencoded = new URLSearchParams();
-        urlencoded.append("app_id", "8732e9655ce0d9734507d59dc5f08c6243192ae556b82e233b8d7394b6517223");
-        urlencoded.append("sentence", this.newWord);
-        urlencoded.append("output_type", "hiragana");
-        
-
-       pronounceDataResult = await fetch("https://labs.goo.ne.jp/api/hiragana", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-              },
-            body: urlencoded,
-          })
-        .then(response => response.json())
-        .then(result => {
-            return result.converted
-            // this._wordPronounce = result.converted
-            // console.log('this._wordPronounce', this._wordPronounce)
-        })
-        .catch(error => {
-            fetchingData = false
-        });
-    }else if(lang === 'hak'){
-
-        const allLearningHakDialects = kanjiLearningLangs.filter(lang=>lang.includes('hak'))
-
-        const abbrPair = {
-            'hak-sixian':'四',
-             'hak-hailu':'海',
-              'hak-dabu':'大',
-               'hak-raoping':"平",
-                'hak-zhaoan':'安',
-                 'hak-nan':'南'
-        }
-
-        pronounceDataResult = await fetch(moedictAPI(targetWord, 'h'))
-        .then(response => response.json())
-        .then(data => {
-            console.log(data)
-            const allGroupedProns = data.h.map(group=>group.p.split(" "))
-
-            const matchedResult = allGroupedProns.map((groupedProns,index)=>{
-                let listIndex =''
-
-                if(allGroupedProns.length >1 ){ 
-                 listIndex = `(${index+1})`
-                }
-                    return listIndex + groupedProns.filter(pron=> {
-                  return allLearningHakDialects.some(dialect => pron.includes(abbrPair[dialect]))
-                }).join(', ').toString()
-            
-            }).join(', ').toString()
-            if(matchedResult.length === 1 && allLearningHakDialects.length ===1) return matchedResult.slice(2)
-            return matchedResult.replaceAll('⃞', '：')
-        })
-        .catch(err => console.error(err));
-
-    }else if(lang === 'nan-tw'){
-
-        pronounceDataResult = await fetch(moedictAPI(targetWord, 't'))
-        .then(response => response.json())
-        .then(data => {
-            console.log(data)
-            
-            const allProns = data.h.map(group=>group.T)
-
-            const matchedResult = allProns.map((pron,index)=>{
-                let listIndex =''
-                if(allProns.length >1 ){ 
-                    listIndex = `(${index+1})`
-                }
-                    return listIndex+pron
-                }).join(', ').toString()
-            
-        return matchedResult
-        })
-        .catch(err => console.error(err));
-
-    }else if(lang === 'bopomofo' || lang === 'pinyin'){
-
-        
-        pronounceDataResult = await fetch(moedictAPI(targetWord, 'raw'))
-        .then(response => response.json())
-        .then(data => {
-            console.log(data)
-            
-            const allProns = data['heteronyms'].map(group=>group[lang])
-
-            
-            const matchedResult = allProns.map((pron,index)=>{
-                let listIndex =''
-                if(allProns.length >1 ){ 
-                    listIndex = `(${index+1})`
-                }
-                    return listIndex+pron
-                }).join(', ').toString()
-            
-        return matchedResult
-        })
-        .catch(err => console.error(err));
-    }
-
+        const pronounceDataResult = await fetchPronInfo(this.newWord, this.contextHere)
         if(pronounceDataResult){
-        fetchingData = false
-        const annotationInput = this.renderRoot.querySelector('#annotation-input')
-        const originalAnnotation = annotationInput.value
-        annotationInput.value = pronounceDataResult + " " + originalAnnotation 
-         this._handleEleValidInput(annotationInput)
-        }
-    
+            // fetchingData = false
+            const annotationInput = this.renderRoot.querySelector('#annotation-input')
+            const originalAnnotation = annotationInput.value
+            annotationInput.value = pronounceDataResult + " " + originalAnnotation 
+             this._handleEleValidInput(annotationInput)
+            }
     }
 
 

@@ -23,12 +23,60 @@ const getCurrentTab = async () => {
 }
 chrome.action.setBadgeBackgroundColor({ color: '#4f4f4f' })
 
+
+    chrome.contextMenus.create({
+        "title": 'Save "%s" to HolliRuby',
+        "contexts": ["selection"],
+        "id": "myContextMenuId"
+    });
+    
+chrome.contextMenus.onClicked.addListener((info, tab)=> {
+    chrome.tabs.sendMessage(tab.id,{action:'save word'})
+})
+
+
+const saveDomainData = async (currentDomain) => {
+    const { favIconUrl } = await getCurrentTab()
+    if (favIconUrl) {
+        let res;
+        let blob;
+        const domainInDB = await db.domainAndLink.get({ url: currentDomain }) //and the custom url
+        if (!domainInDB) {
+            res = await fetch(favIconUrl)
+            blob = await res.blob()
+
+            const newDomain = {
+                url: currentDomain,
+                dynamicRendering: true,
+                icon: blob,
+                showTabWords: null,
+                tags: null,
+                lang: null
+            }
+            db.domainAndLink.add(newDomain)
+            console.log(newDomain);
+
+        } else if (!domainInDB.icon) {
+            console.log(domainInDB);
+            db.domainAndLink.update({ url: currentDomain }, { "icon": blob })
+            console.log('update icon')
+        }
+    }
+}
+
 chrome.runtime.onMessage.addListener(
     (request, sender, sendResponse) => {
         console.log(request, sender.tab.id)
         if (request.action === 'sendResponse') {
             sendResponse({ message: 'ok I sent it' })
         }
+        if(request.action === 'Hollinize' && request.targetNode){
+            request.targetNode.textContent = 'okokokokok'
+            sendResponse(request.targetNode)
+        }
+
+
+
         if(request.action === 'getFaviconThisSite'){
             // const { favIconUrl } = await getCurrentTab()
             // if (favIconUrl) {
@@ -100,36 +148,6 @@ chrome.runtime.onMessage.addListener(
             const theContextObj = { ...request.newContext }
             const currentDomain = new URL(theContextObj.url).hostname
 
-
-            const saveDomainData = async () => {
-                const { favIconUrl } = await getCurrentTab()
-                if (favIconUrl) {
-                    let res;
-                    let blob;
-                    const domainInDB = await db.domainAndLink.get({ url: currentDomain }) //and the custom url
-                    if (!domainInDB) {
-                        res = await fetch(favIconUrl)
-                        blob = await res.blob()
-
-                        const newDomain = {
-                            url: currentDomain,
-                            dynamicRendering: true,
-                            icon: blob,
-                            showTabWords: null,
-                            tags: null,
-                            lang: null
-                        }
-                        db.domainAndLink.add(newDomain)
-                        console.log(newDomain);
-
-                    } else if (!domainInDB.icon) {
-                        console.log(domainInDB);
-                        db.domainAndLink.update({ url: currentDomain }, { "icon": blob })
-                        console.log('update icon')
-                    }
-                }
-            }
-
             const saveTheWord = async () => {
                 const sameWordInDB = await db.wordList.get({ word: theWordObj.word })
 
@@ -146,13 +164,21 @@ chrome.runtime.onMessage.addListener(
                 // console.log(contextToAdd)
 
             }
-            const sendSomeResponse = async () => {
+            const doAndResponse = async () => {
                 await saveTheWord()
-                await saveDomainData()
+                await saveDomainData(currentDomain)
                 sendResponse({ message: `got ${request.newWord.word}` })
             }
 
-            sendSomeResponse()
+            doAndResponse()
+        }
+        if(request.action === 'addNewContextForSavedWord' && request.newContext){
+            const theContextObj = { ...request.newContext }
+            db.contextList.add(theContextObj).then(()=>{
+                sendResponse({message: `saved ${theContextObj.context}`})
+            })
+
+
         }
         return true
     });
