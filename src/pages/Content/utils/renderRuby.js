@@ -1,6 +1,6 @@
 import '../components/customElements/HolliText';
 import '../components/customElements/HooliWordInfoBlock'
-
+import {myList} from '../index'
 
 export let wordInPageList = []
 
@@ -9,16 +9,18 @@ const getCurrentURL = ()=>{
 }
 let currentURL = getCurrentURL()
 
+export const transformElementId= (eleId, target)=>{
+    const splittedEleId = eleId.split('-')
+    if(target === 'wordId')  return splittedEleId.slice(1, splittedEleId.length-1).join('-')
+    if(target === 'count') return splittedEleId[splittedEleId.length -1]
+
+}
 
 export const clearNoLongerExistWordInWordInPageList = ()=>{
-    const transformElementIdToWordId = (eleId)=>{
-        const splittedEleId = eleId.split('-')
-        return splittedEleId.slice(1, splittedEleId.length-1).join('-')
-    }
     
     const wordIdOfHooliTextsOnDoc = []
     document.querySelectorAll('hooli-text').forEach(ele=>{
-        const wordId = transformElementIdToWordId(ele.id)
+        const wordId = transformElementId(ele.id, 'wordId')
         if(wordIdOfHooliTextsOnDoc.indexOf(wordId) < 0) wordIdOfHooliTextsOnDoc.push(wordId)
     })
 
@@ -29,9 +31,9 @@ export const clearNoLongerExistWordInWordInPageList = ()=>{
 }
 
 
-const putHooliTextOnNode = (targetNode, wordList, setting)=>{
+const putHooliTextOnNode = (targetNode, dumb, setting)=>{
 
-    for (let wordObj of wordList) {
+    for (let wordObj of myList) {
                 
         let matchText = (wordObj.stem || wordObj.word)
 
@@ -86,8 +88,8 @@ const putHooliTextOnNode = (targetNode, wordList, setting)=>{
                 const renderNode = document.createElement('hooli-text')
                 renderNode.wordObj = wordObj
                 renderNode.textContent = word
-                renderNode.wordId = wordObj.id
                 renderNode.id = `h-${wordObj.id}-${updatedWordInTheList.countInCurrentPage - countMatchedTime + count + 1}`
+                renderNode.className = `h-${wordObj.id}`
                 //id start from 1 not 0
                 return renderNode
             }
@@ -120,13 +122,13 @@ const putHooliTextOnNode = (targetNode, wordList, setting)=>{
 }
 
 
-export const renderMultipleRuby = (nodesArray, wordList, setting)=>{
-
+export const renderMultipleRuby = (nodesArray, dumb, setting)=>{
+    
     console.log('renderRuby execute', setting)
     const performanceStart = performance.now()
 
         nodesArray.forEach((node=>{
-            renderRuby(node, wordList, setting, false)
+            renderRuby(node, dumb, setting, false)
         }))
 
             
@@ -136,9 +138,11 @@ export const renderMultipleRuby = (nodesArray, wordList, setting)=>{
 }
 
 
-export const renderRuby = (target, wordList, setting, isStart) => {
+export const renderRuby = (target, dumb, setting, isStart) => {
     
-    
+    const startTime = performance.now()
+
+
     const nodeIterator = document.createNodeIterator(target, NodeFilter.SHOW_TEXT, myGoodFilter);
     // mygoodfilter source:
     // https://github.com/XQDD/highlight_new_words/blob/12be7a1d79ad209ffffcbfc1038efbb7aa3bbd8c/content_scripts/highlight.js#L329
@@ -180,7 +184,15 @@ export const renderRuby = (target, wordList, setting, isStart) => {
     
         let textNode;
         while (textNode = nodeIterator.nextNode()) {
-            putHooliTextOnNode(textNode, wordList, setting)
+
+            const currentTime = performance.now()
+
+            if(currentTime - startTime > 3000) {
+                console.log('stop execute renderRuby')
+                break;
+            }
+
+            putHooliTextOnNode(textNode, dumb, setting)
         }
     
 

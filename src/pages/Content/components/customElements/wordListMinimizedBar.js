@@ -1,10 +1,10 @@
 
 import '@webcomponents/custom-elements'
-import { LitElement, html, css, unsafeCSS } from 'lit';
+import { LitElement, html, css } from 'lit';
 // import { showWordList, wordInPageList } from '../infoSection'
 import {  CloseIcon, MoreIcon, RefreshIcon, MinimizeIcon, ChevronUpIcon, ChevronDownIcon, VisibilityIcon, VisibilityOffIcon } from '@spectrum-web-components/icons-workflow';
 import interact from 'interactjs'
-import {wordInPageList, clearNoLongerExistWordInWordInPageList} from '../../utils/renderRuby'
+import {wordInPageList, clearNoLongerExistWordInWordInPageList, transformElementId} from '../../utils/renderRuby'
 
 
 class HooliWordListMinimizedBar extends LitElement {
@@ -38,7 +38,7 @@ class HooliWordListMinimizedBar extends LitElement {
         </div>`
     }
     _handleOpenWordList() {
-        showWordList()
+        // showWordList()
     }
 
 }
@@ -189,13 +189,16 @@ class HooliFloatingWordList extends LitElement {
     }
     _lookingForMatchBar(wordId){
         if(!this.lookingWord) return 
-        if(this.lookingWord.id === wordId) return html`<div id='looking-for-match-bar'>
+        if(this.lookingWord.id === wordId) {
+            const existingEleIdsCount = Array.from(document.querySelectorAll(`.h-${wordId}`)).map(ele=> +transformElementId(ele.id, 'count'))
+
+        return html`<div id='looking-for-match-bar'>
         <h5><button @click="${this._handleOpenWordBlock}">${this._openWordBlockWhenMatching?VisibilityIcon({width:15, height:15}):VisibilityOffIcon({width:15, height:15})}</button></h5>
-        <h6>${this.lookingWord.currentFocusCount}/${this.lookingWord.countInCurrentPage}</h6>
+        <h6>${existingEleIdsCount.indexOf(this.lookingWord.currentFocusCount)+1}/${existingEleIdsCount.length}</h6>
         <button @click="${()=>this._handleScrollToWord('prev')}">${ChevronUpIcon({width:15, height:15})}</button>
         <button @click="${()=>this._handleScrollToWord('next')}" >${ChevronDownIcon({width:15, height:15})}</button>
         <button @click="${this._handleCloseLooking}" >${CloseIcon({width:15, height:15})}</button>
-        </div>`
+        </div>`}
     }
     
     render() {

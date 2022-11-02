@@ -131,7 +131,7 @@ chrome.runtime.onMessage.addListener(
             getDomainDataByUrls(request.domains)
 
         }
-        if (request.wordId) {
+        if (request.wordId && request.action === 'getContexts') {
             const getContextByWordId = async (wordId) => {
                 const contexts = await db.contextList.filter((contextObj) => {
                     return contextObj.wordId === wordId
@@ -174,11 +174,38 @@ chrome.runtime.onMessage.addListener(
         }
         if(request.action === 'addNewContextForSavedWord' && request.newContext){
             const theContextObj = { ...request.newContext }
-            db.contextList.add(theContextObj).then(()=>{
+            const currentDomain = new URL(theContextObj.url).hostname
+            const addContextAndDomain = async()=>{
+                await db.contextList.add(theContextObj)
+                await saveDomainData(currentDomain)
                 sendResponse({message: `saved ${theContextObj.context}`})
+            }
+            addContextAndDomain()
+        }
+        if(request.action === 'deleteThisWordObjAndAllItsContexts' && request.wordId && request.contextIdsToDelete){
+            const {wordId, contextIdsToDelete} = request
+            const deleteWordAndDomainObjByWordId = async()=>{
+                await db.wordList.delete(wordId)
+                await db.contextList.bulkDelete(contextIdsToDelete)
+                sendResponse({
+                status:'success', 
+                message:`delete ${wordId}, contexts ${contextIdsToDelete.join(', ')}`
             })
-
-
+            }
+            deleteWordAndDomainObjByWordId()
+        }
+        if(request.action === 'deleteTheseContexts' && request.contextIdsToDelete){
+            const {contextIdsToDelete} = request
+            if(contextIdsToDelete.length > 0){
+                const deleteContextsByContextIds = async()=>{
+                    await db.contextList.delete(contextIdsToDelete)
+                    sendResponse({
+                        status:'success',
+                        message:`delete contexts ${contextIdsToDelete.join(', ')}`
+                    })
+                }
+                deleteContextsByContextIds()
+            }
         }
         return true
     });

@@ -97,16 +97,12 @@ const observer = new MutationObserver((mutations) => {
         }
 
     })
-    // console.log(mutations)
-    if (visible) {
-        // if (mutations.length === 1 && mutations[0].type === 'childList') {
-        //     if (mutations[0].addedNodes.length === 0) return
-        //     if (mutations[0].addedNodes[0].tagName?.includes('HOOLI')) return
-        // }
 
+    if (visible) {
+ 
         if(runningIntervalId) return 
         const checkIfNewNodes = setInterval(() => {
-            if(newAddedNodes.length === 0) {
+            if(!visible || newAddedNodes.length === 0) {
                 clearInterval(checkIfNewNodes)
                 runningIntervalId = null
                 return
@@ -158,6 +154,22 @@ export let myList = [];
 let whiteList = []
 export let floatingWindow = false
 let connect = false;
+
+
+export const restoreHolliText = (wordId)=>{
+    let targetEles;
+    if(!wordId) {
+        targetEles = document.querySelectorAll('holli-text')
+    }else{
+        targetEles = document.querySelectorAll(`.h-${wordId}`)
+    }
+    targetEles.forEach(ele=>{
+     const fragment = new DocumentFragment()
+     fragment.textContent = ele.textContent
+     ele.replaceWith(fragment)
+    })
+    myList = myList.filter(wordObj=>wordObj.id !== wordId)
+ }
 
 function startFunction(){
 //test i18n

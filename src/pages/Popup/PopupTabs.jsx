@@ -118,7 +118,7 @@ export function PopupTabs({
         useEffect(()=>{
         if(!domainData)   return
         if([ domainData.activate , domainData.floatingWindow , domainData.mouseTool]
-            .some(setting=> typeof setting === 'boolean')){
+            .some(setting=> typeof setting === 'boolean' && activate)){
                 setCurrentTab(0)
             }
     },[domainData])
@@ -139,12 +139,6 @@ export function PopupTabs({
                     openFloatingWindow={openFloatingWindow}
                     customSettingToggle={customSettingToggle}
                     setCustomSettingToggle={setCustomSettingToggle}
-                    // openCurrentSiteFloatingWindow={openCurrentSiteFloatingWindow}
-                    // setOpenCurrentSiteFloatingWindow={setOpenCurrentSiteFloatingWindow}
-                    // openCurrentSiteMouseTool={openCurrentSiteMouseTool}
-                    // setOpenCurrentSiteMouseTool={setOpenCurrentSiteMouseTool}
-                    // currentSiteActivateToggle={currentSiteActivateToggle}
-                    // setCurrentSiteActivateToggle={setCurrentSiteActivateToggle}
                     currentDomain={currentDomain}
                     domainData={domainData}
                     setDomainData={setDomainData}
@@ -159,9 +153,6 @@ export function PopupTabs({
                     setOpenMouseTool={setOpenMouseTool}
                     openFloatingWindow={openFloatingWindow}
                     setOpenFloatingWindow={setOpenFloatingWindow}
-                    // setOpenCurrentSiteFloatingWindow={setOpenCurrentSiteFloatingWindow}
-                    // setOpenCurrentSiteMouseTool={setOpenCurrentSiteMouseTool}
-                    // setCurrentSiteActivateToggle={setCurrentSiteActivateToggle}
                     customSettingToggle={customSettingToggle}
                     domainData={domainData}
                     setDomainData={setDomainData}

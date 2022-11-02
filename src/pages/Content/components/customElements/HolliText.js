@@ -66,9 +66,11 @@ class HooliText extends LitElement {
         document.body.appendChild(smallTip)
     }
     openWordBlock(){
+        const existingWordBlock = document.querySelector('hooli-wordinfo-block')
+        if(existingWordBlock) existingWordBlock.remove()
             const wordBlock = document.createElement('hooli-wordinfo-block')
             let contextHere = ''
-            chrome.runtime.sendMessage({ wordId: this.wordObj.id }, (response) => {
+            chrome.runtime.sendMessage({ wordId: this.wordObj.id, action:'getContexts' }, (response) => {
                 wordBlock.contexts = response.contexts
                 // console.log(response.contexts)
                 const allDomains = response.contexts.map(contextObj => {
