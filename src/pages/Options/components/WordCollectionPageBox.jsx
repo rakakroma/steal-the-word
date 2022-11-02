@@ -3,7 +3,7 @@ import { Box } from "@mui/system";
 import React from "react";
 import { getDomain } from "../utils/transformData";
 
-export const WordCollectionPageBox = ({ arrayWithUrl, showingWord, targetWordRef, handleWordClick }) => {
+export const WordCollectionPageBox = ({ imgUri, arrayWithUrl, showingWord, targetWordRef, handleWordClick }) => {
 
     return <Box sx={{
         border: '1px solid black',
@@ -15,13 +15,16 @@ export const WordCollectionPageBox = ({ arrayWithUrl, showingWord, targetWordRef
     }} key={arrayWithUrl[0]}>
         <Box sx={{ display: 'flex' }}>
             <img width='20px' height='20px' loading="lazy"
-                src={getDomain(arrayWithUrl.words[0].contextInfos[0].url) ?
-                    "https://s2.googleusercontent.com/s2/favicons?domain=" + getDomain(arrayWithUrl.words[0].contextInfos[0].url) :
-                    "https://findicons.com/files/icons/1504/kidcon_alpine_os/32/local_file_address.png"} alt={"logo of " + getDomain(arrayWithUrl.words[0].contextInfos[0].url)}
-                onError={({ currentTarget }) => {
-                    currentTarget.onerror = null;
-                    currentTarget.src = "https://" + getDomain(arrayWithUrl.words[0].contextInfos[0].url) + '/favicon.ico';
-                }} />
+                src={imgUri}
+                alt=''
+            // src={getDomain(arrayWithUrl.words[0].url) ?
+            //     "https://s2.googleusercontent.com/s2/favicons?domain=" + getDomain(arrayWithUrl.words[0].contextInfos[0].url) :
+            //     "https://findicons.com/files/icons/1504/kidcon_alpine_os/32/local_file_address.png"} alt={"logo of " + getDomain(arrayWithUrl.words[0].contextInfos[0].url)}
+            // onError={({ currentTarget }) => {
+            //     currentTarget.onerror = null;
+            //     currentTarget.src = "https://" + getDomain(arrayWithUrl.words[0].contextInfos[0].url) + '/favicon.ico';
+            // }} 
+            />
             <Typography variant='body2' sx={{
                 marginLeft: '2px',
                 display: 'inline-block',
@@ -29,7 +32,7 @@ export const WordCollectionPageBox = ({ arrayWithUrl, showingWord, targetWordRef
                 height: '15px',
                 overflow: 'hidden',
                 textOverflow: "ellipsis"
-            }}>{arrayWithUrl.words[0].contextInfos[0].pageTitle}</Typography>
+            }}>{arrayWithUrl.words[0].pageTitle}</Typography>
         </Box>
         {arrayWithUrl.words.map(wordObj => {
             return <Box key={wordObj.id} id={wordObj.id}>

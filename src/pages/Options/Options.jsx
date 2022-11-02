@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef, createContext } from 'react';
 import './Options.css';
 import CustomizedDialogs from './components/CustomizedDialogs';
-import { Checkbox, Box, createTheme, CssBaseline, Divider, FormControlLabel, FormGroup, IconButton, Input, InputAdornment, Link, List, ListItem, ListItemText, Switch, TextField, ThemeProvider, Tooltip, Typography, FormControl, InputLabel, Select, OutlinedInput, MenuItem, Snackbar, Slide } from '@mui/material';
-import { Search } from '@mui/icons-material';
+import { Checkbox, Box, createTheme, CssBaseline, Divider, FormControlLabel, FormGroup, IconButton, Input, InputAdornment, Link, List, ListItem, ListItemText, Switch, TextField, ThemeProvider, Tooltip, Typography, FormControl, InputLabel, Select, OutlinedInput, MenuItem, Snackbar, Slide, alpha } from '@mui/material';
+import { Search, SortByAlpha } from '@mui/icons-material';
 import { formatDate, fullDate, sortByDate } from './utils/Date'
-import { groupBy } from './utils/groupBy'
-import { countDate } from './utils/countDate'
+// import { groupBy } from './utils/groupBy'
+// import { countDate } from './utils/countDate'
 import { themeStyle } from './theme.style'
 import { WideList } from './components/WideList';
 import { SearchBar } from './components/SearchBar';
@@ -14,8 +14,11 @@ import PersonalVideoIcon from '@mui/icons-material/PersonalVideo';
 import { checkLocalLanguagePossible, checkStringLanguage } from './utils/languageDetection';
 import { WordAnimation } from './components/WordAnimation';
 import MultipleSelectCheckmarks from './components/MultiSelectionCheckmarks';
-import { dataTransform } from './utils/transformData';
-
+// import { dataTransform, getDomain } from './utils/transformData';
+import { getDataInTableFromIndexedDB } from './utils/getDataFromDB'
+import { db } from '../Background/database';
+import LaptopChromebookIcon from '@mui/icons-material/LaptopChromebook';
+// import { TestElement } from '../Content/components/testElement';
 
 
 function TransitionUp(props) {
@@ -26,9 +29,9 @@ function TransitionUp(props) {
 
 const Options = () => {
 
-  const [myList, setMyList] = useState([])
-  // const imgRef = useRef(null)
-  // const [stolenColor, setStolenColor] = useState([])
+  const [contextList, setContextList] = useState([])
+  const [domainAndLinkList, setDomainAndLinkList] = useState([])
+  const [wordList, setWordList] = useState([])
   const [searchText, setSearchText] = useState("")
   const [hideAlias, setHideAlias] = useState(true)
   const [viewMode, setViewMode] = useState(false)
@@ -37,55 +40,62 @@ const Options = () => {
   const [languageFilter, setLanguageFilter] = useState({ taiwanese: true, hakka: true, english: true, chinese: true, japanese: true, korean: true, all: true })
   const [timeMode, setTimeMode] = useState(false)
   const [showNotification, setShowNotification] = useState(false)
+  const [testMode, setTestMode] = useState(false)
+  const [alphabeticalOrderMode, setAlphabeticalOrderMode] = useState(false)
 
-  const transformedData = dataTransform(myList)
+  // const transformedData = dataTransform(contextList)
 
   const theme = createTheme(themeStyle)
 
+
+
   useEffect(() => {
-    chrome.storage.local.get("myWordList", function (obj) {
-      if (obj.myWordList && obj.myWordList.length > 0) {
-        setMyList(obj.myWordList)
-        // console.log(obj.myWordList, myList);
-      } else {
-        console.log('沒有');
-      }
-    })
+
+    async function getDataInDB() {
+      let contextListInDB = await getDataInTableFromIndexedDB('contextList', 'descending')
+      let LinkListInDB = await getDataInTableFromIndexedDB('domainAndLink')
+      let wordListInDB = await getDataInTableFromIndexedDB('wordList')
+      setContextList(contextListInDB)
+      setDomainAndLinkList(LinkListInDB)
+      setWordList(wordListInDB)
+    }
+    getDataInDB()
+
   }, [])
 
   const handleDelete = (id) => {
-    const updatedList = myList.filter(wordObj => wordObj.id !== id)
-    setMyList(updatedList)
-    chrome.storage.local.set({ "myWordList": updatedList });
+    const updatedList = contextList.filter(wordObj => wordObj.id !== id)
+    setContextList(updatedList)
+    // chrome.storage.local.set({ "myWordList": updatedList });
   }
 
   const handleEdit = (id, updatedInfo) => {
     const targetId = id
-    let objToEdit = myList.find(wordObj => wordObj.id === targetId)
+    let objToEdit = contextList.find(wordObj => wordObj.id === targetId)
     objToEdit = { ...objToEdit, ...updatedInfo }
 
-    const updatedList = myList.map(wordObj => {
+    const updatedList = contextList.map(wordObj => {
       if (wordObj.id === id) return objToEdit
       return wordObj
     })
-    setMyList(updatedList)
-    chrome.storage.local.set({ "myWordList": updatedList });
+    setContextList(updatedList)
+    // chrome.storage.local.set({ "myWordList": updatedList });
   }
 
 
   const handleSelectPhrase = (targetId) => {
-    const objToEdit = myList.find(wordObj => wordObj.id === targetId)
+    const objToEdit = contextList.find(wordObj => wordObj.id === targetId)
     objToEdit.phrase = window.getSelection().toString().trim()
     if (!objToEdit.context.includes(objToEdit.phrase) || !objToEdit.phrase.includes(objToEdit.word)) return
 
-    const updatedList = myList.map(wordObj => {
+    const updatedList = contextList.map(wordObj => {
       // if (wordObj.id === e.target.parentElement.id) return objToEdit
       if (wordObj.id === targetId) return objToEdit
       return wordObj
     })
-    setMyList(updatedList)
+    setContextList(updatedList)
     window.getSelection().removeAllRanges()
-    chrome.storage.local.set({ "myWordList": updatedList });
+    // chrome.storage.local.set({ "myWordList": updatedList });
   }
 
   const logFile = (event) => {
@@ -93,12 +103,13 @@ const Options = () => {
     let json = JSON.parse(str);
     // console.log('string', str);
     console.log('json', json);
-    setMyList(json)
-    chrome.storage.local.set({ "myWordList": json });
+    db.wordList.bulkAdd(json)
+    setContextList(json)
+    // chrome.storage.local.set({ "myWordList": json });
   }
 
   const handleImport = (e) => {
-    console.log('import')
+    // console.log('import')
     e.preventDefault()
     if (!file.value.length) return;
     let reader = new FileReader()
@@ -113,8 +124,8 @@ const Options = () => {
     return { uri: dataUri, fileName: exportFileDefaultName }
   }
 
-  const handleExport = () => {
-    const result = exportToJsonFile(myList)
+  const handleExport = (textFile) => {
+    const result = exportToJsonFile(textFile)
     return {
       link: result.uri,
       fileName: result.fileName
@@ -127,7 +138,7 @@ const Options = () => {
   }
 
 
-  const groupedList = (wordList) => groupBy(sortByDate(wordList), 'domain')
+  // const groupedList = (wordList) => groupBy(sortByDate(wordList), 'domain')
 
   const getSelectedLanguage = () => {
     return Object.entries(languageFilter).reduce((accu, [key, value]) => {
@@ -179,16 +190,24 @@ const Options = () => {
         <SearchBar
           searchText={searchText}
           handleSearch={handleSearch}
-          myList={myList}
+          contextList={contextList}
         />
 
-        <CustomizedDialogs handleExport={handleExport} handleImport={handleImport} />
+        <CustomizedDialogs
+          wordList={wordList}
+          handleExport={handleExport}
+          handleImport={handleImport}
+          contextList={contextList}
+          setContextList={setContextList}
+          domainAndLinkList={domainAndLinkList}
+
+        />
       </Box>
 
 
       <Box sx={{ display: 'flex', margin: '10px' }}>
         <Box sx={{ width: '10vw' }}>
-          <Typography variant='h6' sx={{ margin: '15px' }}>{`已存詞彙 ${myList.length}`}</Typography>
+          <Typography variant='h6' sx={{ margin: '15px' }}>{`已存詞彙 ${contextList.length}`}</Typography>
 
 
           <MultipleSelectCheckmarks options={languages} />
@@ -230,33 +249,67 @@ const Options = () => {
           >
             <PersonalVideoIcon />
           </IconButton>
+          <IconButton
+            onClick={() => setTestMode(!testMode)}
+            sx={{
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <LaptopChromebookIcon />
+          </IconButton>
+          <IconButton
+            onClick={() => setAlphabeticalOrderMode(!alphabeticalOrderMode)}
+            sx={{
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <SortByAlpha />
+          </IconButton>
         </Box>
         {/* <Box sx={{ width: '15vw' }}>
 
         </Box> */}
         {animationMode ?
           <WordAnimation
-            myList={languageSelectionFilter(myList)}
+            contextList={languageSelectionFilter(contextList)}
           /> :
-          viewMode === true ?
-            <WideList
-              myList={languageSelectionFilter(myList)}
-              allWords={transformedData}
-              hideAlias={hideAlias}
-              setHideAlias={setHideAlias}
-              handleSelectPhrase={handleSelectPhrase}
-              handleDelete={handleDelete}
-              handleEdit={handleEdit}
-              setShowNotification={setShowNotification}
-            />
-            : <WordCollection
-              allWords={transformedData}
-              myList={languageSelectionFilter(myList)}
-              groupedList={groupedList(languageSelectionFilter(myList))}
-              phraseMode={phraseMode}
-              handleSelectPhrase={handleSelectPhrase}
-              timeMode={timeMode}
-            />
+          testMode ?
+            <Box>
+              {/* {domainAndLinkList.map((obj, i) => {
+                return <img
+                  width='20px'
+                  height='20px'
+                  loading="lazy"
+                  src={obj.icon ? URL.createObjectURL(obj.icon) : ''}
+                  alt={obj.url}
+                />
+              })} */}
+            </Box> :
+            viewMode === true ?
+              <WideList
+                wordList={wordList}
+                contextList={contextList}
+                // allWords={transformedData}
+                hideAlias={hideAlias}
+                setHideAlias={setHideAlias}
+                handleSelectPhrase={handleSelectPhrase}
+                handleDelete={handleDelete}
+                handleEdit={handleEdit}
+                setShowNotification={setShowNotification}
+                domainAndLinkList={domainAndLinkList}
+
+              />
+              : <WordCollection
+                wordList={wordList}
+                // contextList={languageSelectionFilter(contextList)}
+                contextList={contextList}
+                // groupedList={groupedList(languageSelectionFilter(contextList))}
+                phraseMode={phraseMode}
+                handleSelectPhrase={handleSelectPhrase}
+                timeMode={timeMode}
+                alphabeticalOrderMode={alphabeticalOrderMode}
+                domainAndLinkList={domainAndLinkList}
+              />
         }
 
       </Box>

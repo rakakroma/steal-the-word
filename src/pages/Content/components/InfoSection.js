@@ -1,5 +1,5 @@
 import interact from 'interactjs'
-
+// import './customElements/HolliText'
 
 export const infoSection = document.createElement('section')
 infoSection.id = 'hooriruby-info-div'
@@ -7,7 +7,11 @@ infoSection.id = 'hooriruby-info-div'
 const shadowInfoSection = infoSection.attachShadow({ mode: "open" })
 shadowInfoSection.innerHTML = `
 <style>
+:host{
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+  'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 
+}
 
 ol{
   padding:0;
@@ -44,6 +48,22 @@ span{
 .hooliruby-words-block:hover .hooliruby-pin-button{
   display:inline-block;
 }
+
+h3,h6{
+  display:inline-block;
+  margin-top:0;
+  margin-bottom:0;
+  margin-left:5px;
+
+}
+a {
+  color:inherit;
+}
+
+#scroll-navigation-bar{
+  display:flex;
+}
+
 </style>
 `
 
@@ -52,43 +72,72 @@ const controlBar = document.createElement('div')
 controlBar.id = 'holli-control-bar'
 controlBar.draggable = true
 
-// function onDrag({movementX, movementY}){
-//     let getStyle = window.getComputedStyle(infoSection);
-//     let leftVal = parseInt(getStyle.left);
-//     let topVal = parseInt(getStyle.top);
-//     console.log(leftVal, topVal)
-//     infoSection.style.left = leftVal>0?`${leftVal + movementX}px`:"0px";
-//     infoSection.style.top = topVal>0?`${topVal + movementY}px`:"0px";
-//   }
+const testLanguageDetectInput = document.createElement('input')
+const submitButton = document.createElement('button')
+submitButton.textContent = '🤔'
+const container  = document.createElement('div')
+submitButton.addEventListener('click', ()=>{
+  const text = testLanguageDetectInput.value
+  if(text){
+  let detectingLanguages = chrome.i18n.detectLanguage(text)
+  detectingLanguages.then(result=>{
+    console.log('text:',text)
+    console.log('isReliable:', result.isReliable)
+    console.log('langs:', result.languages.map(lang=> `${lang.language} ${lang.percentage}%`))
+  })
+  }else{
+    console.log('no text!')
+  }
+})
 
-
+container.appendChild(testLanguageDetectInput)
+container.appendChild(submitButton)
 
 
 shadowInfoSection.appendChild(controlBar)
+
+//
+shadowInfoSection.appendChild(container)
 shadowInfoSection.appendChild(countList)
 
 export const displayList = []
+export const wordInPageList = []
+let showingMode
+
+const modeButton = document.createElement('button')
+modeButton.textContent = '😅'
+modeButton.addEventListener('click', () => {
+  if (showingMode === 'displaying') {
+    showingMode = 'inPage'
+    showWordList()
+    return
+  }
+  showingMode = 'displaying'
+  showWordList()
+
+})
+controlBar.appendChild(modeButton)
+
+const clearButton = document.createElement('button')
+clearButton.textContent = 'clear'
+clearButton.addEventListener('click', () => {
+  wordInPageList.length = 0
+  showWordList()
+}
+)
+controlBar.appendChild(clearButton)
+
 
 export const showWordList = () => {
+  let mode = showingMode || 'inPage'
+  console.log('showWordList')
+
   countList.textContent = ''
-  if (displayList.length > 0) {
+  if (wordInPageList.length > 0) {
     document.body.appendChild(infoSection)
-    // infoSection.shadowRoot.querySelector('button')
-    // .addEventListener('click',()=>{
-    //     showWordList()
-    // })
     const topBar = shadowInfoSection.querySelector('#holli-control-bar')
 
-    // topBar.addEventListener('dragstart',()=>{
-    //     console.log("dragstart")
-    //     topBar.classList.add('active')
-    //     topBar.addEventListener('mousemove', onDrag)
-    //   })
-    //   document.addEventListener('mouseup',()=>{
-    //     console.log("mouseup")
-    //     topBar.classList.remove('active')
-    //     topBar.removeEventListener('mousemove', onDrag)
-    //   })
+
     const position = { x: 0, y: 0 }
     interact(topBar)
       .draggable({
@@ -103,7 +152,7 @@ export const showWordList = () => {
           //     console.log(event.type, event.target)
           //   },
           move(event) {
-            console.log(event)
+            // console.log(event)
             position.x += event.dx
             position.y += event.dy
 
@@ -118,7 +167,7 @@ export const showWordList = () => {
         edges: { bottom: true },
         listeners: {
           move: function (event) {
-            console.log(event.target.dataset, event.rect)
+            // console.log(event.target.dataset, event.rect)
             let { x, y } = event.target.dataset
             x = (parseFloat(x) || 0) + event.deltaRect.left
             y = (parseFloat(y) || 0) + event.deltaRect.top
@@ -134,26 +183,69 @@ export const showWordList = () => {
         }
       })
 
-
-    displayList.forEach(wordObj => {
-      const countListItem = document.createElement('li')
-      const pinButton = document.createElement('button')
-      const wordSpan = document.createElement('span')
-      const aliasSpan = document.createElement('span')
-      // const currentContextDiv = document.createElement('div')
-      // currentContextDiv.textContent = wordObj.currentContext
-      // currentContextDiv.className = 'holli-current-context-div'
-
-      countListItem.className = 'hooliruby-words-block'
-      pinButton.className = 'hooliruby-pin-button'
-      pinButton.textContent = '📌'
-      wordSpan.textContent = `${wordObj.word} `
-      aliasSpan.textContent = wordObj.alias
-      countListItem.appendChild(pinButton)
-      countListItem.appendChild(wordSpan)
-      countListItem.appendChild(aliasSpan)
-      countList.appendChild(countListItem)
-      // countList.appendChild(currentContextDiv)
+    const displayingList = Array.from(new Set(displayList)).map(wordId => {
+      return wordInPageList.find(wordObj => wordObj.id === wordId)
     })
+
+    if (mode === 'displaying') {
+      displayingList.forEach(wordObj => {
+        const countListItem = document.createElement('li')
+        const wordH3 = document.createElement('h3')
+        const aliasH6 = document.createElement('h6')
+        countListItem.className = 'hooliruby-words-block'
+        wordH3.textContent = wordObj.word
+        aliasH6.textContent = wordObj.pronounce || wordObj.definitions[0].aliases[0]
+        countListItem.appendChild(wordH3)
+        countListItem.appendChild(aliasH6)
+        countList.appendChild(countListItem)
+      })
+    } else if (mode === 'inPage') {
+      wordInPageList.forEach(wordObj => {
+        const countListItem = document.createElement('li')
+        const wordH3 = document.createElement('h3')
+        const aliasH6 = document.createElement('h6')
+        const wordTotalCount = document.createElement('h6')
+        wordTotalCount.textContent = `${wordObj.countInCurrentPage}`
+
+        // wordH3.addEventListener('click',()=>{
+        //   const lastElement = document.querySelector(`#h-${wordObj.id}-${wordObj.countInCurrentPage}`)
+        //   if(lastElement)  lastElement.scrollIntoView({ behavior: 'smooth' });
+
+        // })
+        wordTotalCount.addEventListener('click',()=>{
+          startScrollToElement(wordObj)
+        })
+        countListItem.className = 'hooliruby-words-block'
+        wordH3.textContent = wordObj.word
+        aliasH6.textContent = wordObj.pronounce || wordObj.definitions[0].aliases[0]
+        // anchor.appendChild(wordH3)
+        countListItem.appendChild(wordTotalCount)
+        countListItem.appendChild(wordH3)
+        countListItem.appendChild(aliasH6)
+        countList.appendChild(countListItem)
+      })
+    }
+
   }
 }
+
+const startScrollToElement = (wordObj)=>{
+
+  const scrollNavigationBar = document.createElement('div')
+const prevButton = document.createElement('button')
+const nextButton = document.createElement('button')
+const targetWord = document.createElement('h5')
+const closeScrollNavigationBar = document.createElement('button')
+
+const currentTarget = document.createElement('h5')
+currentTarget.textContent = `${wordObj.countInCurrentPage}`
+scrollNavigationBar.id = 'scroll-navigation-bar'
+prevButton.textContent = '⬆'
+nextButton.textContent = '⬇'
+targetWord.textContent = wordObj.word
+closeScrollNavigationBar.textContent = 'X'
+
+scrollNavigationBar.append(closeScrollNavigationBar, targetWord, prevButton, nextButton)
+shadowInfoSection.appendChild(scrollNavigationBar)
+}
+
