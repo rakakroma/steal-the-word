@@ -14,13 +14,13 @@ export const setWordBlockPosition = (ref, blockEle) => {
     let leftPos = 0
 
     const countBottomPos = -(window.scrollY + refClientRect.top)
-    let useTopPos = refClientRect.top < 150 ? true : false
+    let useTopPos = refClientRect.top < 400 ? true : false
     // let bottomPos = countBottomPos
 
-    if (countLeftPos > 190 && window.innerWidth - countLeftPos > 200) {
+    if (countLeftPos > 195 && window.innerWidth - countLeftPos > 200) {
         leftPos = countLeftPos
-    } else if (countLeftPos < 190) {
-        leftPos = 190
+    } else if (countLeftPos < 195) {
+        leftPos = 200
 
     } else if (window.innerWidth - countLeftPos < 200) {
         leftPos = window.innerWidth - 200

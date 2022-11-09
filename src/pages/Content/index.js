@@ -1,75 +1,57 @@
-// import React from 'react';
-// import { render } from 'react-dom';
-// import { shadowAppTopStyle } from './shadowApp.style';
-import { renderRuby,renderMultipleRuby } from './utils/renderRuby';
-// import { showWordList } from './components/infoSection'
+import { renderRuby,renderMultipleRuby,wordInPageList } from './utils/renderRuby';
 import './components/customElements/HolliText';
 import './components/customElements/wordListMinimizedBar'
-import { setWordBlockPosition } from './utils/setWordBlockPosition'
-import {ReactComponent} from './components/ReactComponent.jsx'
 import {openAddNewWord} from './components/customElements/HolliText'
+import {
+    computePosition,
+    flip,
+    shift,
+    offset,
+    arrow,
+    inline
+  } from '@floating-ui/dom';
 
-
-//第二個重要功能：已上色的ruby要能夠很快的儲存新例句／片語
 
 console.log('Content script works!');
-
 
 const body = document.body
 const currentURL = window.location.hash ?
     window.location.href.slice(0, window.location.href.lastIndexOf(window.location.hash)) :
     window.location.href
 
+const updatePosition = (refEle, floatEle) =>{
+        computePosition(refEle, floatEle, {
+            placement: 'top-end',
+            middleware: [offset(10),flip(), shift({padding: 3})],
+          }).then(({x, y}) => {
+            Object.assign(floatEle.style, {
+              left: `${x}px`,
+              top: `${y}px`,
+            });
+          });
+    }
 const init = () => {
-
-    const addingTool = document.createElement('hooli-adding-tool')
-
     body.addEventListener('mouseup', (e) => {
-        if(e.button === 2) return
+        const addingToolOnBody = document.querySelector('hooli-adding-tool')
+        if(addingToolOnBody){
+            if(e.composedPath().find(e=>e.tagName === 'HOOLI-ADDING-TOOL')) return
+            addingToolOnBody.remove()
+        }
+        if(e.button === 2) return //ignore right click
         const selection = document.getSelection()
         const selectedText = selection.toString().trim()
-        // const clientRect = selection.getRangeAt(0).getBoundingClientRect()
-        const elementOnBody = document.querySelector('hooli-adding-tool')
-
-        if (elementOnBody) return
-        // setTimeout(() => {
-        //     if (!selectedText &&
-        //         // document.querySelector('#hooliruby-floating-tool')) body.removeChild(floatingTool)
-        //         document.querySelector('hooli-adding-tool'))body.removeChild(addingTool)
-        // })
-
-        if (selectedText) {
-            if (selection.anchorNode?.children) return
-            if (selectedText.length > 60) return
-            // addingTool.style.top = (e.pageY + 10) + 'px'
-            // addingTool.style.left = (e.pageX - 25) + 'px'
-            setWordBlockPosition(window.getSelection().getRangeAt(0), addingTool)
-
-            // floatingTool.style.top = (e.pageY - 10) + 'px'
-            // floatingTool.style.left = (e.pageX + 25) + 'px'
-            // floatingTool.style.top = window.innerHeight - clientRect.top + 'px'
-            // console.log(clientRect)
-            // if (document.querySelector('#hooliruby-floating-tool')) {
-            //     return
-            // }
-     
-                document.querySelector('hooli-adding-tool')?.remove()
-            body.appendChild(addingTool)
-            // body.appendChild(floatingTool)
-            // floatingTool.appendChild(buttonOfFloatingTool)
-            return
-        }
+        if (!selectedText || selectedText.length > 60)  return
+        if (selection.anchorNode?.children) return //ignore web component e.g. input, textarea, and my lit element
+        const addingTool = document.createElement('hooli-adding-tool')
+        updatePosition(window.getSelection().getRangeAt(0), addingTool)
+        body.appendChild(addingTool)
     })
 }
 
 
-// throttle
-let coldTime = false 
-let timeout = null
 let visible = true
 let newAddedNodes = []
 let newRemovedNodes = []
-// let clearedIntervalId = null
 let runningIntervalId = null
 
 document.addEventListener("visibilitychange", () => {
@@ -86,8 +68,6 @@ const observer = new MutationObserver((mutations) => {
             mutation.addedNodes.forEach(addedNode=>{
                 newAddedNodes.push(addedNode)
             })
-            // console.log('new added nodes')
-            // console.log(newAddedNodes)
         }
         
         if(mutation.removedNodes.length > 0 ){
@@ -99,7 +79,7 @@ const observer = new MutationObserver((mutations) => {
     })
 
     if (visible) {
- 
+
         if(runningIntervalId) return 
         const checkIfNewNodes = setInterval(() => {
             if(!visible || newAddedNodes.length === 0) {
@@ -114,6 +94,7 @@ const observer = new MutationObserver((mutations) => {
                     if(addedNode.tagName?.includes('HOOLI')) return false
                 return true
             })
+            console.log(nodesToHandle)
             if(nodesToHandle.length === 0){
                 clearInterval(checkIfNewNodes)
                 runningIntervalId = null
@@ -121,40 +102,20 @@ const observer = new MutationObserver((mutations) => {
                 newRemovedNodes=[]    
                 return
             }
-            renderMultipleRuby(nodesToHandle, myList, {floatingWindow})
+            renderMultipleRuby(nodesToHandle, myList)
 
             newAddedNodes = []
             newRemovedNodes = []
 
         }, 3000);
         runningIntervalId = checkIfNewNodes
-
-
-        // timeout = setTimeout(() => {
-        //     newAddedNodes.filter(addedNode=>{
-        //         if(newRemovedNodes.indexOf(addedNode) > -1) {
-        //             console.log('offset')
-        //             return false
-        //         } 
-        //         return true
-        //     })
-        //     newAddedNodes = []
-        //     newRemovedNodes=[]
-        // },2000)
-            // renderRuby(document.body, myList, { floatingWindow })
-            //  })
     }
 }
 )
 
 
-
-
 export let myList = [];
 let whiteList = []
-export let floatingWindow = false
-let connect = false;
-
 
 export const restoreHolliText = (wordId)=>{
     let targetEles;
@@ -178,63 +139,45 @@ console.log('ui lang:',chrome.i18n.getUILanguage())
 
 //
     chrome.storage.local.get([
-        'activate', 'mouseTool', 'floatingWindow'], function (obj) {
-            console.log(obj)
-            if (obj.activate === false) {
+        'activate', 'mouseTool', 'floatingWindow'], function (allSiteSettings) {
+            console.log('all site setting')
+            console.log(allSiteSettings)
+            if (allSiteSettings.activate === false) {
                 chrome.runtime.sendMessage({ action: 'notWorking' })
                 return
             }
             chrome.runtime.sendMessage({ action: 'getStart', url: currentURL }, (res) => {
+                console.log('custom setting')
                 console.log(res)
-                if (res.activate === false) {
+                const {wordList, domainData} = res
+                if (domainData?.activate === false) {
                     chrome.runtime.sendMessage({ action: 'notWorking' })
                     return
                 }
-                if (obj.floatingWindow) {
-                    floatingWindow = true
 
-                    const wordListElement=  document.createElement('hooli-floating-word-list')
-
-                    // const rootDiv = document.createElement('div')
-                    // const shadow = rootDiv.attachShadow({mode:'open'})
-                    // const shadowRoot = rootDiv.shadowRoot
-                    // shadowRoot.innerHTML = `#test-react {
-                    //     all: initial;
-                    //     background-color: rgb(239, 239, 239);
-                    //     width: 200px;
-                    //     color: rgb(0, 0, 0);
-                    //     position: fixed;
-                    //     top: 150px;
-                    //     right: 20px;
-                    //     z-index: 999999999990;
-                    //     overflow-y: overlay;
-                    //     display: flex;
-                    //     flex-direction: column;
-                    //     border: 1px solid grey;
-                    //   }
-                    //   `
-                    // render(<ReactComponent />, shadowRoot)
-                    // body.appendChild(rootDiv)
-                    body.appendChild(wordListElement)
-                }
-                if (res.wordList.length > 0) {
+                if (wordList.length > 0) {
                     myList = res.wordList
                     let loadEvent = false
                     const startAfterLoaded = () => {
                         console.log('page loaded')
                         loadEvent = true
-            renderRuby(document.body, myList, { floatingWindow }, true)
+                        renderRuby(document.body, true)
+                        if (allSiteSettings.floatingWindow && domainData?.floatingWindow !== false) {
+                            if(wordInPageList.length === 0){
+                            const minimizedWordList = document.createElement('hooli-wordlist-minimized-bar')
+                            minimizedWordList.mode = 'autoOpen'
+                            body.appendChild(minimizedWordList)
+                            }else{
+                            const wordListElement=  document.createElement('hooli-floating-word-list')
+                            body.appendChild(wordListElement)
+                            }
+                        }
                         observer.observe(body, { childList: true, subtree: true, characterData: true })
                         window.removeEventListener('load', startAfterLoaded)
                     }
                     window.addEventListener('load', startAfterLoaded())
                     setTimeout(() => {
-                        if (!loadEvent) {
-                renderRuby(document.body, myList, { floatingWindow }, true)
-                            observer.observe(body, { childList: true, subtree: true, characterData: true })
-
-                            window.removeEventListener('load', startAfterLoaded)
-                        }
+                        if (!loadEvent) startAfterLoaded()
                     }, 2500)
                 } else {
                     console.log('nothing');
@@ -257,6 +200,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.tabInfo) {
         thisDomain = message.tabInfo.url.split("//")[1].split('/')[0]
     }
+    if(message.action==='deleteWord'){
+
+    }
     if (message.dynamicRendering) {
         whiteList.push(thisDomain)
         console.log(whiteList)
@@ -274,12 +220,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         })
         return true;
     } else if (message.showWordList === true) {
-        floatingWindow = true
         chrome.storage.local.set({ "floatingWindow": true }, () => {
             if (body.querySelector('#hooriruby-info-div')) {
                 body.querySelector('#hooriruby-info-div').classList.remove('hide')
             }
-            renderRuby(document.body, myList, { floatingWindow })
+            renderRuby(document.body)
             // showWordList()
             console.log('open')
             sendResponse({ content: "已顯示wordList" })
@@ -288,12 +233,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     } else if (message.showWordList === false) {
         // floatingWindow = false
         chrome.storage.local.set({ 'floatingWindow': false }, () => {
-            floatingWindow = false
             if (body.querySelector('#hooriruby-info-div')) {
                 // body.removeChild(infoSection)
                 body.querySelector('#hooriruby-info-div').classList.add('hide')
             }
-renderRuby(document.body, myList, { floatingWindow })
+renderRuby(document.body)
             console.log('close')
             sendResponse({ content: "已關閉wordList" })
         })
@@ -303,5 +247,3 @@ renderRuby(document.body, myList, { floatingWindow })
         sendResponse({ content: 'content script 已收到訊息' })
     }
 });
-
-

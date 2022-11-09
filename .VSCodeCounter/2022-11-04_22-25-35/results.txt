@@ -1,0 +1,107 @@
+Date : 2022-11-04 22:25:35
+Directory : /Users/robertchun39/repos/personal-project/hoorirubi-react
+Total : 62 files,  27076 codes, 1119 comments, 907 blanks, all 29102 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| JSON               |          4 |     21,995 |         64 |          1 |     22,060 |
+| JavaScript         |         44 |      4,802 |        927 |        856 |      6,585 |
+| TypeScript         |          1 |        185 |         36 |         26 |        247 |
+| JSON with Comments |          2 |         33 |          2 |          1 |         36 |
+| HTML               |          2 |         20 |          0 |          4 |         24 |
+| Markdown           |          1 |         18 |          0 |          7 |         25 |
+| CSS                |          7 |         16 |         90 |         11 |        117 |
+| XML                |          1 |          7 |          0 |          1 |          8 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++--------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                           | files      | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                              |         62 |     27,076 |      1,119 |        907 |     29,102 |
+| src                                                                                                                            |         52 |      4,840 |      1,016 |        868 |      6,724 |
+| src/assets                                                                                                                     |          1 |          7 |          0 |          1 |          8 |
+| src/assets/img                                                                                                                 |          1 |          7 |          0 |          1 |          8 |
+| src/pages                                                                                                                      |         50 |      4,781 |      1,016 |        867 |      6,664 |
+| src/pages/Background                                                                                                           |          3 |        185 |         40 |         37 |        262 |
+| src/pages/Content                                                                                                              |         13 |      2,396 |        237 |        452 |      3,085 |
+| src/pages/Content/components                                                                                                   |          5 |      1,649 |        115 |        260 |      2,024 |
+| src/pages/Content/components/customElements                                                                                    |          3 |      1,649 |         97 |        251 |      1,997 |
+| src/pages/Content/utils                                                                                                        |          5 |        477 |         78 |        136 |        691 |
+| src/pages/Options                                                                                                              |         27 |      1,689 |        558 |        272 |      2,519 |
+| src/pages/Options/components                                                                                                   |         12 |      1,196 |        466 |        152 |      1,814 |
+| src/pages/Options/utils                                                                                                        |          8 |        196 |         55 |         60 |        311 |
+| src/pages/Popup                                                                                                                |          7 |        511 |        181 |        106 |        798 |
+| utils                                                                                                                          |          3 |         64 |          3 |         16 |         83 |
++--------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++--------------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                                                       | language           | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/.prettierrc                                                         | JSON               |          6 |          0 |          0 |          6 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/README.md                                                           | Markdown           |         18 |          0 |          7 |         25 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/jsconfig.json                                                       | JSON with Comments |         12 |          2 |          0 |         14 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/package-lock.json                                                   | JSON               |     21,925 |          0 |          1 |     21,926 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/package.json                                                        | JSON               |         12 |         64 |          0 |         76 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/assets/img/logo.svg                                             | XML                |          7 |          0 |          1 |          8 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/manifest.json                                                   | JSON               |         52 |          0 |          0 |         52 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Background/config.js                                      | JavaScript         |          4 |          0 |          2 |          6 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Background/database.js                                    | JavaScript         |          8 |         25 |          8 |         41 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Background/index.js                                       | JavaScript         |        173 |         15 |         27 |        215 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Content/components/ReactComponent.css                     | CSS                |          0 |         14 |          1 |         15 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Content/components/ReactComponent.jsx                     | JavaScript         |          0 |          4 |          8 |         12 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Content/components/customElements/HolliText.js            | JavaScript         |        523 |         46 |         99 |        668 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Content/components/customElements/HooliWordInfoBlock.js   | JavaScript         |        814 |         33 |        108 |        955 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Content/components/customElements/wordListMinimizedBar.js | JavaScript         |        312 |         18 |         44 |        374 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Content/content.styles.css                                | CSS                |          0 |          0 |          1 |          1 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Content/index.js                                          | JavaScript         |        204 |         44 |         39 |        287 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Content/shadowApp.style.js                                | JavaScript         |         66 |          0 |         16 |         82 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Content/utils/fetchPronInfo.js                            | JavaScript         |        120 |          7 |         42 |        169 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Content/utils/get-selection-more.ts                       | TypeScript         |        185 |         36 |         26 |        247 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Content/utils/observerForIntersection.js                  | JavaScript         |          0 |         20 |          4 |         24 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Content/utils/renderRuby.js                               | JavaScript         |        139 |         13 |         52 |        204 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Content/utils/setWordBlockPosition.js                     | JavaScript         |         33 |          2 |         12 |         47 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/AlphabeticalOrderList.jsx                         | JavaScript         |          0 |          0 |          1 |          1 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/Options.css                                       | CSS                |          8 |         13 |          4 |         25 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/Options.jsx                                       | JavaScript         |        249 |         24 |         48 |        321 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/components/CustomizedDialogs.jsx                  | JavaScript         |        387 |        335 |         39 |        761 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/components/Highlighter.jsx                        | JavaScript         |         24 |          2 |          8 |         34 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/components/MultiSelectionCheckmarks.jsx           | JavaScript         |         53 |          1 |          6 |         60 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/components/SearchBar.jsx                          | JavaScript         |         40 |          1 |          4 |         45 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/components/WideList.jsx                           | JavaScript         |         58 |         13 |         11 |         82 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/components/WideListPageBlock.jsx                  | JavaScript         |         66 |          3 |          4 |         73 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/components/WideListWordBlock.jsx                  | JavaScript         |        172 |         27 |         17 |        216 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/components/WordAnimation.jsx                      | JavaScript         |        118 |          4 |         20 |        142 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/components/WordCollection.jsx                     | JavaScript         |        218 |         70 |         39 |        327 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/components/WordCollectionPageBox.jsx              | JavaScript         |         41 |          7 |          3 |         51 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/components/defaultRuby.style.js                   | JavaScript         |         14 |          3 |          0 |         17 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/components/smallWord.css                          | CSS                |          5 |          0 |          1 |          6 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/index.css                                         | CSS                |          0 |          0 |          1 |          1 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/index.html                                        | HTML               |         10 |          0 |          2 |         12 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/index.jsx                                         | JavaScript         |          9 |          0 |          4 |         13 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/theme.style.js                                    | JavaScript         |         21 |          0 |          0 |         21 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/utils/Date.js                                     | JavaScript         |         11 |          0 |          4 |         15 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/utils/countDate.js                                | JavaScript         |         22 |          0 |          7 |         29 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/utils/formatBytes.js                              | JavaScript         |          8 |          1 |          1 |         10 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/utils/getDataFromDB.js                            | JavaScript         |         10 |          0 |          1 |         11 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/utils/groupBy.js                                  | JavaScript         |         10 |          0 |          1 |         11 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/utils/languageDetection.js                        | JavaScript         |         87 |          7 |         23 |        117 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/utils/shuffle.js                                  | JavaScript         |          8 |          0 |          1 |          9 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Options/utils/transformData.js                            | JavaScript         |         40 |         47 |         22 |        109 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Popup/Popup.css                                           | CSS                |          0 |         45 |          1 |         46 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Popup/Popup.jsx                                           | JavaScript         |        154 |         59 |         31 |        244 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Popup/PopupTabs.jsx                                       | JavaScript         |        133 |          8 |         24 |        165 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Popup/ToggleOptions.jsx                                   | JavaScript         |        205 |         51 |         42 |        298 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Popup/index.css                                           | CSS                |          3 |         18 |          2 |         23 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Popup/index.html                                          | HTML               |         10 |          0 |          2 |         12 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/src/pages/Popup/index.jsx                                           | JavaScript         |          6 |          0 |          4 |         10 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/tsconfig.json                                                       | JSON with Comments |         21 |          0 |          1 |         22 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/utils/build.js                                                      | JavaScript         |         10 |          1 |          5 |         16 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/utils/env.js                                                        | JavaScript         |          4 |          1 |          1 |          6 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/utils/webserver.js                                                  | JavaScript         |         50 |          1 |         10 |         61 |
+| /Users/robertchun39/repos/personal-project/hoorirubi-react/webpack.config.js                                                   | JavaScript         |        178 |         34 |         14 |        226 |
+| Total                                                                                                                          |                    |     27,076 |      1,119 |        907 |     29,102 |
++--------------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

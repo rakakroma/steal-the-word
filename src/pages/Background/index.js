@@ -2,7 +2,7 @@ import { getDataInTableFromIndexedDB } from "../Options/utils/getDataFromDB";
 // import { getDomain } from "../Options/utils/transformData";
 import { db } from "./database";
 
-function blobToBase64(blob) {
+const blobToBase64=(blob)=>{
     return new Promise((resolve, _) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result);
@@ -10,9 +10,8 @@ function blobToBase64(blob) {
     });
 }
 
-
-console.log('This is the background page.');
-console.log('Put the background scripts here.');
+// console.log('This is the background page.');
+// console.log('Put the background scripts here.');
 
 
 const getCurrentTab = async () => {
@@ -35,8 +34,7 @@ chrome.contextMenus.onClicked.addListener((info, tab)=> {
 })
 
 
-const saveDomainData = async (currentDomain) => {
-    const { favIconUrl } = await getCurrentTab()
+const saveDomainData = async (currentDomain, favIconUrl) => {
     if (favIconUrl) {
         let res;
         let blob;
@@ -67,30 +65,8 @@ const saveDomainData = async (currentDomain) => {
 chrome.runtime.onMessage.addListener(
     (request, sender, sendResponse) => {
         console.log(request, sender.tab.id)
-        if (request.action === 'sendResponse') {
-            sendResponse({ message: 'ok I sent it' })
-        }
-        if(request.action === 'Hollinize' && request.targetNode){
-            request.targetNode.textContent = 'okokokokok'
-            sendResponse(request.targetNode)
-        }
-
-
-
         if(request.action === 'getFaviconThisSite'){
-            // const { favIconUrl } = await getCurrentTab()
-            // if (favIconUrl) {
-            //     let res;
-            //     let blob;
-            //     const domainInDB = await db.domainAndLink.get({ url: currentDomain }) //and the custom url
-            //         res = await fetch(favIconUrl)
-            //         blob = await res.blob()
-            // }
-            let iconUrl ;
-            getCurrentTab().then(tabInfo=> {
-                iconUrl = tabInfo.favIconUrl}).then(()=>{
-                    sendResponse({iconUrl})
-                })
+            sendResponse({iconUrl:sender.tab.favIconUrl})
         }
         if (request.action === 'notWorking') {
             chrome.action.setBadgeText({ text: 'STOP', tabId: sender.tab.id })
@@ -100,25 +76,27 @@ chrome.runtime.onMessage.addListener(
         }
         if (request.action === 'getStart' && request.url) {
             (async () => {
-                console.log('getstart')
-                const currentDomain = new URL(request.url).hostname
+                console.log('getstart');
+                const currentDomain = new URL(request.url).hostname;
+                const domainData = await db.domainAndLink.get({ url: currentDomain });
+                if (domainData?.activate === false) {
+                    sendResponse({ activate: false })
+                    return
+                }
                 const sortedWordList = await getDataInTableFromIndexedDB('wordList').then(wordList => {
                     return wordList.sort((a, b) => b.word.length - a.word.length)
                 })
-                const domainData = await db.domainAndLink.get({ url: currentDomain })
+
                 if (!domainData) {
                     sendResponse({ wordList: sortedWordList })
                     return
                 }
-                if (domainData.activate === false) {
-                    sendResponse({ activate: false })
-                    return
-                }
+
 
                 sendResponse({ wordList: sortedWordList, domainData })
-            })()
+            })();
         }
-        if (request.domains) {
+        if (request.action==='getImgDataFromUrls' && request.domains) {
             const getDomainDataByUrls = async (domains) => {
                 const domainData = await Promise.all(domains.map(async (domain) => {
                     const gotDomainObj = await db.domainAndLink.get({ url: domain })
@@ -142,49 +120,65 @@ chrome.runtime.onMessage.addListener(
             getContextByWordId(request.wordId)
         }
 
-        // if (request.message === 'i give you') sendResponse({ message: 'ok i know' })
-        if (request.newWord && request.newContext) {
+        if (request.action === 'saveWordAndContext' && request.newWord && request.newContext) {
             const theWordObj = { ...request.newWord }
             const theContextObj = { ...request.newContext }
-            const currentDomain = new URL(theContextObj.url).hostname
+            const currentDomain = new URL(theContextObj.url).hostname;
 
             const saveTheWord = async () => {
                 const sameWordInDB = await db.wordList.get({ word: theWordObj.word })
 
                 if (sameWordInDB) {
                     db.contextList.add(theContextObj)
-                    // console.log(contextToAdd)
-                    sendResponse({ message: `已經有了${request.newWord.word}` })
-                    return
+                    sendResponse({ 
+                        status:'existWord',
+                        message: `you already have ${request.newWord.word}`
+                     })
+                    return false
                 }
 
                 db.wordList.add(theWordObj)
                 db.contextList.add(theContextObj)
-                // console.log(theWordObjToAdd)
-                // console.log(contextToAdd)
-
+                return true
             }
-            const doAndResponse = async () => {
-                await saveTheWord()
-                await saveDomainData(currentDomain)
-                sendResponse({ message: `got ${request.newWord.word}` })
-            }
-
-            doAndResponse()
+             (async () => {
+                const saveSuccess = await saveTheWord()
+                if(!saveSuccess) return
+                await saveDomainData(currentDomain, sender.tab.favIconUrl)
+                sendResponse({ 
+                    status:'success',
+                    message: `got ${request.newWord.word}`
+                 })
+            })();
         }
         if(request.action === 'addNewContextForSavedWord' && request.newContext){
-            const theContextObj = { ...request.newContext }
-            const currentDomain = new URL(theContextObj.url).hostname
-            const addContextAndDomain = async()=>{
+            const theContextObj = { ...request.newContext };
+            const currentDomain = new URL(theContextObj.url).hostname;
+            (async()=>{
                 await db.contextList.add(theContextObj)
-                await saveDomainData(currentDomain)
-                sendResponse({message: `saved ${theContextObj.context}`})
-            }
-            addContextAndDomain()
+                await saveDomainData(currentDomain, sender.tab.favIconUrl)
+                sendResponse({
+                    status:'success',
+                    message: `saved ${theContextObj.context}`
+                })
+            })()
         }
+        if(request.action === 'addNewContextAndDefinitionForSavedWord' && request.newContext && request.updatedDefinitions && request.definitionCount){
+            const {newContext, updatedDefinitions, definitionCount} = request;
+
+            (async()=>{
+                await db.contextList.add(newContext)
+                await db.wordList.update({id:newContext.wordId}, {definitions:updatedDefinitions, definitionCount})
+                sendResponse({
+                    status:'success',
+                    message: `saved and update definition`
+                })
+            })()
+        }
+
         if(request.action === 'deleteThisWordObjAndAllItsContexts' && request.wordId && request.contextIdsToDelete){
             const {wordId, contextIdsToDelete} = request
-            const deleteWordAndDomainObjByWordId = async()=>{
+            const deleteWordAndContextsByWordId = async()=>{
                 await db.wordList.delete(wordId)
                 await db.contextList.bulkDelete(contextIdsToDelete)
                 sendResponse({
@@ -192,20 +186,60 @@ chrome.runtime.onMessage.addListener(
                 message:`delete ${wordId}, contexts ${contextIdsToDelete.join(', ')}`
             })
             }
-            deleteWordAndDomainObjByWordId()
+            deleteWordAndContextsByWordId()
         }
-        if(request.action === 'deleteTheseContexts' && request.contextIdsToDelete){
-            const {contextIdsToDelete} = request
-            if(contextIdsToDelete.length > 0){
-                const deleteContextsByContextIds = async()=>{
-                    await db.contextList.delete(contextIdsToDelete)
+        if(request.action === 'deleteContexts' && request.contextIdsToDelete){
+            const {contextIdsToDelete} = request;
+            if(contextIdsToDelete.length === 0) return //error
+                (async()=>{
+                    // const contextDataShouldBeDeleted = db.contextList.bulkGet(contextIdsToDelete)
+                    await db.contextList.bulkDelete(contextIdsToDelete)
                     sendResponse({
                         status:'success',
                         message:`delete contexts ${contextIdsToDelete.join(', ')}`
                     })
-                }
-                deleteContextsByContextIds()
+                })()
+            
+        }
+        if(request.action === 'deleteContextsAndDefinitions' && 
+        request.newDefinitions && 
+        request.wordId &&
+        request.contextIdsToDelete){
+            const {newDefinitions, contextIdsToDelete, wordId} = request;
+            if(newDefinitions.length === 0) return //error
+            if(contextIdsToDelete.length === 0) return //error
+            (async()=>{
+                await db.contextList.bulkDelete(contextIdsToDelete)
+                await db.wordList.update({id:wordId}, {definitions:newDefinitions})
+                sendResponse({
+                    status:'success',
+                    message:`delete contexts ${contextIdsToDelete.join(', ')} and definition`
+                })
+            })()
+
+        }
+        if(request.action === 'changePhraseToContext' && request.contextId && request.phrase){
+            const  {contextId, phrase} = request
+            const changePhraseByContextId = async()=>{
+                await db.contextList.update({id:contextId}, {phrase})
+                sendResponse({
+                    status:'success'
+                })
             }
+            changePhraseByContextId()
+        }
+        if(request.action === 'editWord'){
+            const {wordId,word, definitions, stem, variants, matchRule} = request;
+            const wordObjToUpdate = {word, definitions};
+            if(stem) wordObjToUpdate.stem = stem;
+            if(variants) wordObjToUpdate.variants = variants;
+            if(matchRule) wordObjToUpdate.matchRule = matchRule;
+             (async()=>{
+                await db.wordList.update({id:wordId}, wordObjToUpdate)
+                sendResponse({
+                    status:'success'
+                })
+            })()
         }
         return true
     });

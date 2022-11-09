@@ -1,9 +1,20 @@
 import '@webcomponents/custom-elements'
-import { AssetsAddedIcon, EditIcon, CheckmarkIcon, CloseIcon, BoxAddIcon, MoreIcon } from '@spectrum-web-components/icons-workflow';
+import { CloseIcon, BoxAddIcon } from '@spectrum-web-components/icons-workflow';
 import { LitElement, html, css } from 'lit';
 import { getSentenceFromSelection } from '../../utils/get-selection-more.ts'
 import './HooliWordInfoBlock.js'
 import { setWordBlockPosition } from '../../utils/setWordBlockPosition'
+import {
+    computePosition,
+    flip,
+    shift,
+    offset,
+    arrow,
+    inline
+  } from '@floating-ui/dom';
+import {getRegexByMatchRule} from '../../utils/matchRule'
+
+
 
 export const openAddNewWord = ()=>{
     if(!document.getSelection().toString().trim()) return
@@ -23,7 +34,6 @@ class HooliText extends LitElement {
     static get properties() {
         return {
             ruby: { type: Boolean },
-            // alias: { type: String },
             wordObj: {type: Object}
         }
     }
@@ -31,7 +41,6 @@ class HooliText extends LitElement {
     constructor() {
         super();
         this.ruby = false;
-        // this.alias = '';
         this.wordObj = null;
     }
 
@@ -40,131 +49,113 @@ class HooliText extends LitElement {
             cursor: pointer;
             color: white;
             background-color: slategray;
-        }`
+        }
+        #annotation-tip{
+        left:0;
+        top:0;
+        position:absolute;
+        display: inline-block;
+        z-index:9999999;
+        padding: 3px; /* 余白 */
+        white-space: nowrap; /* テキストを折り返さない */
+        font-size: 12px; /* フォントサイズ */
+        line-height: 1.3; /* 行間 */
+        background: rgb(241, 241, 241); /* 背景色 */
+        color: rgb(0, 0, 0); /* 文字色 */
+        border-radius: 3px; /* 角丸 */
+        transition: 0.1s ease-in; /* アニメーション */
+        opacity: 0; 
+        visibility: hidden;
+        font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+        font-style:normal;
+        }
+
+         #annotation-tip.show-tooltip{
+        opacity:1;
+        visibility:visible;
+        }
+        `
     ]
 
     renderElement() {
-
-        if (this.ruby) {
-            return html`<ruby class='container'>${this.text}<rt>${this.alias}</rt></ruby>`
-        }
-        return html`<span @click="${this.openWordBlock}" class='span container' data-alias=${this.alias}><slot></slot></span>`
+        const annotation = this.wordObj.definitions[0].aliases[0]
+        return html`<span 
+        @click="${this.openWordBlock}" 
+        id='hooli-text-container'
+        ><slot></slot><span><div id='annotation-tip'>${annotation}</div>`
     }
 
     render() {
         return html`${this.renderElement()}`
     }
-    _showHoverTip() {
-        const smallTip = document.createElement('hooli-smalltip')
-        smallTip.alias = this.wordObj.definitions[0].aliases[0]
-        smallTip.style.bottom = `${window.innerHeight - this.getBoundingClientRect().top + 4}px`
-        smallTip.style.left = `${this.getBoundingClientRect().left + this.offsetWidth / 2}px`
-        this.addEventListener('mouseout', () => {
-            const tip = document.querySelector('hooli-smalltip')
-            if (tip) document.body.removeChild(tip)
-        })
-        document.body.appendChild(smallTip)
+    getContextSentenceFromThisEle(){
+        const range = document.createRange()
+        range.selectNode(this)
+        window.getSelection().removeAllRanges()
+        window.getSelection().addRange(range)
+        const context = getSentenceFromSelection(document.getSelection())
+        window.getSelection().removeAllRanges()   
+        return context 
+
     }
     openWordBlock(){
-        const existingWordBlock = document.querySelector('hooli-wordinfo-block')
-        if(existingWordBlock) existingWordBlock.remove()
+            document.querySelector('hooli-wordinfo-block')?.remove()
             const wordBlock = document.createElement('hooli-wordinfo-block')
-            let contextHere = ''
-            chrome.runtime.sendMessage({ wordId: this.wordObj.id, action:'getContexts' }, (response) => {
-                wordBlock.contexts = response.contexts
-                // console.log(response.contexts)
-                const allDomains = response.contexts.map(contextObj => {
-                    return new URL(contextObj.url).hostname
-                })
-                chrome.runtime.sendMessage({ domains: allDomains }, (response) => {
-                    wordBlock.imgSrcs = response.domainData
-                })
-            })
             wordBlock.wordObj = this.wordObj
-            wordBlock.context = ''
-            wordBlock.contextHere = contextHere
-
-            const range = document.createRange()
-            range.selectNode(this)
-            window.getSelection().removeAllRanges()
-            window.getSelection().addRange(range)
-            wordBlock.contextHere = getSentenceFromSelection(document.getSelection())
-            window.getSelection().removeAllRanges()
-            
-           
+            wordBlock.contextHere = this.getContextSentenceFromThisEle()
             setWordBlockPosition(this, wordBlock)
-
              document.body.appendChild(wordBlock)
+
              const floatingWordList = document.querySelector('hooli-floating-word-list')
-       if(floatingWordList){
-        const idSplitByDash = this.id.split('-')
-        const currentFocusCount = +idSplitByDash[idSplitByDash.length-1]
-        floatingWordList.gotLookingWord(this.wordObj.id, currentFocusCount)
-        // floatingWordList.lookingWord = {...this.wordObj, currentFocusCount}
+            if(floatingWordList){
+                const idSplitByDash = this.id.split('-')
+                const currentFocusCount = +idSplitByDash[idSplitByDash.length-1]
+                floatingWordList.gotLookingWord(this.wordObj.id, currentFocusCount)
        }
     }
-    connectedCallback() {
-        super.connectedCallback()
-        this.addEventListener('mouseover', this._showHoverTip)
-    }
 
-    disconnectedCallback() {
-        super.disconnectedCallback()
-        this.removeEventListener('mouseover', this._showHoverTip)
+    firstUpdated() {
+        const tooltip = this.renderRoot.querySelector('#annotation-tip')
+        const container = this.renderRoot.querySelector('#hooli-text-container');
+        
+        const update = () =>{
+    
+            computePosition(container, tooltip, {
+                placement: 'top',
+                middleware: [offset(3), inline(), shift({padding: 5})],
+              }).then(({x, y}) => {
+                Object.assign(tooltip.style, {
+                  left: `${x}px`,
+                  top: `${y}px`,
+                });
+              });
+        }
+    
+        const showTooltip = ()=>{
+            update()
+            if(!tooltip.classList.contains('show-tooltip')) tooltip.classList.add('show-tooltip')
+        }
 
+        const hideTooltip = ()=>{
+            if(tooltip.classList.contains('show-tooltip')){
+                tooltip.classList.remove('show-tooltip')
+            }
+        }
+        [
+            ['mouseenter', showTooltip],
+            ['mouseleave', hideTooltip],
+            // ['focusin', showTooltip],
+            // ['focusout', hideTooltip],
+            // ['blur', hideTooltip],
+          ].forEach(([event, listener]) => {
+            container.addEventListener(event, listener);
+          });
+          update()
     }
 }
 
 customElements.define('hooli-text', HooliText)
-
-
-
-
-class HooliSmallTip extends LitElement {
-
-    static get properties() {
-        return {
-            alias: { type: String },
-            topPosition: { type: Number },
-            leftPosition: { type: Number }
-        }
-    }
-    constructor() {
-        super()
-        this.alias = '';
-    }
-    static styles = [
-        css`:host{
-        z-index:9999999999;
-        position:fixed;
-        transform: translateX(-50%);
-        font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
-    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-
-    }
-    
-    div{
-       display: inline-block;
-       padding: 3px; /* 余白 */
-       white-space: nowrap; /* テキストを折り返さない */
-       font-size: 0.8rem; /* フォントサイズ */
-       line-height: 1.3; /* 行間 */
-       background: rgb(241, 241, 241); /* 背景色 */
-       color: rgb(0, 0, 0); /* 文字色 */
-       border-radius: 3px; /* 角丸 */
-       transition: 0.1s ease-in; /* アニメーション */
-
-    }
-    
-    `
-    ]
-    render() {
-        return html`<div>${this.alias}</div>`
-    }
-}
-customElements.define('hooli-smalltip', HooliSmallTip)
-
-
 
 class HooliTextarea extends LitElement {
 
@@ -172,7 +163,9 @@ class HooliTextarea extends LitElement {
         return {
             value: { type: String },
             placeholder: { type: String },
-            maxLength: {type: Number}
+            maxLength: {type: Number},
+            minLength: {type:Number},
+            currentLength: {type: Number}
             // highlightText: { type: String }
         }
     }
@@ -182,11 +175,19 @@ class HooliTextarea extends LitElement {
         this.value = '';
         this.placeholder = '';
         this.maxLength = 460;
+        this.minLength = null;
+        this.currentLength = 0;
         // this.highlightedText = ''
     }
 
     static styles = [
-        css`textarea{
+        
+        css`
+        div{
+            position:relative;
+        }
+        textarea{
+            position:relative;
             font-family:inherit;
             font-size:13px;
             resize: none;
@@ -203,41 +204,86 @@ class HooliTextarea extends LitElement {
         textarea:focus{
             outline: none;
         }
+        #count-length.invalid-length{
+            color:#ff7676;
+        }
+        #count-length.max-length{
+            color:#e89961
+        }
+        #count-length{
+            color: rgb(208 204 204);
+            position: absolute;
+            bottom: -4px;
+            right: 10px;       
+            }
         `
     ]
 
-    connectedCallback() {
-        super.connectedCallback()
-        setTimeout(() => this._handleAutoHeight(), 0)
-    }
-
     render() {
-        return html`<textarea
+        return html`
+        <textarea
          @input="${this._handleAutoHeightAndUpdateValue}" 
          placeholder="${this.placeholder}"
          maxLength = "${this.maxLength}"
-         .value=${this.value}></textarea>`
+         .value=${this.value}></textarea>
+         <span id='count-length'>${this.currentLength}/${this.maxLength}</span>
+         
+         `
 
     }
 
     _handleAutoHeightAndUpdateValue(e) {
         this._handleUpdateValue(e)
         this._handleAutoHeight()
+        this._handleCountCharacter(e.target.value)
     }
 
+    _handleCountCharacter(value){
+        this.currentLength = value.length
+        const countLengthSpan =this.renderRoot.querySelector('#count-length')
+
+        if(typeof this.minLength === 'number'){
+            if(this.currentLength <this.minLength){
+                countLengthSpan.className = 'invalid-length'
+                return
+            }
+        }
+        if(this.currentLength > this.maxLength){
+            countLengthSpan.className = 'invalid-length'
+        }else if(this.currentLength === this.maxLength ){
+            countLengthSpan.className = 'max-length'
+        }else if(countLengthSpan.className){
+            countLengthSpan.className = ''
+
+        }
+    }
 
     _handleUpdateValue(e) {
         this.value = e.target.value
     }
     _handleAutoHeight() {
         const theTextArea = this.renderRoot.querySelector('textarea')
-        if (theTextArea.value.length < 16) {
+        if (theTextArea.value.length < 20) {
             theTextArea.style.height = "15px"
             return
         }
         theTextArea.style.height = 'auto'
         theTextArea.style.height = theTextArea.scrollHeight + "px"
     }
+
+    // firstUpdated(){
+    // }
+
+    connectedCallback() {
+        super.connectedCallback()
+        setTimeout(() => this._handleAutoHeight(), 0)
+        if(this.value.length > this.maxLength) {
+            this.value = this.value.slice(0, this.maxLength)
+           }
+            this.currentLength = this.value.length
+    
+    }
+
 }
 customElements.define('hooli-textarea', HooliTextarea)
 
@@ -251,13 +297,15 @@ class hooliHighlighter extends LitElement {
     static get properties() {
         return {
             text: { type: String },
-            matchWord: { type: String }
+            matchword: { type: String },
+            matchRule: {type: String }
         }
     }
     constructor() {
         super()
-        this.text = ''
-        this.matchWord = ''
+        this.text = '';
+        this.matchword = '';
+        this.matchRule = 'any';
     }
 
     static styles = [
@@ -271,9 +319,15 @@ class hooliHighlighter extends LitElement {
     }
 
     _highlightedText() {
-        if (!this.matchWord) return html`${this.text}`
+        if(!this.matchword?.trim()) return html`${this.text}`
 
-        const regex = new RegExp(this.matchWord, "gi");
+        // const regexByMatchRule = {
+        //     any: this.matchword,
+        //     start: `\\b${this.matchword}`,
+        //     end: `${this.matchword}\\b`,
+        //     independent: `\\b${this.matchword}\\b`
+        // }
+        const regex = new RegExp(getRegexByMatchRule(this.matchword, this.matchRule), "gi");
         const parts = this.text.split(regex);
         const matched = this.text.match(regex)
         if (parts.length === 1) return html`${this.text}`
@@ -295,20 +349,11 @@ class hooliHighlighter extends LitElement {
 customElements.define('hooli-highlighter', hooliHighlighter)
 
 class HooliAddingTool extends LitElement {
-    // static get properties() {
-    //     return {
-
-    //     }
-    // }
-
-    // constructor(){
-    //     super()
-    // }
 
     static styles = [
         css`
         :host{
-            z-index:999999999;
+            z-index:99999999;
             position: absolute;
         }
         button{
@@ -320,250 +365,109 @@ class HooliAddingTool extends LitElement {
         `
     ]
 
-    connectedCallback() {
-        super.connectedCallback()
-        setTimeout(() => window.addEventListener('click', this._handleClose))
-    }
-
-    disconnectedCallback() {
-        super.disconnectedCallback()
-        window.removeEventListener('click', this._handleClose)
-    }
 
     render() {
-        return html`
-                <button @click="${this._handleAddText}">${BoxAddIcon({ width: 18, height: 18 })}</button>
-`}
+        return html`<button @click="${this._handleAddText}">${BoxAddIcon({ width: 18, height: 18 })}</button>`}
 
     get _thisElementOnBody() {
         return document.querySelector('hooli-adding-tool')
     }
     _handleAddText(e) {
-        e.preventDefault()
-        e.stopPropagation()
+        // e.preventDefault()
+        // e.stopPropagation()
        openAddNewWord()
-        setTimeout(() => this._thisElementOnBody.remove())
-        return
+        setTimeout(() => document.querySelector('hooli-adding-tool')?.remove())
     }
-    _handleClose(e) {
-        // console.log('trigger!') 
-        if (!e.composedPath().some(node => node.tagName === 'HOOLI-ADDING-TOOL')) {
-            // console.log('bye')
-            setTimeout(() => document.querySelector('hooli-adding-tool').remove())
-        }
-    }
+
 }
 customElements.define('hooli-adding-tool', HooliAddingTool)
 
-class HooliRelativeToolTip extends LitElement {
+class HooliTagsInput extends LitElement{
 
-    static get properties() {
+    static get properties(){
         return {
-            text: { type: String }
+            tags: {type:Array},
+            placeholder:{type: String}
         }
     }
-    constructor() {
-        super()
-        this.text = '';
-    }
-
-    static styles = [
-        css`:host{
-        position:relative;
-        --tip--content:''
-
-    }
-    span::before {
-  content:  '' var(--tip--content) '';
-  opacity: 0; /* はじめは隠しておく */
-  visibility: hidden; /* はじめは隠しておく */
-  position: absolute; /* 絶対配置 */
-  left: 50%; /* 親に対して中央配置 */
-  transform: translateX(-50%); /* 親に対して中央配置 */
-  bottom: 17px;
-  display: inline-block;
-  padding: 3px; /* 余白 */
-  font-size: 10px; /* フォントサイズ */
-  line-height: 1.3; /* 行間 */
-  background: rgb(241, 241, 241); /* 背景色 */
-  color: rgb(0, 0, 0); /* 文字色 */
-  border-radius: 3px; /* 角丸 */
-  transition: 0.1s ease-in; /* アニメーション */
-  z-index: 99999999;
-  width:230px;
-}
-
-span:hover::before {
-  opacity: 1;
-  visibility: visible;
-}
-
-    `
-    ]
-    render() {
-        return html`<span>
-        <slot></slot>
-        </span>`
-    }
-
-    connectedCallback() {
-        super.connectedCallback()
-        this.style.setProperty('--tip--content', `"${this.text}"`)
-
-    }
-}
-
-customElements.define('hooli-relative-tooltip', HooliRelativeToolTip)
-
-class HooliMenu extends LitElement {
-
-    static get properties() {
-        return {
-            size: { type: Number },
-            open: { type: Boolean }
-        }
-    }
-    constructor() {
+    constructor(){
         super();
-        this.size = 14;
-        this.open = false;
-
+        this.tags = [];
+        this.placeholder = '';
     }
-
     static styles = [
         css`
-        :host{
-            position:relative;
+        #container{
         }
-        button{
-            border:none;
-            background:#f3f3f3;
+        .tag-span{
+            margin: 2px;
+            border-radius: 4px;
+            padding: 2px 3px;
+            background-color: #e7e3de;
             cursor:pointer;
+            }
+        .remove-button{
+            display:none;
+        }
+        .tag-span:hover > .remove-button, .remove-button:hover{
+            display:inline-block;
+        }
+        input{
             color:black;
-        }
-        button.menu-hidden{
-            background:white;
-        }
-        button:hover{
-            background:#f3f3f3;
+            border:none;
+            display:inline-block;
+            background-color:white;
         }
 
-        #menu-list{
-            background: #f3f3f3;
-            box-shadow: 3.0px 3.1px 3.1px hsl(0deg 0% 0% / 0.41);
-            position:absolute;
-            z-index:99999991;
-            cursor:default;
-            width:70px;
-            top:1px;
-            right:2px;
-            padding:1px;
-        }
-        #menu-list.hidden{
-            opacity:0;
-        }
-
-        ::slotted(li){
-            list-style-type: none;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            padding:3px;
-        }
-        ::slotted(li:hover){
-            background:#e4e3e4;
-        }
         `
     ]
 
-    get _menuListElement() {
-        return this.renderRoot.querySelector('#menu-list')
+    _tagsDisplay(){
+        
+        return html`${
+            this.tags?.map(tagText=>{
+                return html`<span class='tag-span'  @click="${this._handleRemove}">${tagText}
+                <span class='remove-button'>${CloseIcon({width:10, height:10})}</span>
+                </span>`
+            })
+        }`
     }
-    get _actionButtonElement(){
-        return this.renderRoot.querySelector('#action-button')
-    }
-    
 
-    _actionButton() {
-        return html`<button id='action-button' class='menu-hidden' @click="${this._handleOpenMenu}" >
-        ${MoreIcon({ height: this.size, width: this.size })}
-        </button>`
-    }
-    _menuList() {
-        return html`<ul id='menu-list' class='hidden'>
-        <slot></slot>
-        </ul>
+    render(){
+        return html`
+        <div id='container' @click="${this._handleFocus}">
+        <input type='text'
+        placeholder=${this.placeholder}
+         @keypress="${this._handleKeyBoardEvent}"></input>
+        ${this._tagsDisplay()}
+        </div>
         `
     }
-
-    render() {
-        return html`${this._actionButton()}
-                    ${this._menuList()}`
+    _handleFocus(){
+        this.renderRoot.querySelector('input').focus()
     }
-
-    _handleOpenMenu(state) {
-
-        const handleClickOutside  = (e)=>{
-            if (!e.composedPath().some(node => node.id === 'menu-list')) {
-                setTimeout(() => {
-                    window.removeEventListener('mouseup',handleClickOutside)
-                    this._handleOpenMenu(false)})
-            }
-        }
-        if(state===true){
-            this.open = true
-        }else if(state === false){
-            this.open = false
-        }else{
-            this.open = !this.open;
-        }
-
-        if (this.open) {
-            if (this._menuListElement.className === 'hidden') this._menuListElement.className = ''
-            if(this._actionButtonElement.className ==='menu-hidden') this._actionButtonElement.className = ''
-            setTimeout(()=>window.addEventListener('mouseup',handleClickOutside))
-        } else {
-            if (!this._menuListElement.className) this._menuListElement.className = 'hidden'
-            if(!this._actionButtonElement.className) this._actionButtonElement.className = 'menu-hidden'
+    _handleRemove(e){
+        const target = e.composedPath().find(node => node.className === 'tag-span')
+        const targetTag =target.innerText.trim()
+        if(targetTag) this.tags = this.tags.filter(tag=>tag !== targetTag)
+    }
+    _handleKeyBoardEvent(e){
+        // if(this.tags.length > 0 && e.key === 'Backspace' && e.target.value === ''){
+        //     this.tags = this.tags.slice(0,-1)
+        // }
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const inputEle = this.renderRoot.querySelector('input')
+            const newVariant = inputEle.value.trim()
+            if(this.tags.indexOf(newVariant) !== -1 || !newVariant){
+                console.log('warning, this variant is already in list')
+                return
+            } 
+            this.tags = this.tags.concat([newVariant])
+            inputEle.value =''
 
         }
     }
 }
 
-customElements.define('hooli-menu', HooliMenu)
-
-// class HooliMenuItem extends LitElement {
-
-//     static get properties (){
-//         return {
-//             text:{type: String}
-
-//         }
-//     }
-
-//     constructor() {
-//         super();
-//         this.text = ''
-//         }
-    
-//         static styles = [
-//             css`li{
-//             list-style-type: none;
-//             overflow: hidden;
-//             white-space: nowrap;
-//             text-overflow: ellipsis;
-//             padding:3px;
-//             }
-//             li:hover{
-//                 background:#e4e3e4;
-//             }
-  
-//             `
-//         ]
-
-//     render(){
-//         return html`<li><slot></slot></li>`
-//     }
-//     }
-
-//     customElements.define('hooli-menu-item', HooliMenuItem)
+customElements.define('hooli-tags-input',HooliTagsInput)

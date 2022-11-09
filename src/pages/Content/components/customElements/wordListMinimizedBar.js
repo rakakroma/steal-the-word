@@ -9,24 +9,49 @@ import {wordInPageList, clearNoLongerExistWordInWordInPageList, transformElement
 
 class HooliWordListMinimizedBar extends LitElement {
 
+    get properties(){
+        return {
+            mode:{type:String}
+        }
+    }
+
+    constructor(){
+        super()
+        this.mode = ''
+    }
 
     static styles = [
         css`:host{
-                width: 30px;
-    height: 60px;
-    background-color: #ede0e06c;
-    box-shadow: 3.0px 6.1px 6.1px hsl(0deg 0% 0% / 0.41);
-    border-bottom-left-radius: 10px;
-    border-top-left-radius: 10px;
-  position:fixed;
-  right:0px;
-  top:100px;
-  z-index:999999999;
-        }
-        :host(:hover){
-            background-color: #ede0e0d3;
-
-        }
+    width: fit-content;
+    height: 28px;
+    background-color: rgb(213 213 213);
+    box-shadow: rgb(0 0 0 / 41%) 0px 3.1px 7.1px;
+    position: fixed;
+    right: 64px;
+    bottom: 0;
+    z-index: 999999999;
+    padding: 2px 5px 0 5px;
+    border-radius: 3px 3px 0 0;
+    color: #0d925b;
+    font-weight: 600;       
+     }
+    :host(:hover){
+         background-color: #e8e8e8d3;
+        user-select:none;
+        cursor:pointer;
+    }
+    #count-word{
+    padding-left: 3px;
+    padding-right: 3px;
+    border-radius: 5px;
+    border: 1px solid white;
+    font-size: 12px;
+    margin-left: 3px;
+    }
+    div{
+        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+        font-size:19px;
+    }
         
         `
 
@@ -34,11 +59,13 @@ class HooliWordListMinimizedBar extends LitElement {
 
     render() {
         return html`<div @click="${this._handleOpenWordList}">
-        10
+        Word List <span id='count-word'>${wordInPageList.length}</span>
         </div>`
     }
     _handleOpenWordList() {
-        // showWordList()
+       const wordList =  document.createElement('hooli-floating-word-list')
+       document.body.appendChild(wordList)
+       this.remove()
     }
 
 }
@@ -68,7 +95,7 @@ class HooliFloatingWordList extends LitElement {
             position: fixed;
             top: 50px;
             right: 20px;
-            z-index: 99999999999;
+            z-index: 99999999;
             overflow-y: overlay;
             display: flex;
             flex-direction: column;
@@ -82,6 +109,8 @@ class HooliFloatingWordList extends LitElement {
              }
              #content-container{
                 padding:3px;
+                max-height:630px;
+                overflow:scroll;
              }
              #title-bar{
                 background:rgb(175, 211, 207);
@@ -162,7 +191,7 @@ class HooliFloatingWordList extends LitElement {
 
         return html`<div id='title-bar'>
         <button class='title-action' @click="${this._handleRefresh}">${RefreshIcon({width:15, height:15})}</button>
-        <button class='title-action'>${MinimizeIcon({width:15, height:15})}</button>
+        <button class='title-action' @click="${this._handleMinimize}">${MinimizeIcon({width:15, height:15})}</button>
         <button class='title-action' @click="${this._handleClose}">${CloseIcon({width:15,height:15})}</button>
         </div>`
     }
@@ -184,7 +213,6 @@ class HooliFloatingWordList extends LitElement {
             ${this._lookingForMatchBar(wordObj.id)}
             `
         })}
-        <li><h3>hello</h3><h6>ハーロー</h6></li>
         </ul>`
     }
     _lookingForMatchBar(wordId){
@@ -197,17 +225,24 @@ class HooliFloatingWordList extends LitElement {
         <h6>${existingEleIdsCount.indexOf(this.lookingWord.currentFocusCount)+1}/${existingEleIdsCount.length}</h6>
         <button @click="${()=>this._handleScrollToWord('prev')}">${ChevronUpIcon({width:15, height:15})}</button>
         <button @click="${()=>this._handleScrollToWord('next')}" >${ChevronDownIcon({width:15, height:15})}</button>
-        <button @click="${this._handleCloseLooking}" >${CloseIcon({width:15, height:15})}</button>
+        <button @click="${this._handleStopLooking}" >${CloseIcon({width:15, height:15})}</button>
         </div>`}
     }
     
+    // _overflowReminder(){
+    //     if(this._checkOverflow()) return html`
+    //     <div id='overflow-reminder-container'>
+    //     scroll to see more
+    //     </div>`
+    // }
+
     render() {
         return html`<div id='word-list-container'>
         ${this._titleBar()}
         <div id='content-container'>
         ${this._wordList()}
-        </div>
-        </div>
+         </div>
+         </div>
         `
     }
     gotLookingWord(wordId, currentFocusCount){
@@ -216,6 +251,10 @@ class HooliFloatingWordList extends LitElement {
     }
     _handleRefresh() {
         clearNoLongerExistWordInWordInPageList()
+        if(wordInPageList.length === 0){
+             this._handleMinimize('autoOpen')
+             return
+            } 
         this.requestUpdate()
 
     }
@@ -285,12 +324,27 @@ class HooliFloatingWordList extends LitElement {
         this.renderRoot.getElementById(`count-${wordId}`).style.visibility = 'hidden'
     }
 
-    _handleCloseLooking(){
+    _handleStopLooking(){
         this.lookingWord = null
             this.requestUpdate()
     }
+
+    _handleMinimize(mode){
+        const minimizedComponent = document.createElement('hooli-wordlist-minimized-bar')
+        if(mode === 'autoOpen') minimizedComponent.mode = 'autoOpen'
+        document.body.appendChild(minimizedComponent)
+        this.remove()
+    }
+
+    // _checkOverflow(){
+    //     const contentContainer = document.querySelector('hooli-floating-word-list')?.shadowRoot?.querySelector('#content-container')
+    //     if(contentContainer)  return contentContainer.scrollHeight > contentContainer.clientHeight
+    // }
+    
     connectedCallback(){
         super.connectedCallback()
+
+        //FIXME: problem in wikipedia
     const position = { x: 0, y: 0 }
     interact('#title-bar')
       .draggable({
