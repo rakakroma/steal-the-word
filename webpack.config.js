@@ -7,10 +7,6 @@ const webpack = require('webpack'),
   TerserPlugin = require('terser-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-
-
-
-
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
 var alias = {
@@ -102,15 +98,14 @@ var options = {
           // {
           //   loader: 'babel-loader',
           // },
-            {
-                    // test: /\.js$/,
-             loader: 'esbuild-loader',
-              options: {                
-               loader: 'jsx',  // Remove this if you're not using JSX
-                target: 'es2015'  // Syntax to compile to (see options below for possible values)
-                     }
-             },
-            
+          {
+            // test: /\.js$/,
+            loader: 'esbuild-loader',
+            options: {
+              loader: 'jsx', // Remove this if you're not using JSX
+              target: 'es2015', // Syntax to compile to (see options below for possible values)
+            },
+          },
         ],
         exclude: /node_modules/,
       },

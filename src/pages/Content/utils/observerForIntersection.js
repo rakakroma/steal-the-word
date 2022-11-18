@@ -1,7 +1,6 @@
-
 // import { displayList, wordInPageList, showWordList } from "../components/infoSection";
 
-// //IntersectionObserver オブジェクト（オブザーバー）を生成  
+// //IntersectionObserver オブジェクト（オブザーバー）を生成
 // export const observerForIntersection = new IntersectionObserver((entries) => {
 //     entries.forEach((entry) => {
 //         const wordId = entry.target.wordId

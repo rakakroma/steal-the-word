@@ -21,13 +21,12 @@ import { LitElement, html, css } from 'lit';
 import dayjs from 'dayjs';
 // import { getSentenceFromSelection } from '../../utils/get-selection-more.ts'
 import { nanoid } from 'nanoid';
-import { myList, restoreHolliText } from '../../index';
+import { myList, restoreHolliText, newList } from '../../index';
 import { renderRuby } from '../../utils/renderRuby';
 import { fetchPronInfo } from '../../utils/fetchPronInfo';
 import './HolliToolTip';
 import './HooliSpinner';
-
-
+import { getMatchTextWithIdRef } from '../../utils/getMatchTextWithIdRef';
 
 // input.editable-valid:after{
 //     content: url("data:image/svg+xml,%3Csvg height='15px' viewBox='0 0 18 18' width='15px' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cstyle%3E .fill %7B fill: %23464646; %7D %3C/style%3E%3C/defs%3E%3Ctitle%3ES Checkmark 18 N%3C/title%3E%3Crect id='Canvas' fill='%23ff13dc' opacity='0' width='18' height='18'/%3E%3Cpath class='fill' d='M15.656,3.8625l-.7275-.5665a.5.5,0,0,0-.7.0875L7.411,12.1415,4.0875,8.8355a.5.5,0,0,0-.707,0L2.718,9.5a.5.5,0,0,0,0,.707l4.463,4.45a.5.5,0,0,0,.75-.0465L15.7435,4.564A.5.5,0,0,0,15.656,3.8625Z' style='fill: rgb(98, 222, 170);'/%3E%3C/svg%3E");
@@ -42,30 +41,36 @@ import './HooliSpinner';
 //     bottom: 1px;
 //     right: 10px;
 // }
-const currentURL = window.location.hash
-  ? window.location.href.slice(
-      0,
-      window.location.href.lastIndexOf(window.location.hash)
-    )
-  : window.location.href;
+const currentURL = () => {
+  return window.location.hash
+    ? window.location.href.slice(
+        0,
+        window.location.href.lastIndexOf(window.location.hash)
+      )
+    : window.location.href;
+};
 
-const updateWordObjToElementsAndWordList = (wordObj)=>{
-    const updatedWordObj = {...wordObj}
-    const wordToUpgradeIndex = myList.findIndex(wordObj=>wordObj.id===updatedWordObj.id)
-    myList[wordToUpgradeIndex] = {...updatedWordObj}
-    document.querySelectorAll(`h-${updatedWordObj.id}`).forEach(ele=>{
-        ele.wordObj = {...updatedWordObj}
-     })
-}
+const submitAndExecute = (request, successFunc, backupFunc) => {
+  console.log(request);
+  chrome.runtime.sendMessage(request, (response) => {
+    console.log(response);
+    if (response.status === 'success') {
+      successFunc(response);
+    }
+    if (typeof backupFunc === 'function') backupFunc(response);
+  });
+};
 
-const sendToBackground = (info)=>{
-    chrome.runtime.sendMessage(info,(res)=>{
-        console.log(res)
-        if(res.status==='success'){
-            return res
-        }
-    })
-}
+const updateWordObjToElementsAndWordList = (wordObj) => {
+  const updatedWordObj = { ...wordObj };
+  const wordToUpgradeIndex = myList.findIndex(
+    (wordObj) => wordObj.id === updatedWordObj.id
+  );
+  myList[wordToUpgradeIndex] = { ...updatedWordObj };
+  document.querySelectorAll(`h-${updatedWordObj.id}`).forEach((ele) => {
+    ele.wordObj = { ...updatedWordObj };
+  });
+};
 
 class HooliWordInfoBlock extends LitElement {
   static get properties() {
@@ -81,7 +86,7 @@ class HooliWordInfoBlock extends LitElement {
       _formInputStatus: { state: true },
       _loading: { state: true },
       _workingContext: { state: true },
-      _helperText:{state:true}
+      _helperText: { state: true },
     };
   }
 
@@ -386,7 +391,7 @@ class HooliWordInfoBlock extends LitElement {
         `,
   ];
 
-_matchWordsArray() {
+  _matchWordsArray() {
     const matchTextFromWordObj = [this.wordObj.word];
     if (this.wordObj.stem) matchTextFromWordObj.push(this.wordObj.stem);
     if (this.wordObj.variants?.length > 0)
@@ -405,6 +410,7 @@ _matchWordsArray() {
         return html`
           <hooli-tooltip text="add match rule">
             <button
+              type="button"
               class="icon-button"
               id="add-match-rule"
               @click="${() => this._handleUpdateFormStatus('openMatchRule')}"
@@ -424,19 +430,16 @@ _matchWordsArray() {
             </a>`;
 
       if (['editWord', 'newWord'].includes(this.mode))
-        return html` <div id="action-bar">
-          ${searchLinkButton()} ${variantsAndMatchRuleButton()}
-        </div>`;
-      if (this.mode === 'newContext')
-        return html`<div id="action-bar">${searchLinkButton()}</div>`;
+        return html`${searchLinkButton()} ${variantsAndMatchRuleButton()}`;
+      if (this.mode === 'newContext') return html`${searchLinkButton()}`;
 
       if (this.mode === 'lookUp')
-        return html` <div id="action-bar">
-          <hooli-tooltip text="search this word in Google">
+        return html` <hooli-tooltip text="search this word in Google">
             ${searchLinkButton()}
           </hooli-tooltip>
           <hooli-tooltip text="add new context">
             <button
+              type="button"
               class="icon-button"
               id="add-new-context"
               @click="${() => (this.mode = 'newContext')}"
@@ -446,6 +449,7 @@ _matchWordsArray() {
           </hooli-tooltip>
           <hooli-tooltip text="edit this word">
             <button
+              type="button"
               class="icon-button"
               @click="${() => (this.mode = 'editWord')}"
             >
@@ -456,8 +460,7 @@ _matchWordsArray() {
             <li slot="list-item" @click="${() => (this.mode = 'deleting')}">
               ${DeleteIcon({ width: 15, height: 15 })} Delete
             </li>
-          </hooli-menu>
-        </div>`;
+          </hooli-menu>`;
     };
 
     return html`
@@ -472,11 +475,11 @@ _matchWordsArray() {
                  .value="${wordDefault}"
                  ></input>`
           : html`${this.mode === 'deleting'
-                ? html`<input type='checkbox' class='checkbox' id='heading-word-delete-checkbox' @change="${this._handleCheckboxSelect}"></input>`
-                : ''}
+                ? html`<input type='checkbox' class='checkbox' name='delete-all' id='heading-word-delete-checkbox' @change="${this._handleCheckboxSelect}"></input>`
+                : null}
               <h3>${this.wordObj.word}</h3>`}
       </div>
-      ${actionBar()}
+      <div id="action-bar">${actionBar()}</div>
     `;
   }
 
@@ -495,11 +498,7 @@ _matchWordsArray() {
                     <div id=${
                       'definition-input-container-' + definitionId
                     } class='definition-input-container'>
-                <hooli-tooltip 
-                text='show when hover the word'
-                placement='bottom-end'
-                offset='5'
-                >
+                <hooli-tooltip text='show when hover the word' placement='bottom-end' offset='5'>
             <input 
             name='annotation'
             class='editable annotation-input' 
@@ -533,6 +532,7 @@ _matchWordsArray() {
         }">
                 <input type='radio'  class='definition-selectable-radio'
                 id=${'definition-selectable-' + definitionId}
+                value=${definitionId}
                 name='definition-select'>
                 </input>
                 <label for=${
@@ -572,6 +572,7 @@ _matchWordsArray() {
             ${this._formInputStatus.newDefinitionWhenDefinitionSelecting
               ? html`${definitionInput()}
                   <button
+                    type="button"
                     @click="${() => {
                       this._handleUpdateFormStatus(
                         'newDefinitionWhenDefinitionSelecting',
@@ -590,6 +591,7 @@ _matchWordsArray() {
                     choose old one
                   </button> `
               : html`<button
+                  type="button"
                   @click="${() => {
                     this._handleUpdateFormStatus(
                       'newDefinitionWhenDefinitionSelecting',
@@ -611,6 +613,12 @@ _matchWordsArray() {
         </div>`;
       }
       if (this.mode === 'editContext') {
+        setTimeout(
+          () =>
+            (this.renderRoot.querySelector(
+              '.definition-selectable-radio'
+            ).checked = true)
+        );
         return html`<div id="definition-selector">
           <div id="selection-or-add">
             ${this.wordObj.definitions.map((definitionObj) => {
@@ -624,8 +632,8 @@ _matchWordsArray() {
     const editableContext = (value) => {
       return html` <hooli-textarea
         id="context-textarea"
-        placeholder='context/sentence'
-        minlength=1
+        placeholder="context/sentence"
+        minlength="1"
         class="editable"
         value=${value}
         @keypress="${this._handleEnterSubmit}"
@@ -642,7 +650,7 @@ _matchWordsArray() {
             this.wordObj?.variants || [];
         });
         return html`
-           <input id='stem-input' type='text' placeholder='stem' .value="${stem}"></input>
+           <input id='stem-input' name='stem' type='text' placeholder='stem' .value="${stem}"></input>
            <hooli-tags-input placeholder='variants' id='variants-input' ></hooli-tags-input>`;
       };
 
@@ -653,8 +661,8 @@ _matchWordsArray() {
           ).checked = true;
         });
 
-        const radioButtonWithToolTip=(value)=>{
-            return html`<hooli-tooltip>
+        const radioButtonWithToolTip = (value) => {
+          return html`<hooli-tooltip>
             <hooli-highlighter  
             slot='tooltip-content'
             text="the @reallycoolguy in cooler is not supercool but that's cool"
@@ -663,27 +671,28 @@ _matchWordsArray() {
              ></hooli-highlighter>
             <input type='radio' name='match-rule' id=${value} value=${value}></input>
             <label for=${value}>${value}</label>
-            </hooli-tooltip>`
-        }
+            </hooli-tooltip>`;
+        };
 
         return html`
-            <div id='match-rule-selection-container'>
-            <h6>Match Rule:
-            <hooli-tooltip>
-            <span class='icon-button'>${InfoIcon({ width: 13, height: 13})}</span>
-            </hooli-tooltip>
+          <div id="match-rule-selection-container">
+            <h6>
+              Match Rule:
+              <hooli-tooltip>
+                <span class="icon-button"
+                  >${InfoIcon({ width: 13, height: 13 })}</span
+                >
+              </hooli-tooltip>
             </h6>
             <div>
-            ${radioButtonWithToolTip('start')}
-            ${radioButtonWithToolTip('end')}
-            ${radioButtonWithToolTip('independent')}
-            ${radioButtonWithToolTip('any')}
+              ${radioButtonWithToolTip('start')}
+              ${radioButtonWithToolTip('end')}
+              ${radioButtonWithToolTip('independent')}
+              ${radioButtonWithToolTip('any')}
+            </div>
+            <div>${variantsInput()}</div>
           </div>
-          <div>
-          ${variantsInput()}
-          </div>
-          </div>
-          `;
+        `;
       }
     };
 
@@ -724,7 +733,7 @@ _matchWordsArray() {
                 ${EditIcon({ width: 13, height: 13 })} edit context
               </li>
             </hooli-menu>`
-          : ''}
+          : null}
       </div>`;
     };
 
@@ -733,22 +742,18 @@ _matchWordsArray() {
     // }
     if (['newWord'].includes(this.mode)) {
       return html`
-        ${matchRuleSelection()} 
-        ${definitionSelectorTemplate()}
+        ${matchRuleSelection()} ${definitionSelectorTemplate()}
         ${editableContext(this.contextHere)}
-        ${pageTitle(this._currentSiteIcoSrc, currentURL, document.title)}
+        ${pageTitle(this._currentSiteIcoSrc, currentURL(), document.title)}
       `;
     }
     if (this.mode === 'newContext') {
       return html`${definitionSelectorTemplate()}
       ${editableContext(this.contextHere)}
-      ${pageTitle(this._currentSiteIcoSrc, currentURL, document.title)} `;
+      ${pageTitle(this._currentSiteIcoSrc, currentURL(), document.title)} `;
     }
     if (this.mode === 'editWord') {
-      return html` 
-      ${matchRuleSelection()} 
-      ${definitionSelectorTemplate()} 
-      `;
+      return html` ${matchRuleSelection()} ${definitionSelectorTemplate()} `;
     }
     if (this.mode === 'editContext' && this._workingContext) {
       const contextId = this._workingContext;
@@ -757,8 +762,7 @@ _matchWordsArray() {
       );
 
       return html`
-        ${definitionSelectorTemplate()}
-         ${editableContext(contextObj.context)}
+        ${definitionSelectorTemplate()} ${editableContext(contextObj.context)}
       `;
     }
     if (this.mode === 'highlighting' && this._workingContext) {
@@ -792,7 +796,10 @@ _matchWordsArray() {
           <h6 class="annotation">${definition.aliases[0]}</h6>
           <p class="definition-note">${definition.note}</p>
           ${this.contexts
-            .filter((contextObj) => contextObj.definitionRef === definition.definitionId)
+            .filter(
+              (contextObj) =>
+                contextObj.definitionRef === definition.definitionId
+            )
             .map((contextObj, index) => {
               let matchedWord;
               matchedWord =
@@ -806,15 +813,15 @@ _matchWordsArray() {
               if (this.imgSrcs.length > 0) {
                 src = this.imgSrcs.find((domainObj) => {
                   return domainObj.url === new URL(contextObj.url).hostname;
-                })?.img;
+                })?.icon;
               }
               return html`
                 <div class="outer-context-container">
                   <div class="vertical-line"></div>
                   <div class="inner-context-container">
                     ${this.mode === 'deleting' && this.contexts.length > 1
-                      ? html`<input type='checkbox' class='checkbox context-delete-checkbox' id='c-${contextObj.id}' @change="${this._handleCheckboxSelect}"></input>`
-                      : ''}
+                      ? html`<input type='checkbox' class='checkbox context-delete-checkbox' name=${contextObj.id} id='c-${contextObj.id}' @change="${this._handleCheckboxSelect}"></input>`
+                      : null}
                     <h5 class="phrase">${contextObj.phrase}</h5>
                     <p id="p-${contextObj.id}">
                       <hooli-highlighter
@@ -855,10 +862,14 @@ _matchWordsArray() {
     if (Object.keys(submitButtonTexts).includes(this.mode))
       return html`
         <div id="submit-helper-text">${this._helperText}</div>
-        <button @click="${this._handleCancel}" id="cancel-button">
+        <button type="button" @click="${this._handleCancel}" id="cancel-button">
           Cancel
         </button>
-        <button @click="${this._handleFormSubmit}" id="submit-button">
+        <button
+          type="submit"
+          @click="${this._handleFormSubmit}"
+          id="submit-button"
+        >
           ${getSubmitButtonText()}
         </button>
       `;
@@ -872,41 +883,41 @@ _matchWordsArray() {
 
   render() {
     return html`<div id="container">
-    <form>
-      <div id="heading-container">${this._headingElement()}</div>
-      <div id="context-section">${this._contextSection()}</div>
-      <div id="submit-section">${this._submitSection()}</div>
+      <form>
+        <div id="heading-container">${this._headingElement()}</div>
+        <div id="context-section">${this._contextSection()}</div>
+        <div id="submit-section">${this._submitSection()}</div>
       </form>
     </div>`;
   }
 
-//   _helperText() {
-//     if (this.mode === 'deleting') {
-//       const selectAll = this.renderRoot.querySelector(
-//         '#heading-word-delete-checkbox'
-//       )?.checked;
+  //   _helperText() {
+  //     if (this.mode === 'deleting') {
+  //       const selectAll = this.renderRoot.querySelector(
+  //         '#heading-word-delete-checkbox'
+  //       )?.checked;
 
-//       if (this.contexts.length > 1) {
-//         const checkboxes = this.renderRoot.querySelectorAll(
-//           '.context-delete-checkbox'
-//         );
-//         let selectedContexts = 0;
-//         checkboxes.forEach((checkbox) => {
-//           if (!checkbox.checked) return;
-//           selectedContexts++;
-//           return;
-//         });
-//         if (selectAll === true)
-//           return `delete this word and all ${selectedContexts} of its contexts?`;
-//         if (selectedContexts > 0)
-//           return `delete ${selectedContexts} of its contexts?`;
-//         return `check the context or the whole word to delete`;
-//       }
+  //       if (this.contexts.length > 1) {
+  //         const checkboxes = this.renderRoot.querySelectorAll(
+  //           '.context-delete-checkbox'
+  //         );
+  //         let selectedContexts = 0;
+  //         checkboxes.forEach((checkbox) => {
+  //           if (!checkbox.checked) return;
+  //           selectedContexts++;
+  //           return;
+  //         });
+  //         if (selectAll === true)
+  //           return `delete this word and all ${selectedContexts} of its contexts?`;
+  //         if (selectedContexts > 0)
+  //           return `delete ${selectedContexts} of its contexts?`;
+  //         return `check the context or the whole word to delete`;
+  //       }
 
-//       if (selectAll === true) return `delete this word and its context?`;
-//       return `check to delete the word and its context`;
-//     }
-//   }
+  //       if (selectAll === true) return `delete this word and its context?`;
+  //       return `check to delete the word and its context`;
+  //     }
+  //   }
 
   _clickInsideRadio(e) {
     if (e.target.classList.contains('definition-selectable')) {
@@ -989,51 +1000,181 @@ _matchWordsArray() {
     this.mode = 'lookUp';
   }
 
+  _formValidation(targetNames, targetValues, options) {
+    if (options) {
+      if (options.includes('newWord')) {
+        if (myList.find((wordObj) => wordObj.word === targetValues.word)) {
+          this._helperText = 'this word already exist';
+          return false;
+        }
+      }
+      if (options.includes('delete')) {
+        if (targetValues['allCheckedName'].length === 0) {
+          this._helperText = 'please fill the checkbox';
+          return false;
+        } else {
+          return true;
+        }
+      }
+      if (options.includes('selectedDefinitionIdOrAnnotation')) {
+        if (
+          !targetValues['selectedDefinitionId'] &&
+          !targetValues['annotation']
+        ) {
+          this._helperText =
+            'please check one of the definition or add new one';
+          return false;
+        }
+      }
+    }
+    const lackedValueNames = [];
+    targetNames.forEach((targetName) => {
+      if (!targetValues[targetName]) lackedValueNames.push(targetName);
+    });
+
+    if (lackedValueNames.length > 0) {
+      this._helperText = `Please fill ${lackedValueNames.join(',')}.`;
+      return false;
+    }
+    return true;
+  }
   _handleFormSubmit(e) {
     // this._loading = true
-    e.preventDefault()
-    const formData = new FormData(this.renderRoot.querySelector('form'))
-    console.log(Object.fromEntries(formData.entries()))
-    formData.forEach((value, key) => console.log(`${key}: ${value}`));
+    e.preventDefault();
+    if (this.mode === 'highlighting') {
+      const phrase = this._phraseSelection;
+      const contextId = this._workingContext;
 
-    return
+      submitAndExecute(
+        {
+          action: 'changePhraseToContext',
+          phrase,
+          contextId,
+        },
+        () => {
+          this.contexts = this.contexts.map((contextObj) => {
+            if (contextObj.id === this._workingContext) {
+              contextObj.phrase = this._phraseSelection;
+            }
+            return contextObj;
+          });
+          this._handlePhraseSelect(contextId, false);
+          this._phraseSelection = null;
+          this._workingContext = null;
+          this.mode = 'lookUp';
+        }
+      );
+      return;
+    }
+
+    const formData = new FormData(this.renderRoot.querySelector('form'));
+    const formObj = Object.fromEntries(formData.entries());
+    console.log(Object.fromEntries(formData.entries()));
+
+    if (this.mode === 'deleting') {
+      console.log('delete!');
+
+      const allCheckedName = Object.keys(formObj);
+
+      if (!this._formValidation(null, { allCheckedName }, ['delete'])) return;
+
+      if (allCheckedName.includes('delete-all')) {
+        const wordId = this.wordObj.id;
+        submitAndExecute(
+          {
+            action: 'deleteThisWordObjAndAllItsContexts',
+            wordId,
+            contextIdsToDelete: this.contexts.map((context) => context.id),
+          },
+          () => {
+            this.remove();
+            restoreHolliText(wordId);
+          }
+        );
+        return;
+      }
+
+      const contextIdsToDelete = allCheckedName.map((contextId) => +contextId);
+      const allDefinitionRefs = {};
+      if (contextIdsToDelete.length > 0) {
+        this.contexts.forEach((contextObj) => {
+          allDefinitionRefs[contextObj.definitionRef]
+            ? allDefinitionRefs[contextObj.definitionRef]++
+            : (allDefinitionRefs[contextObj.definitionRef] = 1);
+          if (contextIdsToDelete.includes(contextObj.id)) {
+            allDefinitionRefs[contextObj.definitionRef]--;
+          }
+        });
+        const definitionsToDelete = [];
+        Object.entries(allDefinitionRefs).forEach((keyPair) => {
+          if (keyPair[1] === 0) definitionsToDelete.push(keyPair[0]);
+        });
+        console.log(contextIdsToDelete, definitionsToDelete);
+
+        const request = { contextIdsToDelete };
+        if (definitionsToDelete.length > 0) {
+          request.newDefinitions = this.wordObj.definitions.filter(
+            (definition) => {
+              return !definitionsToDelete.includes(definition.definitionId);
+            }
+          );
+          request.action = 'deleteContextsAndDefinitions';
+          request.wordId = this.wordObj.id;
+        } else {
+          request.action = 'deleteContexts';
+        }
+        submitAndExecute(request, () => {
+          this.contexts = this.contexts.filter(
+            (contextObj) => !contextIdsToDelete.includes(contextObj.id)
+          );
+          if (request.action === 'deleteContextsAndDefinitions') {
+            this.wordObj = {
+              ...this.wordObj,
+              definitions: request.newDefinitions,
+            };
+            setTimeout(() => updateWordObjToElementsAndWordList(this.wordObj));
+          }
+          this.mode = 'lookUp';
+        });
+        return;
+      }
+    }
+
+    const word = formObj.word?.trim();
+    const annotation = formObj.annotation?.trim();
+    const stem = formObj.stem?.trim();
+    const matchRule = formObj['match-rule'];
+    const selectedDefinitionId = formObj['definition-select'];
+    const context = this.renderRoot
+      .querySelector('#context-textarea')
+      ?.value.trim();
+    const wordNote = this.renderRoot
+      .querySelector('.long-note-textarea')
+      ?.value.trim();
+    const variants = this.renderRoot.querySelector('#variants-input')?.tags;
+    console.log({
+      word,
+      annotation,
+      stem,
+      matchRule,
+      selectedDefinitionId,
+      context,
+      wordNote,
+      variants,
+    });
+    // return
+
     if (this.mode === 'newWord') {
-      const word = this.renderRoot.querySelector('#word-input').value.trim();
-      const stem =
-        this.renderRoot.querySelector('#stem-input')?.value.trim() || '';
-      const variants =
-        this.renderRoot.querySelector('#variants-input')?.tags || [];
-      const matchRule =
-        this.renderRoot.querySelector('input[name="match-rule"]:checked')?.id ||
-        '';
-      const annotation = this.renderRoot
-        .querySelector('.annotation-input')
-        .value.trim();
-      const wordNote = this.renderRoot
-        .querySelector('.long-note-textarea')
-        .value.trim();
-      const context = this.renderRoot
-        .querySelector('#context-textarea')
-        .value.trim();
+      //   console.log({matchRule, word, stem, variants, annotation, wordNote, context });
 
-      if (!word) {
-        console.log('word!');
+      if (
+        !this._formValidation(['word', 'annotation', 'context'], {
+          word,
+          annotation,
+          context,
+        })
+      )
         return;
-      }
-      if (!annotation) {
-        console.log('write sth on annotation plz');
-        return;
-      }
-      if (!context) {
-        console.log('context!');
-        return;
-      }
-      console.log({ word, stem, variants, annotation, wordNote, context });
-
-      if (myList.find((wordObj) => wordObj.word === word)) {
-        this._helperText = 'this word is already exist'
-        return
-      }
 
       const theNewWord = {
         id: nanoid(),
@@ -1049,11 +1190,13 @@ _matchWordsArray() {
           },
         ],
         lang: [],
-        matchRule,
-        stem,
-        variants,
+        matchRule: matchRule || '',
+        stem: stem || '',
+        variants: variants || [],
       };
+
       console.log(theNewWord);
+
       const theNewContext = {
         context,
         word,
@@ -1063,58 +1206,45 @@ _matchWordsArray() {
         note: '',
         pageTitle: document.title,
         phrase: '',
-        url: currentURL,
+        url: currentURL(),
       };
 
-      chrome.runtime.sendMessage(
+      submitAndExecute(
         {
-            action:'saveWordAndContext',
+          action: 'saveWordAndContext',
           newWord: theNewWord,
           newContext: theNewContext,
         },
+        () => {
+          // this._loading = false;
+          myList.push(theNewWord);
+          newList.push(...getMatchTextWithIdRef(theNewWord));
+          renderRuby(document.body, true);
+          this.remove();
+        },
         (response) => {
-            console.log(response)
-          if (response.status==='success') {
-            // this._loading = false;
-            myList.push(theNewWord);
-            renderRuby(document.body, true);
-            this.remove();
-          }
-          if(response.status==='existWord'){
-            this._helperText = 'this word is already exist'
+          if (response.status === 'existWord') {
+            this._helperText = 'this word is already exist';
           }
         }
       );
     }
 
     if (this.mode === 'newContext') {
-      const context = this.renderRoot
-        .querySelector('#context-textarea')
-        .value.trim();
-      const word = this.wordObj.word;
-      const wordId = this.wordObj.id;
-      const annotation = this.renderRoot
-        .querySelector('.annotation-input')
-        ?.value.trim();
-      const wordNote = this.renderRoot
-        .querySelector('.long-note-textarea')
-        ?.value.trim();
-
-      if (!context) {
-        console.log('please fill the context');
+      if (
+        !this._formValidation(
+          ['context'],
+          { context, selectedDefinitionId, annotation },
+          ['selectedDefinitionIdOrAnnotation']
+        )
+      )
         return;
-      }
 
-      let definitionRef;
-      let newDefinition;
-      if (!this._formInputStatus.newDefinitionWhenDefinitionSelecting) {
-        const splittedCheckedDefinitionId = this.renderRoot
-          .querySelector('input[name="definition-select"]:checked')
-          .id.split('-');
-        definitionRef =
-          splittedCheckedDefinitionId[splittedCheckedDefinitionId.length - 1];
-      } else {
-        definitionRef = `${this.wordObj.definitionCount || 1}`;
+      const definitionRef = selectedDefinitionId
+        ? selectedDefinitionId
+        : `${this.wordObj.definitionCount || 1}`;
+      let newDefinition = null;
+      if (!selectedDefinitionId && annotation) {
         newDefinition = {
           aliases: [annotation],
           definitionId: definitionRef,
@@ -1125,17 +1255,17 @@ _matchWordsArray() {
 
       const newContext = {
         context,
-        word,
-        wordId,
+        word: this.wordObj.word,
+        wordId: this.wordObj.id,
         date: Date.now(),
         definitionRef,
         note: '',
         pageTitle: document.title,
         phrase: '',
-        url: currentURL,
+        url: currentURL(),
       };
       console.log(newContext);
-      console.log(newDefinition);
+      console.log(newDefinition ? newDefinition : 'no new definition');
 
       const request = {};
       request.action = 'addNewContextForSavedWord';
@@ -1149,114 +1279,23 @@ _matchWordsArray() {
         request.definitionCount = +definitionRef + 1;
       }
 
-      chrome.runtime.sendMessage(request, (response) => {
-        // this._loading = false;
-        console.log(response)
-        if (response.status==='success') {
-          console.log(response.message);
-            if(newDefinition){
-                this.wordObj = {...this.wordObj,
-                    definitionCount:request.definitionCount,
-                     definitions:[...this.wordObj.definitions, newDefinition] }  
-                setTimeout(()=>{
-                    updateWordObjToElementsAndWordList(this.wordObj)
-                }) 
-            }
-            this._getContextsFromDB()
-            this.mode = 'lookUp'    
+      submitAndExecute(request, (response) => {
+        if (newDefinition) {
+          this.wordObj = {
+            ...this.wordObj,
+            definitionCount: request.definitionCount,
+            definitions: [...this.wordObj.definitions, newDefinition],
+          };
+          setTimeout(() => {
+            updateWordObjToElementsAndWordList(this.wordObj);
+          });
         }
+        this._getContextsFromDB();
+        this.mode = 'lookUp';
       });
-    }
-
-    if (this.mode === 'deleting') {
-      console.log('delete!');
-      const mainCheckEle = this.renderRoot.querySelector(
-        '#heading-word-delete-checkbox'
-      );
-      if (mainCheckEle.checked) {
-        const wordId = this.wordObj.id;
-        chrome.runtime.sendMessage(
-          {
-            action: 'deleteThisWordObjAndAllItsContexts',
-            wordId,
-            contextIdsToDelete: this.contexts.map((context) => context.id),
-          },
-          (response) => {
-            this._loading = false;
-            console.log(response);
-            if (response.status === 'success') {
-              this.remove();
-              restoreHolliText(wordId);
-            }
-          }
-        );
-        return;
-      }
-      const allContextCheckEles = this.renderRoot.querySelectorAll('.context-delete-checkbox');
-      const contextIdsToDelete = [];
-      allContextCheckEles.forEach((contextCheckEle) => {
-        if (contextCheckEle.checked) {
-          const splittedId = contextCheckEle.id.split('-');
-          contextIdsToDelete.push(+splittedId[splittedId.length - 1]);
-        }
-      });
-      if(contextIdsToDelete.length === 0){
-        this._helperText = 'check to delete'
-      }
-      const allDefinitionRefs = {}
-      if (contextIdsToDelete.length > 0) {
-        this.contexts.forEach(contextObj=>{
-            allDefinitionRefs[contextObj.definitionRef]?
-            allDefinitionRefs[contextObj.definitionRef]++:
-             allDefinitionRefs[contextObj.definitionRef] = 1
-            if(contextIdsToDelete.includes(contextObj.id)){
-                allDefinitionRefs[contextObj.definitionRef] --
-            }
-        })
-        const definitionsToDelete =[];
-        Object.entries(allDefinitionRefs).forEach(keyPair=>{
-            if(keyPair[1]===0) definitionsToDelete.push(keyPair[0])
-        })
-        console.log(contextIdsToDelete,definitionsToDelete)
-
-        const request = {contextIdsToDelete};
-        if(definitionsToDelete.length > 0) {
-            request.newDefinitions = this.wordObj.definitions.filter(definition=>{
-                return !definitionsToDelete.includes(definition.definitionId)
-            })
-            request.action = 'deleteContextsAndDefinitions'
-            request.wordId = this.wordObj.id
-        }else{
-            request.action = 'deleteContexts';
-        }
-        console.log(request)
-        chrome.runtime.sendMessage(request,
-          (response) => {
-            console.log(response)
-            if (response.status==='success') {
-                this.contexts = this.contexts.filter(contextObj=>!contextIdsToDelete.includes(contextObj.id))
-                if(request.action ==='deleteContextsAndDefinitions'){
-                    // console.log('update wordObj')
-                    this.wordObj = {...this.wordObj, definitions:request.newDefinitions}
-                    setTimeout(()=>updateWordObjToElementsAndWordList(this.wordObj))
-                }
-                this.mode ='lookUp'
-
-            }
-          }
-        );
-        return
-      }
     }
     if (this.mode === 'editWord') {
-      const wordId = this.wordObj.id;
-      // const matchRule = this.renderRoot.querySelector('#match-rule-selection')?.value
-      const word = this.renderRoot.querySelector('#word-input').value.trim();
-      const matchRule = this.renderRoot.querySelector(
-        'input[name="match-rule"]:checked'
-      )?.id;
-      const stem = this.renderRoot.querySelector('#stem-input')?.value.trim();
-      const variants = this.renderRoot.querySelector('#variants-input')?.tags;
+      if (!this._formValidation(['word'], { word })) return;
       const defintionEles = this.renderRoot.querySelectorAll(
         '.definition-input-container'
       );
@@ -1277,75 +1316,51 @@ _matchWordsArray() {
 
       console.log(definitions, stem, variants, matchRule);
 
-      chrome.runtime.sendMessage(
+      submitAndExecute(
         {
           action: 'editWord',
-          wordId,
+          wordId: this.wordObj.id,
           word,
           definitions,
           stem,
           variants,
           matchRule,
         },
-        (res) => {
-          if (res.status === 'success') {
-            this.wordObj = {...this.wordObj,          
-                word,
-                definitions,
-                stem,
-                variants,
-                matchRule
-                }
-            this.mode = 'lookUp'
-            updateWordObjToElementsAndWordList(this.wordObj)
-          }
+        () => {
+          this.wordObj = {
+            ...this.wordObj,
+            word,
+            definitions,
+            stem,
+            variants,
+            matchRule,
+          };
+          this.mode = 'lookUp';
+          updateWordObjToElementsAndWordList(this.wordObj);
+          //todo: if new update match list
         }
       );
     }
-    if(this.mode === 'editContext'){
-        const context = this.renderRoot
-        .querySelector('#context-textarea')
-        .value.trim();
-        const contextId = this._workingContext;
-        let definitionRef;       
-        const splittedCheckedDefinitionId = this.renderRoot
-        .querySelector('input[name="definition-select"]:checked')
-        .id.split('-');
-      definitionRef = splittedCheckedDefinitionId[splittedCheckedDefinitionId.length - 1];
-
-        chrome.runtime.sendMessage({
-            action:'editContext', context, contextId, definitionRef
-        },(res)=>{
-            console.log(res)
-            if(res.status==='success'){
-                this.mode ='lookUp'
-                this._workingContext = null
-                this._getContextsFromDB()
-            }
+    if (this.mode === 'editContext') {
+      if (
+        !this._formValidation(['context', 'selectedDefinitionId'], {
+          context,
+          selectedDefinitionId,
         })
-    }
-    if (this.mode === 'highlighting') {
-      const phrase = this._phraseSelection;
+      )
+        return;
       const contextId = this._workingContext;
-      chrome.runtime.sendMessage(
+      submitAndExecute(
         {
-          action: 'changePhraseToContext',
-          phrase,
+          action: 'editContext',
+          context,
           contextId,
+          definitionRef: selectedDefinitionId,
         },
-        (res) => {
-          if (res.status === 'success') {
-            this.contexts = this.contexts.map((contextObj) => {
-              if (contextObj.id === this._workingContext) {
-                contextObj.phrase = this._phraseSelection;
-              }
-              return contextObj;
-            });
-          }
-          this._handlePhraseSelect(contextId, false);
-          this._phraseSelection = null;
-          this._workingContext = null;
+        () => {
           this.mode = 'lookUp';
+          this._workingContext = null;
+          this._getContextsFromDB();
         }
       );
     }
@@ -1428,7 +1443,6 @@ _matchWordsArray() {
       this.contextHere
     );
     if (pronounceDataResult) {
-      // fetchingData = false
       const annotationInput =
         this.renderRoot.querySelector('.annotation-input');
       const originalAnnotation = annotationInput.value;
@@ -1436,45 +1450,56 @@ _matchWordsArray() {
       // this._handleEleValidInput(annotationInput)
     }
   };
-  _getContextsFromDB(){
+  _getContextsFromDB() {
     chrome.runtime.sendMessage(
-        {  action: 'getContexts' ,
-        wordId: this.wordObj.id
-    },
-        (response) => {
-            // console.log(response.contexts)
-          this.contexts = response.contexts;
-          // this._loading = false
-          const allDomains = response.contexts.map((contextObj) => {
-            return new URL(contextObj.url).hostname;
-          });
-          chrome.runtime.sendMessage({
-            action:'getImgDataFromUrls',
-             domains: allDomains 
-            }, (response) => {
+      { action: 'getContexts', wordId: this.wordObj.id },
+      (response) => {
+        // console.log(response.contexts)
+        this.contexts = response.contexts;
+        // this._loading = false
+        const allDomains = response.contexts.map((contextObj) => {
+          return new URL(contextObj.url).hostname;
+        });
+        chrome.runtime.sendMessage(
+          {
+            action: 'getImgDataFromUrls',
+            domains: allDomains,
+          },
+          (response) => {
             this.imgSrcs = response.domainData;
-          });
-        }
-      );
+          }
+        );
+      }
+    );
+  }
+  _updateModeAndDoSth(mode) {
+    //todo: this one right now is not really updating any mode, just handle the focus.
+    if (mode) this.mode = mode;
+
+    if (this.mode === 'newWord') {
+      setTimeout(() => {
+        const annoInput = this.renderRoot
+          .querySelector('.annotation-input')
+          .focus();
+      });
+    }
   }
   firstUpdated() {
-    const getFaviconThisSite = ()=>{
-        chrome.runtime.sendMessage({ action: 'getFaviconThisSite' }, (res) => {
-            this._currentSiteIcoSrc = res.iconUrl;
-            console.log(res.iconUrl)
-          });
-    }
+    const getFaviconThisSite = () => {
+      chrome.runtime.sendMessage({ action: 'getFaviconThisSite' }, (res) => {
+        this._currentSiteIcoSrc = res.iconUrl;
+      });
+    };
     window.addEventListener('mouseup', this._handleClose);
     if (this.mode === 'lookUp') {
-        this._getContextsFromDB()
-        
+      this._getContextsFromDB();
     }
-    if (this.mode === 'newWord'){
-        this._pronSearch();
-        getFaviconThisSite()
-        }
-    if(this.mode === 'newContext'){
-        getFaviconThisSite()
+    if (this.mode === 'newWord') {
+      this._pronSearch();
+      getFaviconThisSite();
+    }
+    if (this.mode === 'newContext') {
+      getFaviconThisSite();
     }
     //   this.renderRoot.querySelector('.annotation-input').focus();
 
@@ -1490,10 +1515,11 @@ _matchWordsArray() {
     // this.renderRoot.querySelectorAll('.editable').forEach(ele => {
     //     this._handleEleValidInput(ele)
     // })
+    this._updateModeAndDoSth();
   }
-//   connectedCallback() {
-//     super.connectedCallback();
-//   }
+  connectedCallback() {
+    super.connectedCallback();
+  }
 
   disconnectedCallback() {
     super.disconnectedCallback();

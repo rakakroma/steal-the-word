@@ -77,5 +77,4 @@ export const shadowAppTopStyle = `
   color:black
 }
 
-      `
-
+      `;
