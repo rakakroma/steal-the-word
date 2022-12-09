@@ -27,7 +27,8 @@ import { fetchPronInfo } from '../../utils/fetchPronInfo';
 import './HolliToolTip';
 import './HooliSpinner';
 import { getMatchTextWithIdRef } from '../../utils/getMatchTextWithIdRef';
-
+import { getAllMatchTextFromWordObj } from '../../../../utilsForAll/getInfoFromWordObj';
+import './TestReactComponent';
 // input.editable-valid:after{
 //     content: url("data:image/svg+xml,%3Csvg height='15px' viewBox='0 0 18 18' width='15px' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cstyle%3E .fill %7B fill: %23464646; %7D %3C/style%3E%3C/defs%3E%3Ctitle%3ES Checkmark 18 N%3C/title%3E%3Crect id='Canvas' fill='%23ff13dc' opacity='0' width='18' height='18'/%3E%3Cpath class='fill' d='M15.656,3.8625l-.7275-.5665a.5.5,0,0,0-.7.0875L7.411,12.1415,4.0875,8.8355a.5.5,0,0,0-.707,0L2.718,9.5a.5.5,0,0,0,0,.707l4.463,4.45a.5.5,0,0,0,.75-.0465L15.7435,4.564A.5.5,0,0,0,15.656,3.8625Z' style='fill: rgb(98, 222, 170);'/%3E%3C/svg%3E");
 //     position: absolute;
@@ -392,14 +393,7 @@ class HooliWordInfoBlock extends LitElement {
   ];
 
   _matchWordsArray() {
-    const matchTextFromWordObj = [this.wordObj.word];
-    if (this.wordObj.stem) matchTextFromWordObj.push(this.wordObj.stem);
-    if (this.wordObj.variants?.length > 0)
-      this.wordObj.variants.forEach((variant) => {
-        matchTextFromWordObj.push(variant);
-      });
-    matchTextFromWordObj.sort((a, b) => b.length - a.length);
-    return matchTextFromWordObj;
+    return getAllMatchTextFromWordObj(this.wordObj);
   }
 
   _headingElement() {
@@ -883,6 +877,7 @@ class HooliWordInfoBlock extends LitElement {
 
   render() {
     return html`<div id="container">
+      <my-shadow-dom-component></my-shadow-dom-component>
       <form>
         <div id="heading-container">${this._headingElement()}</div>
         <div id="context-section">${this._contextSection()}</div>

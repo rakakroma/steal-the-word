@@ -4,9 +4,14 @@ import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
 const StyledSideBar = styled(Box)(({ theme }) => ({
-  width: '70px',
+  [theme.breakpoints.up('lg')]: {
+    display: 'block',
+  },
+  [theme.breakpoints.down('lg')]: {
+    display: 'none',
+  },
+  width: '230px',
   height: '100vh',
-  minWidth: '50px',
   padding: '20px 20px',
   boxShadow: '0 0 6px hsl(210 14% 90%)',
   backgroundColor: theme.palette.background.light,
@@ -19,8 +24,8 @@ export const Sidebar = () => {
         home
       </Link>
       <br />
-      <Link component={RouterLink} to="main">
-        main
+      <Link component={RouterLink} to="home">
+        home
       </Link>
     </StyledSideBar>
   );

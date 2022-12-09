@@ -10,12 +10,8 @@ export const themeStyle = {
       main: '#a23f60',
     },
     background: {
-      light: '#ffffff',
-      default: '#fbfbfb',
+      default: '#F8F9FA',
     },
   },
   spacing: 8,
-  typography: {
-    fontSize: 12,
-  },
 };

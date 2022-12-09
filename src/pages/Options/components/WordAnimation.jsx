@@ -28,7 +28,6 @@ import PauseIcon from '@mui/icons-material/Pause';
 import React, { useEffect, useState, useRef } from 'react';
 import { shuffle } from '../utils/shuffle';
 import { PlayArrow, Shuffle, ShuffleOn } from '@mui/icons-material';
-import { Highlighter } from './Highlighter';
 
 export const WordAnimation = ({ myList }) => {
   // const [animatingWord, setAnimatingWord] = useState(null)
@@ -129,10 +128,10 @@ export const WordAnimation = ({ myList }) => {
       >
         {/* <Typography variant='h4'>{animatingList[intervalCounter].phrase || animatingList[intervalCounter].word}</Typography> */}
         <Typography variant="h4">
-          <Highlighter
+          {/* <Highlighter
             highlightWord={animatingList[intervalCounter].word}
             text={animatingList[intervalCounter].context}
-          />
+          /> */}
         </Typography>
         <Fade in={fadeIn}>
           <Typography variant="h5">

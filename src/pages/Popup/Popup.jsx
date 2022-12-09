@@ -185,7 +185,7 @@ const Popup = () => {
             <Grid>
               <IconButton
                 LinkComponent={'a'}
-                href={`${chrome.runtime.getURL('options.html')}#/main`}
+                href={`${chrome.runtime.getURL('options.html')}#/home`}
                 target="_blank"
                 sx={{ width: '20px', height: '20px' }}
               >

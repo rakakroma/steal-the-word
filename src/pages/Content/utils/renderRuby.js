@@ -1,4 +1,4 @@
-import '../components/customElements/HolliText';
+import '../components/customElements/HooliText';
 import '../components/customElements/HooliWordInfoBlock';
 import { myList, newList } from '../index';
 import { getRegexByMatchRule } from './matchRule';
@@ -33,17 +33,6 @@ export const clearNoLongerExistWordInWordInPageList = () => {
   });
 };
 
-// const getMatchTexts = (wordObj) => {
-//   const matchTextFromWordObj = [wordObj.word];
-//   if (wordObj.stem) matchTextFromWordObj.push(wordObj.stem);
-//   if (wordObj.variants?.length > 0)
-//     wordObj.variants.forEach((variant) => {
-//       matchTextFromWordObj.push(variant);
-//     });
-//   matchTextFromWordObj.sort((a, b) => b.length - a.length);
-//   return matchTextFromWordObj;
-// };
-
 const putHooliTextOnNode = (targetNode) => {
   // for (let wordObj of myList) {
   //todo: support variants match, i think extend the list directly instead of check every 'variants' property might get better performance
@@ -56,8 +45,6 @@ const putHooliTextOnNode = (targetNode) => {
         (wordObj) => wordObj.id === textPair.wordIdRef
       );
       if (!wordObj) return;
-
-      console.log(matchText, matchText === 'fugly');
 
       const langRegex = new RegExp(
         /\p{sc=Hani}|\p{sc=Hira}|\p{sc=Kana}|\p{sc=Hang}/,
@@ -83,19 +70,6 @@ const putHooliTextOnNode = (targetNode) => {
         !boundaryRegex.test(targetNode.textContent)
       )
         return;
-
-      // const checkMatchedString = () => {
-      //   const matchTextFromWordObj = [wordObj.word];
-      //   if (wordObj.stem) matchTextFromWordObj.push(wordObj.stem);
-      //   if (wordObj.variants?.length > 0)
-      //     wordObj.variants.forEach((variant) => {
-      //       matchTextFromWordObj.push(variant);
-      //     });
-      //   matchTextFromWordObj.sort((a, b) => b.length - a.length);
-      //   return matchTextFromWordObj.find((wordVariants) => {
-      //     return targetNode.textContent.indexOf(wordVariants) !== -1;
-      //   });
-      // };
 
       let replaceText = matchText;
       const sentenceWithoutWord = targetNode.textContent.split(replaceText);

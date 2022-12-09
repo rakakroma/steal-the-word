@@ -3,9 +3,11 @@ import {
   renderMultipleRuby,
   wordInPageList,
 } from './utils/renderRuby';
-import './components/customElements/HolliText';
+import './components/customElements/HooliText';
 import './components/customElements/wordListMinimizedBar';
-import { openAddNewWord } from './components/customElements/HolliText';
+import './components/customElements/HooliFloatingWordList';
+import './components/customElements/HooliHighlighter';
+import { openAddNewWord } from './components/customElements/HooliText';
 import {
   computePosition,
   flip,

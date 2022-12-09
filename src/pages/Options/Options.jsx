@@ -1,4 +1,10 @@
-import React, { useEffect, useState, createContext, useContext } from 'react';
+import React, {
+  useEffect,
+  useState,
+  createContext,
+  useContext,
+  useMemo,
+} from 'react';
 import './Options.css';
 import CustomizedDialogs from './components/CustomizedDialogs';
 import {
@@ -29,16 +35,13 @@ import { formatDate, fullDate, sortByDate } from './utils/Date';
 // import { groupBy } from './utils/groupBy'
 // import { countDate } from './utils/countDate'
 import { themeStyle } from './theme.style';
-import { WideList } from './components/WideList';
-import { SearchBar } from './components/SearchBar';
-import { WordCollection } from './components/WordCollection';
+import { WordCollection } from './components/WordCollection/WordCollection';
 import PersonalVideoIcon from '@mui/icons-material/PersonalVideo';
 import {
   checkLocalLanguagePossible,
   checkStringLanguage,
 } from './utils/languageDetection';
 import { WordAnimation } from './components/WordAnimation';
-import MultipleSelectCheckmarks from './components/MultiSelectionCheckmarks';
 // import { dataTransform, getDomain } from './utils/transformData';
 import { getDataInTableFromIndexedDB } from './utils/getDataFromDB';
 import { db } from '../Background/database';
@@ -49,25 +52,20 @@ import { Outlet } from 'react-router-dom';
 import { Sidebar } from './components/Sidebar';
 import { styled } from '@mui/material/styles';
 import { useLiveQuery } from 'dexie-react-hooks';
-import store from './store.js';
-import { Provider } from 'react-redux';
+import PersistentDrawerRight from './components/WordCollection/WordInfoDrawer/WordInfoDrawer';
+import { useCallback } from 'react';
+import { useRegisterActions } from 'kbar';
 
 // function TransitionUp(props) {
 //   return <Slide {...props} direction="up" />;
 // }
 
-const MainContentContainer = styled(Box)`
-  padding: 20px;
-`;
-
 export const ContextListContext = createContext([]);
 export const DomainAndLinkListContext = createContext([]);
-const WordListContext = createContext([]);
+export const WordListContext = createContext([]);
+export const WordInfoDrawerContext = createContext({});
 
 const Options = () => {
-  // const [contextList, setContextList] = useState([]);
-  // const [domainAndLinkList, setDomainAndLinkList] = useState([]);
-  // const [wordList, setWordList] = useState([]);
   // const [searchText, setSearchText] = useState('');
   // const [hideAlias, setHideAlias] = useState(true);
   // const [viewMode, setViewMode] = useState(false);
@@ -87,28 +85,7 @@ const Options = () => {
   // const [testMode, setTestMode] = useState(false);
   // const [alphabeticalOrderMode, setAlphabeticalOrderMode] = useState(false);
 
-  // const transformedData = dataTransform(contextList)
-
-  // const contextList = useLiveQuery(() => db['contextList'].reverse().toArray());
-  // const domainAndLinkList = useLiveQuery(() => db['contextList'].toArray());
-  // const wordList = useLiveQuery(() => db['wordList'].toArray());
-
   const theme = createTheme(themeStyle);
-
-  // useEffect(() => {
-  //   async function getDataInDB() {
-  //     // let contextListInDB = await getDataInTableFromIndexedDB(
-  //     //   'contextList',
-  //     //   'descending'
-  //     // );
-  //     // let LinkListInDB = await getDataInTableFromIndexedDB('domainAndLink');
-  //     // let wordListInDB = await getDataInTableFromIndexedDB('wordList');
-  //     // setContextList(contextListInDB);
-  //     // setDomainAndLinkList(LinkListInDB);
-  //     // setWordList(wordListInDB);
-  //   }
-  //   getDataInDB();
-  // }, []);
 
   // const handleDelete = (id) => {
   //   const updatedList = contextList.filter((wordObj) => wordObj.id !== id);
@@ -146,66 +123,6 @@ const Options = () => {
   //   // setContextList(updatedList);
   //   window.getSelection().removeAllRanges();
   //   // chrome.storage.local.set({ "myWordList": updatedList });
-  // };
-
-  const [loggedData, setLoggedData] = useState(null)
-
-const saveToDB = (data)=>{
-  const {wordList, contextList, domainAndLinkList} = data
-
-  const contextListWithoutId = contextList.map(contextObj=>{
-    delete contextObj.id
-    return contextObj
-  })
-const domainAndLinkListWithoutId = domainAndLinkList.map(domainAndLinkObj =>{
-  delete domainAndLinkObj.id
-  return domainAndLinkObj
-})
-console.log(wordList, contextListWithoutId, domainAndLinkListWithoutId)
-
-  db.wordList.bulkAdd(wordList)
-  db.contextList.bulkAdd(contextListWithoutId)
-  db.domainAndLink.bulkAdd(domainAndLinkListWithoutId)
-
-}
-
-  const logFile = (event) => {
-    let str = event.target.result;
-    let json = JSON.parse(str);
-    setLoggedData(json)
-    saveToDB(json)
-  };
-
-  const handleImport = (e) => {
-    // console.log('import')
-    e.preventDefault();
-    if (!file.value.length) return;
-    let reader = new FileReader();
-    reader.onload = logFile;
-    reader.readAsText(file.files[0]);
-  };
-
-  const exportToJsonFile = (obj) => {
-    const dataStr = JSON.stringify(obj);
-    const dataUri =
-      'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-    const exportFileDefaultName = `HolliRubyList ${formatDate(
-      new Date()
-    )}.json`;
-    return { uri: dataUri, fileName: exportFileDefaultName };
-  };
-
-  const handleExport = (textFile) => {
-    const result = exportToJsonFile(textFile);
-    return {
-      link: result.uri,
-      fileName: result.fileName,
-    };
-  };
-
-
-  // const handleSearch = (e) => {
-  //   setSearchText(e.target.value);
   // };
 
   // const groupedList = (wordList) => groupBy(sortByDate(wordList), 'domain')
@@ -259,53 +176,51 @@ console.log(wordList, contextListWithoutId, domainAndLinkListWithoutId)
   //   'chinese',
   // ];
 
-  const contextList = useLiveQuery(() => db['contextList'].reverse().toArray());
+  const contextList = useLiveQuery(() =>
+    db['contextList'].orderBy('date').reverse().toArray()
+  );
   const domainAndLinkList = useLiveQuery(() => db['domainAndLink'].toArray());
-  const wordList = useLiveQuery(()=> db.wordList.toArray())
+  const wordList = useLiveQuery(() => db.wordList.toArray());
 
-  // const blobToBase64 = (blob) => {
-  //   return new Promise((resolve, _) => {
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => resolve(reader.result);
-  //     reader.readAsDataURL(blob);
-  //   });
-  // };
+  const [wordInfoTarget, setWordInfoTarget] = useState(null);
 
-  // const [newDomainAndLinkList, setNewDomainAndLinkList] = useState([])
+  const changeWordInfoTarget = useCallback((wordAndContextId) => {
+    setWordInfoTarget(wordAndContextId);
+  }, []);
 
-  // const testBlob = async()=>{
-  //   const base64data = await Promise.all(domainAndLinkList.map(async(data)=>{
-  //     if(data.icon){
-  //     const img = await blobToBase64(data.icon)
-  //     data.icon = img
-  //     }
-  //     return data
-  //   }))
-  //   setNewDomainAndLinkList(base64data)
-  // }
+  const handleWordClick = useCallback(
+    (wordAndContextId) => {
+      const { wordId, contextId } = wordAndContextId;
+      console.log(`wordInfoTarget ${wordInfoTarget}`);
+      if (wordId === wordInfoTarget?.wordId) {
+        if (
+          !wordInfoTarget.contextId ||
+          wordInfoTarget.contextId === contextId
+        ) {
+          changeWordInfoTarget(null);
+          return;
+        }
+      }
+      changeWordInfoTarget(wordAndContextId);
+    },
+    [wordInfoTarget, changeWordInfoTarget]
+  );
 
-  const exportAll = handleExport({contextList, domainAndLinkList, wordList}).link
+  const infoTargetAndSetter = useMemo(
+    () => ({ wordInfoTarget, handleWordClick, changeWordInfoTarget }),
+    [wordInfoTarget, handleWordClick, changeWordInfoTarget]
+  );
 
-
-
-
-
-  const handleClearAll = ()=>{
-    if(confirm('delete all?')){
-      console.log('ok')
-      db.delete().then (()=>db.open());
-        }else{
-      console.log('cancel')
-    }
-  }
   return (
     <ContextListContext.Provider value={contextList}>
       <DomainAndLinkListContext.Provider value={domainAndLinkList}>
-        <Box sx={{ display: 'flex' }}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            {/* <KBarCommandPalette> */}
-            {/* <Snackbar
+        <WordListContext.Provider value={wordList}>
+          <WordInfoDrawerContext.Provider value={infoTargetAndSetter}>
+            <Box sx={{ display: 'flex' }}>
+              <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <KBarCommandPalette>
+                  {/* <Snackbar
             TransitionComponent={TransitionUp}
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             open={Boolean(showNotification)}
@@ -313,65 +228,13 @@ console.log(wordList, contextListWithoutId, domainAndLinkListWithoutId)
             onClose={() => setShowNotification(false)}
             message={showNotification.message}
           /> */}
-            <Sidebar />
-            <MainContentContainer>
-                <Link
-                  href={exportAll}
-                  download={`allList ${formatDate(
-                    new Date()
-                  )}.json`}
-                >
-                  下載全部
-                </Link>
-                <hr />
-                <form id="upload" onSubmit={handleImport}>
-                  <label htmlFor="file">上傳資料（json）</label>
-                  <input type="file" id="file" accept=".json" />
-                  {/* <Input type='file' inputProps={{ accept: '.json' }} /> */}
-                  <button>匯入</button>
-                </form>
-                <Box>
-                contextList: {loggedData?.contextList.length}
-                <hr />
-                domainAndLinkList:{loggedData?.domainAndLinkList.length}
-                <hr />
-                wordList: {loggedData?.wordList.length}
-                <hr />
+                  <Sidebar />
+                  <PersistentDrawerRight>
+                    <Outlet />
+                  </PersistentDrawerRight>
 
-                <hr />
-                <button onClick={handleClearAll}>clear all data from db</button>
-                </Box>
-              <Outlet />
-            </MainContentContainer>
-            {/* <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
-            backgroundColor="primary.main"
-          >
-            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-              HolliRuby💫
-            </Typography>
-
-            <SearchBar
-              // searchText={searchText}
-              // handleSearch={handleSearch}
-              contextList={contextList}
-            />
-
-            <CustomizedDialogs
-              wordList={wordList}
-              handleExport={handleExport}
-              handleImport={handleImport}
-              contextList={contextList}
-              setContextList={setContextList}
-              domainAndLinkList={domainAndLinkList}
-            />
-          </Box> */}
-
-            {/* <Box sx={{ display: 'flex', margin: '10px' }}> */}
-            {/* <Box sx={{ width: '10vw' }}>
+                  {/* <Box sx={{ display: 'flex', margin: '10px' }}> */}
+                  {/* <Box sx={{ width: '10vw' }}>
               <Typography
                 variant="h6"
                 sx={{ margin: '15px' }}
@@ -581,14 +444,14 @@ console.log(wordList, contextListWithoutId, domainAndLinkListWithoutId)
                 <SortByAlpha />
               </IconButton>
             </Box> */}
-            {/* <Box sx={{ width: '15vw' }}>
+                  {/* <Box sx={{ width: '15vw' }}>
 
         </Box> */}
-            {/* {animationMode ? (
+                  {/* {animationMode ? (
             <WordAnimation contextList={languageSelectionFilter(contextList)} />
           ) : testMode ? (
             <Box> */}
-            {/* {domainAndLinkList.map((obj, i) => {
+                  {/* {domainAndLinkList.map((obj, i) => {
                 return <img
                   width='20px'
                   height='20px'
@@ -597,7 +460,7 @@ console.log(wordList, contextListWithoutId, domainAndLinkListWithoutId)
                   alt={obj.url}
                 />
               })} */}
-            {/* </Box>
+                  {/* </Box>
           ) : viewMode === true ? (
             <WideList
               wordList={wordList}
@@ -614,10 +477,12 @@ console.log(wordList, contextListWithoutId, domainAndLinkListWithoutId)
           ) : (
           )} */}
 
-            {/* </Box> */}
-            {/* </KBarCommandPalette> */}
-          </ThemeProvider>
-        </Box>
+                  {/* </Box> */}
+                </KBarCommandPalette>
+              </ThemeProvider>
+            </Box>
+          </WordInfoDrawerContext.Provider>
+        </WordListContext.Provider>
       </DomainAndLinkListContext.Provider>
     </ContextListContext.Provider>
   );

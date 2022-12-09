@@ -1,39 +1,4 @@
-// export const dataTransform = (wordList) => {
-//     const formattedList = wordList.map(wordObj => {
-//         const result = { ...wordObj }
-//         result.definitionGroups = [{
-//             aliases: [wordObj.alias],
-//             definitionId: "0"
-//         }
-//         ]
-//         result.contextInfos = [{
-//             context: wordObj.context,
-//             date: wordObj.date,
-//             url: wordObj.url,
-//             pageTitle: wordObj.pageTitle,
-//             definitionRef: '0',
-//             phrase: wordObj.phrase || null
-//         }]
-//         delete result.alias
-//         delete result.context
-//         delete result.date
-//         delete result.url
-//         delete result.pageTitle
-//         delete result.meaning
-//         delete result.domain
-//         delete result.phrase
-//         result.definitionCount = 1
-//         if (result.editedWordObj) delete result.editedWordObj
-//         return result
-//     }
-//     )
-//     return formattedList
-// }
-
-// export const getDomain = (url) => {
-//     const domain = url.replace('http://', '').replace('https://', '').split(/[/?#]/)[0];
-//     return domain
-// }
+import dayjs from 'dayjs';
 
 export const pagesWords = (contexts) => {
   const allPages = [...new Set(contexts.map((contextObj) => contextObj.url))];
@@ -55,55 +20,90 @@ export const pagesWords = (contexts) => {
 
 // console.log(newPageWords)
 
-const customMatchUrls = ['developer.mozilla.org/ja'];
+// const customMatchUrls = ['developer.mozilla.org/ja'];
 
 // const allDomains = [...new Set(pagesWords.map(page => getDomain(page.url)))]
 
 export const domainPageWords = (words) =>
   pagesWords(words).reduce((acc, curr) => {
-    const matchedCustomUrl = customMatchUrls.find((matchPart) =>
-      curr.url.includes(matchPart)
-    );
-    if (matchedCustomUrl) {
-      if (
-        acc.find(
-          (pagesAndMatchRule) => pagesAndMatchRule[0] === matchedCustomUrl
-        )
-      ) {
-        return acc.map((pagesAndMatchRule) => {
-          if (pagesAndMatchRule[0] === matchedCustomUrl)
-            pagesAndMatchRule[1].push(curr);
-          return pagesAndMatchRule;
-        });
-      } else {
-        acc.push([matchedCustomUrl, [curr]]);
-        return acc;
-      }
+    // const matchedCustomUrl = customMatchUrls.find((matchPart) =>
+    //   curr.url.includes(matchPart)
+    // );
+    // if (matchedCustomUrl) {
+    //   if (
+    //     acc.find(
+    //       (pagesAndMatchRule) => pagesAndMatchRule[0] === matchedCustomUrl
+    //     )
+    //   ) {
+    //     return acc.map((pagesAndMatchRule) => {
+    //       if (pagesAndMatchRule[0] === matchedCustomUrl)
+    //         pagesAndMatchRule[1].push(curr);
+    //       return pagesAndMatchRule;
+    //     });
+    //   } else {
+    //     acc.push([matchedCustomUrl, [curr]]);
+    //     return acc;
+    //   }
+    // } else {
+
+    const hostName = new URL(curr.url).hostname || curr.url;
+    if (acc.find((pagesAndMatchRule) => pagesAndMatchRule[0] === hostName)) {
+      return acc.map((pagesAndMatchRule) => {
+        if (pagesAndMatchRule[0] === hostName) pagesAndMatchRule[1].push(curr);
+        return pagesAndMatchRule;
+      });
     } else {
-      if (
-        acc.find(
-          (pagesAndMatchRule) =>
-            pagesAndMatchRule[0] === new URL(curr.url).hostname
-        )
-      ) {
-        return acc.map((pagesAndMatchRule) => {
-          if (pagesAndMatchRule[0] === new URL(curr.url).hostname)
-            pagesAndMatchRule[1].push(curr);
-          return pagesAndMatchRule;
-        });
-      } else {
-        acc.push([new URL(curr.url).hostname, [curr]]);
-        return acc;
-      }
+      acc.push([hostName, [curr]]);
+      return acc;
     }
+    // }
   }, []);
 
-// export const getMatchedContextInfos = (wordObj, targetUrl) => wordObj.contextInfos.filter(contextInfo => contextInfo.url === targetUrl)
+export const arrayWithUrlsByDateType = (dateType, words) => {
+  return pagesWords(words).reduce((acc, currentValue) => {
+    const dateData = dayjs(currentValue.words[0].date)
+      .startOf(dateType)
+      .format('YYYY/MM/DD');
+    const dateDataYearForObjectKey = `y${dateData.slice(0, 4)}`;
+    const matchCurrentAccYear = acc.hasOwnProperty(dateDataYearForObjectKey);
+    const initialDataForCurrentDate = {
+      dateData,
+      sortByUrlData: [currentValue],
+    };
+    if (!matchCurrentAccYear) {
+      Object.assign(acc, {
+        [dateDataYearForObjectKey]: [initialDataForCurrentDate],
+      });
+      return acc;
+    }
+    const targetAccYearValue = acc[dateDataYearForObjectKey];
+    const sameDateDataIndex = targetAccYearValue.findIndex(
+      (sortByDateData) => sortByDateData.dateData === dateData
+    );
+    if (sameDateDataIndex === -1) {
+      targetAccYearValue.push(initialDataForCurrentDate);
+      return acc;
+    } else {
+      targetAccYearValue[sameDateDataIndex].sortByUrlData.push(currentValue);
+      return acc;
+    }
+  }, {});
+};
 
-// export const getAllPhrasesInThisContext = (wordObj, targetUrl) => {
-//     const allPhrases = getMatchedContextInfos(wordObj, targetUrl).reduce((acc, curr) => {
-//         if (curr.phrase) { acc.push(curr.phrase) }
-//         return acc
-//     }, [])
-//     return allPhrases.length > 0 ? allPhrases : null
-// }
+export const wordListInAlphabeticalOrder = (wordList) => {
+  return [...wordList].sort((a, b) => {
+    return a.word.localeCompare(b.word);
+  });
+};
+
+export const cutUrl = (url) => {
+  let result = url;
+  if (!url) return '';
+  if (url.startsWith('www.')) {
+    result = result.replace('www.', '');
+  }
+  if (url.endsWith('.com')) {
+    result = result.slice(0, -4);
+  }
+  return result;
+};

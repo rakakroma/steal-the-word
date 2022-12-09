@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import {
   KBarProvider,
@@ -9,9 +9,13 @@ import {
   KBarSearch,
   useMatches,
   NO_GROUP,
+  useRegisterActions,
 } from 'kbar';
 
-import { Checkbox, Box } from '@mui/material';
+import { Checkbox, Box, ListSubheader, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { ContextListContext, WordListContext } from './Options';
+// import { KBarSearch } from './components/KBarSearch';
 
 export const KBarCommandPalette = ({ children }) => {
   const RenderResults = () => {
@@ -22,42 +26,84 @@ export const KBarCommandPalette = ({ children }) => {
         items={results}
         onRender={({ item, active }) =>
           typeof item === 'string' ? (
-            <div>{item}</div>
+            // section
+            <Box
+              sx={{
+                fontSize: '12px',
+                color: 'grey',
+              }}
+            >
+              {item}
+            </Box>
           ) : (
-            <div
-              style={{
+            <Box
+              sx={{
                 background: active ? '#eee' : 'transparent',
               }}
             >
-              {item.name}
-            </div>
+              <Typography
+                variant="span"
+                sx={{
+                  mr: '15px',
+                  fontSize: item.type === 'context' ? '12px' : '16px',
+                }}
+              >
+                {item.name}
+              </Typography>
+              <Typography
+                variant="span"
+                sx={{ fontSize: '12px', color: '#5b5b5b' }}
+              >
+                {item.subtitle}
+              </Typography>
+            </Box>
           )
         }
       />
     );
   };
+
+  const navigate = useNavigate();
+
   const actions = [
     {
-      id: 'blog',
-      name: '哈',
-      shortcut: ['b'],
-      keywords: 'writing words',
-      perform: () => (window.location.pathname = 'blog'),
+      id: 'home-page',
+      name: 'Home Page',
+      shortcut: ['m'],
+      keywords: 'home',
+      perform: () => navigate('home'),
+      section: 'Navigate To',
     },
     {
-      id: 'contact',
-      name: 'Contact',
-      shortcut: ['c'],
-      keywords: 'email',
-      perform: () => (window.location.pathname = 'contact'),
+      id: 'words-collection',
+      name: 'Words Collection',
+      shortcut: ['w'],
+      keywords: 'words collection all',
+      perform: () => navigate('words'),
+      section: 'Navigate To',
     },
     {
-      id: 'test',
-      name: '真的假的',
-      shortcut: ['z'],
-      keywords: '壞 cool',
-      perform: () => console.log('真'),
+      id: 'settings',
+      name: 'Settings/Preferences',
+      shortcut: ['s', 'p'],
+      keywords: 'preferences',
+      perform: () => navigate('settings'),
+      section: 'Navigate To',
     },
+    {
+      id: 'word-search',
+      name: 'Search Word',
+      shortcut: ['s', 'w'],
+      keywords: 'search find word where',
+      section: 'action',
+    },
+    // {
+    //   id: 'context-search',
+    //   name: 'Search Context',
+    //   shortcut: ['s', 'c'],
+    //   keywords: 'search find context sentence phrase',
+    //   section: 'action',
+    // },
   ];
 
   return (
@@ -74,7 +120,8 @@ export const KBarCommandPalette = ({ children }) => {
             style={{
               boxSizing: 'content-box',
               backgroundColor: 'white',
-              width: '500px',
+              minWidth: '500px',
+              width: '60vw',
               border: '1px solid grey',
               borderRadius: '5px',
               padding: '5px',
@@ -86,9 +133,13 @@ export const KBarCommandPalette = ({ children }) => {
                 width: '-webkit-fill-available',
                 border: 'none',
                 outline: 'none',
-                height: '16px',
+                height: '26px',
+                fontSize: '20px',
+                borderBottom: '1px solid grey',
+                marginBottom: '6px',
               }}
             />
+
             <RenderResults />
           </KBarAnimator>
         </KBarPositioner>
