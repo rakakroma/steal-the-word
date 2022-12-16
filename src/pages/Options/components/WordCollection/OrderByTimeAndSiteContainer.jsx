@@ -1,24 +1,11 @@
-import Masonry from '@mui/lab/Masonry';
-import {
-  AvatarGroup,
-  Box,
-  Chip,
-  Divider,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, Chip, Typography, useTheme } from '@mui/material';
 import React, { memo, useRef } from 'react';
-import { cutUrl, domainPageWords } from '../../utils/transformData';
-import {
-  WordListInWordCollection,
-  WordCollectionPageBoxContainer,
-  WordCollectionPageBox,
-} from './WordCollectionPageBox';
-import { SiteIconAvatar, SiteIconButton } from './SiteIconButton';
-import { ListSubTitle } from './ListSubTitle';
-import { IndexQuickRefBox } from './IndexQuickRefBox';
-import { randomLightColors } from '../../colors';
 import { GroupedVirtuoso } from 'react-virtuoso';
+import { cutUrl, domainPageWords } from '../../utils/transformData';
+import { IndexQuickRefBox } from './IndexQuickRefBox';
+import { ListSubTitle } from './ListSubTitle';
+import { SiteIconAvatar } from './SiteIconButton';
+import { WordCollectionPageBox } from './WordCollectionPageBox';
 
 export const OrderByTimeAndSiteContainer = memo(
   ({
@@ -28,7 +15,8 @@ export const OrderByTimeAndSiteContainer = memo(
     columns,
     height,
     width,
-    displayContext,
+    displayMode,
+    // displayContext,
     // containerWidth,
   }) => {
     const getDomainIcon = (url) => {
@@ -37,7 +25,7 @@ export const OrderByTimeAndSiteContainer = memo(
       )?.icon;
     };
     const wordsByDomain = domainPageWords(contextList);
-    const domainAndWordLength = wordsByDomain.map((arrayWithDomain) => {
+    const domainAndWordCount = wordsByDomain.map((arrayWithDomain) => {
       const wordCount = arrayWithDomain[1].reduce(
         (accumulatedWordCount, currentUrlData) => {
           return accumulatedWordCount + currentUrlData.words.length;
@@ -54,15 +42,15 @@ export const OrderByTimeAndSiteContainer = memo(
     const theme = useTheme();
 
     const siteModeVirtuoso = useRef(null);
-    const groupCounts = Array(domainAndWordLength.length).fill(1);
+    const groupCounts = Array(domainAndWordCount.length).fill(1);
 
     // .sort((a, b) => b.wordCount - a.wordCount)
 
     return (
       <Box>
         <IndexQuickRefBox>
-          {domainAndWordLength.map((item, groupIndex) => {
-            const domainData = domainAndWordLength[groupIndex];
+          {domainAndWordCount.map((item, groupIndex) => {
+            const domainData = domainAndWordCount[groupIndex];
 
             return (
               <Chip
@@ -109,7 +97,7 @@ export const OrderByTimeAndSiteContainer = memo(
           groupCounts={groupCounts}
           style={{ height: '65vh', width: width || '100%' }}
           groupContent={(index) => {
-            const domainData = domainAndWordLength[index];
+            const domainData = domainAndWordCount[index];
             return (
               <ListSubTitle
                 content={
@@ -141,7 +129,7 @@ export const OrderByTimeAndSiteContainer = memo(
                   return (
                     <React.Fragment key={dataByUrl.url}>
                       <WordCollectionPageBox
-                        displayContext={displayContext}
+                        displayMode={displayMode}
                         noIcon={true}
                         arrayWithUrl={dataByUrl}
                         // containerWidth={containerWidth}

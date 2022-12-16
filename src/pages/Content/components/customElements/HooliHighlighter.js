@@ -32,16 +32,11 @@ class HooliHighlighter extends LitElement {
   _highlightedText() {
     if (!this.matchword?.trim()) return html`${this.text}`;
 
-    // const regexByMatchRule = {
-    //     any: this.matchword,
-    //     start: `\\b${this.matchword}`,
-    //     end: `${this.matchword}\\b`,
-    //     independent: `\\b${this.matchword}\\b`
-    // }
     const regex = new RegExp(
       getRegexByMatchRule(this.matchword, this.matchRule),
       'gi'
     );
+
     const parts = this.text.split(regex);
     const matched = this.text.match(regex);
     if (parts.length === 1) return html`${this.text}`;

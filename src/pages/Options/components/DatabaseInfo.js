@@ -27,9 +27,14 @@ export const DatabaseInfo = () => {
   const todaysWord = wordOfToday(wordList);
   return (
     <Box sx={{ display: 'flex' }}>
-      <SimpleInfoBox title="words" content={wordList?.length} />
-      <SimpleInfoBox title="contexts" content={contextList?.length} />
-      <SimpleInfoBox
+      <CoolInfoBox
+        title="words"
+        content={wordList?.length}
+        additionalNumber={contextList?.length}
+        additionalInfo={'contexts'}
+      />
+      {/* <CoolInfoBox title="contexts" content={contextList?.length} /> */}
+      <CoolInfoBox
         handleClick={() => handleWordClick({ wordId: todaysWord.id })}
         title="word Of today"
         content={todaysWord.word}
@@ -38,26 +43,59 @@ export const DatabaseInfo = () => {
   );
 };
 
-const SimpleInfoBox = ({ title, content, handleClick }) => {
+// const SimpleInfoBox = ({ title, content, handleClick }) => {
+//   return (
+//     <Box
+//       sx={{
+//         border: '1px solid black',
+//         borderRadius: '7px',
+//         padding: '8px',
+//         minWidth: '120px',
+//         maxWidth: '230px',
+//         margin: '10px',
+//       }}
+//     >
+//       <Typography variant="subtitle1">{title}</Typography>
+//       <Typography
+//         variant="h5"
+//         sx={{ textAlign: 'center' }}
+//         onClick={handleClick}
+//       >
+//         {content}
+//       </Typography>
+//     </Box>
+//   );
+// };
+
+const CoolInfoBox = ({ title, content, additionalNumber, additionalInfo }) => {
   return (
     <Box
       sx={{
-        border: '1px solid black',
-        borderRadius: '7px',
-        padding: '8px',
-        minWidth: '120px',
-        maxWidth: '230px',
-        margin: '10px',
+        bgcolor: 'background.paper',
+        boxShadow: 1,
+        borderRadius: 2,
+        p: 2,
+        minWidth: 300,
       }}
     >
-      <Typography variant="subtitle1">{title}</Typography>
-      <Typography
-        variant="h5"
-        sx={{ textAlign: 'center' }}
-        onClick={handleClick}
-      >
+      <Box sx={{ color: 'text.secondary' }}>{title}</Box>
+      <Box sx={{ color: 'text.primary', fontSize: 34, fontWeight: 'medium' }}>
         {content}
-      </Typography>
+      </Box>
+      <Box
+        sx={{
+          color: 'success.dark',
+          display: 'inline',
+          fontWeight: 'bold',
+          mx: 0.5,
+          fontSize: 14,
+        }}
+      >
+        {additionalNumber}
+      </Box>
+      <Box sx={{ color: 'text.secondary', display: 'inline', fontSize: 14 }}>
+        {additionalInfo}
+      </Box>
     </Box>
   );
 };

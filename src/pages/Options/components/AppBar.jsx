@@ -10,13 +10,14 @@ import {
   Link,
   Typography,
 } from '@mui/material';
-import { SearchOutlined } from '@mui/icons-material';
+import { LightMode, ModeNight, SearchOutlined } from '@mui/icons-material';
 import { useLocation } from 'react-router-dom';
-import React from 'react';
+import React, { useContext } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useKBar } from 'kbar';
 import { Link as RouterLink } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
+import { ColorModeContext } from '../Options';
 
 const StyledAppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => !['open', 'drawerWidth'].includes(prop),
@@ -114,6 +115,16 @@ const PageBreadcrumbs = () => {
   );
 };
 
+const DarkModeButton = () => {
+  const theme = useTheme();
+  const { toggleDarkMode } = useContext(ColorModeContext);
+  return (
+    <IconButton onClick={toggleDarkMode}>
+      {theme.palette.mode === 'dark' ? <LightMode /> : <ModeNight />}
+    </IconButton>
+  );
+};
+
 export const AppBar = ({ open, drawerWidth }) => {
   return (
     <StyledAppBar position="sticky" open={open} drawerWidth={drawerWidth}>
@@ -125,6 +136,7 @@ export const AppBar = ({ open, drawerWidth }) => {
         >
           <MenuIcon />
         </IconButton>
+        <DarkModeButton />
         <PageBreadcrumbs />
         <SearchSection />
       </Toolbar>

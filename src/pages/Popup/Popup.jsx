@@ -22,18 +22,12 @@ import { PopupTabs } from './PopupTabs';
 import { db } from '../Background/database.js';
 
 const Popup = () => {
-  // const [dynamicRendering, setDynamicRendering] = useState(false)
-  // const [turnOnOff, setTurnOnOff] = useState(true)
   const [currentDomain, setCurrentDomain] = useState('');
   const [validPlace, setValidPlace] = useState(true);
-  // const [showWordList, setShowWordList] = useState(false)
   const [favIconUrl, setFavIconUrl] = useState('');
   const [domainData, setDomainData] = useState(null);
 
   const [customSettingToggle, setCustomSettingToggle] = useState(false);
-  // const [openCurrentSiteFloatingWindow, setOpenCurrentSiteFloatingWindow] = useState(false)
-  // const [openCurrentSiteMouseTool, setOpenCurrentSiteMouseTool] = useState(false)
-  // const [currentSiteActivateToggle, setCurrentSiteActivateToggle] = useState(false)
 
   const [activate, setActivate] = useState(false);
   const [openMouseTool, setOpenMouseTool] = useState(false);
@@ -67,13 +61,6 @@ const Popup = () => {
 
       db.domainAndLink.get({ url: thisDomain }).then((gotDomainData) => {
         if (gotDomainData) {
-          //delete this after update all data in db
-          // if (!gotDomainData.floatingWindow) {
-          //   gotDomainData.floatingWindow = null;
-          //   gotDomainData.mouseTool = null;
-          //   gotDomainData.activate = null;
-          // }
-          //
           console.log(gotDomainData);
           setDomainData(gotDomainData);
         } else {
@@ -88,10 +75,6 @@ const Popup = () => {
         ) {
           setCustomSettingToggle(true);
         }
-        //     if (typeof gotDomainData.floatingWindow === 'boolean') setOpenCurrentSiteFloatingWindow(gotDomainData.floatingWindow)
-        //     if (typeof gotDomainData.mouseTool === 'boolean') setOpenCurrentSiteMouseTool(gotDomainData.mouseTool)
-        //     if (typeof gotDomainData.activate === 'boolean') setCurrentSiteActivateToggle(gotDomainData.activate)
-        //   }
       });
 
       chrome.storage.local.get(
@@ -100,10 +83,6 @@ const Popup = () => {
           if (obj.activate) setActivate(true);
           if (obj.mouseTool) setOpenMouseTool(true);
           if (obj.floatingWindow) setOpenFloatingWindow(true);
-          // if no site custom setting
-          // setCurrentSiteActivateToggle(obj.activate)
-          // setOpenCurrentSiteFloatingWindow(obj.floatingWindow)
-          // setOpenCurrentSiteMouseTool(obj.mouseTool)
         }
       );
     });
@@ -123,26 +102,6 @@ const Popup = () => {
       </div>
     );
   }
-
-  // const handleRenderOption = () => {
-  //   if (!dynamicRendering) {
-  //     setDynamicRendering(true);
-  //     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-  //       chrome.tabs.sendMessage(tabs[0].id, { dynamicRendering: true, tabInfo: tabs[0] },
-  //         (response) => {
-  //           console.log(response);
-  //         });
-  //     });
-  //   } else {
-  //     setDynamicRendering(false);
-  //     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-  //       chrome.tabs.sendMessage(tabs[0].id, { dynamicRendering: false, tabInfo: tabs[0] },
-  //         (response) => {
-  //           console.log(response);
-  //         });
-  //     });
-  //   }
-  // }
 
   const handleToggleFloatingWindow = () => {
     if (openFloatingWindow === true) {
@@ -202,18 +161,15 @@ const Popup = () => {
               <Edit sx={{ width: '13px', height: '13px' }} />
             </IconButton>
           </Grid>
-          <Grid container alignItems="center" justifyContent="center">
-            <Chip label="ja" size="small" variant="outlined" />
-            <Chip label="en" size="small" />
-          </Grid>
-          <Grid container alignItems="center" justifyContent="center">
+
+          {/* <Grid container alignItems="center" justifyContent="center">
             <Chip label="Tech" size="small" />
             <Chip label="news" size="small" />
             <Chip label="SNS" size="small" />
             <Chip label="sports" size="small" />
-          </Grid>
+          </Grid> */}
         </Box>
-        <Box sx={{}}>
+        <Box>
           <PopupTabs
             activate={activate}
             setActivate={setActivate}
@@ -223,32 +179,11 @@ const Popup = () => {
             setOpenFloatingWindow={setOpenFloatingWindow}
             customSettingToggle={customSettingToggle}
             setCustomSettingToggle={setCustomSettingToggle}
-            // openCurrentSiteFloatingWindow={openCurrentSiteFloatingWindow}
-            // setOpenCurrentSiteFloatingWindow={setOpenCurrentSiteFloatingWindow}
-            // openCurrentSiteMouseTool={openCurrentSiteMouseTool}
-            // setOpenCurrentSiteMouseTool={setOpenCurrentSiteMouseTool}
-            // currentSiteActivateToggle={currentSiteActivateToggle}
-            // setCurrentSiteActivateToggle={setCurrentSiteActivateToggle}
             currentDomain={currentDomain}
             domainData={domainData}
             setDomainData={setDomainData}
           />
         </Box>
-        {/* <header className="App-header"> */}
-        {/* <PopUpToggleButton /> */}
-        {/* <Typography variant='h6'>目前網域</Typography>
-          <Switch size='small'
-            checked={dynamicRendering}
-            onChange={handleRenderOption} />
-          <Typography variant='subtitle2'>開啟功能</Typography>
-          <Switch size='small'
-            checked={turnOnOff}
-            onChange={handleTurnOnOff} />
-          <Typography variant='subtitle2'>顯示本頁詞</Typography>
-          <Switch size='small'
-            checked={showWordList}
-            onChange={handleShowWordList} /> */}
-        {/* </header> */}
       </Box>
     </ThemeProvider>
   );

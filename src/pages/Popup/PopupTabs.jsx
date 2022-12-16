@@ -51,7 +51,6 @@ const TabsList = styled(TabsListUnstyled)`
 `;
 
 const Tab = styled(TabUnstyled)`
-  /* font-family: IBM Plex Sans, sans-serif; */
   color: white;
   cursor: pointer;
   font-size: 0.8rem;
@@ -101,12 +100,6 @@ export function PopupTabs({
   setOpenFloatingWindow,
   customSettingToggle,
   setCustomSettingToggle,
-  // openCurrentSiteFloatingWindow,
-  // setOpenCurrentSiteFloatingWindow,
-  // openCurrentSiteMouseTool,
-  // setOpenCurrentSiteMouseTool,
-  // currentSiteActivateToggle,
-  // setCurrentSiteActivateToggle,
   currentDomain,
   setDomainData,
 }) {

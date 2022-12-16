@@ -1,7 +1,7 @@
 import { getDataInTableFromIndexedDB } from '../Options/utils/getDataFromDB';
 // import { getDomain } from "../Options/utils/transformData";
 import { db } from './database';
-import { getMatchTextWithIdRef } from '../Content/utils/getMatchTextWithIdRef';
+import { getMatchList } from '../../utilsForAll/getMatchTextWithIdRef';
 
 const blobToBase64 = (blob) => {
   return new Promise((resolve, _) => {
@@ -10,11 +10,6 @@ const blobToBase64 = (blob) => {
     reader.readAsDataURL(blob);
   });
 };
-
-// console.log('This is the background page.');
-// console.log('Put the background scripts here.');
-
-//i don't know why but it seems that i can not export function from here or i will get error in setBadge... and create..
 
 chrome.action.setBadgeBackgroundColor({ color: '#4f4f4f' });
 
@@ -36,7 +31,7 @@ const saveDomainData = async (currentDomain, favIconUrl) => {
     if (!domainInDB) {
       res = await fetch(favIconUrl);
       blob = await res.blob();
-      const base64Icon = await blobToBase64(blob)
+      const base64Icon = await blobToBase64(blob);
       const newDomain = {
         url: currentDomain,
         dynamicRendering: true,
@@ -71,7 +66,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
   if (request.action === 'getStart' && request.url) {
     (async () => {
-      console.log('getstart');
+      console.log('get start');
       const currentDomain = new URL(request.url).hostname;
       const domainData = await db.domainAndLink.get({ url: currentDomain });
       if (domainData?.activate === false) {
@@ -79,16 +74,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         return;
       }
       const wordList = await getDataInTableFromIndexedDB('wordList');
-      const getMatchList = (wordList) => {
-        let matchList = [];
-        wordList.forEach((wordObj) => {
-          matchList.push(...getMatchTextWithIdRef(wordObj));
-        });
-        matchList = matchList.sort(
-          (a, b) => b.matchText.length - a.matchText.length
-        );
-        return matchList;
-      };
 
       const newList = getMatchList(wordList);
       if (!domainData) {
@@ -99,7 +84,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     })();
   }
   if (request.action === 'getImgDataFromUrls' && request.domains) {
-    // const {domains} = request
     (async () => {
       const domainData = await Promise.all(
         request.domains.map(async (domain) => {
@@ -117,7 +101,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           return contextObj.wordId === request.wordId;
         })
         .toArray();
-      // console.log(contexts)
       sendResponse({ contexts });
     })();
   }

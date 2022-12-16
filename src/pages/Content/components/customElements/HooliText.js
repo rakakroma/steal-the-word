@@ -77,7 +77,7 @@ class HooliText extends LitElement {
   ];
 
   renderElement() {
-    const annotation = this.wordObj.definitions[0].aliases[0];
+    const annotation = this.wordObj.definitions[0].annotation;
     return html`<span @click="${this.openWordBlock}" id="hooli-text-container"
       ><slot></slot
       ><span><div id="annotation-tip">${annotation}</div></span></span

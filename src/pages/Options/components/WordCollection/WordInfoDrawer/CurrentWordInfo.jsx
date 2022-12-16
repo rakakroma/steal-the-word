@@ -1,210 +1,91 @@
-import React, { useContext } from 'react';
-import { useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import {
-  WordListContext,
-  ContextListContext,
-  DomainAndLinkListContext,
-  WordInfoDrawerContext,
-} from '../../../Options';
-import { useState } from 'react';
-import { getAllMatchTextFromWordObj } from '../../../../../utilsForAll/getInfoFromWordObj.js';
-import { SiteIconButton } from '../SiteIconButton';
 import {
   Button,
+  ButtonBase,
+  Checkbox,
   Divider,
-  FilledInput,
-  IconButton,
-  Input,
-  InputBase,
-  Rating,
-  TextField,
-  Tooltip,
+  FormControlLabel,
+  Typography,
 } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
+import Box from '@mui/material/Box';
+import { grey, red } from '@mui/material/colors';
+import { useTheme } from '@mui/material/styles';
+import React, { useContext, useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { db } from '../../../../Background/database.js';
 import {
-  Controller,
-  FormProvider,
-  useForm,
-  useFormContext,
-} from 'react-hook-form';
-import { useEffect } from 'react';
-import styled from '@emotion/styled';
-import { db } from '../../../../Background/database';
+  ContextListContext,
+  DomainAndLinkListContext,
+  TagListContext,
+  WordInfoDrawerContext,
+  WordListContext,
+} from '../../../Options';
+import {
+  convertValueToFitCreatableInput,
+  CreatableSelectInput,
+} from './inputs/CreatableSelectInput';
+import { DefinitionBlock } from './DefinitionBlock.jsx';
+import { SubmitSection } from './SubmitSection';
+import { TypographyOrInput } from './inputs/TypographyOrInput';
+import { VariantsInfo } from './VariantsInfo';
+import { WordRating } from './WordRating';
+import { nanoid } from 'nanoid';
 
-const StyledRating = styled(Rating)({
-  '& .MuiRating-iconFilled': {
-    color: '#ff6d75',
-  },
-  '& .MuiRating-iconHover': {
-    color: '#ff3d47',
-  },
-});
-
-const TypographyOrInput = (props) => {
-  const { editMode, variant, sx, content, inputName, name } = props;
-  const theme = useTheme();
-  const { control } = useFormContext(); // retrieve all hook formMethods
-
-  // console.log(theme.typography[variant]);
-  if (!editMode) {
-    return (
-      <Typography sx={sx} variant={variant}>
-        {props.children || content}
-      </Typography>
-    );
+export const getName = (inputName, idInfo, isInDefinition) => {
+  if (isInDefinition) {
+    return `def**${inputName}**${idInfo}`;
+  } else {
+    return `context**${inputName}**${idInfo}`;
   }
-
-  // const rules = {context:,'definition note':'', word:'',annotation:''};
-
-  const maxLength = 460;
-  const required = true;
-
-  return (
-    <Controller
-      // shouldUnregister
-      name={name}
-      control={control}
-      defaultValue={content}
-      rules={{ maxLength: 460 }}
-      render={({ field }) => (
-        <InputBase
-          // {...field}
-          multiline
-          fullWidth
-          placeholder={inputName}
-          inputRef={field.ref}
-          value={field.value}
-          onChange={field.onChange}
-          sx={{ ...theme.typography[variant], ...sx }}
-        />
-      )}
-    />
-  );
 };
 
-const ContextByDefBox = ({ contextObj, allMatchText, editMode }) => {
-  const theme = useTheme();
-
-  const matchText = allMatchText.find(
-    (matchText) => contextObj.context.indexOf(matchText) > -1
-  );
-  return (
-    <Box sx={{ m: theme.spacing(2, 1) }}>
-      <TypographyOrInput
-        name={`context-*${contextObj.id}`}
-        inputName="context"
-        editMode={editMode}
-        variant="subtitle2"
-        sx={{ lineHeight: 1.2, wordBreak: 'break-all' }}
-        content={contextObj.context}
-      >
-        <hooli-highlighter
-          text={contextObj.context}
-          matchword={contextObj.phrase || matchText}
-        ></hooli-highlighter>
-      </TypographyOrInput>
-      <Box>
-        <Tooltip title={contextObj.pageTitle} placement="left-end">
-          <Typography
-            variant="subtitle2"
-            sx={{
-              fontSize: '0.8rem',
-              color: 'text.secondary',
-              overflow: 'hidden',
-              width: '250px',
-              maxHeight: '2.1rem',
-              lineHeight: '1rem',
-              // whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            <SiteIconButton
-              iconUri={contextObj.icon}
-              linkUrl={contextObj.url}
-              iconSize={16}
-            />
-            {contextObj.pageTitle}
-          </Typography>
-        </Tooltip>
-      </Box>
-    </Box>
-  );
-};
-const VariantsInfo = ({ wordId, editMode, variants, stem }) => {
-  const theme = useTheme();
-
-  return (
-    <Box sx={{ fontSize: '0.8rem', color: theme.palette.grey[500] }}>
-      {variants?.length > 0 && (
-        <>
-          variants:
-          <Typography
-            component="span"
-            sx={{
-              ml: theme.spacing(1),
-              fontSize: '0.8rem',
-            }}
-          >
-            {variants.join(' ,').toString()}
-          </Typography>
-        </>
-      )}
-      {stem && (
-        <>
-          stem:
-          <TypographyOrInput
-            name={`stem-*${wordId}`}
-            inputName="word"
-            editMode={editMode}
-            component="span"
-            sx={{
-              ml: theme.spacing(1),
-              fontSize: '0.8rem',
-            }}
-            content={stem}
-          ></TypographyOrInput>
-        </>
-      )}
-    </Box>
-  );
+export const getDataFromName = (name) => {
+  const splitted = name.split('**');
+  return {
+    id: splitted[2],
+    inputName: splitted[1],
+    section: splitted[0],
+  };
 };
 
 export const CurrentWordInfo = () => {
   const theme = useTheme();
 
-  const { wordInfoTarget } = useContext(WordInfoDrawerContext);
+  const { wordInfoTarget, changeWordInfoTarget } = useContext(
+    WordInfoDrawerContext
+  );
   const wordList = useContext(WordListContext);
   const contextList = useContext(ContextListContext);
   const domainAndLinkList = useContext(DomainAndLinkListContext);
+  const tagList = useContext(TagListContext);
 
-  const [editMode, setEditMode] = useState(false);
-  const [ratingStars, setRatingStars] = useState(false);
-  const formMethods = useForm({ shouldUnregister: true });
+  const [controlMode, setControlMode] = useState('display');
+  const [changingTagsWhenDisplay, setChangingTagsWhenDisplay] = useState(null);
 
   const handleCloseEdit = () => {
-    setEditMode(false);
+    setControlMode('display');
+    //TODO: maybe an alert to prevent unsaved change
   };
 
   useEffect(() => {
     handleCloseEdit();
   }, [wordInfoTarget]);
 
+  useEffect(() => {
+    setChangingTagsWhenDisplay(null);
+  }, [wordInfoTarget, controlMode]);
+
+  const formMethods = useForm({
+    shouldUnregister: true,
+    mode: 'onChange',
+  });
+
   const targetWordId = wordInfoTarget?.wordId;
   const targetWord = targetWordId
     ? wordList.find((wordObj) => wordObj.id === targetWordId)
     : null;
-  useEffect(() => {
-    setRatingStars(targetWord?.stars || 0);
-  }, [targetWord]);
-
-  if (!targetWord) return <Box>Error, no target word in db</Box>;
-  const allMatchText = getAllMatchTextFromWordObj(targetWord);
-
   const targetWordContexts = contextList
-    .filter((contextObj) => contextObj.wordId === targetWordId)
-    .map((contextObj) => {
+    ?.filter((contextObj) => contextObj.wordId === targetWordId)
+    ?.map((contextObj) => {
       const contextDomain = new URL(contextObj.url).hostname;
       const domainObj = domainAndLinkList.find(
         (domainObj) => domainObj.url === contextDomain
@@ -212,66 +93,278 @@ export const CurrentWordInfo = () => {
       contextObj.icon = domainObj?.icon;
       return contextObj;
     });
+
+  const onlyOneContext = targetWordContexts?.length === 1;
+
+  const deleteWordInDb = (id) => {
+    db.wordList.delete(id);
+    changeWordInfoTarget(null);
+  };
+
+  const isNewTagValue = (value) => {
+    return tagList.findIndex((tagObj) => tagObj.tag === value) === -1;
+  };
+
   const handleFormSubmit = (data) => {
+    console.log(data);
+    if (controlMode === 'display' && changingTagsWhenDisplay) {
+      //handle tag submit
+      const tagsData = data[changingTagsWhenDisplay];
+      const checkSameTagData = (firstData, secondData) => {
+        return (
+          firstData.wordId === secondData.wordId &&
+          firstData.defId === secondData.defId
+        );
+      };
+      const refData = {
+        wordId: targetWord.id,
+        defId: getDataFromName(changingTagsWhenDisplay).id,
+      };
+      const tagIdArrayForWord = [];
+
+      tagsData.forEach((tagData) => {
+        const tag = tagData.label;
+
+        if (isNewTagValue(tag)) {
+          const newTagData = {
+            id: nanoid(),
+            tag,
+            wordDefRefs: [refData],
+          };
+          db.tagList.add(newTagData);
+          tagIdArrayForWord.push(newTagData.id);
+        } else {
+          const id = tagData.value;
+          const wordDefRefsBeforeUpdate = tagList.find(
+            (tagObj) => tagObj.id === id
+          ).wordDefRefs;
+
+          const wordRefIsNotInTagData = //the tag is newly added to the word
+            wordDefRefsBeforeUpdate.findIndex((wordDefData) =>
+              checkSameTagData(wordDefData, refData)
+            ) === -1;
+          if (wordRefIsNotInTagData) {
+            db.tagList.update(id, {
+              wordDefRefs: [...wordDefRefsBeforeUpdate, refData],
+            });
+          }
+          tagIdArrayForWord.push(id);
+        }
+      });
+
+      const tagsBeforeUpdate = targetWord.definitions.find(
+        (definition) => definition.definitionId === refData.defId
+      ).tags;
+      const tagsDeletedFromThisDef = tagsBeforeUpdate.filter(
+        (tagId) => !tagIdArrayForWord.includes(tagId)
+      );
+
+      tagsDeletedFromThisDef.forEach((tagId) => {
+        const tagObjInData = tagList.find((tagObj) => tagObj.id === tagId);
+        console.log(tagObjInData.wordDefRefs);
+        // console.log(checkSameTagData(tagObjInData.wordDefRefs[0], refData));
+        console.log();
+        if (
+          tagObjInData.wordDefRefs.length === 1 &&
+          checkSameTagData(tagObjInData.wordDefRefs[0], refData)
+        ) {
+          console.log('delete');
+          db.tagList.delete(tagId);
+        } else {
+          console.log('update');
+          const newDefRefs = tagObjInData.wordDefRefs.filter(
+            (refObj) => !checkSameTagData(refObj, refData)
+          );
+          db.tagList.update(tagId, { wordDefRefs: newDefRefs });
+        }
+      });
+
+      const newDefinitions = targetWord.definitions.map((definition) => {
+        if (definition.definitionId === refData.defId) {
+          definition.tags = tagIdArrayForWord;
+        }
+        return definition;
+      });
+
+      db.wordList.update(targetWord.id, { definitions: newDefinitions });
+      console.log('changing tags');
+      setChangingTagsWhenDisplay(null);
+
+      return;
+    }
+    if (controlMode === 'delete') {
+      if (onlyOneContext || data.word === true) {
+        const contextIdsToDelete = targetWordContexts.map(
+          (contextObj) => contextObj.id
+        );
+        db.contextList.bulkDelete(contextIdsToDelete);
+        deleteWordInDb(targetWord.id);
+        return;
+      }
+      //context data only
+      const contextIdsToDelete = Object.keys(data)
+        .filter((name) => {
+          return data[name] === true;
+        })
+        .map((qualifiedName) => {
+          return +getDataFromName(qualifiedName).id;
+        });
+
+      const defRefThatStillExist = targetWordContexts.reduce((accu, curr) => {
+        const defRef = curr.definitionRef;
+        if (accu.indexOf(defRef) > -1) return accu;
+        if (contextIdsToDelete.indexOf(curr.id) > -1) return accu;
+        return accu.concat(defRef);
+      }, []);
+      const defsThatStillExist = targetWord.definitions.filter((definition) => {
+        return defRefThatStillExist.indexOf(definition.definitionId) > -1;
+      });
+
+      db.contextList.bulkDelete(contextIdsToDelete);
+      db.wordList.update(targetWord.id, {
+        definitions: defsThatStillExist,
+      });
+      setControlMode('display');
+      return;
+    }
+
     const changedDataKey = Object.keys(formMethods.formState.dirtyFields);
+
     if (changedDataKey.length > 0) {
-      const changedData = changedDataKey.reduce((accu, curr) => {
-        accu[curr] = data[curr];
-        return accu;
-      }, {});
-      console.log(changedData);
+      let newWordInfo = false;
+      let newDefInfo = false;
+      let newContextInfo = false;
+      const wordObjInfoToUpdate = {};
+      const defsArrayToUpdate = [...targetWord.definitions];
+      const contextObjsToUpdate = [];
+      const tagsToUpdate = [];
+      changedDataKey.forEach((key) => {
+        if (['word', 'variants', 'stem', 'matchRule'].includes(key)) {
+          if (!newWordInfo) {
+            newWordInfo = true;
+          }
+          if (key === 'variants') {
+            wordObjInfoToUpdate.variants = data.variants.map(
+              (valueAndLabel) => valueAndLabel.value
+            );
+            return;
+          }
+          const inputResult = data[key].trim();
+          wordObjInfoToUpdate[key] = inputResult;
+          //TODO: check no duplicate word
+        }
+        if (key.startsWith('def**')) {
+          if (!newDefInfo) {
+            newDefInfo = true;
+          }
+          const [, inputName, definitionId] = key.split('**');
+          if (inputName === 'tags') {
+            console.log(data[key]);
+            return;
+          }
+          const inputResult = data[key].trim();
+          const targetDefIndex = defsArrayToUpdate.findIndex(
+            (definition) => definition.definitionId === definitionId
+          );
+          defsArrayToUpdate[targetDefIndex][inputName] = inputResult;
+        }
+        if (key.startsWith('context**')) {
+          if (!newContextInfo) {
+            newContextInfo = true;
+          }
+          const [, inputName, contextId] = key.split('**');
+          const inputResult = data[key].trim();
+          contextObjsToUpdate.push({ id: +contextId, context: inputResult });
+          //currently only context value, if there is more value for contextObj in the future, it would cause bugs
+        }
+      });
+      if (newWordInfo) {
+        console.log('------word info------');
+        console.log(wordObjInfoToUpdate);
+        db.wordList.update({ id: targetWord.id }, wordObjInfoToUpdate);
+        if (wordObjInfoToUpdate.word) {
+          targetWordContexts.forEach((contextObj) => {
+            db.contextList.update(
+              { id: +contextObj.id },
+              { word: wordObjInfoToUpdate.word }
+            );
+          });
+        }
+      }
+      if (newDefInfo) {
+        console.log('---defsArrayToUpdate----');
+        console.log(defsArrayToUpdate);
+        db.wordList.update(
+          { id: targetWord.id },
+          { definitions: defsArrayToUpdate }
+        );
+      }
+      if (newContextInfo) {
+        console.log('---contextObjsToUpdate----');
+        console.log(contextObjsToUpdate);
+        contextObjsToUpdate.forEach((idAndContext) => {
+          const { id, context } = idAndContext;
+          db.contextList.update({ id }, { context });
+        });
+      }
+      setControlMode('display');
     } else {
       console.log('nothing changed');
     }
   };
 
-  const updateWordRatingInDb = (value) => {
-    db.wordList
-      .update({ id: targetWordId }, { stars: value })
-      .then((updated) => {
-        if (updated) console.log(`update ${targetWordId} to ${value} stars`);
-        else console.log('Nothing was updated');
-      });
-  };
-  const handleWordRating = (e, newValue) => {
-    if (newValue === null) {
-      setRatingStars(0);
-      updateWordRatingInDb(0);
-      return;
-    }
-    setRatingStars(newValue);
-    updateWordRatingInDb(newValue);
+  const getDefaultValueFromData = (wordObj, contextObjs) => {
+    const values = {
+      word: wordObj.word,
+      variants: convertValueToFitCreatableInput(wordObj.variants),
+      stem: wordObj.stem,
+      matchRule: wordObj.matchRule,
+    };
+
+    wordObj.definitions.forEach((def) => {
+      const defId = def.definitionId;
+      values[getName('note', defId, true)] = def.note;
+      values[getName('annotation', defId, true)] = def.annotation;
+      values[getName('tags', defId, true)] = def.tags || [];
+    });
+
+    contextObjs.forEach((contextObj) => {
+      values[getName('context', contextObj.id, false)] = contextObj.context;
+    });
+    return values;
   };
 
+  const isDeletingAll =
+    controlMode === 'delete' &&
+    (formMethods.watch('word') === true || onlyOneContext);
+  if (!wordInfoTarget) return null;
+  if (!targetWord) return <Box>Error, no target word in db</Box>;
+
   return (
-    <Box sx={{ display: 'flex' }}>
-      <FormProvider {...formMethods}>
+    <FormProvider {...formMethods}>
+      <Box
+        component="form"
+        sx={{ display: 'flex', flexDirection: 'column', padding: '20px' }}
+        onSubmit={formMethods.handleSubmit(handleFormSubmit)}
+      >
         <Box
-          onSubmit={formMethods.handleSubmit(handleFormSubmit)}
-          component={editMode ? 'form' : ''}
           sx={{
+            backgroundColor: isDeletingAll ? red[50] : undefined,
             display: 'flex',
             flexDirection: 'column',
-            padding: '20px',
-            margin: '5px',
+            margin: 1,
             width: '100%',
-            // width: '65vw',
             height: 'fit-content',
             borderRadius: '10px',
           }}
         >
-          <StyledRating
-            defaultValue={0}
-            value={ratingStars}
-            max={3}
-            onChange={handleWordRating}
-          />
-
+          {controlMode !== 'delete' && <WordRating targetWord={targetWord} />}
           <Box>
             <TypographyOrInput
-              name={`word-*${targetWord.id}`}
+              checkable={true}
+              name="word"
               inputName="word"
-              editMode={editMode}
+              controlMode={controlMode}
               variant="h6"
               sx={{
                 wordBreak: 'break-word',
@@ -280,77 +373,39 @@ export const CurrentWordInfo = () => {
             />
             <Divider />
             <Box sx={{ mt: theme.spacing(1) }}>
-              {targetWord.definitions.map((definitionObj) => {
-                const annotation = definitionObj.aliases[0];
-                return (
-                  <Box key={definitionObj.definitionId}>
-                    <TypographyOrInput
-                      name={`annotation-*${definitionObj.definitionId}`}
-                      inputName="annotation"
-                      editMode={editMode}
-                      variant="subtitle1"
-                      sx={{
-                        fontWeight: 600,
-                        color: theme.palette.grey[800],
-                        lineHeight: 1.2,
-                        fontSize: '0.95rem',
-                        wordBreak: 'break-word',
-                      }}
-                      content={annotation}
-                    />
-                    <TypographyOrInput
-                      name={`def-note-*${definitionObj.definitionId}`}
-                      inputName="definition note"
-                      editMode={editMode}
-                      variant="subtitle2"
-                      sx={{ fontWeight: 400, wordBreak: 'break-all' }}
-                      content={definitionObj.note}
-                    />
-                    <Box>
-                      {targetWordContexts
-                        .filter(
-                          (contextObj) =>
-                            contextObj.definitionRef ===
-                            definitionObj.definitionId
-                        )
-                        .map((contextObj) => {
-                          return (
-                            <ContextByDefBox
-                              key={contextObj.id}
-                              contextObj={contextObj}
-                              allMatchText={allMatchText}
-                              editMode={editMode}
-                            />
-                          );
-                        })}
-                    </Box>
-                    <VariantsInfo
-                      wordId={targetWord.id}
-                      editMode={editMode}
-                      stem={targetWord.stem}
-                      variants={targetWord.variants}
-                    />
-                  </Box>
-                );
-              })}
-              {editMode ? (
-                <Box>
-                  <Button color="secondary" onClick={handleCloseEdit}>
-                    Cancel
-                  </Button>
-                  <Button type="submit" color="primary" variant="contained">
-                    Submit
-                  </Button>
-                </Box>
-              ) : (
-                <IconButton onClick={() => setEditMode(true)}>
-                  <EditIcon />
-                </IconButton>
-              )}
+              <DefinitionBlock
+                targetWord={targetWord}
+                targetWordContexts={targetWordContexts}
+                controlMode={controlMode}
+                changingTagsWhenDisplay={changingTagsWhenDisplay}
+                setChangingTagsWhenDisplay={setChangingTagsWhenDisplay}
+              />
+              <VariantsInfo
+                controlMode={controlMode}
+                stem={targetWord.stem}
+                variants={targetWord.variants}
+                matchRule={targetWord.matchRule}
+              />
             </Box>
           </Box>
         </Box>
-      </FormProvider>
-    </Box>
+        <Box>
+          <SubmitSection
+            defaultData={getDefaultValueFromData(
+              targetWord,
+              targetWordContexts
+            )}
+            onlyOneContext={onlyOneContext}
+            handleCloseEdit={handleCloseEdit}
+            controlMode={controlMode}
+            setControlMode={setControlMode}
+            disableSubmit={
+              Object.keys(formMethods.formState.dirtyFields).length === 0 ||
+              formMethods.formState.isSubmitting
+            }
+          />
+        </Box>
+      </Box>
+    </FormProvider>
   );
 };

@@ -20,12 +20,13 @@
     "@mui/lab": "^5.0.0-alpha.92",
     "@mui/material": "^5.9.2",
     "@mui/x-data-grid": "^5.17.2",
-    "@reduxjs/toolkit": "^1.9.0",
     "@spectrum-web-components/icons-workflow": "^0.9.0",
     "@webcomponents/custom-elements": "^1.5.0",
+    "chroma-js": "^2.4.2",
     "dayjs": "^1.11.5",
     "dexie": "^3.2.2",
     "dexie-react-hooks": "^1.1.1",
+    "i18next": "^22.4.1",
     "interactjs": "^1.10.17",
     "kbar": "^0.1.0-beta.38",
     "lit": "^2.3.1",
@@ -35,10 +36,10 @@
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.40.0",
     "react-hot-loader": "^4.13.0",
-    "react-redux": "^8.0.5",
+    "react-i18next": "^12.1.1",
     "react-router-dom": "^6.4.3",
-    "react-virtuoso": "^3.1.5",
-    "react-window": "^1.8.8"
+    "react-select": "^5.7.0",
+    "react-virtuoso": "^3.1.5"
   },
   "devDependencies": {
     "@babel/core": "^7.17.0",

@@ -1,28 +1,56 @@
 import { Button, Typography } from '@mui/material';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import createCache from '@emotion/cache';
+import { CacheProvider } from '@emotion/react';
 
-// Create a React component to render inside the shadow root
 function MyReactApp() {
   return (
     <div>
-      {/* <h1>Hello from React!</h1> */}
       <Button variant="contained">Click me!</Button>
     </div>
   );
 }
 
-// Define your web component as usual, extending the HTMLElement class
 class MyShadowDomComponent extends HTMLElement {
   connectedCallback() {
-    // Use the `attachShadow` method to create a shadow root, specifying
-    // the 'open' mode
     const shadowRoot = this.attachShadow({ mode: 'open' });
+    const emotionRoot = document.createElement('style');
+    const shadowRootElement = document.createElement('div');
+    shadowRoot.appendChild(emotionRoot);
+    shadowRoot.appendChild(shadowRootElement);
 
-    // Use the `ReactDOM.render` method to render your React app inside
-    // the shadow root
-    ReactDOM.render(<MyReactApp />, shadowRoot);
+    const cache = createCache({
+      key: 'css',
+      prepend: true,
+      container: emotionRoot,
+    });
+    ReactDOM.createRoot(shadowRootElement).render(
+      <CacheProvider value={cache}>
+        <MyReactApp />
+      </CacheProvider>
+    );
+    // ReactDOM.render(<MyReactApp />, shadowRoot);
   }
 }
 
 customElements.define('my-shadow-dom-component', MyShadowDomComponent);
+
+// const container = document.querySelector('#root');
+// const shadowContainer = container.attachShadow({ mode: 'open' });
+// const emotionRoot = document.createElement('style');
+// const shadowRootElement = document.createElement('div');
+// shadowContainer.appendChild(emotionRoot);
+// shadowContainer.appendChild(shadowRootElement);
+
+// const cache = createCache({
+//   key: 'css',
+//   prepend: true,
+//   container: emotionRoot,
+// });
+
+// ReactDOM.createRoot(shadowRootElement).render(
+//   <CacheProvider value={cache}>
+//     <App />
+//   </CacheProvider>
+// );

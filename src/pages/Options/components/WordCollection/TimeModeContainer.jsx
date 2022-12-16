@@ -8,7 +8,7 @@ import { ListSubTitle } from './ListSubTitle';
 
 export const TimeModeContainer = memo(
   ({
-    displayContext,
+    displayMode,
     phraseMode,
     dateArrangement,
     contextList,
@@ -96,7 +96,7 @@ export const TimeModeContainer = memo(
                                 key={arrayWithUrl.url}
                                 imgUri={domainInfo.icon}
                                 arrayWithUrl={arrayWithUrl}
-                                displayContext={displayContext}
+                                displayMode={displayMode}
                                 containerWidth={containerWidth}
                               />
                             );

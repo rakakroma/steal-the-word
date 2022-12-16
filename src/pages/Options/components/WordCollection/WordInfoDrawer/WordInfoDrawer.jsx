@@ -20,8 +20,10 @@ import '../../../../Content/components/customElements/HooliHighlighter';
 import { wordListInAlphabeticalOrder } from '../../../utils/transformData';
 import { AppBar } from '../../AppBar';
 import { CurrentWordInfo } from './CurrentWordInfo';
+import { HideDrawerButton } from './HideDrawerButton';
 
-const drawerWidth = 340;
+// const drawerWidth = 340;
+const drawerWidth = 390;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -60,7 +62,9 @@ export default function PersistentDrawerRight(props) {
   const { wordInfoTarget, changeWordInfoTarget, handleWordClick } = useContext(
     WordInfoDrawerContext
   );
-  const biggerThan600px = useMediaQuery('(min-width:600px)');
+  // const biggerThan600px = useMediaQuery('(min-width:600px)');
+
+  const breakpointOfDirectionChange = useMediaQuery('(min-width:700px)');
 
   const open = wordInfoTarget?.wordId?.length > 0;
 
@@ -78,7 +82,7 @@ export default function PersistentDrawerRight(props) {
             type: 'word',
             id: wordObj.id,
             name: wordObj.word,
-            subtitle: wordObj.definitions[0].aliases[0],
+            subtitle: wordObj.definitions[0].annotation,
             perform: () => handleWordClick({ wordId: wordObj.id }),
             section: 'words',
             parent: 'word-search',
@@ -107,33 +111,24 @@ export default function PersistentDrawerRight(props) {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <AppBar open={biggerThan600px ? open : false} drawerWidth={drawerWidth} />
+      <AppBar
+        open={breakpointOfDirectionChange ? open : false}
+        drawerWidth={drawerWidth}
+      />
       <Main open={open}>{props.children}</Main>
       <Drawer
         sx={{
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: biggerThan600px ? drawerWidth : '100%',
+            width: breakpointOfDirectionChange ? drawerWidth : '100%',
             overflowX: 'hidden',
           },
         }}
         variant="persistent"
-        anchor={biggerThan600px ? 'right' : 'bottom'}
+        anchor={breakpointOfDirectionChange ? 'right' : 'bottom'}
         open={open}
       >
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {biggerThan600px ? (
-              theme.direction === 'rtl' ? (
-                <ChevronLeftIcon />
-              ) : (
-                <ChevronRightIcon />
-              )
-            ) : (
-              <KeyboardArrowDown />
-            )}
-          </IconButton>
-        </DrawerHeader>
+        <HideDrawerButton />
         <Divider />
         <CurrentWordInfo />
       </Drawer>

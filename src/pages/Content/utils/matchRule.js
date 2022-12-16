@@ -1,10 +1,12 @@
 export const getRegexByMatchRule = (matchWord, matchRule) => {
   matchRule = matchRule.toLowerCase();
+  const regexSafeStr = matchWord.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+
   const regexByMatchRule = {
-    any: matchWord,
-    start: `\\b${matchWord}`,
-    end: `${matchWord}\\b`,
-    independent: `\\b${matchWord}\\b`,
+    any: regexSafeStr,
+    start: `\\b${regexSafeStr}`,
+    end: `${regexSafeStr}\\b`,
+    independent: `\\b${regexSafeStr}\\b`,
   };
   return regexByMatchRule[matchRule];
 };

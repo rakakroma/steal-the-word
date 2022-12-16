@@ -3,9 +3,29 @@ import React from 'react';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 
 export const DateArrangementPicker = ({
-  handleUpdateDateArrangement,
+  allArrangementMode,
+  setDateArrangement,
   dateArrangement,
 }) => {
+  const handleUpdateDateArrangement = (position) => {
+    const currentModePosition = allArrangementMode.indexOf(dateArrangement);
+    if (position === 'forward') {
+      if (currentModePosition === allArrangementMode.length - 1) {
+        setDateArrangement(allArrangementMode[0]);
+        return;
+      }
+      setDateArrangement(allArrangementMode[currentModePosition + 1]);
+      return;
+    }
+    if (position === 'backward') {
+      if (currentModePosition === 0) {
+        setDateArrangement(allArrangementMode[allArrangementMode.length - 1]);
+        return;
+      }
+      setDateArrangement(allArrangementMode[currentModePosition - 1]);
+    }
+  };
+
   const DirectionButton = ({ direction }) => {
     return (
       <IconButton

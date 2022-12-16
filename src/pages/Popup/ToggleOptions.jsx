@@ -10,9 +10,6 @@ export const AllSitesToggleOptions = ({
   setOpenMouseTool,
   openFloatingWindow,
   setOpenFloatingWindow,
-  // setOpenCurrentSiteFloatingWindow,
-  // setOpenCurrentSiteMouseTool,
-  // setCurrentSiteActivateToggle,
   customSettingToggle,
   domainData,
   setDomainData,
@@ -22,17 +19,14 @@ export const AllSitesToggleOptions = ({
     switch (option) {
       case 'activate':
         chrome.storage.local.set({ activate: !activate });
-        // if (!customSettingToggle) setCurrentSiteActivateToggle(!activate)
         setActivate(!activate);
         break;
       case 'openMouseTool':
         chrome.storage.local.set({ mouseTool: !openMouseTool });
-        // if (!customSettingToggle) setOpenCurrentSiteMouseTool(!openMouseTool)
         setOpenMouseTool(!openMouseTool);
         break;
       case 'openFloatingWindow':
         chrome.storage.local.set({ floatingWindow: !openFloatingWindow });
-        // if (!customSettingToggle) setOpenCurrentSiteFloatingWindow(!openFloatingWindow)
         setOpenFloatingWindow(!openFloatingWindow);
         break;
       default:
@@ -40,9 +34,7 @@ export const AllSitesToggleOptions = ({
   };
 
   return (
-    <Stack
-    // divider={<Divider flexItem />}
-    >
+    <Stack>
       <Option
         description="Floating Window"
         checked={openFloatingWindow}
@@ -74,15 +66,7 @@ export const CurrentSiteToggleOptions = ({
   setDomainData,
   customSettingToggle,
   setCustomSettingToggle,
-  // openCurrentSiteFloatingWindow,
-  // setOpenCurrentSiteFloatingWindow,
-  // openCurrentSiteMouseTool,
-  // setOpenCurrentSiteMouseTool,
-  // currentSiteActivateToggle,
-  // setCurrentSiteActivateToggle
 }) => {
-  // console.log(domainData)
-
   const [openCurrentSiteFloatingWindow, setOpenCurrentSiteFloatingWindow] =
     useState(false);
   const [openCurrentSiteMouseTool, setOpenCurrentSiteMouseTool] =
@@ -126,27 +110,7 @@ export const CurrentSiteToggleOptions = ({
             })
             .catch((err) => console.error(err));
         }
-        // db.transaction("rw", db.domainAndLink, async () => {
-        //     if (!domainData) {
-        //         const domainObj = {
-        //             url: currentDomain,
-        //             activate: true,
-        //             floatingWindow: openFloatingWindow,
-        //             mouseTool: openMouseTool,
-        //             icon: null,
-        //             tags: null,
-        //             lang: null
-        //         }
-        //         await db.domainAndLink.add(domainObj)
-        //         // const data = await db.domainAndLink.get({ url: currentDomain })
-        //         // console.log(data || 'no data')
-        //         // console.log('data in db')
-        //         setDomainData(domainObj)
-        //         setOpenCurrentSiteFloatingWindow(domainData.floatingWindow)
-        //         setOpenCurrentSiteMouseTool(domainData.mouseTool)
-        //         setCurrentSiteActivateToggle(domainData.activate)
 
-        //     }
         if (customSettingToggle === true) {
           db.domainAndLink
             .update(domainData, {
@@ -187,7 +151,6 @@ export const CurrentSiteToggleOptions = ({
             });
         }
 
-        // })
         break;
       case 'openCurrentSiteFloatingWindow':
         db.transaction('rw', db.domainAndLink, async () => {
@@ -202,7 +165,6 @@ export const CurrentSiteToggleOptions = ({
             setDomainData({ ...domainData, floatingWindow: false });
             setOpenCurrentSiteFloatingWindow(false);
           }
-          // setOpenCurrentSiteFloatingWindow(!openCurrentSiteFloatingWindow)
         });
         break;
       case 'openCurrentSiteMouseTool':
@@ -251,33 +213,14 @@ export const CurrentSiteToggleOptions = ({
             setOpenCurrentSiteFloatingWindow(openFloatingWindow);
             setOpenCurrentSiteMouseTool(openMouseTool);
           }
-
-          // setCurrentSiteActivateToggle(!currentSiteActivateToggle)
         }).then();
         break;
       default:
     }
   };
 
-  // const handleOptionCheckedSync = (option) => {
-  //     const optionObj = {
-  //         floatingWindow: openFloatingWindow,
-  //         mouseTool: openMouseTool,
-  //         activate
-  //     }
-  //     if (!domainData) return true
-  //     if (!typeof domainData[option] === 'boolean') {
-  //         return true
-  //     } else {
-  //         return domainData[option]
-  //     }
-
-  // }
-
   return (
-    <Stack
-    // divider={<Divider flexItem />}
-    >
+    <Stack>
       <Option
         description="Use Custom Setting in Current Site?"
         checked={customSettingToggle}

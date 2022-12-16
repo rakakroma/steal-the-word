@@ -26,7 +26,7 @@ import { renderRuby } from '../../utils/renderRuby';
 import { fetchPronInfo } from '../../utils/fetchPronInfo';
 import './HolliToolTip';
 import './HooliSpinner';
-import { getMatchTextWithIdRef } from '../../utils/getMatchTextWithIdRef';
+import { getMatchTextWithIdRef } from '../../../../utilsForAll/getMatchTextWithIdRef';
 import { getAllMatchTextFromWordObj } from '../../../../utilsForAll/getInfoFromWordObj';
 import './TestReactComponent';
 // input.editable-valid:after{
@@ -486,7 +486,7 @@ class HooliWordInfoBlock extends LitElement {
         if (definitionObj) {
           definitionId = definitionObj.definitionId;
           note = definitionObj.note;
-          annotation = definitionObj.aliases[0];
+          annotation = definitionObj.annotation;
         }
         return html`
                     <div id=${
@@ -519,7 +519,7 @@ class HooliWordInfoBlock extends LitElement {
       };
       const definitionSelectable = (definitionObj) => {
         const { definitionId } = definitionObj;
-        const annotation = definitionObj.aliases[0];
+        const annotation = definitionObj.annotation;
 
         return html`<div class='definition-selectable' @click="${
           this._clickInsideRadio
@@ -787,7 +787,7 @@ class HooliWordInfoBlock extends LitElement {
     if ((this.mode === 'lookUp' && this.contexts) || this.mode === 'deleting') {
       return html` ${this.wordObj.definitions.map((definition, i) => {
         return html` <div class="definition-and-contexts-container">
-          <h6 class="annotation">${definition.aliases[0]}</h6>
+          <h6 class="annotation">${definition.annotation}</h6>
           <p class="definition-note">${definition.note}</p>
           ${this.contexts
             .filter(
@@ -877,7 +877,6 @@ class HooliWordInfoBlock extends LitElement {
 
   render() {
     return html`<div id="container">
-      <my-shadow-dom-component></my-shadow-dom-component>
       <form>
         <div id="heading-container">${this._headingElement()}</div>
         <div id="context-section">${this._contextSection()}</div>
@@ -1178,13 +1177,12 @@ class HooliWordInfoBlock extends LitElement {
         definitionCount: 1,
         definitions: [
           {
-            aliases: [annotation],
+            annotation,
             definitionId: '0',
             note: wordNote,
             tags: [],
           },
         ],
-        lang: [],
         matchRule: matchRule || '',
         stem: stem || '',
         variants: variants || [],
@@ -1241,7 +1239,7 @@ class HooliWordInfoBlock extends LitElement {
       let newDefinition = null;
       if (!selectedDefinitionId && annotation) {
         newDefinition = {
-          aliases: [annotation],
+          annotation,
           definitionId: definitionRef,
           note: wordNote,
           tags: [],
@@ -1303,7 +1301,7 @@ class HooliWordInfoBlock extends LitElement {
         const note = ele.querySelector('.long-note-textarea').value.trim();
         definitions.push({
           definitionId,
-          aliases: [annotation],
+          annotation,
           note,
           tags: [],
         });

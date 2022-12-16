@@ -1,40 +1,21 @@
-import {
-  Box,
-  Slider,
-  ToggleButtonGroup,
-  ToggleButton,
-  useMediaQuery,
-  Fade,
-  useTheme,
-  Switch,
-  ButtonGroup,
-  FormControlLabel,
-  Portal,
-  Popper,
-  IconButton,
-  Checkbox,
-} from '@mui/material';
-import React, { useContext, useState, useMemo, forwardRef } from 'react';
+import { Box, Fade, FormControlLabel, Switch, useTheme } from '@mui/material';
+import React, { forwardRef, useContext, useMemo, useState } from 'react';
 // import relativeTime from 'dayjs/plugin/relativeTime'
 
+import { useContainerQuery } from 'react-container-query';
 import {
   ContextListContext,
   DomainAndLinkListContext,
-  WordInfoDrawerContext,
   WordListContext,
 } from '../../Options.jsx';
-import { useContainerQuery } from 'react-container-query';
-import { themeStyle } from '../../theme.style';
-import styled from '@emotion/styled';
-import { TimeModeContainer } from './TimeModeContainer';
 import { AlphabeticalOrderModeContainer } from './AlphabeticalOrderModeContainer';
+import { ControlOrderToggle } from './CollectionControlPanel/ControlOrderToggle.jsx';
+import { DateArrangementPicker } from './CollectionControlPanel/DateArrangementPicker.jsx';
+import { DisplayModeSelect } from './CollectionControlPanel/DisplayModeSelect.jsx';
+import { OptionPopper } from './CollectionControlPanel/OptionPopper';
 import { OrderByTimeAndSiteContainer } from './OrderByTimeAndSiteContainer';
-import { bgcolor } from '@mui/system';
-import { DateArrangementPicker } from './DateArrangementPicker';
-import { useRef } from 'react';
-import { FilterAlt, Star } from '@mui/icons-material';
-import { useEffect } from 'react';
-import { useCallback } from 'react';
+import { TagsContainer } from './TagsContainer.jsx';
+import { TimeModeContainer } from './TimeModeContainer';
 
 const FadeMotionWrapper = (props) => {
   return (
@@ -44,19 +25,18 @@ const FadeMotionWrapper = (props) => {
   );
 };
 
-const ContainerQueryWrapper = forwardRef((props, ref) => {
+export const ContainerQueryWrapper = forwardRef((props, ref) => {
   return <div ref={ref}>{props.children}</div>;
 });
 
 export const WordCollection = ({
   filterOption,
   filterKanji,
-  displayContext,
+  displayMode,
   dateArrangement,
   orderMode,
   height,
   width,
-  portalRef,
 }) => {
   const query = {
     300: {
@@ -77,8 +57,6 @@ export const WordCollection = ({
   };
   const [containerWidth, containerRef] = useContainerQuery(query);
   const theme = useTheme();
-
-  const phraseMode = false;
 
   const contextList = useContext(ContextListContext);
   const domainAndLinkList = useContext(DomainAndLinkListContext);
@@ -125,21 +103,19 @@ export const WordCollection = ({
         sx={{
           height: height || '75vh',
           width: width || '100%',
-          padding: '10px',
+          padding: 2,
           backgroundColor: theme.palette.background.default,
         }}
       >
         <FadeMotionWrapper>
           {(orderMode === 'time' || !orderMode) && (
             <TimeModeContainer
-              phraseMode={phraseMode}
               dateArrangement={dateArrangement}
               contextList={filteredContextList}
               domainAndLinkList={domainAndLinkList}
-              displayContext={displayContext}
+              displayMode={displayMode}
               height={height}
               width={width}
-              // containerWidth={containerWidth}
             />
           )}
           {orderMode === 'alphabeticalOrder' && (
@@ -152,14 +128,23 @@ export const WordCollection = ({
           )}
           {orderMode === 'timeSite' && (
             <OrderByTimeAndSiteContainer
-              phraseMode={phraseMode}
+              displayMode={displayMode}
               contextList={filteredContextList}
               domainAndLinkList={domainAndLinkList}
-              columns={displayContext ? contextColumnCount : columnCount}
+              columns={
+                displayMode === 'context' ? contextColumnCount : columnCount
+              }
               height={height}
               width={width}
-              displayContext={displayContext}
-              // containerWidth={containerWidth}
+            />
+          )}
+          {orderMode === 'tags' && (
+            <TagsContainer
+              displayMode={displayMode}
+              wordList={filteredWordList}
+              columns={columnCount}
+              height={height}
+              width={width}
             />
           )}
         </FadeMotionWrapper>
@@ -168,264 +153,52 @@ export const WordCollection = ({
   );
 };
 
-const TimeModeControlPanel = ({
-  dateArrangement,
-  setDateArrangement,
-  displayContext,
-  setDisplayContext,
-}) => {
-  const allArrangementMode = ['date', 'week', 'month'];
-
-  const handleUpdateDateArrangement = (position) => {
-    const currentModePosition = allArrangementMode.indexOf(dateArrangement);
-    if (position === 'forward') {
-      if (currentModePosition === allArrangementMode.length - 1) {
-        setDateArrangement(allArrangementMode[0]);
-        return;
-      }
-      setDateArrangement(allArrangementMode[currentModePosition + 1]);
-      return;
-    }
-    if (position === 'backward') {
-      if (currentModePosition === 0) {
-        setDateArrangement(allArrangementMode[allArrangementMode.length - 1]);
-        return;
-      }
-      setDateArrangement(allArrangementMode[currentModePosition - 1]);
-    }
-  };
-
-  return (
-    <>
-      <DateArrangementPicker
-        handleUpdateDateArrangement={handleUpdateDateArrangement}
-        dateArrangement={dateArrangement}
-      />
-      <FormControlLabel
-        control={
-          <Switch
-            size="small"
-            onChange={() => setDisplayContext(!displayContext)}
-            checked={displayContext}
-          />
-        }
-        label="display context"
-        labelPlacement="start"
-      />
-    </>
-  );
-};
-
-const AlphabeticalControlPanel = ({ filterKanji, setFilterKanji }) => {
-  return (
-    <FormControlLabel
-      control={
-        <Switch
-          size="small"
-          onChange={() => setFilterKanji(!filterKanji)}
-          checked={filterKanji}
-        />
-      }
-      label="include 漢字"
-      labelPlacement="start"
-    />
-  );
-};
-
-const ControlPanel = forwardRef((props, ref) => {
-  return (
-    <Box ref={ref} sx={{ display: 'flex' }}>
-      initial
-    </Box>
-  );
-});
-
-// const CheckboxGroup = ({ labelArray, mainLabel, checked, setChecked }) => {
-
-//   const handleCheckParent = (e) => {
-//     setChecked(Array(checked.length).fill(e.target.checked));
-//   };
-
-//   const handleCheckOne = (value, position) => {
-//     const allChecked = [...checked];
-//     allChecked[position] = value;
-//     setChecked(allChecked);
-//   };
-
-//   const children = (
-//     <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
-//       {labelArray.map((label, index) => (
-//         <FormControlLabel
-//           key={label}
-//           label={label}
-//           control={
-//             <Checkbox
-//               checked={checked[index]}
-//               onChange={(e) => handleCheckOne(e.target.checked, index)}
-//             />
-//           }
-//         />
-//       ))}
-//     </Box>
-//   );
-
-//   return (
-//     <div>
-//       <FormControlLabel
-//         label={mainLabel}
-//         control={
-//           <Checkbox
-//             checked={checked.findIndex((label) => label === false) === -1}
-//             // indeterminate={checked[0] !== checked[1]}
-//             onChange={handleCheckParent}
-//           />
-//         }
-//       />
-//       {children}
-//     </div>
-//   );
-// };
-
-const TransitionsPopper = ({ filterStarsAndSetter }) => {
-  const [open, setOpen] = React.useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-    setOpen((previousOpen) => !previousOpen);
-  };
-
-  return (
-    <div>
-      <IconButton onClick={handleClick}>
-        <FilterAlt />
-      </IconButton>
-      <Popper open={open} anchorEl={anchorEl} transition placement="bottom-end">
-        {({ TransitionProps }) => (
-          <Fade {...TransitionProps} timeout={350}>
-            <Box
-              sx={{
-                border: 1,
-                p: 1,
-                bgcolor: 'background.paper',
-                minWidth: '190px',
-              }}
-            >
-              {/* <CheckboxGroup
-                mainLabel="All Stars"
-                labelArray={Object.keys(filterStarsAndSetter.filterStars)}
-                checked={Object.values(filterStarsAndSetter.filterStars)}
-                setChecked={(booleanArray) => {
-                  filterStarsAndSetter.setFilterStars({
-                    threeStars: booleanArray[0],
-                    twoStars: booleanArray[1],
-                    oneStar: booleanArray[2],
-                  });
-                }}
-              /> */}
-              <Slider
-                value={filterStarsAndSetter.filterStars}
-                onChange={(e) =>
-                  filterStarsAndSetter.setFilterStars(e.target.value)
-                }
-                defaultValue={0}
-                // valueLabelFormat={}
-                step={1}
-                valueLabelDisplay="auto"
-                min={0}
-                max={3}
-                marks={[
-                  {
-                    value: 0,
-                    label: 'all',
-                  },
-                  {
-                    value: 1,
-                    label: <Star />,
-                  },
-                  {
-                    value: 2,
-                    label: (
-                      <>
-                        <Star />
-                        <Star />
-                      </>
-                    ),
-                  },
-                  {
-                    value: 3,
-                    label: (
-                      <>
-                        <Star />
-                        <Star />
-                        <Star />
-                      </>
-                    ),
-                  },
-                ]}
-              />
-            </Box>
-          </Fade>
-        )}
-      </Popper>
-    </div>
-  );
-};
-
-export const SinglePageWordCollection = ({
-  defaultOrderMode,
-  defaultDisplayContext,
-}) => {
+export const SinglePageWordCollection = ({ defaultOrderMode }) => {
   const [orderMode, setOrderMode] = useState(defaultOrderMode || 'time');
   const [dateArrangement, setDateArrangement] = useState('date');
-  const [displayContext, setDisplayContext] = useState(
-    defaultDisplayContext || false
-  );
+  const [displayMode, setDisplayMode] = useState('word');
+
   const [filterKanji, setFilterKanji] = useState(false);
   const [filterStars, setFilterStars] = useState(0);
 
-  const handleChange = (event, newOrderMode) => {
-    if (!newOrderMode) return;
-    setOrderMode(newOrderMode);
-  };
-  const ControlOrderToggle = () => {
-    const theme = useTheme();
-    return (
-      <ToggleButtonGroup
-        size="small"
-        color="primary"
-        value={orderMode}
-        exclusive
-        onChange={handleChange}
-        sx={{ bgcolor: theme.palette.background.paper }}
-      >
-        <ToggleButton value="time">time</ToggleButton>
-        <ToggleButton value="timeSite">Site</ToggleButton>
-        <ToggleButton value="alphabeticalOrder">alphabetical</ToggleButton>
-      </ToggleButtonGroup>
-    );
-  };
-
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <ControlOrderToggle />
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+        }}
+      >
+        <ControlOrderToggle orderMode={orderMode} setOrderMode={setOrderMode} />
         <Box sx={{ display: 'flex' }}>
           {orderMode === 'time' && (
-            <TimeModeControlPanel
-              dateArrangement={dateArrangement}
+            <DateArrangementPicker
+              allArrangementMode={['date', 'week', 'month']}
               setDateArrangement={setDateArrangement}
-              displayContext={displayContext}
-              setDisplayContext={setDisplayContext}
+              dateArrangement={dateArrangement}
+            />
+          )}
+          {['time', 'timeSite', 'tags'].includes(orderMode) && (
+            <DisplayModeSelect
+              displayMode={displayMode}
+              setDisplayMode={setDisplayMode}
             />
           )}
           {orderMode === 'alphabeticalOrder' && (
-            <AlphabeticalControlPanel
-              filterKanji={filterKanji}
-              setFilterKanji={setFilterKanji}
+            <FormControlLabel
+              control={
+                <Switch
+                  size="small"
+                  onChange={() => setFilterKanji(!filterKanji)}
+                  checked={filterKanji}
+                />
+              }
+              label="include 漢字"
+              labelPlacement="start"
             />
           )}
-          <TransitionsPopper
+          <OptionPopper
             filterStarsAndSetter={{
               filterStars,
               setFilterStars,
@@ -435,7 +208,7 @@ export const SinglePageWordCollection = ({
       </Box>
       <WordCollection
         filterOption={{ filterStars }}
-        displayContext={displayContext}
+        displayMode={displayMode}
         dateArrangement={dateArrangement}
         orderMode={orderMode}
         height="80vh"

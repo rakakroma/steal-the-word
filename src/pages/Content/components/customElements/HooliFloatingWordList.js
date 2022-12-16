@@ -164,7 +164,7 @@ class HooliFloatingWordList extends LitElement {
                 >
               </span>
             </h3>
-            <h6>${wordObj.definitions[0].aliases[0]}</h6>
+            <h6>${wordObj.definitions[0].annotation}</h6>
           </li>
           ${this._lookingForMatchBar(wordObj.id)} `;
       })}

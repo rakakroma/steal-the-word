@@ -16,6 +16,7 @@ import {
   arrow,
   inline,
 } from '@floating-ui/dom';
+import './content.styles.css';
 
 console.log('Content script works!');
 
@@ -103,7 +104,6 @@ const observer = new MutationObserver((mutations) => {
         if (addedNode.tagName?.includes('HOOLI')) return false;
         return true;
       });
-      console.log(nodesToHandle);
       if (nodesToHandle.length === 0) {
         clearInterval(checkIfNewNodes);
         runningIntervalId = null;

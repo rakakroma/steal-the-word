@@ -67,7 +67,7 @@ const HighlightedContext = ({ contextObj }) => {
     if (!wordObj || !wordObj.word)
       return (
         <Typography variant="subtitle1" component="div">
-          {contextObj.word} word data missing
+          word data missing
         </Typography>
       );
     const allMatchText = getAllMatchTextFromWordObj(wordObj);
@@ -84,11 +84,15 @@ const HighlightedContext = ({ contextObj }) => {
   );
 };
 
-export const WordListInWordCollection = ({ wordsArray, displayContext }) => {
+export const WordListInWordCollection = ({
+  wordsArray,
+  displayMode,
+  showDivider,
+}) => {
   const { wordInfoTarget, handleWordClick } = useContext(WordInfoDrawerContext);
   const wordList = useContext(WordListContext);
 
-  const dataType = wordsArray[0].wordId ? 'contextObj' : 'wordObj';
+  const dataType = wordsArray[0]?.wordId ? 'contextObj' : 'wordObj';
 
   return wordsArray.map((dataObj, index) => {
     const dataWordId = dataType === 'contextObj' ? dataObj.wordId : dataObj.id;
@@ -111,17 +115,17 @@ export const WordListInWordCollection = ({ wordsArray, displayContext }) => {
       <React.Fragment key={dataObj.id}>
         <SmallWord
           id={dataObj.id}
-          // ref={wordInfoTarget?.wordId === contextObj.wordId ? targetWordRef : null}
           sx={{
             color: wordInfoTarget?.wordId === dataWordId ? 'primary.dark' : '',
           }}
           onClick={() => handleWordClick(wordClickData)}
         >
-          {displayContext ? (
+          {displayMode === 'context' && (
             <HighlightedContext contextObj={dataObj} />
-          ) : (
-            dataObj.word
           )}
+          {displayMode === 'phrase'
+            ? dataObj.phrase || dataObj.word
+            : dataObj.word}
           {stars ? (
             <>
               {Array(stars)
@@ -132,35 +136,43 @@ export const WordListInWordCollection = ({ wordsArray, displayContext }) => {
             </>
           ) : null}
         </SmallWord>
-        {displayContext && index !== wordsArray.length - 1 && (
-          <Divider sx={{ pt: '5px', mb: '5px' }} />
-        )}
+        {showDivider &&
+          displayMode !== 'word' &&
+          index !== wordsArray.length - 1 && (
+            <Divider sx={{ pt: '5px', mb: '5px' }} />
+          )}
       </React.Fragment>
     );
   });
 };
 
 export const WordCollectionPageBox = ({
-  displayContext,
+  displayMode,
   imgUri,
   arrayWithUrl,
-  containerWidth,
+  // containerWidth,
   noIcon,
 }) => {
-  const pageBoxWidth = (containerWidth, displayContext) => {
-    if (displayContext) {
-      if (!containerWidth || containerWidth['600']) return '280px';
-      return '100%';
-    } else {
-      if (!containerWidth || containerWidth['450']) return '180px';
-      return '100%';
-    }
-  };
+  // const pageBoxWidth = (containerWidth, displayContext) => {
+  //   if (displayContext) {
+  //     if (!containerWidth || containerWidth['600']) return '280px';
+  //     return '100%';
+  //   } else {
+  //     if (!containerWidth || containerWidth['450']) return '180px';
+  //     return '100%';
+  //   }
+  // };
   const theme = useTheme();
   return (
     <WordCollectionPageBoxContainer
       sx={{
-        width: pageBoxWidth(containerWidth, displayContext),
+        // width: pageBoxWidth(containerWidth, displayContext),
+        width:
+          displayMode === 'context'
+            ? '280px'
+            : displayMode === 'phrase'
+            ? '220px'
+            : '180px',
         backgroundColor: theme.palette.background.paper,
       }}
       key={arrayWithUrl[0]}
@@ -172,8 +184,9 @@ export const WordCollectionPageBox = ({
         pageTitle={arrayWithUrl.words[0].pageTitle}
       />
       <WordListInWordCollection
+        showDivider={true}
         wordsArray={arrayWithUrl.words}
-        displayContext={displayContext}
+        displayMode={displayMode}
       />
     </WordCollectionPageBoxContainer>
   );
