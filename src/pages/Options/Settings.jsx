@@ -1,111 +1,112 @@
-import { Link, Box, Button } from '@mui/material';
-import React, { useContext, useState } from 'react';
-import { formatDate } from './utils/Date';
 import {
-  ContextListContext,
-  DomainAndLinkListContext,
-  WordListContext,
-} from './Options';
-import {
-  exportToJsonFile,
-  saveImportDataToDB,
-  clearDB,
-} from './utils/ImportExport';
-import { demoData } from '../../utilsForAll/demoData';
+  Link,
+  Box,
+  Typography,
+  Divider,
+  Input,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  Radio,
+  FormControlLabel,
+  styled,
+} from '@mui/material';
+import React, { useState } from 'react';
+import { blue } from '@mui/material/colors';
+import { Container } from '@mui/system';
+import { CloudUpload } from '@mui/icons-material';
+import { ImportAndExportBox } from './ImportAndExportBox';
+// import '../Content/components/customElements/HooliText';
+import { useRef } from 'react';
+import { useEffect } from 'react';
 
-const ExportBox = () => {
-  const contextList = useContext(ContextListContext);
-  const domainAndLinkList = useContext(DomainAndLinkListContext);
-  const wordList = useContext(WordListContext);
-
+const StylePanel = ({ selectedStyle, setSelectedStyle }) => {
+  const handleChange = (e) => setSelectedStyle(e.target.value);
   return (
-    <Link
-      href={exportToJsonFile({
-        contextList,
-        domainAndLinkList,
-        wordList,
-      })}
-      download={`allList ${formatDate(new Date())}.json`}
-    >
-      下載全部
-    </Link>
+    <FormControl>
+      <FormLabel>Text Style</FormLabel>
+      <RadioGroup value={selectedStyle} onChange={handleChange}>
+        <FormControlLabel value="default" control={<Radio />} label="default" />
+        <FormControlLabel value="style1" control={<Radio />} label="style1" />
+      </RadioGroup>
+    </FormControl>
   );
 };
 
-const ImportBox = () => {
-  const [loggedData, setLoggedData] = useState(null);
+const StylingBox = () => {
+  const [selectedStyle, setSelectedStyle] = useState('default');
 
-  const logFile = (event) => {
-    let str = event.target.result;
-    let json = JSON.parse(str);
-    setLoggedData(json);
-    // saveImportDataToDB(json);
+  const defaultStyle = {
+    cursor: 'pointer',
+    color: 'white',
+    backgroundColor: 'slategray',
   };
 
-  const handleUpload = (e) => {
-    // console.log('import')
-    e.preventDefault();
-    if (!file.value.length) return;
-    let reader = new FileReader();
-    reader.onload = logFile;
-    reader.readAsText(file.files[0]);
+  const style1 = {
+    cursor: 'pointer',
+    color: 'black',
+    backgroundColor: '#d8d8d8',
+  };
+  const style2 = {
+    cursor: 'pointer',
+    backgroundImage:
+      'linear-gradient(to right, #F27121cc, #E94057cc, #8A2387cc)',
   };
 
-  const handleImportToDb = () => {
-    if (loggedData) {
-      saveImportDataToDB(loggedData);
-    } else {
-      console.log('no uploaded data');
-    }
+  const FakeHooliText = (props) => {
+    return (
+      <span style={selectedStyle === 'default' ? defaultStyle : style1}>
+        {props.children}
+      </span>
+    );
   };
+
+  const DummyTextBox = ({ bgColor, color }) => {
+    return (
+      <Box sx={{ width: '400px', backgroundColor: bgColor, color: color }}>
+        Yes, I am familiar with <FakeHooliText>Lorem Ipsum</FakeHooliText>.
+        <FakeHooliText>Lorem Ipsum</FakeHooliText> is a dummy text that is often
+        used as a placeholder in the design and layout of documents, websites,
+        and other visual media. It is a form of "greeked" text that is used to
+        fill space in a document or page layout.{' '}
+        <FakeHooliText>Lorem Ipsum</FakeHooliText> is derived from a work by the
+        Roman philosopher and statesman Cicero, and it has been used as a
+        placeholder text in the publishing and printing industries for
+        centuries. The text is often used as a placeholder because it has a
+        neutral appearance and does not distract the reader from the layout and
+        design of the document or page. It is also used as a way to focus on the
+        visual design of a document or page without being distracted by the
+        content of the text.
+      </Box>
+    );
+  };
+
   return (
-    <Box>
-      <Button
-        onClick={() => {
-          setLoggedData(demoData);
-        }}
-      >
-        Demo Data
-      </Button>
-      <form id="upload" onSubmit={handleUpload}>
-        <label htmlFor="file">上傳資料（json）</label>
-        <input type="file" id="file" accept=".json" />
-        {/* <Input type='file' inputProps={{ accept: '.json' }} /> */}
-        <button>上傳</button>
-      </form>
-
-      {loggedData ? (
-        <>
-          <Box>
-            contextList: {loggedData?.contextList.length}
-            <hr />
-            domainAndLinkList:{loggedData?.domainAndLinkList.length}
-            <hr />
-            wordList: {loggedData?.wordList.length}
-          </Box>
-          <button onClick={handleImportToDb}>匯入資料庫</button>
-        </>
-      ) : null}
+    <Box sx={{ display: 'flex' }}>
+      <StylePanel
+        selectedStyle={selectedStyle}
+        setSelectedStyle={setSelectedStyle}
+      />
+      <DummyTextBox bgColor="black" color="white" />
+      <DummyTextBox bgColor="white" color="black" />
     </Box>
   );
 };
 
 export const Settings = () => {
-  const handleClearAll = () => {
-    if (confirm('delete all?')) {
-      console.log('ok');
-      clearDB();
-    } else {
-      console.log('cancel');
-    }
-  };
   return (
-    <>
-      <ExportBox />
-      <hr />
-      <ImportBox />
-      <hr />
-      <button onClick={handleClearAll}>clear all data from db</button>
-    </>
+    <Box>
+      <Typography variant="h4">Settings / Preferences</Typography>
+      <Divider sx={{ marginY: 2 }} />
+      <Typography variant="h5">Backup / Restore</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 7 }}>
+        <ImportAndExportBox />
+      </Box>
+      <Divider sx={{ marginY: 2 }} />
+      <Typography variant="h5">Style The Marked Text</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 7 }}>
+        <StylingBox />
+      </Box>
+    </Box>
   );
 };

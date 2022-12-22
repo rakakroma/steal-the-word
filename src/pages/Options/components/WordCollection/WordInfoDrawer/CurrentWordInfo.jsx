@@ -47,6 +47,27 @@ export const getDataFromName = (name) => {
   };
 };
 
+const getDefaultValueFromData = (wordObj, contextObjs) => {
+  const values = {
+    word: wordObj.word,
+    variants: convertValueToFitCreatableInput(wordObj.variants),
+    stem: wordObj.stem,
+    matchRule: wordObj.matchRule,
+  };
+
+  wordObj.definitions.forEach((def) => {
+    const defId = def.definitionId;
+    values[getName('note', defId, true)] = def.note;
+    values[getName('annotation', defId, true)] = def.annotation;
+    values[getName('tags', defId, true)] = def.tags || [];
+  });
+
+  contextObjs.forEach((contextObj) => {
+    values[getName('context', contextObj.id, false)] = contextObj.context;
+  });
+  return values;
+};
+
 export const CurrentWordInfo = () => {
   const theme = useTheme();
 
@@ -311,27 +332,6 @@ export const CurrentWordInfo = () => {
     } else {
       console.log('nothing changed');
     }
-  };
-
-  const getDefaultValueFromData = (wordObj, contextObjs) => {
-    const values = {
-      word: wordObj.word,
-      variants: convertValueToFitCreatableInput(wordObj.variants),
-      stem: wordObj.stem,
-      matchRule: wordObj.matchRule,
-    };
-
-    wordObj.definitions.forEach((def) => {
-      const defId = def.definitionId;
-      values[getName('note', defId, true)] = def.note;
-      values[getName('annotation', defId, true)] = def.annotation;
-      values[getName('tags', defId, true)] = def.tags || [];
-    });
-
-    contextObjs.forEach((contextObj) => {
-      values[getName('context', contextObj.id, false)] = contextObj.context;
-    });
-    return values;
   };
 
   const isDeletingAll =

@@ -12,7 +12,7 @@ import { TypographyOrInput } from './inputs/TypographyOrInput';
 import { TagListContext } from '../../../Options';
 import { useContext } from 'react';
 import { useMemo } from 'react';
-import { rgbFromString } from '../../../utils/rgbFromString';
+import { rgbFromString } from '../../../../../utilsForAll/rgbFromString';
 import { TagChip, TagLabelChip } from '../../TagChip';
 
 export const DefinitionBlock = ({

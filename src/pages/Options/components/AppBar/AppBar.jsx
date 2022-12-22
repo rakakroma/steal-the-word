@@ -1,23 +1,13 @@
 import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import { styled, useTheme } from '@mui/material/styles';
-import {
-  Box,
-  Breadcrumbs,
-  Button,
-  ButtonBase,
-  IconButton,
-  Link,
-  Typography,
-} from '@mui/material';
+import { Box, Button, ButtonBase, IconButton } from '@mui/material';
 import { LightMode, ModeNight, SearchOutlined } from '@mui/icons-material';
-import { useLocation } from 'react-router-dom';
 import React, { useContext } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useKBar } from 'kbar';
-import { Link as RouterLink } from 'react-router-dom';
-import HomeIcon from '@mui/icons-material/Home';
-import { ColorModeContext } from '../Options';
+import { ColorModeContext } from '../../Options';
+import { PageBreadcrumbs } from './PageBreadcrumbs';
 
 const StyledAppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => !['open', 'drawerWidth'].includes(prop),
@@ -75,43 +65,6 @@ const SearchSection = () => {
       <ShortCutKey keyContent="⌘k" />
       <SearchOutlined sx={{ color: 'black' }} />
     </ButtonBase>
-  );
-};
-
-const PageBreadcrumbs = () => {
-  const { pathname } = useLocation();
-
-  const pathArray = pathname.split('/').slice(1);
-  const theme = useTheme();
-
-  const pathIcon = {
-    home: <HomeIcon />,
-  };
-
-  return (
-    <Breadcrumbs sx={{ marginX: theme.spacing(2), alignItems: 'normal' }}>
-      {pathArray.map((pathTarget, index) => {
-        const last = index === pathArray.length - 1;
-        const to = `/${pathArray.slice(0, index + 1).join('/')}`;
-
-        return last ? (
-          <Typography color="text.primary" key={to}>
-            {pathTarget}
-          </Typography>
-        ) : (
-          <Link
-            component={RouterLink}
-            underline="hover"
-            color="inherit"
-            to={to}
-            key={to}
-          >
-            {pathIcon[pathTarget] || pathTarget}
-            {/* {pathTarget} */}
-          </Link>
-        );
-      })}
-    </Breadcrumbs>
   );
 };
 

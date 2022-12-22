@@ -5,13 +5,15 @@ import { buttonUnstyledClasses } from '@mui/base/ButtonUnstyled';
 import TabsListUnstyled from '@mui/base/TabUnstyled';
 import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import TabsUnstyled from '@mui/base/TabsUnstyled';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import { styled } from '@mui/system';
 import {
   AllSitesToggleOptions,
   CurrentSiteToggleOptions,
   ToggleOptions,
 } from './ToggleOptions';
+import { TabDataContext } from './Popup';
+import { useDbDomainData, useLocalStorageData } from './useDataHook';
 
 const blue = {
   50: '#F0F7FF',
@@ -26,18 +28,18 @@ const blue = {
   900: '#003A75',
 };
 
-const grey = {
-  50: '#f6f8fa',
-  100: '#eaeef2',
-  200: '#d0d7de',
-  300: '#afb8c1',
-  400: '#8c959f',
-  500: '#6e7781',
-  600: '#57606a',
-  700: '#424a53',
-  800: '#32383f',
-  900: '#24292f',
-};
+// const grey = {
+//   50: '#f6f8fa',
+//   100: '#eaeef2',
+//   200: '#d0d7de',
+//   300: '#afb8c1',
+//   400: '#8c959f',
+//   500: '#6e7781',
+//   600: '#57606a',
+//   700: '#424a53',
+//   800: '#32383f',
+//   900: '#24292f',
+// };
 
 const TabsList = styled(TabsListUnstyled)`
   width: 220px;
@@ -90,33 +92,18 @@ const Tabs = styled(TabsUnstyled)`
   padding: 2px;
 `;
 
-export function PopupTabs({
-  domainData,
-  activate,
-  setActivate,
-  openMouseTool,
-  setOpenMouseTool,
-  openFloatingWindow,
-  setOpenFloatingWindow,
-  customSettingToggle,
-  setCustomSettingToggle,
-  currentDomain,
-  setDomainData,
-}) {
+export const PopupTabs = () => {
   const [currentTab, setCurrentTab] = useState(1);
+  const { currentDomain } = useContext(TabDataContext);
+  const domainDataAndMethods = useDbDomainData(currentDomain);
+  const localStorageDataAndMethods = useLocalStorageData();
 
-  useEffect(() => {
-    if (!domainData) return;
-    if (
-      [
-        domainData.activate,
-        domainData.floatingWindow,
-        domainData.mouseTool,
-      ].some((setting) => typeof setting === 'boolean' && activate)
-    ) {
-      setCurrentTab(0);
-    }
-  }, [domainData]);
+  const { isCustomSetting } = domainDataAndMethods;
+  const { globalPreference } = localStorageDataAndMethods;
+
+  // if (isCustomSetting) {
+  //   setCurrentTab(0);
+  // }
 
   const handleChange = (value) => {
     setCurrentTab(value);
@@ -124,42 +111,26 @@ export function PopupTabs({
   return (
     <Tabs value={currentTab} onChange={(e, value) => handleChange(value)}>
       <TabsList>
-        {activate ? (
+        {globalPreference.activate && (
           <Tab component="span" value={0}>
             current Site
           </Tab>
-        ) : (
-          ''
         )}
-        <Tab component="span" value={1} disabled={!activate}>
+        <Tab component="span" value={1} disabled={!globalPreference.activate}>
           All Sites
         </Tab>
       </TabsList>
       <TabPanelUnstyled value={0}>
         <CurrentSiteToggleOptions
-          activate={activate}
-          openMouseTool={openMouseTool}
-          openFloatingWindow={openFloatingWindow}
-          customSettingToggle={customSettingToggle}
-          setCustomSettingToggle={setCustomSettingToggle}
-          currentDomain={currentDomain}
-          domainData={domainData}
-          setDomainData={setDomainData}
+          domainDataAndMethods={domainDataAndMethods}
+          localStorageDataAndMethods={localStorageDataAndMethods}
         />
       </TabPanelUnstyled>
       <TabPanelUnstyled value={1}>
         <AllSitesToggleOptions
-          activate={activate}
-          setActivate={setActivate}
-          openMouseTool={openMouseTool}
-          setOpenMouseTool={setOpenMouseTool}
-          openFloatingWindow={openFloatingWindow}
-          setOpenFloatingWindow={setOpenFloatingWindow}
-          customSettingToggle={customSettingToggle}
-          domainData={domainData}
-          setDomainData={setDomainData}
+          localStorageDataAndMethods={localStorageDataAndMethods}
         />
       </TabPanelUnstyled>
     </Tabs>
   );
-}
+};

@@ -1,225 +1,96 @@
-import {
-  renderRuby,
-  renderMultipleRuby,
-  wordInPageList,
-} from './utils/renderRuby';
+import { renderRuby, wordInPageList } from './utils/renderRuby';
 import './components/customElements/HooliText';
 import './components/customElements/wordListMinimizedBar';
 import './components/customElements/HooliFloatingWordList';
 import './components/customElements/HooliHighlighter';
 import { openAddNewWord } from './components/customElements/HooliText';
-import {
-  computePosition,
-  flip,
-  shift,
-  offset,
-  arrow,
-  inline,
-} from '@floating-ui/dom';
+
 import './content.styles.css';
+import { currentURL } from './utils/currentURL';
+import { observer } from './utils/observer';
+import { setMouseUpToolTip } from './utils/setMouseUpToolTip';
 
-console.log('Content script works!');
-
-const body = document.body;
-const currentURL = window.location.hash
-  ? window.location.href.slice(
-      0,
-      window.location.href.lastIndexOf(window.location.hash)
-    )
-  : window.location.href;
-
-const updatePosition = (refEle, floatEle) => {
-  computePosition(refEle, floatEle, {
-    placement: 'top-end',
-    middleware: [offset(10), flip(), shift({ padding: 3 })],
-  }).then(({ x, y }) => {
-    Object.assign(floatEle.style, {
-      left: `${x}px`,
-      top: `${y}px`,
-    });
-  });
-};
-const init = () => {
-  body.addEventListener('mouseup', (e) => {
-    const addingToolOnBody = document.querySelector('hooli-adding-tool');
-    if (addingToolOnBody) {
-      if (e.composedPath().find((e) => e.tagName === 'HOOLI-ADDING-TOOL')) {
-        return;
-      }
-      addingToolOnBody.remove();
-    }
-    if (e.button === 2) return; //ignore right click
-    setTimeout(() => {
-      const selection = document.getSelection();
-      const selectedText = selection.toString().trim();
-      if (!selectedText || selectedText.length > 60) return;
-      if (selection.anchorNode?.children) return; //ignore web component e.g. input, textarea, and my lit element
-      const addingTool = document.createElement('hooli-adding-tool');
-      updatePosition(window.getSelection().getRangeAt(0), addingTool);
-      body.appendChild(addingTool);
-    }, 5);
-  });
-};
-
-let visible = true;
-let newAddedNodes = [];
-let newRemovedNodes = [];
-let runningIntervalId = null;
-
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') {
-    visible = true;
-  } else {
-    visible = false;
-  }
-});
-
-const observer = new MutationObserver((mutations) => {
-  mutations.forEach((mutation) => {
-    if (mutation.addedNodes.length > 0) {
-      mutation.addedNodes.forEach((addedNode) => {
-        newAddedNodes.push(addedNode);
-      });
-    }
-
-    if (mutation.removedNodes.length > 0) {
-      mutation.removedNodes.forEach((removedNode) => {
-        newRemovedNodes.push(removedNode);
-      });
-    }
-  });
-
-  if (visible) {
-    if (runningIntervalId) return;
-    const checkIfNewNodes = setInterval(() => {
-      if (!visible || newAddedNodes.length === 0) {
-        clearInterval(checkIfNewNodes);
-        runningIntervalId = null;
-        return;
-      }
-      const nodesToHandle = newAddedNodes.filter((addedNode) => {
-        if (newRemovedNodes.indexOf(addedNode) > -1) {
-          return false;
-        }
-        if (addedNode.tagName?.includes('HOOLI')) return false;
-        return true;
-      });
-      if (nodesToHandle.length === 0) {
-        clearInterval(checkIfNewNodes);
-        runningIntervalId = null;
-        newAddedNodes = [];
-        newRemovedNodes = [];
-        return;
-      }
-      renderMultipleRuby(nodesToHandle, myList);
-
-      newAddedNodes = [];
-      newRemovedNodes = [];
-    }, 3000);
-    runningIntervalId = checkIfNewNodes;
-  }
-});
+export const body = document.body;
 
 export let myList = [];
 export let newList = [];
+export let tagList = [];
 let whiteList = [];
 
-export const restoreHolliText = (wordId) => {
-  let targetEles;
-  if (!wordId) {
-    targetEles = document.querySelectorAll('holli-text');
-  } else {
-    targetEles = document.querySelectorAll(`.h-${wordId}`);
+const appendSideListWindow = (foundMatchWord) => {
+  if (!foundMatchWord) {
+    const minimizedWordList = document.createElement(
+      'hooli-wordlist-minimized-bar'
+    );
+    minimizedWordList.mode = 'autoOpen';
+    body.appendChild(minimizedWordList);
+    return;
   }
-  targetEles.forEach((ele) => {
-    const fragment = new DocumentFragment();
-    fragment.textContent = ele.textContent;
-    ele.replaceWith(fragment);
-  });
-  myList = myList.filter((wordObj) => wordObj.id !== wordId);
+  const wordListElement = document.createElement('hooli-floating-word-list');
+  body.appendChild(wordListElement);
 };
 
-function startFunction() {
-  //test i18n
-  chrome.i18n.getAcceptLanguages((result) =>
-    console.log('accept lang:', result)
-  );
-  console.log('ui lang:', chrome.i18n.getUILanguage());
+const checkOptionIsOn = (optionName, globalSetting, customSetting) => {
+  //if global turn off, all turn off;
+  if (!globalSetting[optionName]) return false;
+  if (!customSetting || !customSetting.customRule) return true;
+  if (!customSetting[optionName]) return false;
+  return true;
+};
 
-  //
-  chrome.storage.local.get(
-    ['activate', 'mouseTool', 'floatingWindow'],
-    function (allSiteSettings) {
-      console.log('all site setting');
-      console.log(allSiteSettings);
-      if (allSiteSettings.activate === false) {
-        chrome.runtime.sendMessage({ action: 'notWorking' });
-        return;
-      }
-      chrome.runtime.sendMessage(
-        { action: 'getStart', url: currentURL },
-        (res) => {
-          console.log('custom setting');
-          console.log(res);
-          const { wordList, domainData } = res;
-          if (domainData?.activate === false) {
-            chrome.runtime.sendMessage({ action: 'notWorking' });
-            console.log('stop');
-            return;
-          }
+const init = async () => {
+  const allSiteSettings = await chrome.storage.local.get([
+    'activate',
+    'mouseTool',
+    'floatingWindow',
+  ]);
+  if (allSiteSettings.activate === false) {
+    chrome.runtime.sendMessage({ action: 'notWorking' });
+    return;
+  }
+  const initialData = await chrome.runtime.sendMessage({
+    action: 'getStart',
+    url: currentURL(),
+  });
+  if (initialData.stop) return;
 
-          if (wordList?.length > 0) {
-            myList = res.wordList;
-            //
-            newList = res.newList;
-            //
-            let loadEvent = false;
-            const startAfterLoaded = () => {
-              console.log('page loaded');
-              loadEvent = true;
-              renderRuby(document.body, true);
-              if (
-                allSiteSettings.floatingWindow &&
-                domainData?.floatingWindow !== false
-              ) {
-                if (wordInPageList.length === 0) {
-                  const minimizedWordList = document.createElement(
-                    'hooli-wordlist-minimized-bar'
-                  );
-                  minimizedWordList.mode = 'autoOpen';
-                  body.appendChild(minimizedWordList);
-                } else {
-                  const wordListElement = document.createElement(
-                    'hooli-floating-word-list'
-                  );
-                  body.appendChild(wordListElement);
-                }
-              }
-              observer.observe(body, {
-                childList: true,
-                subtree: true,
-                characterData: true,
-              });
-              window.removeEventListener('load', startAfterLoaded);
-            };
-            window.addEventListener('load', startAfterLoaded());
-            setTimeout(() => {
-              if (!loadEvent) startAfterLoaded();
-            }, 2500);
-          } else {
-            console.log('nothing');
-          }
-          init();
-        }
-      );
+  myList = initialData.wordList;
+  newList = initialData.newList;
+  tagList = initialData.tagList;
+
+  let loadEvent = false;
+
+  const startAfterLoaded = () => {
+    // console.log('page loaded');
+    loadEvent = true;
+    renderRuby(document.body, true);
+
+    if (
+      checkOptionIsOn('floatingWindow', allSiteSettings, initialData.domainData)
+    ) {
+      appendSideListWindow(wordInPageList.length > 0);
     }
-  );
-}
-startFunction();
+    if (checkOptionIsOn('mouseTool', allSiteSettings, initialData.domainData)) {
+      setMouseUpToolTip();
+    }
+    observer.observe(body, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+    window.removeEventListener('load', startAfterLoaded);
+  };
+
+  window.addEventListener('load', startAfterLoaded);
+  setTimeout(() => {
+    if (!loadEvent) startAfterLoaded();
+  }, 2500);
+};
+init();
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log(message);
-  console.log(sender);
+  // console.log(message);
+  // console.log(sender);
   let thisDomain;
   if (message.action === 'save word') {
     openAddNewWord();
@@ -227,11 +98,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.tabInfo) {
     thisDomain = message.tabInfo.url.split('//')[1].split('/')[0];
   }
-  if (message.action === 'deleteWord') {
-  }
+  // if (message.action === 'deleteWord') {
+  // }
   if (message.dynamicRendering) {
     whiteList.push(thisDomain);
-    console.log(whiteList);
+    // console.log(whiteList);
     chrome.storage.local.set({ whiteDomainList: whiteList }, () => {
       sendResponse({ content: `已加入white list : ${whiteList}` });
       observer.observe(body, {
@@ -243,7 +114,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   } else if (message.dynamicRendering === false) {
     whiteList = whiteList.filter((domainName) => domainName !== thisDomain);
-    console.log(whiteList);
+    // console.log(whiteList);
     chrome.storage.local.set({ whiteDomainList: whiteList }, () => {
       observer.disconnect();
       sendResponse({ content: `已移出white list : ${whiteList}` });
@@ -256,7 +127,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
       renderRuby(document.body);
       // showWordList()
-      console.log('open');
+      // console.log('open');
       sendResponse({ content: '已顯示wordList' });
     });
     return true;
@@ -268,7 +139,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         body.querySelector('#hooriruby-info-div').classList.add('hide');
       }
       renderRuby(document.body);
-      console.log('close');
+      // console.log('close');
       sendResponse({ content: '已關閉wordList' });
     });
     return true;

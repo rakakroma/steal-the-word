@@ -3,7 +3,7 @@ import { CloseIcon, BoxAddIcon } from '@spectrum-web-components/icons-workflow';
 import { LitElement, html, css } from 'lit';
 import { getSentenceFromSelection } from '../../utils/get-selection-more.ts';
 import './HooliWordInfoBlock.js';
-import { setWordBlockPosition } from '../../utils/setWordBlockPosition';
+import { setWordBlockPosition } from '../../utils/setPosition';
 import {
   computePosition,
   flip,
@@ -47,6 +47,8 @@ class HooliText extends LitElement {
         cursor: pointer;
         color: white;
         background-color: slategray;
+        white-space: normal;
+        display: inline-block;
       }
       #annotation-tip {
         left: 0;
@@ -78,10 +80,8 @@ class HooliText extends LitElement {
 
   renderElement() {
     const annotation = this.wordObj.definitions[0].annotation;
-    return html`<span @click="${this.openWordBlock}" id="hooli-text-container"
-      ><slot></slot
-      ><span><div id="annotation-tip">${annotation}</div></span></span
-    >`;
+    return html`<slot></slot>
+      <div id="annotation-tip">${annotation}</div> `;
   }
 
   render() {
@@ -114,10 +114,9 @@ class HooliText extends LitElement {
 
   firstUpdated() {
     const tooltip = this.renderRoot.querySelector('#annotation-tip');
-    const container = this.renderRoot.querySelector('#hooli-text-container');
 
     const update = () => {
-      computePosition(container, tooltip, {
+      computePosition(this, tooltip, {
         placement: 'top',
         middleware: [offset(3), inline(), shift({ padding: 5 })],
       }).then(({ x, y }) => {
@@ -142,12 +141,10 @@ class HooliText extends LitElement {
     [
       ['mouseenter', showTooltip],
       ['mouseleave', hideTooltip],
-      // ['focusin', showTooltip],
-      // ['focusout', hideTooltip],
-      // ['blur', hideTooltip],
     ].forEach(([event, listener]) => {
-      container.addEventListener(event, listener);
+      this.addEventListener(event, listener);
     });
+    this.addEventListener('click', this.openWordBlock);
     update();
   }
 }
@@ -276,6 +273,7 @@ class HooliTextarea extends LitElement {
     this.currentLength = this.value.length;
   }
 }
+
 customElements.define('hooli-textarea', HooliTextarea);
 
 class HooliAddingTool extends LitElement {
@@ -312,7 +310,7 @@ class HooliAddingTool extends LitElement {
 }
 customElements.define('hooli-adding-tool', HooliAddingTool);
 
-class HooliTagsInput extends LitElement {
+class HooliVariantsInput extends LitElement {
   static get properties() {
     return {
       tags: { type: Array },
@@ -361,14 +359,21 @@ class HooliTagsInput extends LitElement {
       </span>`;
     })}`;
   }
+  _customEventOptions() {
+    return {
+      detail: { tags: this.tags },
+      bubbles: true,
+      composed: true,
+    };
+  }
 
   render() {
     return html`
         <div id='container' @click="${this._handleFocus}">
+        ${this._tagsDisplay()}
         <input type='text'
         placeholder=${this.placeholder}
          @keypress="${this._handleKeyBoardEvent}"></input>
-        ${this._tagsDisplay()}
         </div>
         `;
   }
@@ -381,23 +386,45 @@ class HooliTagsInput extends LitElement {
       .find((node) => node.className === 'tag-span');
     const targetTag = target.innerText.trim();
     if (targetTag) this.tags = this.tags.filter((tag) => tag !== targetTag);
+
+    this.dispatchEvent(
+      new CustomEvent('tagschange', this._customEventOptions())
+    );
   }
   _handleKeyBoardEvent(e) {
-    // if(this.tags.length > 0 && e.key === 'Backspace' && e.target.value === ''){
-    //     this.tags = this.tags.slice(0,-1)
-    // }
-    if (e.key === 'Enter') {
+    if (
+      [
+        'Enter',
+        //  'Tab'
+        //FIXME: tab is not work but I don't know why
+      ].includes(e.key)
+    ) {
       e.preventDefault();
       const inputEle = this.renderRoot.querySelector('input');
-      const newVariant = inputEle.value.trim();
-      if (this.tags.indexOf(newVariant) !== -1 || !newVariant) {
+      const newTag = inputEle.value.trim();
+      if (this.tags.indexOf(newTag) !== -1 || !newTag) {
         console.log('warning, this variant is already in list');
         return;
       }
-      this.tags = this.tags.concat([newVariant]);
+
+      this.tags = this.tags.concat([newTag]);
+
+      this.dispatchEvent(
+        new CustomEvent('tagschange', this._customEventOptions())
+      );
+
       inputEle.value = '';
     }
   }
 }
 
-customElements.define('hooli-tags-input', HooliTagsInput);
+customElements.define('hooli-variants-input', HooliVariantsInput);
+
+// class HooliFloatingEleContainer extends LitElement {
+//   static styles = [css`
+//   :host{
+//     all:initial;
+//     position:fixed;
+
+//   }`]
+// }

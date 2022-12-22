@@ -3,7 +3,7 @@ import { Box } from '@mui/system';
 import React, { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import CreatableSelect from 'react-select/creatable';
-import { rgbFromString } from '../../../../utils/rgbFromString';
+import { rgbFromString } from '../../../../../../utilsForAll/rgbFromString';
 import { colorStyles } from './selectableInputStyle';
 import TagIcon from '@mui/icons-material/Tag';
 

@@ -8,7 +8,7 @@ export const exportToJsonFile = (obj) => {
 };
 
 export const saveImportDataToDB = (importedData) => {
-  const { wordList, contextList, domainAndLinkList } = importedData;
+  const { wordList, contextList, domainAndLinkList, tagList } = importedData;
 
   const excludeIdInfo = (list) => {
     return list.map((listObj) => {
@@ -22,6 +22,9 @@ export const saveImportDataToDB = (importedData) => {
   db.wordList.bulkAdd(wordList);
   db.contextList.bulkAdd(contextListWithoutId);
   db.domainAndLink.bulkAdd(domainAndLinkListWithoutId);
+  if (tagList) {
+    db.tagList.bulkAdd(tagList);
+  }
 };
 
 export const clearDB = () => db.delete().then(() => db.open());

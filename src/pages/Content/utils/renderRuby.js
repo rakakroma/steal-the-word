@@ -1,16 +1,11 @@
 import '../components/customElements/HooliText';
 import '../components/customElements/HooliWordInfoBlock';
 import { myList, newList } from '../index';
+import { currentURL } from './currentURL';
 import { getRegexByMatchRule } from './matchRule';
 export let wordInPageList = [];
 
-const getCurrentURL = () => {
-  return window.location.href.slice(
-    0,
-    window.location.href.lastIndexOf(window.location.hash)
-  );
-};
-let currentURL = getCurrentURL();
+let theCurrentURL = currentURL();
 
 export const transformElementId = (eleId, target) => {
   const splittedEleId = eleId.split('-');
@@ -79,8 +74,8 @@ const putHooliTextOnNode = (targetNode) => {
         (wordObjInDisplay) => wordObjInDisplay.id === wordObj.id
       );
       if (!theWordInTheList) {
-        if (getCurrentURL() !== currentURL) {
-          currentURL = getCurrentURL();
+        if (currentURL() !== theCurrentURL) {
+          theCurrentURL = currentURL();
           clearNoLongerExistWordInWordInPageList();
         }
         wordInPageList.push({

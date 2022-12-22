@@ -1,5 +1,4 @@
-import { rgbFromString } from '../../../../utils/rgbFromString';
-
+import { rgbFromString } from '../../../../../../utilsForAll/rgbFromString';
 export const colorStyles = {
   control: (styles) => {
     return {

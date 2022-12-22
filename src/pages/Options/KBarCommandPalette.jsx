@@ -79,7 +79,7 @@ export const KBarCommandPalette = ({ children }) => {
       name: 'Words Collection',
       shortcut: ['w'],
       keywords: 'words collection all',
-      perform: () => navigate('words'),
+      perform: () => navigate('home/words'),
       section: 'Navigate To',
     },
     {
@@ -87,7 +87,7 @@ export const KBarCommandPalette = ({ children }) => {
       name: 'Settings/Preferences',
       shortcut: ['s', 'p'],
       keywords: 'preferences',
-      perform: () => navigate('settings'),
+      perform: () => navigate('home/settings'),
       section: 'Navigate To',
     },
     {

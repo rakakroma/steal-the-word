@@ -1,3 +1,5 @@
+import { computePosition, flip, offset, shift } from '@floating-ui/dom';
+
 export const setWordBlockPosition = (ref, blockEle) => {
   let type;
   if (ref.constructor.name === 'Range') {
@@ -51,4 +53,16 @@ export const setWordBlockPosition = (ref, blockEle) => {
     if (useTopPos)
       blockEle.style.top = `${window.scrollY + refClientRect.bottom + 2}px`;
   }
+};
+
+export const updatePosition = (refEle, floatEle) => {
+  computePosition(refEle, floatEle, {
+    placement: 'top-end',
+    middleware: [offset(10), flip(), shift({ padding: 3 })],
+  }).then(({ x, y }) => {
+    Object.assign(floatEle.style, {
+      left: `${x}px`,
+      top: `${y}px`,
+    });
+  });
 };

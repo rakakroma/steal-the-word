@@ -1,7 +1,7 @@
 import { Chip, IconButton, InputBase } from '@mui/material';
 import { useContext, useState } from 'react';
 import { TagListContext } from '../Options';
-import { rgbFromString } from '../utils/rgbFromString';
+import { rgbFromString } from '../../../utilsForAll/rgbFromString';
 import React from 'react';
 import { Check, Close, Edit, Tag } from '@mui/icons-material';
 import { Box } from '@mui/system';

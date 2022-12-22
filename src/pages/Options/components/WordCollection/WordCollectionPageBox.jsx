@@ -8,6 +8,7 @@ import { WordInfoDrawerContext, WordListContext } from '../../Options';
 import { getAllMatchTextFromWordObj } from '../../../../utilsForAll/getInfoFromWordObj';
 import '../../../Content/components/customElements/HooliHighlighter';
 import { Star } from '@mui/icons-material';
+import dayjs from 'dayjs';
 
 const SmallWord = styled(Box)(({ theme }) => ({
   wordBreak: 'break-word',
@@ -146,27 +147,39 @@ export const WordListInWordCollection = ({
   });
 };
 
+const DateInfo = ({ date }) => {
+  const dateContent = dayjs(date).isSame(dayjs(), 'year')
+    ? dayjs(date).format('MMM D')
+    : dayjs(date).format('MMM D,YY');
+
+  return (
+    <Typography
+      sx={{
+        color: '#999999',
+        position: 'absolute',
+        top: '-12px',
+        right: '6px',
+        fontSize: '12px',
+      }}
+    >
+      {dateContent}
+    </Typography>
+  );
+};
+
 export const WordCollectionPageBox = ({
   displayMode,
   imgUri,
   arrayWithUrl,
   // containerWidth,
+  showDate,
   noIcon,
 }) => {
-  // const pageBoxWidth = (containerWidth, displayContext) => {
-  //   if (displayContext) {
-  //     if (!containerWidth || containerWidth['600']) return '280px';
-  //     return '100%';
-  //   } else {
-  //     if (!containerWidth || containerWidth['450']) return '180px';
-  //     return '100%';
-  //   }
-  // };
   const theme = useTheme();
   return (
     <WordCollectionPageBoxContainer
       sx={{
-        // width: pageBoxWidth(containerWidth, displayContext),
+        position: 'relative',
         width:
           displayMode === 'context'
             ? '280px'
@@ -177,6 +190,7 @@ export const WordCollectionPageBox = ({
       }}
       key={arrayWithUrl[0]}
     >
+      {showDate && <DateInfo date={arrayWithUrl.words[0].date} />}
       <PageTitleSection
         noIcon={noIcon}
         linkUrl={arrayWithUrl.words[0].url}

@@ -129,6 +129,7 @@ export const OrderByTimeAndSiteContainer = memo(
                   return (
                     <React.Fragment key={dataByUrl.url}>
                       <WordCollectionPageBox
+                        showDate={true}
                         displayMode={displayMode}
                         noIcon={true}
                         arrayWithUrl={dataByUrl}

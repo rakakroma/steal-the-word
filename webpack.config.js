@@ -40,9 +40,6 @@ var options = {
     popup: path.join(__dirname, 'src', 'pages', 'Popup', 'index.jsx'),
     background: path.join(__dirname, 'src', 'pages', 'Background', 'index.js'),
     contentScript: path.join(__dirname, 'src', 'pages', 'Content', 'index.js'),
-    // devtools: path.join(__dirname, 'src', 'pages', 'Devtools', 'index.js'),
-    // panel: path.join(__dirname, 'src', 'pages', 'Panel', 'index.jsx'),
-    // newtab: path.join(__dirname, 'src', 'pages', 'Newtab', 'index.jsx'),
   },
   chromeExtensionBoilerplate: {
     notHotReload: ['background', 'contentScript', 'devtools'],
@@ -78,10 +75,10 @@ var options = {
         test: new RegExp('.(' + fileExtensions.join('|') + ')$'),
         type: 'asset/resource',
         exclude: /node_modules/,
-        // loader: 'file-loader',
-        // options: {
-        //   name: '[name].[ext]',
-        // },
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]',
+        },
       },
       {
         test: /\.html$/,
@@ -168,12 +165,6 @@ var options = {
         },
       ],
     }),
-    // new HtmlWebpackPlugin({
-    //   template: path.join(__dirname, 'src', 'pages', 'Newtab', 'index.html'),
-    //   filename: 'newtab.html',
-    //   chunks: ['newtab'],
-    //   cache: false,
-    // }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'src', 'pages', 'Options', 'index.html'),
       filename: 'options.html',
@@ -186,18 +177,6 @@ var options = {
       chunks: ['popup'],
       cache: false,
     }),
-    // new HtmlWebpackPlugin({
-    //   template: path.join(__dirname, 'src', 'pages', 'Devtools', 'index.html'),
-    //   filename: 'devtools.html',
-    //   chunks: ['devtools'],
-    //   cache: false,
-    // }),
-    // new HtmlWebpackPlugin({
-    //   template: path.join(__dirname, 'src', 'pages', 'Panel', 'index.html'),
-    //   filename: 'panel.html',
-    //   chunks: ['panel'],
-    //   cache: false,
-    // }),
   ],
   infrastructureLogging: {
     level: 'info',

@@ -16,7 +16,7 @@ chrome.action.setBadgeBackgroundColor({ color: '#4f4f4f' });
 chrome.contextMenus.create({
   title: 'Save "%s" to HolliRuby',
   contexts: ['selection'],
-  id: 'myContextMenuId',
+  id: 'holli77777',
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
@@ -32,31 +32,46 @@ const saveDomainData = async (currentDomain, favIconUrl) => {
       res = await fetch(favIconUrl);
       blob = await res.blob();
       const base64Icon = await blobToBase64(blob);
+      // const newDomain = {
+      //   url: currentDomain,
+      //   dynamicRendering: true,
+      //   icon: base64Icon,
+      //   showTabWords: null,
+      //   tags: null,
+      //   lang: null,
+      // };
       const newDomain = {
         url: currentDomain,
-        dynamicRendering: true,
+        activate: null,
+        floatingWindow: null,
+        mouseTool: null,
         icon: base64Icon,
-        showTabWords: null,
         tags: null,
         lang: null,
       };
       db.domainAndLink.add(newDomain);
-      console.log(newDomain);
+      // console.log(newDomain);
     } else if (!domainInDB.icon) {
-      console.log(domainInDB);
+      // console.log(domainInDB);
       db.domainAndLink.update({ url: currentDomain }, { icon: blob });
-      console.log('update icon');
+      // console.log('update icon');
     }
   }
 };
 
+const setStopBadge = (tabId) => {
+  chrome.action.setBadgeText({ text: 'STOP', tabId });
+};
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log(request, sender.tab.id);
+  const tabId = sender.tab.id;
   if (request.action === 'getFaviconThisSite') {
     sendResponse({ iconUrl: sender.tab.favIconUrl });
   }
   if (request.action === 'notWorking') {
-    chrome.action.setBadgeText({ text: 'STOP', tabId: sender.tab.id });
+    // chrome.action.setBadgeText({ text: 'STOP', tabId: sender.tab.id });
+    setStopBadge(tabId);
   }
   if (request.action === 'updateWordCount' && request.count) {
     chrome.action.setBadgeText({
@@ -66,21 +81,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
   if (request.action === 'getStart' && request.url) {
     (async () => {
-      console.log('get start');
       const currentDomain = new URL(request.url).hostname;
       const domainData = await db.domainAndLink.get({ url: currentDomain });
-      if (domainData?.activate === false) {
-        sendResponse({ domainData });
+      const stopInThisPage =
+        domainData?.activate === false && domainData?.customRule === true;
+      if (stopInThisPage) {
+        sendResponse({ stop: true });
+        setStopBadge(tabId);
         return;
       }
       const wordList = await getDataInTableFromIndexedDB('wordList');
-
+      const tagList = await getDataInTableFromIndexedDB('tagList');
       const newList = getMatchList(wordList);
-      if (!domainData) {
-        sendResponse({ wordList, newList });
-        return;
-      }
-      sendResponse({ wordList, newList, domainData });
+      sendResponse({ wordList, newList, tagList, domainData });
     })();
   }
   if (request.action === 'getImgDataFromUrls' && request.domains) {
@@ -252,6 +265,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         { id: contextId },
         { definitionRef, context }
       );
+      sendResponse({
+        status: 'success',
+      });
+    })();
+  }
+  if (request.action === 'updateWordRating') {
+    const { rating, wordId } = request;
+    (async () => {
+      await db.wordList.update({ id: wordId }, { stars: rating });
       sendResponse({
         status: 'success',
       });

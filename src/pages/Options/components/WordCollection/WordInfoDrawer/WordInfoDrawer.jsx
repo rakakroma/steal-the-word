@@ -18,7 +18,7 @@ import { useMediaQuery } from '@mui/material';
 import { useRegisterActions } from 'kbar';
 import '../../../../Content/components/customElements/HooliHighlighter';
 import { wordListInAlphabeticalOrder } from '../../../utils/transformData';
-import { AppBar } from '../../AppBar';
+import { AppBar } from '../../AppBar/AppBar';
 import { CurrentWordInfo } from './CurrentWordInfo';
 import { HideDrawerButton } from './HideDrawerButton';
 

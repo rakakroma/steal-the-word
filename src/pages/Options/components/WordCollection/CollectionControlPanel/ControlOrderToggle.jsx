@@ -1,14 +1,11 @@
 import React from 'react';
 
 import { useTheme } from '@emotion/react';
-import { ToggleButton, ToggleButtonGroup } from '@mui/material';
-import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import DomainIcon from '@mui/icons-material/Domain';
+import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
 import TagIcon from '@mui/icons-material/Tag';
-import { ContainerQueryWrapper } from '../WordCollection';
-import { useContainerQuery } from 'react-container-query';
-import { useEffect } from 'react';
+import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 export const ControlOrderToggle = ({ orderMode, setOrderMode }) => {
   const theme = useTheme();
