@@ -1,11 +1,11 @@
 import '../components/customElements/HooliText';
 import '../components/customElements/HooliWordInfoBlock';
-import { myList, newList } from '../index';
-import { currentURL } from './currentURL';
+import { addOrUpdatePageWordAndGetCount } from '../redux/displayingWordListSlice';
+import { store } from '../redux/store';
+import { getMatchRefList, getWordList } from '../redux/wordDataSlice';
 import { getRegexByMatchRule } from './matchRule';
-export let wordInPageList = [];
 
-let theCurrentURL = currentURL();
+// export let wordInPageList = [];
 
 export const transformElementId = (eleId, target) => {
   const splittedEleId = eleId.split('-');
@@ -14,140 +14,78 @@ export const transformElementId = (eleId, target) => {
   if (target === 'count') return splittedEleId[splittedEleId.length - 1];
 };
 
-export const clearNoLongerExistWordInWordInPageList = () => {
-  const wordIdOfHooliTextsOnDoc = [];
-  document.querySelectorAll('hooli-text').forEach((ele) => {
-    const wordId = transformElementId(ele.id, 'wordId');
-    if (wordIdOfHooliTextsOnDoc.indexOf(wordId) < 0)
-      wordIdOfHooliTextsOnDoc.push(wordId);
-  });
-
-  wordInPageList = wordInPageList.filter((wordObj) => {
-    if (wordIdOfHooliTextsOnDoc.indexOf(wordObj.id) < 0) return false;
-    return true;
-  });
-};
-
 const putHooliTextOnNode = (targetNode) => {
-  // for (let wordObj of myList) {
+  const myList = getWordList(store.getState());
+  const newList = getMatchRefList(store.getState());
   //todo: support variants match, i think extend the list directly instead of check every 'variants' property might get better performance
   //todo: deal with first character capital word
   for (let textPair of newList) {
-    // let matchText = wordObj.stem || wordObj.word;
     const { matchText } = textPair;
-    if (targetNode.textContent.indexOf(matchText) > -1) {
-      const wordObj = myList.find(
-        (wordObj) => wordObj.id === textPair.wordIdRef
-      );
-      if (!wordObj) return;
+    if (targetNode.textContent.indexOf(matchText) === -1) continue;
+    const wordObj = myList.find((wordObj) => wordObj.id === textPair.wordIdRef);
+    if (!wordObj) continue;
 
-      const langRegex = new RegExp(
-        /\p{sc=Hani}|\p{sc=Hira}|\p{sc=Kana}|\p{sc=Hang}/,
-        'um'
-      ); //chinese(han), japanese(hiragana, katakana), korean(hangul)
-      const boundaryRegex = new RegExp(
-        getRegexByMatchRule(matchText, wordObj.matchRule || 'start'),
-        'im'
-      );
+    const langRegex = new RegExp(
+      /\p{sc=Hani}|\p{sc=Hira}|\p{sc=Kana}|\p{sc=Hang}/,
+      'um'
+    ); //chinese(han), japanese(hiragana, katakana), korean(hangul)
+    const boundaryRegex = new RegExp(
+      getRegexByMatchRule(matchText, wordObj.matchRule || 'start'),
+      'im'
+    );
 
-      // const boundaryRegex = new RegExp(`\\b${matchText}`, 'im')
+    // const boundaryRegex = new RegExp(`\\b${matchText}`, 'im')
 
-      //languages do not  have word separator (which means can't use /b as word boundary):
-      //Thai, Lao, Khmer, Chinese, Japanese, Korean
-      //further reading: https://www.w3.org/International/articles/typography/linebreak
+    //languages do not  have word separator (which means can't use /b as word boundary):
+    //Thai, Lao, Khmer, Chinese, Japanese, Korean
+    //further reading: https://www.w3.org/International/articles/typography/linebreak
 
-      //languages may need to deal with the capitalization(first letter as a capital letter) situation
-      //Latin, Armenian, Cyrillic, Georgian, Greek alphabets.
-      //unicode script: Latn, Grek, Cyrl,Geor
+    //languages may need to deal with the capitalization(first letter as a capital letter) situation
+    //Latin, Armenian, Cyrillic, Georgian, Greek alphabets.
+    //unicode script: Latn, Grek, Cyrl,Geor
 
-      if (
-        !langRegex.test(matchText) &&
-        !boundaryRegex.test(targetNode.textContent)
-      )
-        return;
+    if (
+      !langRegex.test(matchText) &&
+      !boundaryRegex.test(targetNode.textContent)
+    )
+      return;
 
-      let replaceText = matchText;
-      const sentenceWithoutWord = targetNode.textContent.split(replaceText);
-      const countMatchedTime = sentenceWithoutWord.length - 1;
+    const sentenceWithoutWord = targetNode.textContent.split(matchText);
+    const countMatchedTime = sentenceWithoutWord.length - 1;
 
-      const theWordInTheList = wordInPageList.find(
-        (wordObjInDisplay) => wordObjInDisplay.id === wordObj.id
-      );
-      if (!theWordInTheList) {
-        if (currentURL() !== theCurrentURL) {
-          theCurrentURL = currentURL();
-          clearNoLongerExistWordInWordInPageList();
-        }
-        wordInPageList.push({
-          ...wordObj,
-          countInCurrentPage: countMatchedTime,
-          currentContext: targetNode.textContent,
-        });
-        chrome.runtime.sendMessage({
-          action: 'updateWordCount',
-          count: wordInPageList.length,
-        });
+    const currentCount = addOrUpdatePageWordAndGetCount({
+      ...wordObj,
+      countInCurrentPage: countMatchedTime,
+    });
 
-        const wordListEle = document.querySelector('hooli-floating-word-list');
-        wordListEle?.requestUpdate();
-        const minimizedWordListEle = document.querySelector(
-          'hooli-wordlist-minimized-bar'
-        );
-        if (minimizedWordListEle?.mode === 'autoOpen') {
-          const newWordListEle = document.createElement(
-            'hooli-floating-word-list'
-          );
-          document.body.appendChild(newWordListEle);
-          minimizedWordListEle.remove();
-        } else {
-          minimizedWordListEle?.requestUpdate();
-        }
+    const createTheWordNode = (wordObj, count) => {
+      const word = matchText;
+      const renderNode = document.createElement('hooli-text');
+      // renderNode.wordObj = wordObj;
+      renderNode.textContent = word;
+      renderNode.id = `h-${wordObj.id}-${
+        // updatedWordInTheList.countInCurrentPage - countMatchedTime + count + 1
+        currentCount - countMatchedTime + count + 1
+      }`;
+      renderNode.className = `h-${wordObj.id}`;
+      //id start from 1 not 0
+      return renderNode;
+    };
+
+    const fragment = new DocumentFragment();
+
+    sentenceWithoutWord.forEach((sentence, i) => {
+      if (i === sentenceWithoutWord.length - 1) {
+        fragment.append(sentence);
       } else {
-        wordInPageList.map((wordObjInList) => {
-          if (wordObj.id === wordObjInList.id) {
-            wordObjInList.countInCurrentPage += countMatchedTime;
-            return wordObjInList;
-          }
-
-          return wordObjInList;
-        });
+        fragment.append(sentence, createTheWordNode(wordObj, i));
       }
-      const updatedWordInTheList = wordInPageList.find(
-        (wordObjInDisplay) => wordObjInDisplay.id === wordObj.id
-      );
+    });
 
-      const createTheWordNode = (wordObj, count) => {
-        const word = replaceText;
-        const renderNode = document.createElement('hooli-text');
-        renderNode.wordObj = wordObj;
-        renderNode.textContent = word;
-        renderNode.id = `h-${wordObj.id}-${
-          updatedWordInTheList.countInCurrentPage - countMatchedTime + count + 1
-        }`;
-        renderNode.className = `h-${wordObj.id}`;
-        //id start from 1 not 0
-        return renderNode;
-      };
-
-      const fragment = new DocumentFragment();
-
-      sentenceWithoutWord.forEach((sentence, i) => {
-        if (i === sentenceWithoutWord.length - 1) {
-          fragment.append(sentence);
-        } else {
-          fragment.append(sentence, createTheWordNode(wordObj, i));
-        }
-      });
-
-      // const allHooliText = fragment.querySelectorAll('hooli-text')
-      // allHooliText.forEach(hooliText => {
-      //     observerForIntersection.observe(hooliText)
-      // })
-
-      const span = document.createElement('span');
-      targetNode.replaceWith(span);
-      span.replaceWith(fragment);
-    }
+    const span = document.createElement('span');
+    targetNode.replaceWith(span);
+    span.replaceWith(fragment);
+    console.log(`create! ${matchText}`);
   }
 };
 

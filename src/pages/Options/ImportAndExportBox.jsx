@@ -31,6 +31,7 @@ const handleClearAll = () => {
   }
   return false;
 };
+
 const SingleDataInfo = ({ title, number }) => {
   return (
     <Box

@@ -1,5 +1,4 @@
 import '@webcomponents/custom-elements';
-import { CloseIcon, BoxAddIcon } from '@spectrum-web-components/icons-workflow';
 import { LitElement, html, css } from 'lit';
 import { getSentenceFromSelection } from '../../utils/get-selection-more.ts';
 import './HooliWordInfoBlock.js';
@@ -12,11 +11,16 @@ import {
   arrow,
   inline,
 } from '@floating-ui/dom';
+import { connect } from 'pwa-helpers';
+import { store } from '../../redux/store';
+import { getWordById } from '../../redux/wordDataSlice';
+
+const removeWordBlock = () =>
+  document.querySelector('hooli-wordinfo-block')?.remove();
 
 export const openAddNewWord = () => {
   if (!document.getSelection().toString().trim()) return;
-  const existingWordBlock = document.querySelector('hooli-wordinfo-block');
-  existingWordBlock?.remove();
+  removeWordBlock();
   const wordBlock = document.createElement('hooli-wordinfo-block');
   wordBlock.mode = 'newWord';
   wordBlock.newWord = document.getSelection().toString().trim();
@@ -27,23 +31,17 @@ export const openAddNewWord = () => {
   document.body.appendChild(wordBlock);
 };
 
-class HooliText extends LitElement {
-  static get properties() {
-    return {
-      ruby: { type: Boolean },
-      wordObj: { type: Object },
-    };
+class HooliText extends connect(store)(LitElement) {
+  stateChanged(state) {
+    this.wordObj = getWordById(store.getState(), this.className.slice(2));
   }
-
-  constructor() {
-    super();
-    this.ruby = false;
-    this.wordObj = null;
-  }
-
   static styles = [
     css`
       :host {
+        all: initial;
+        font-size: inherit;
+        font-family: inherit;
+        font-weight: inherit;
         cursor: pointer;
         color: white;
         background-color: slategray;
@@ -75,13 +73,30 @@ class HooliText extends LitElement {
         opacity: 1;
         visibility: visible;
       }
+      .divider {
+        border: 0;
+        display: block;
+        width: 98%;
+        background-color: #c0c0c0;
+        height: 1px;
+        margin: 0;
+      }
     `,
   ];
 
   renderElement() {
-    const annotation = this.wordObj.definitions[0].annotation;
+    const definitionLength = this.wordObj.definitions.length;
     return html`<slot></slot>
-      <div id="annotation-tip">${annotation}</div> `;
+      <div id="annotation-tip">
+        ${this.wordObj.definitions.map((definition, i) => {
+          if (i < definitionLength - 1) {
+            return html`<div>${definition.annotation}</div>
+              <div class="divider"></div>`;
+          } else {
+            return html`<div>${definition.annotation}</div>`;
+          }
+        })}
+      </div> `;
   }
 
   render() {
@@ -97,9 +112,10 @@ class HooliText extends LitElement {
     return context;
   }
   openWordBlock() {
-    document.querySelector('hooli-wordinfo-block')?.remove();
+    removeWordBlock();
     const wordBlock = document.createElement('hooli-wordinfo-block');
-    wordBlock.wordObj = this.wordObj;
+    // wordBlock.wordObj = this.wordObj;
+    wordBlock.className = this.className.replace('h', 'b');
     wordBlock.contextHere = this.getContextSentenceFromThisEle();
     setWordBlockPosition(this, wordBlock);
     document.body.appendChild(wordBlock);
@@ -129,14 +145,11 @@ class HooliText extends LitElement {
 
     const showTooltip = () => {
       update();
-      if (!tooltip.classList.contains('show-tooltip'))
-        tooltip.classList.add('show-tooltip');
+      tooltip.classList.add('show-tooltip');
     };
 
     const hideTooltip = () => {
-      if (tooltip.classList.contains('show-tooltip')) {
-        tooltip.classList.remove('show-tooltip');
-      }
+      tooltip.classList.remove('show-tooltip');
     };
     [
       ['mouseenter', showTooltip],
@@ -150,281 +163,3 @@ class HooliText extends LitElement {
 }
 
 customElements.define('hooli-text', HooliText);
-
-class HooliTextarea extends LitElement {
-  static get properties() {
-    return {
-      value: { type: String },
-      placeholder: { type: String },
-      maxLength: { type: Number },
-      minLength: { type: Number },
-      currentLength: { type: Number },
-      // highlightText: { type: String }
-    };
-  }
-
-  constructor() {
-    super();
-    this.value = '';
-    this.placeholder = '';
-    this.maxLength = 460;
-    this.minLength = null;
-    this.currentLength = 0;
-    // this.highlightedText = ''
-  }
-
-  static styles = [
-    css`
-      div {
-        position: relative;
-      }
-      textarea {
-        position: relative;
-        font-family: inherit;
-        font-size: 13px;
-        resize: none;
-        overflow: hidden;
-        padding-left: 5px;
-        width: -webkit-fill-available;
-        width: -moz-fill-available;
-        width: -moz-available;
-        width: fill-available;
-        color: inherit;
-        background-color: inherit;
-        border: none;
-      }
-      textarea:focus {
-        outline: none;
-      }
-      #count-length.invalid-length {
-        color: #ff7676;
-      }
-      #count-length.max-length {
-        color: #e89961;
-      }
-      #count-length {
-        color: rgb(208 204 204);
-        position: absolute;
-        bottom: -4px;
-        right: 10px;
-      }
-    `,
-  ];
-
-  render() {
-    return html`
-      <textarea
-        @input="${this._handleAutoHeightAndUpdateValue}"
-        placeholder="${this.placeholder}"
-        maxlength="${this.maxLength}"
-        .value=${this.value}
-      ></textarea>
-      <span id="count-length">${this.currentLength}/${this.maxLength}</span>
-    `;
-  }
-
-  _handleAutoHeightAndUpdateValue(e) {
-    this._handleUpdateValue(e);
-    this._handleAutoHeight();
-    this._handleCountCharacter(e.target.value);
-  }
-
-  _handleCountCharacter(value) {
-    this.currentLength = value.length;
-    const countLengthSpan = this.renderRoot.querySelector('#count-length');
-
-    if (typeof this.minLength === 'number') {
-      if (this.currentLength < this.minLength) {
-        countLengthSpan.className = 'invalid-length';
-        return;
-      }
-    }
-    if (this.currentLength > this.maxLength) {
-      countLengthSpan.className = 'invalid-length';
-    } else if (this.currentLength === this.maxLength) {
-      countLengthSpan.className = 'max-length';
-    } else if (countLengthSpan.className) {
-      countLengthSpan.className = '';
-    }
-  }
-
-  _handleUpdateValue(e) {
-    this.value = e.target.value;
-  }
-  _handleAutoHeight() {
-    const theTextArea = this.renderRoot.querySelector('textarea');
-    if (theTextArea.value.length < 20) {
-      theTextArea.style.height = '15px';
-      return;
-    }
-    theTextArea.style.height = 'auto';
-    theTextArea.style.height = theTextArea.scrollHeight + 'px';
-  }
-
-  // firstUpdated(){
-  // }
-
-  connectedCallback() {
-    super.connectedCallback();
-    setTimeout(() => this._handleAutoHeight(), 0);
-    if (this.value.length > this.maxLength) {
-      this.value = this.value.slice(0, this.maxLength);
-    }
-    this.currentLength = this.value.length;
-  }
-}
-
-customElements.define('hooli-textarea', HooliTextarea);
-
-class HooliAddingTool extends LitElement {
-  static styles = [
-    css`
-      :host {
-        z-index: 99999999;
-        position: absolute;
-      }
-      button {
-        background: white;
-        color: #19d819;
-        border-radius: 8px;
-        border: none;
-      }
-    `,
-  ];
-
-  render() {
-    return html`<button @click="${this._handleAddText}">
-      ${BoxAddIcon({ width: 18, height: 18 })}
-    </button>`;
-  }
-
-  get _thisElementOnBody() {
-    return document.querySelector('hooli-adding-tool');
-  }
-  _handleAddText(e) {
-    // e.preventDefault()
-    // e.stopPropagation()
-    openAddNewWord();
-    setTimeout(() => document.querySelector('hooli-adding-tool')?.remove());
-  }
-}
-customElements.define('hooli-adding-tool', HooliAddingTool);
-
-class HooliVariantsInput extends LitElement {
-  static get properties() {
-    return {
-      tags: { type: Array },
-      placeholder: { type: String },
-    };
-  }
-  constructor() {
-    super();
-    this.tags = [];
-    this.placeholder = '';
-  }
-  static styles = [
-    css`
-      #container {
-      }
-      .tag-span {
-        margin: 2px;
-        border-radius: 4px;
-        padding: 2px 3px;
-        background-color: #e7e3de;
-        cursor: pointer;
-      }
-      .remove-button {
-        display: none;
-      }
-      .tag-span:hover > .remove-button,
-      .remove-button:hover {
-        display: inline-block;
-      }
-      input {
-        color: black;
-        border: none;
-        display: inline-block;
-        background-color: white;
-      }
-    `,
-  ];
-
-  _tagsDisplay() {
-    return html`${this.tags?.map((tagText) => {
-      return html`<span class="tag-span" @click="${this._handleRemove}"
-        >${tagText}
-        <span class="remove-button"
-          >${CloseIcon({ width: 10, height: 10 })}</span
-        >
-      </span>`;
-    })}`;
-  }
-  _customEventOptions() {
-    return {
-      detail: { tags: this.tags },
-      bubbles: true,
-      composed: true,
-    };
-  }
-
-  render() {
-    return html`
-        <div id='container' @click="${this._handleFocus}">
-        ${this._tagsDisplay()}
-        <input type='text'
-        placeholder=${this.placeholder}
-         @keypress="${this._handleKeyBoardEvent}"></input>
-        </div>
-        `;
-  }
-  _handleFocus() {
-    this.renderRoot.querySelector('input').focus();
-  }
-  _handleRemove(e) {
-    const target = e
-      .composedPath()
-      .find((node) => node.className === 'tag-span');
-    const targetTag = target.innerText.trim();
-    if (targetTag) this.tags = this.tags.filter((tag) => tag !== targetTag);
-
-    this.dispatchEvent(
-      new CustomEvent('tagschange', this._customEventOptions())
-    );
-  }
-  _handleKeyBoardEvent(e) {
-    if (
-      [
-        'Enter',
-        //  'Tab'
-        //FIXME: tab is not work but I don't know why
-      ].includes(e.key)
-    ) {
-      e.preventDefault();
-      const inputEle = this.renderRoot.querySelector('input');
-      const newTag = inputEle.value.trim();
-      if (this.tags.indexOf(newTag) !== -1 || !newTag) {
-        console.log('warning, this variant is already in list');
-        return;
-      }
-
-      this.tags = this.tags.concat([newTag]);
-
-      this.dispatchEvent(
-        new CustomEvent('tagschange', this._customEventOptions())
-      );
-
-      inputEle.value = '';
-    }
-  }
-}
-
-customElements.define('hooli-variants-input', HooliVariantsInput);
-
-// class HooliFloatingEleContainer extends LitElement {
-//   static styles = [css`
-//   :host{
-//     all:initial;
-//     position:fixed;
-
-//   }`]
-// }

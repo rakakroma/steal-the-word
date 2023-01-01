@@ -1,6 +1,6 @@
 import '@webcomponents/custom-elements';
 import { LitElement, html, css } from 'lit';
-import { getRegexByMatchRule } from '../../utils/matchRule';
+import { getRegexByMatchRule } from '../../../utils/matchRule';
 
 class HooliHighlighter extends LitElement {
   static get properties() {

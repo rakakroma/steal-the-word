@@ -19,54 +19,14 @@ import {
   WordInfoDrawerContext,
   WordListContext,
 } from '../../../Options';
-import {
-  convertValueToFitCreatableInput,
-  CreatableSelectInput,
-} from './inputs/CreatableSelectInput';
+import { CreatableSelectInput } from './inputs/CreatableSelectInput';
 import { DefinitionBlock } from './DefinitionBlock.jsx';
 import { SubmitSection } from './SubmitSection';
 import { TypographyOrInput } from './inputs/TypographyOrInput';
 import { VariantsInfo } from './VariantsInfo';
 import { WordRating } from './WordRating';
 import { nanoid } from 'nanoid';
-
-export const getName = (inputName, idInfo, isInDefinition) => {
-  if (isInDefinition) {
-    return `def**${inputName}**${idInfo}`;
-  } else {
-    return `context**${inputName}**${idInfo}`;
-  }
-};
-
-export const getDataFromName = (name) => {
-  const splitted = name.split('**');
-  return {
-    id: splitted[2],
-    inputName: splitted[1],
-    section: splitted[0],
-  };
-};
-
-const getDefaultValueFromData = (wordObj, contextObjs) => {
-  const values = {
-    word: wordObj.word,
-    variants: convertValueToFitCreatableInput(wordObj.variants),
-    stem: wordObj.stem,
-    matchRule: wordObj.matchRule,
-  };
-
-  wordObj.definitions.forEach((def) => {
-    const defId = def.definitionId;
-    values[getName('note', defId, true)] = def.note;
-    values[getName('annotation', defId, true)] = def.annotation;
-    values[getName('tags', defId, true)] = def.tags || [];
-  });
-
-  contextObjs.forEach((contextObj) => {
-    values[getName('context', contextObj.id, false)] = contextObj.context;
-  });
-  return values;
-};
+import { getDataFromName, getDefaultValueFromData } from './getDataFromName';
 
 export const CurrentWordInfo = () => {
   const theme = useTheme();
@@ -278,7 +238,7 @@ export const CurrentWordInfo = () => {
           if (!newDefInfo) {
             newDefInfo = true;
           }
-          const [, inputName, definitionId] = key.split('**');
+          const [_, inputName, definitionId] = key.split('**');
           if (inputName === 'tags') {
             console.log(data[key]);
             return;
@@ -303,14 +263,14 @@ export const CurrentWordInfo = () => {
         console.log('------word info------');
         console.log(wordObjInfoToUpdate);
         db.wordList.update({ id: targetWord.id }, wordObjInfoToUpdate);
-        if (wordObjInfoToUpdate.word) {
-          targetWordContexts.forEach((contextObj) => {
-            db.contextList.update(
-              { id: +contextObj.id },
-              { word: wordObjInfoToUpdate.word }
-            );
-          });
-        }
+        // if (wordObjInfoToUpdate.word) {
+        //   targetWordContexts.forEach((contextObj) => {
+        //     db.contextList.update(
+        //       { id: +contextObj.id },
+        //       { word: wordObjInfoToUpdate.word }
+        //     );
+        //   });
+        // }
       }
       if (newDefInfo) {
         console.log('---defsArrayToUpdate----');

@@ -1,5 +1,4 @@
 import { renderMultipleRuby } from './renderRuby';
-import { myList } from '../index';
 
 let visible = true;
 document.addEventListener('visibilitychange', () => {
@@ -45,7 +44,7 @@ export const observer = new MutationObserver((mutations) => {
         newRemovedNodes = [];
         return;
       }
-      renderMultipleRuby(nodesToHandle, myList);
+      renderMultipleRuby(nodesToHandle);
 
       newAddedNodes = [];
       newRemovedNodes = [];

@@ -12,6 +12,7 @@ import {
   useRegisterActions,
 } from 'kbar';
 
+// import { KBarResults } from 'kbar-test';
 import { Checkbox, Box, ListSubheader, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { ContextListContext, WordListContext } from './Options';

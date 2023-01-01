@@ -7,7 +7,7 @@ import { useFormContext } from 'react-hook-form';
 import { getAllMatchTextFromWordObj } from '../../../../../utilsForAll/getInfoFromWordObj';
 import { ContextByDefBox } from './ContextByDefBox';
 import { CreatableSelectInput } from './inputs/CreatableSelectInput';
-import { getDataFromName, getName } from './CurrentWordInfo';
+import { getDataFromName, getName } from './getDataFromName';
 import { TypographyOrInput } from './inputs/TypographyOrInput';
 import { TagListContext } from '../../../Options';
 import { useContext } from 'react';

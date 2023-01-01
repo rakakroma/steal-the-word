@@ -11,6 +11,7 @@ const ASSET_PATH = process.env.ASSET_PATH || '/';
 
 var alias = {
   'react-dom': '@hot-loader/react-dom',
+  kbar: path.resolve(__dirname, 'node_modules/kbar'),
 };
 
 // load the secrets

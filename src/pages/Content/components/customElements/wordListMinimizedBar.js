@@ -1,10 +1,12 @@
 import '@webcomponents/custom-elements';
 import { LitElement, html, css } from 'lit';
 // import { showWordList, wordInPageList } from '../infoSection'
-import { MoreIcon } from '@spectrum-web-components/icons-workflow';
-import { wordInPageList } from '../../utils/renderRuby';
+// import { MoreIcon } from '@spectrum-web-components/icons-workflow';
+// import { wordInPageList } from '../../utils/renderRuby';
+import { connect } from 'pwa-helpers/connect-mixin.js';
+import { store } from '../../redux/store';
 
-class HooliWordListMinimizedBar extends LitElement {
+class HooliWordListMinimizedBar extends connect(store)(LitElement) {
   get properties() {
     return {
       mode: { type: String },
@@ -53,9 +55,12 @@ class HooliWordListMinimizedBar extends LitElement {
     `,
   ];
 
+  stateChanged(state) {
+    this.listLength = state.displayingWordList.length;
+  }
   render() {
     return html`<div @click="${this._handleOpenWordList}">
-      Word List <span id="count-word">${wordInPageList.length}</span>
+      Word List <span id="count-word">${this.listLength}</span>
     </div>`;
   }
   _handleOpenWordList() {

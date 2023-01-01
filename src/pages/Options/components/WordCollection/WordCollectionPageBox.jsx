@@ -6,7 +6,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import { SiteIconButton } from './SiteIconButton';
 import { WordInfoDrawerContext, WordListContext } from '../../Options';
 import { getAllMatchTextFromWordObj } from '../../../../utilsForAll/getInfoFromWordObj';
-import '../../../Content/components/customElements/HooliHighlighter';
+import '../../../Content/components/customElements/WordBlock/HooliHighlighter';
 import { Star } from '@mui/icons-material';
 import dayjs from 'dayjs';
 
@@ -96,28 +96,22 @@ export const WordListInWordCollection = ({
   const dataType = wordsArray[0]?.wordId ? 'contextObj' : 'wordObj';
 
   return wordsArray.map((dataObj, index) => {
-    const dataWordId = dataType === 'contextObj' ? dataObj.wordId : dataObj.id;
+    const wordObj =
+      dataType === 'wordObj'
+        ? dataObj
+        : wordList?.find((wordObj) => wordObj.id === dataObj.wordId);
+
     const wordClickData = {
-      wordId: dataWordId,
+      wordId: wordObj.id,
       contextId: dataType === 'contextObj' ? dataObj.id : null,
     };
-
-    let stars = 0;
-    if (dataType === 'contextObj') {
-      const wordObj = wordList?.find((wordObj) => wordObj.id === dataWordId);
-      if (wordObj?.stars) {
-        stars = wordObj.stars;
-      }
-    } else {
-      stars = dataObj.stars;
-    }
 
     return (
       <React.Fragment key={dataObj.id}>
         <SmallWord
           id={dataObj.id}
           sx={{
-            color: wordInfoTarget?.wordId === dataWordId ? 'primary.dark' : '',
+            color: wordInfoTarget?.wordId === wordObj.id ? 'primary.dark' : '',
           }}
           onClick={() => handleWordClick(wordClickData)}
         >
@@ -125,11 +119,11 @@ export const WordListInWordCollection = ({
             <HighlightedContext contextObj={dataObj} />
           )}
           {displayMode === 'phrase'
-            ? dataObj.phrase || dataObj.word
-            : dataObj.word}
-          {stars ? (
+            ? dataObj.phrase || wordObj.word
+            : wordObj.word}
+          {wordObj.stars ? (
             <>
-              {Array(stars)
+              {Array(wordObj.stars)
                 .fill(0)
                 .map((d, i) => (
                   <Star fontSize="13px" key={i} />

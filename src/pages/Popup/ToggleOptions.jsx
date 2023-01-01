@@ -56,7 +56,7 @@ export const CurrentSiteToggleOptions = ({
   domainDataAndMethods,
   localStorageDataAndMethods,
 }) => {
-  const { domainData, toggleOneDomainData, setAll } = domainDataAndMethods;
+  const { domainData, toggleOneDomainData } = domainDataAndMethods;
   const { globalPreference } = localStorageDataAndMethods;
 
   const SecondaryOption = ({ name }) => {

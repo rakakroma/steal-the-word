@@ -1,17 +1,11 @@
-import { Edit } from '@mui/icons-material';
-import { Box, Chip, Typography, useTheme } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import React, { memo, useContext, useMemo, useRef } from 'react';
 import { GroupedVirtuoso } from 'react-virtuoso';
 import { TagListContext } from '../../Options';
-import { cutUrl, domainPageWords } from '../../utils/transformData';
 import { EditableTagChip, TagLabelChip } from '../TagChip';
 import { IndexQuickRefBox } from './IndexQuickRefBox';
 import { ListSubTitle } from './ListSubTitle';
-import { SiteIconAvatar } from './SiteIconButton';
-import {
-  WordCollectionPageBox,
-  WordListInWordCollection,
-} from './WordCollectionPageBox';
+import { WordListInWordCollection } from './WordCollectionPageBox';
 
 export const TagsContainer = memo(
   ({

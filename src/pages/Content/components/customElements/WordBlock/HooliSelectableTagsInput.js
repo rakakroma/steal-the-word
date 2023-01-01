@@ -5,7 +5,8 @@ import {
 } from '@spectrum-web-components/icons-workflow';
 import { LitElement, html, css } from 'lit';
 import { iconButtonStyle } from './wordInfoBlockStyles';
-import { rgbFromString } from '../../../../utilsForAll/rgbFromString';
+import { rgbFromString } from '../../../../../utilsForAll/rgbFromString';
+import { classMap } from 'lit/directives/class-map.js';
 
 const isElementInViewport = (element, container) => {
   var containerRect = container.getBoundingClientRect();
@@ -24,7 +25,9 @@ class HooliSelectableTagsInput extends LitElement {
   static get properties() {
     return {
       options: { type: Array },
+
       selectedoptions: { type: Array },
+      _newAddedOptions: { type: Array },
       _inputValue: { state: true },
       _selectingOptionIndex: { state: true },
       _showSuggestions: { state: true },
@@ -35,8 +38,9 @@ class HooliSelectableTagsInput extends LitElement {
     super();
     this.options = [];
     this.selectedoptions = [];
+    this._newAddedOptions = [];
     this._selectingOptionIndex = 0;
-    this._showSuggestions = false;
+    this._showSuggestions = true;
   }
 
   static styles = [
@@ -44,9 +48,6 @@ class HooliSelectableTagsInput extends LitElement {
       .text-input-with-options {
         align-items: center;
         position: relative;
-        box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em,
-          rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em,
-          rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
       }
       .options {
         padding-top: 4px;
@@ -60,8 +61,10 @@ class HooliSelectableTagsInput extends LitElement {
 
       #text-input {
         border: none;
-        outline: none;
+        outline: grey solid 1px;
         display: inline-block;
+        background-color: white;
+        color: black;
       }
       #text-input:focus {
         background-color: white;
@@ -78,17 +81,21 @@ class HooliSelectableTagsInput extends LitElement {
   ];
 
   render() {
-    const optionsListClassName = this._showSuggestions
-      ? 'options'
-      : 'options hide';
+    const optionsListClassName = {
+      options: true,
+      hide: !this._showSuggestions,
+    };
+    const addNewOptionClassName = {
+      hide: !this._showNewOption(),
+    };
     return html`
-      <div class="text-input-with-options" @focusin=${this._handleFocusIn}>
+      <div class="text-input-with-options">
         ${this.selectedoptions.map((option, index) => {
           return html`<hooli-tag
-            taglabel=${option}
-            selectable="true"
+            .taglabel=${option}
+            ?selectable=${true}
             @click="${() => this._handleClickDelete(index)}"
-            deletable="true"
+            ?deletable=${true}
           ></hooli-tag>`;
         })}
         <input
@@ -98,43 +105,40 @@ class HooliSelectableTagsInput extends LitElement {
           placeholder="search/create new tag"
           value=${this._inputValue}
           @input=${this._handleInput}
-          @keyup=${this._handleKeyUp}
           @keydown=${this._handleKeySelectOption}
+          @focus=${(e) => {
+            this._showOptionsList(true);
+          }}
         />
         <div class="submit-section">
-          <button class="icon-button">
+          <button class="icon-button" @click=${this._submitCancel}>
             ${CancelIcon({ width: 15, height: 15 })}
           </button>
-          <button class="icon-button" @click=${() => this._submitResult()}>
+          <button class="icon-button" @click=${this._submitResult}>
             ${CheckmarkIcon({ width: 15, height: 15 })}
           </button>
         </div>
-        <div class=${optionsListClassName} id="options-list">
+        <div class=${classMap(optionsListClassName)} id="options-list">
           ${this._filteredOptions().map((option, index) => {
             const isSelectedOption = this._selectingOptionIndex === index;
             return html`<hooli-tag
-              taglabel=${option}
-              selectable="true"
+              .taglabel=${option}
+              ?selectable=${true}
               .selecting=${isSelectedOption}
               @click=${() => this._handleAddSelectedOption(option)}
             ></hooli-tag>`;
           })}
           <hooli-tag
-            class=${!this._showNewOption() && 'hide'}
-            selectable="true"
+            class=${classMap(addNewOptionClassName)}
+            ?selectable=${true}
             .selecting=${this._selectingOptionIndex ===
             this._filteredOptions().length}
-            taglabel=${'create "' + this._inputValue + '"'}
+            .taglabel=${'create "' + this._inputValue + '"'}
           ></hooli-tag>
         </div>
       </div>
     `;
   }
-
-  _handleFocusIn = (e) => {
-    console.log('in');
-    this._showOptionsList(true);
-  };
 
   _filteredOptions() {
     if (!this._inputValue && this.selectedoptions.length === 0)
@@ -174,30 +178,30 @@ class HooliSelectableTagsInput extends LitElement {
     }
   };
 
-  _handleKeyUp(e) {
-    if (e.key === 'Escape') {
-      this._inputValue = '';
-      this.shadowRoot.querySelector('#text-input').value = '';
-      this._showOptionsList(false);
-    }
-    if (e.key !== 'Enter') return;
-    let newSelectedOption = this._filteredOptions()[this._selectingOptionIndex];
-    if (
-      !newSelectedOption &&
-      this._selectingOptionIndex === this._filteredOptions().length &&
-      this._showNewOption()
-    ) {
-      newSelectedOption = e.target.value.trim();
-    }
-    if (!newSelectedOption) {
-      this._submitResult();
-      return;
-    }
-    this._handleAddSelectedOption(newSelectedOption);
-    this._selectingOptionIndex = 0;
-    this.shadowRoot.querySelector('#text-input').value = '';
-    this._inputValue = '';
-  }
+  // _handleKeyUp(e) {
+  //   if (e.key === 'Escape') {
+  //     this._inputValue = '';
+  //     this.shadowRoot.querySelector('#text-input').value = '';
+  //     this._showOptionsList(false);
+  //   }
+  //   if (e.key !== 'Enter') return;
+  // let newSelectedOption = this._filteredOptions()[this._selectingOptionIndex];
+  // if (
+  //   !newSelectedOption &&
+  //   this._selectingOptionIndex === this._filteredOptions().length &&
+  //   this._showNewOption()
+  // ) {
+  //   newSelectedOption = e.target.value.trim();
+  // }
+  // if (!newSelectedOption) {
+  //   this._submitResult();
+  //   return;
+  // }
+  // this._handleAddSelectedOption(newSelectedOption);
+  // this._selectingOptionIndex = 0;
+  // this.shadowRoot.querySelector('#text-input').value = '';
+  // this._inputValue = '';
+  // }
 
   _handleInput(event) {
     this._inputValue = event.target.value;
@@ -211,6 +215,37 @@ class HooliSelectableTagsInput extends LitElement {
   }
 
   _handleKeySelectOption(e) {
+    if (e.isComposing) {
+      // console.log('isComposing');
+      return;
+    }
+    if (e.key === 'Escape') {
+      this._inputValue = '';
+      this.shadowRoot.querySelector('#text-input').value = '';
+      this._showOptionsList(false);
+      return;
+    }
+
+    if (e.key === 'Enter') {
+      let newSelectedOption =
+        this._filteredOptions()[this._selectingOptionIndex];
+      if (
+        !newSelectedOption &&
+        this._selectingOptionIndex === this._filteredOptions().length &&
+        this._showNewOption()
+      ) {
+        newSelectedOption = e.target.value.trim();
+      }
+      if (!newSelectedOption) {
+        this._submitResult();
+        return;
+      }
+      this._handleAddSelectedOption(newSelectedOption);
+      this._selectingOptionIndex = 0;
+      this.shadowRoot.querySelector('#text-input').value = '';
+      this._inputValue = '';
+      return;
+    }
     if (e.key === 'Backspace') {
       if (this._inputValue || this.selectedoptions.length === 0) return;
       this.selectedoptions = this.selectedoptions.slice(
@@ -257,20 +292,27 @@ class HooliSelectableTagsInput extends LitElement {
     this._showOptionsList(false);
   }
 
-  _submitResult() {
+  _submitCancel() {
     const eventOptions = {
-      detail: { selectedoptions: this.selectedoptions },
       bubbles: true,
       composed: true,
     };
-    this.dispatchEvent(new CustomEvent('submittags', eventOptions));
+    this.dispatchEvent(new CustomEvent('cancel-input', eventOptions));
+  }
+  _submitResult() {
+    const eventOptions = {
+      detail: { selectedOptions: this.selectedoptions },
+      bubbles: true,
+      composed: true,
+    };
+    this.dispatchEvent(new CustomEvent('submit-tags', eventOptions));
   }
 
   firstUpdated() {
     const handleClickOutside = (e) => {
       const showIt = e.composedPath().some((node) => node === this);
       if (showIt === false) {
-        this._showOptionsList(showIt);
+        this._showOptionsList(false);
       }
     };
 
@@ -293,25 +335,11 @@ class HooliTags extends LitElement {
     super();
     this.tags = [];
   }
-  // static styles = [
-  //   css`
-  //     .tag {
-  //       border-radius: 4px;
-  //       margin-left: 4px;
-  //       margin-right: 4px;
-  //     }
-  //   `,
-  // ];
 
   render() {
     return html`<div class="tags-container">
       ${this.tags.map((tag) => {
-        // const stringColor = rgbFromString(tag, 0.1);
-
         return html`<hooli-tag taglabel=${tag}></hooli-tag>`;
-        // return html`<span style="background-color:${stringColor}" class="tag"
-        //   >${tag}</span
-        // >`;
       })}
     </div>`;
   }

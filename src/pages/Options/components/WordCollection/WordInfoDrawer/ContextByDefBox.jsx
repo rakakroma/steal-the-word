@@ -5,7 +5,7 @@ import { SiteIconButton } from '../SiteIconButton';
 import { Button, Tooltip, Typography, useMediaQuery } from '@mui/material';
 import { TypographyOrInput } from './inputs/TypographyOrInput';
 import { useIsOverflow } from '../../../utils/customHook';
-import { getName } from './CurrentWordInfo';
+import { getName } from './getDataFromName';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { db } from '../../../../Background/database';

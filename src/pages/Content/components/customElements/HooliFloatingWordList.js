@@ -10,12 +10,15 @@ import {
 } from '@spectrum-web-components/icons-workflow';
 import interact from 'interactjs';
 import {
-  wordInPageList,
-  clearNoLongerExistWordInWordInPageList,
+  // wordInPageList,
+  // clearNoLongerExistWordInWordInPageList,
   transformElementId,
 } from '../../utils/renderRuby';
+import { store } from '../../redux/store';
+import { connect } from 'pwa-helpers';
+import { clearNoLongerExistWordInWordInPageList } from '../../redux/displayingWordListSlice';
 
-class HooliFloatingWordList extends LitElement {
+class HooliFloatingWordList extends connect(store)(LitElement) {
   get properties() {
     return {
       lookingWord: { state: true },
@@ -131,6 +134,10 @@ class HooliFloatingWordList extends LitElement {
     `,
   ];
 
+  stateChanged(state) {
+    this.wordInPageList = state.displayingWordList;
+  }
+
   _titleBar() {
     return html`<div id="title-bar">
       <button class="title-action" @click="${this._handleRefresh}">
@@ -147,7 +154,7 @@ class HooliFloatingWordList extends LitElement {
 
   _wordList() {
     return html`<ul>
-      ${wordInPageList.map((wordObj) => {
+      ${this.wordInPageList.map((wordObj) => {
         return html`<li>
             <h3
               class="word-h3"
@@ -202,12 +209,6 @@ class HooliFloatingWordList extends LitElement {
     }
   }
 
-  // _overflowReminder(){
-  //     if(this._checkOverflow()) return html`
-  //     <div id='overflow-reminder-container'>
-  //     scroll to see more
-  //     </div>`
-  // }
   render() {
     return html`<div id="word-list-container">
       ${this._titleBar()}
@@ -216,14 +217,14 @@ class HooliFloatingWordList extends LitElement {
   }
   gotLookingWord(wordId, currentFocusCount) {
     this.lookingWord = {
-      ...wordInPageList.find((wordObj) => wordObj.id === wordId),
+      ...this.wordInPageList.find((wordObj) => wordObj.id === wordId),
       currentFocusCount,
     };
     this.requestUpdate();
   }
   _handleRefresh() {
     clearNoLongerExistWordInWordInPageList();
-    if (wordInPageList.length === 0) {
+    if (this.wordInPageList.length === 0) {
       this._handleMinimize('autoOpen');
       return;
     }

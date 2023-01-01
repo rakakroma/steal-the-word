@@ -16,7 +16,7 @@ import {
 import { KeyboardArrowDown } from '@mui/icons-material';
 import { useMediaQuery } from '@mui/material';
 import { useRegisterActions } from 'kbar';
-import '../../../../Content/components/customElements/HooliHighlighter';
+import '../../../../Content/components/customElements/WordBlock/HooliHighlighter';
 import { wordListInAlphabeticalOrder } from '../../../utils/transformData';
 import { AppBar } from '../../AppBar/AppBar';
 import { CurrentWordInfo } from './CurrentWordInfo';
