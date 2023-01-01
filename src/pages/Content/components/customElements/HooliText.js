@@ -32,8 +32,13 @@ export const openAddNewWord = () => {
 };
 
 class HooliText extends connect(store)(LitElement) {
+  static get properties() {
+    return {
+      wordObj: { type: Object },
+    };
+  }
   stateChanged(state) {
-    this.wordObj = getWordById(store.getState(), this.className.slice(2));
+    this.wordObj = getWordById(state, this.className.slice(2));
   }
   static styles = [
     css`
@@ -85,6 +90,9 @@ class HooliText extends connect(store)(LitElement) {
   ];
 
   renderElement() {
+    if (!this.wordObj) {
+      return html`<slot></slot>`;
+    }
     const definitionLength = this.wordObj.definitions.length;
     return html`<slot></slot>
       <div id="annotation-tip">

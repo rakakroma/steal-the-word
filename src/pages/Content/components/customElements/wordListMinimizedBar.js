@@ -9,6 +9,7 @@ import { store } from '../../redux/store';
 class HooliWordListMinimizedBar extends connect(store)(LitElement) {
   get properties() {
     return {
+      listLength: { type: Number },
       mode: { type: String },
     };
   }
@@ -18,6 +19,9 @@ class HooliWordListMinimizedBar extends connect(store)(LitElement) {
     this.mode = '';
   }
 
+  stateChanged(state) {
+    this.listLength = state.displayingWordList.length;
+  }
   static styles = [
     css`
       :host {
@@ -55,9 +59,6 @@ class HooliWordListMinimizedBar extends connect(store)(LitElement) {
     `,
   ];
 
-  stateChanged(state) {
-    this.listLength = state.displayingWordList.length;
-  }
   render() {
     return html`<div @click="${this._handleOpenWordList}">
       Word List <span id="count-word">${this.listLength}</span>

@@ -7,12 +7,10 @@ import { openTagsInputButton } from './contextForLookUp';
 export const definitionTags = (wordBlock, tags, definitionId) => {
   const tagList = getTagList(store.getState());
 
-  // const handleExitInputMode = (e) => {
-  //   // wordBlock._handleUpdateFormStatus('editingTagDefId', null);
-  //   wordBlock._toLookUpMode();
-  // };
   const handleSubmitTags = (e) => {
     console.log(e.detail);
+    const { selectedOptions, newAddedOptions } = e.detail;
+
     wordBlock._toLookUpMode();
   };
   const allTagLabels = tagList.map((tagObj) => tagObj.tag);

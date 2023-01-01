@@ -2,6 +2,7 @@ import { updateBadgeHandlers } from './updateBadge';
 import { updateHandlers } from './updateData';
 import { getHandlers } from './getData';
 import { deleteHandlers } from './deleteData';
+import './databaseSubscription';
 
 chrome.action.setBadgeBackgroundColor({ color: '#4f4f4f' });
 

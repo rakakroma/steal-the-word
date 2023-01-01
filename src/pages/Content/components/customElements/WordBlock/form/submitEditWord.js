@@ -42,9 +42,9 @@ export const submitEditWord = (wordBlock, word, stem, variants, matchRule) => {
         // matchRule,
       },
       () => {
-        store.dispatch(
-          updateOneWord({ ...wordBlock.wordObj, ...wordObjToUpdate })
-        );
+        // store.dispatch(
+        //   updateOneWord({ ...wordBlock.wordObj, ...wordObjToUpdate })
+        // );
         wordBlock._toLookUpMode();
       }
     );

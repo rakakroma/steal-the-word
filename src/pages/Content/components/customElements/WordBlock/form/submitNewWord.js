@@ -27,7 +27,6 @@ export const submitNewWord = (
   const theNewWord = {
     id: nanoid(),
     word,
-    associationWOrdIds: [],
     definitionCount: 1,
     definitions: [
       {
@@ -63,8 +62,8 @@ export const submitNewWord = (
       newContext: theNewContext,
     },
     () => {
-      store.dispatch(addOneWord(theNewWord));
-      renderRuby(document.body, true);
+      // store.dispatch(addOneWord(theNewWord));
+      // renderRuby(document.body, true);
       wordBlock.remove();
     },
     (response) => {

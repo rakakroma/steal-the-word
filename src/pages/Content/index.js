@@ -6,7 +6,6 @@ import './components/customElements/WordBlock/HooliHighlighter';
 import { openAddNewWord } from './components/customElements/HooliText';
 
 import './content.styles.css';
-import { currentURL } from './utils/currentURL';
 import { observer } from './utils/observer';
 import { setMouseUpToolTip } from './utils/setMouseUpToolTip';
 import { store } from './redux/store';
@@ -16,8 +15,13 @@ import {
 } from './redux/messageWithBackground';
 import { getDisplayingWordList } from './redux/displayingWordListSlice';
 import { updateBadgeToNoWork } from '../Background/updateBadge';
-import { getStart } from '../Background/getData';
 import { getCertainSetting } from './redux/workingPreferenceSlice';
+import {
+  checkAndUpdateNewTagList,
+  checkAndUpdateNewWordListAndReRender,
+  checkNewWordListAndReRender,
+  replaceWholeList,
+} from './redux/wordDataSlice';
 
 export const body = document.body;
 
@@ -38,14 +42,6 @@ const appendSideListWindow = (foundMatchWord) => {
   const wordListElement = document.createElement('hooli-floating-word-list');
   body.appendChild(wordListElement);
 };
-
-// const checkOptionIsOn = (optionName, globalSetting, customSetting) => {
-//   //if global turn off, all turn off;
-//   if (!globalSetting[optionName]) return false;
-//   if (!customSetting || !customSetting.customRule) return true;
-//   if (!customSetting[optionName]) return false;
-//   return true;
-// };
 
 const init = async () => {
   await store.dispatch(getGlobalPreferencesFromLocalStorage());
@@ -87,14 +83,19 @@ const init = async () => {
 init();
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log(message);
-  console.log(sender);
-  let thisDomain;
+  // console.log(message);
+  if (!getCertainSetting(store.getState(), 'activate')) {
+    return;
+  }
   if (message.action === 'save word') {
     openAddNewWord();
   }
-  if (message.tabInfo) {
-    thisDomain = message.tabInfo.url.split('//')[1].split('/')[0];
+
+  if (message.tagList) {
+    checkAndUpdateNewTagList(store.getState(), message.tagList);
+  }
+  if (message.wordList) {
+    checkAndUpdateNewWordListAndReRender(store.getState(), message.wordList);
   }
   // if (message.action === 'deleteWord') {
   // }

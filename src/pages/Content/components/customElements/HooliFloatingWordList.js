@@ -16,11 +16,16 @@ import {
 } from '../../utils/renderRuby';
 import { store } from '../../redux/store';
 import { connect } from 'pwa-helpers';
-import { clearNoLongerExistWordInWordInPageList } from '../../redux/displayingWordListSlice';
+import {
+  clearNoLongerExistWordInWordInPageList,
+  getDisplayingWordList,
+  getWordObjsOfDisplayingWordList,
+} from '../../redux/displayingWordListSlice';
 
 class HooliFloatingWordList extends connect(store)(LitElement) {
-  get properties() {
+  static get properties() {
     return {
+      wordInPageList: { type: Array },
       lookingWord: { state: true },
       _openWordBlockWhenMatching: { state: true },
     };
@@ -30,6 +35,10 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
     super();
     this.lookingWord = null;
     this._openWordBlockWhenMatching = true;
+  }
+
+  stateChanged(state) {
+    this.wordInPageList = getWordObjsOfDisplayingWordList(state);
   }
 
   static styles = [
@@ -134,10 +143,6 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
     `,
   ];
 
-  stateChanged(state) {
-    this.wordInPageList = state.displayingWordList;
-  }
-
   _titleBar() {
     return html`<div id="title-bar">
       <button class="title-action" @click="${this._handleRefresh}">
@@ -220,7 +225,7 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
       ...this.wordInPageList.find((wordObj) => wordObj.id === wordId),
       currentFocusCount,
     };
-    this.requestUpdate();
+    // this.requestUpdate();
   }
   _handleRefresh() {
     clearNoLongerExistWordInWordInPageList();
@@ -228,7 +233,7 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
       this._handleMinimize('autoOpen');
       return;
     }
-    this.requestUpdate();
+    // this.requestUpdate();
   }
   _handleClose() {
     this.remove();
@@ -308,10 +313,6 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
     this.remove();
   }
 
-  // _checkOverflow(){
-  //     const contentContainer = document.querySelector('hooli-floating-word-list')?.shadowRoot?.querySelector('#content-container')
-  //     if(contentContainer)  return contentContainer.scrollHeight > contentContainer.clientHeight
-  // }
   connectedCallback() {
     super.connectedCallback();
 
@@ -329,7 +330,6 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
         //     console.log(event.type, event.target)
         //   },
         move(event) {
-          // console.log(event)
           position.x += event.dx;
           position.y += event.dy;
           document.querySelector(

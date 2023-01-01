@@ -10,7 +10,7 @@ import './WordBlock/HooliMenu';
 import './WordBlock/HooliSelectableTagsInput';
 import './WordBlock/HooliTextarea';
 import './WordBlock/HooliVariantsInput';
-
+import './WordBlock/HooliTag';
 import { submitDelete } from './WordBlock/form/submitDelete';
 import { submitEditContext } from './WordBlock/form/submitEditContext';
 import { submitEditWord } from './WordBlock/form/submitEditWord';

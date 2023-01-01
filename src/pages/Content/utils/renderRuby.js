@@ -54,17 +54,16 @@ const putHooliTextOnNode = (targetNode) => {
     const countMatchedTime = sentenceWithoutWord.length - 1;
 
     const currentCount = addOrUpdatePageWordAndGetCount({
-      ...wordObj,
+      // ...wordObj,
+      id: wordObj.id,
       countInCurrentPage: countMatchedTime,
     });
 
     const createTheWordNode = (wordObj, count) => {
       const word = matchText;
       const renderNode = document.createElement('hooli-text');
-      // renderNode.wordObj = wordObj;
       renderNode.textContent = word;
       renderNode.id = `h-${wordObj.id}-${
-        // updatedWordInTheList.countInCurrentPage - countMatchedTime + count + 1
         currentCount - countMatchedTime + count + 1
       }`;
       renderNode.className = `h-${wordObj.id}`;

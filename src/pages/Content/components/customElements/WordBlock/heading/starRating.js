@@ -28,9 +28,9 @@ export const starRating = (wordBlock) => {
         wordId: wordBlock.wordObj.id,
       };
       submitAndExecute(request, (res) => {
-        store.dispatch(
-          updateOneWord({ ...wordBlock.wordObj, stars: updateValue })
-        );
+        // store.dispatch(
+        //   updateOneWord({ ...wordBlock.wordObj, stars: updateValue })
+        // );
       });
     };
     return html`<button

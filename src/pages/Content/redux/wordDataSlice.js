@@ -1,10 +1,19 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { getMatchList } from '../../../utilsForAll/getMatchTextWithIdRef';
+import { renderRuby } from '../utils/renderRuby';
+import { restoreAndDeleteHooliText } from '../utils/restoreHolliText';
+import {
+  clearNoLongerExistWordInWordInPageList,
+  deleteOneDisplayingWordById,
+  deletePageWordsByIds,
+  getDisplayingWordList,
+} from './displayingWordListSlice';
 import {
   getInitialDataFromDb,
   updateOneWordInDb,
   updateWordPartInDb,
 } from './messageWithBackground';
+import { store } from './store';
 
 export const wordDataSlice = createSlice({
   name: 'wordData',
@@ -31,6 +40,12 @@ export const wordDataSlice = createSlice({
       );
       state.wordList[wordToUpgradeIndex] = { ...newWordObj };
     },
+    replaceWholeList: (state, action) => {
+      const { wordList, tagList } = action.payload;
+      const newWordList = wordList || [...state.wordList];
+      const newTagList = tagList || [...state.tagList];
+      return { wordList: newWordList, tagList: newTagList };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getInitialDataFromDb.fulfilled, (state, action) => {
@@ -40,7 +55,7 @@ export const wordDataSlice = createSlice({
   },
 });
 
-export const { addOneWord, deleteOneWord, updateOneWord } =
+export const { addOneWord, deleteOneWord, updateOneWord, replaceWholeList } =
   wordDataSlice.actions;
 
 const getWordData = (state) => state.wordData;
@@ -59,3 +74,37 @@ export const findDuplicateWord = (string, storeState) => {
 
 export const getWordById = (state, wordId) =>
   getWordList(state).find((wordObj) => wordObj.id === wordId);
+
+export const checkAndUpdateNewTagList = (state, newTagList) => {
+  const tagList = getTagList(state);
+  if (tagList.length === newTagList) {
+    return;
+  }
+  store.dispatch(replaceWholeList({ tagList: newTagList }));
+};
+
+export const checkAndUpdateNewWordListAndReRender = (state, newWordList) => {
+  //for performance concern, it is not updating data if the length did not change (add or delete),
+  //because background would send the non-update data sometimes.
+
+  const wordList = getWordList(state);
+  if (wordList.length < newWordList.length) {
+    store.dispatch(replaceWholeList({ wordList: newWordList }));
+    renderRuby(document.body, true);
+  }
+  if (wordList.length > newWordList.length) {
+    store.dispatch(replaceWholeList({ wordList: newWordList }));
+    const currentDisplayingList = getDisplayingWordList(state);
+    //only one word change when listening to new list
+    const deletedDisplayingWordId = currentDisplayingList.find((wordInfo) => {
+      return (
+        newWordList.findIndex((wordObj) => wordObj.id === wordInfo.id) === -1
+      );
+    })?.id;
+
+    if (deletedDisplayingWordId) {
+      restoreAndDeleteHooliText(deletedDisplayingWordId);
+      store.dispatch(deleteOneDisplayingWordById(deletedDisplayingWordId));
+    }
+  }
+};

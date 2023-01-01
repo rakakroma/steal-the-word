@@ -1,11 +1,9 @@
 import {
   CancelIcon,
   CheckmarkIcon,
-  CloseIcon,
 } from '@spectrum-web-components/icons-workflow';
 import { LitElement, html, css } from 'lit';
 import { iconButtonStyle } from './wordInfoBlockStyles';
-import { rgbFromString } from '../../../../../utilsForAll/rgbFromString';
 import { classMap } from 'lit/directives/class-map.js';
 
 const isElementInViewport = (element, container) => {
@@ -25,9 +23,7 @@ class HooliSelectableTagsInput extends LitElement {
   static get properties() {
     return {
       options: { type: Array },
-
       selectedoptions: { type: Array },
-      _newAddedOptions: { type: Array },
       _inputValue: { state: true },
       _selectingOptionIndex: { state: true },
       _showSuggestions: { state: true },
@@ -38,7 +34,6 @@ class HooliSelectableTagsInput extends LitElement {
     super();
     this.options = [];
     this.selectedoptions = [];
-    this._newAddedOptions = [];
     this._selectingOptionIndex = 0;
     this._showSuggestions = true;
   }
@@ -216,7 +211,6 @@ class HooliSelectableTagsInput extends LitElement {
 
   _handleKeySelectOption(e) {
     if (e.isComposing) {
-      // console.log('isComposing');
       return;
     }
     if (e.key === 'Escape') {
@@ -300,8 +294,11 @@ class HooliSelectableTagsInput extends LitElement {
     this.dispatchEvent(new CustomEvent('cancel-input', eventOptions));
   }
   _submitResult() {
+    const newAddedOptions = this.selectedoptions.filter((option) => {
+      return this.options.findIndex((tagName) => tagName === option) === -1;
+    });
     const eventOptions = {
-      detail: { selectedOptions: this.selectedoptions },
+      detail: { selectedOptions: this.selectedoptions, newAddedOptions },
       bubbles: true,
       composed: true,
     };
@@ -323,99 +320,3 @@ class HooliSelectableTagsInput extends LitElement {
   }
 }
 customElements.define('hooli-selectable-tags-input', HooliSelectableTagsInput);
-
-class HooliTags extends LitElement {
-  static get properties() {
-    return {
-      tags: { type: Array },
-    };
-  }
-
-  constructor() {
-    super();
-    this.tags = [];
-  }
-
-  render() {
-    return html`<div class="tags-container">
-      ${this.tags.map((tag) => {
-        return html`<hooli-tag taglabel=${tag}></hooli-tag>`;
-      })}
-    </div>`;
-  }
-}
-
-customElements.define('hooli-tags', HooliTags);
-
-class HooliTag extends LitElement {
-  static get properties() {
-    return {
-      taglabel: { type: String },
-      selectable: { type: Boolean },
-      selecting: { type: Boolean },
-      deletable: { type: Boolean },
-    };
-  }
-
-  constructor() {
-    super();
-    this.taglabel = '';
-    this.selectable = false;
-    this.selecting = false;
-    this.deletable = false;
-  }
-  static styles = [
-    css`
-      .tag {
-        user-select: none;
-        border-radius: 4px;
-        margin-left: 4px;
-        margin-right: 4px;
-        padding-left: 4px;
-        padding-right: 4px;
-        transition: all 0.15s ease-in-out 0s;
-      }
-      .selectable {
-        cursor: pointer;
-      }
-      .selectable:hover {
-        filter: contrast(0.5);
-        border: 1px solid black;
-      }
-      .selecting {
-        box-shadow: 3px 3px 4px;
-        border: 1px solid black;
-      }
-      .hide-icon {
-        vertical-align: middle;
-        display: none;
-      }
-      .tag:hover .hide-icon {
-        display: inline-block;
-      }
-    `,
-  ];
-
-  render() {
-    const stringColor = rgbFromString(this.taglabel, 0.2);
-    const eleClassName = () => {
-      const initialClassName = ['tag'];
-      if (this.selectable) initialClassName.push('selectable');
-      if (this.selecting) initialClassName.push('selecting');
-      // if (this.deletable) initialClassName.push('deletable');
-      return initialClassName.join(' ');
-    };
-    return html`<span
-      class=${eleClassName()}
-      style="background-color:${stringColor}"
-      >${this.taglabel}
-      ${this.deletable
-        ? html`<span class="hide-icon">
-            ${CloseIcon({ width: 12, height: 12 })}</span
-          >`
-        : ''}
-    </span>`;
-  }
-}
-
-customElements.define('hooli-tag', HooliTag);

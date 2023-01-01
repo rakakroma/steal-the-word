@@ -19,7 +19,7 @@ export const submitDelete = (wordBlock, formObj) => {
       },
       () => {
         wordBlock.remove();
-        restoreAndDeleteHooliText(wordId);
+        // restoreAndDeleteHooliText(wordId);
       }
     );
     return;
@@ -55,12 +55,12 @@ export const submitDelete = (wordBlock, formObj) => {
       request.action = 'deleteContexts';
     }
     submitAndExecute(request, () => {
-      store.dispatch(
-        updateOneWord({
-          ...wordBlock.wordObj,
-          definitions: request.newDefinitions,
-        })
-      );
+      // store.dispatch(
+      //   updateOneWord({
+      //     ...wordBlock.wordObj,
+      //     definitions: request.newDefinitions,
+      //   })
+      // );
       store.dispatch(
         getContextsDataFromDB({ wordId: wordBlock.wordObj.id, force: true })
       );
