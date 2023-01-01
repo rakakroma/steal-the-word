@@ -101,6 +101,11 @@ export const WordListInWordCollection = ({
         ? dataObj
         : wordList?.find((wordObj) => wordObj.id === dataObj.wordId);
 
+    if (!wordObj) {
+      console.error(dataObj.wordId);
+      //FIXME: maybe i should just delete that data?
+      return null;
+    }
     const wordClickData = {
       wordId: wordObj.id,
       contextId: dataType === 'contextObj' ? dataObj.id : null,

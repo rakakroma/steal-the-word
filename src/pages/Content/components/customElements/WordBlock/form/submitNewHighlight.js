@@ -6,6 +6,7 @@ export const submitNewHighlight = (wordBlock) => {
   const { phraseSelection, workingContext } = wordBlock._formInputStatus;
 
   submitAndExecute(
+    wordBlock,
     {
       action: 'changePhraseToContext',
       phrase: phraseSelection,

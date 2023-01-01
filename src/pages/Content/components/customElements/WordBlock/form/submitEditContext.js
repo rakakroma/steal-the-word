@@ -12,6 +12,7 @@ export const submitEditContext = (wordBlock, context, selectedDefinitionId) => {
     return;
   const contextId = wordBlock._formInputStatus.workingContext;
   submitAndExecute(
+    wordBlock,
     {
       action: 'editContext',
       context,

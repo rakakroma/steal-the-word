@@ -27,7 +27,7 @@ export const starRating = (wordBlock) => {
         rating: updateValue,
         wordId: wordBlock.wordObj.id,
       };
-      submitAndExecute(request, (res) => {
+      submitAndExecute(wordBlock, request, (res) => {
         // store.dispatch(
         //   updateOneWord({ ...wordBlock.wordObj, stars: updateValue })
         // );

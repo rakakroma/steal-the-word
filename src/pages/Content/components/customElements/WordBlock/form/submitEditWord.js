@@ -23,23 +23,17 @@ export const submitEditWord = (wordBlock, word, stem, variants, matchRule) => {
       });
     });
 
-    // console.log(definitions, stem, variants, matchRule);
-
     const wordObjToUpdate = { word, definitions };
     if (stem) wordObjToUpdate.stem = stem;
     if (variants) wordObjToUpdate.variants = variants;
     if (matchRule) wordObjToUpdate.matchRule = matchRule;
 
     submitAndExecute(
+      wordBlock,
       {
         action: 'editWord',
         wordId: wordBlock.wordObj.id,
         wordObjToUpdate,
-        // word,
-        // definitions,
-        // stem,
-        // variants,
-        // matchRule,
       },
       () => {
         // store.dispatch(

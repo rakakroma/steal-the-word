@@ -2,14 +2,14 @@ import { addNewContextAndDefinitionForSavedWord } from '../../../../../Backgroun
 import { getContextsDataFromDB } from '../../../../redux/messageWithBackground';
 import { store } from '../../../../redux/store';
 import { currentURL } from '../../../../utils/currentURL';
+import { submitAndExecute } from './submitAndExecute';
 
 export const submitNewContext = (
   wordBlock,
   context,
   selectedDefinitionId,
   annotation,
-  wordNote,
-  submitAndExecute
+  wordNote
 ) => {
   if (
     !wordBlock._formValidation(
@@ -49,7 +49,7 @@ export const submitNewContext = (
       definitionCount: +newDefinitionId + 1,
       newContext,
     };
-    submitAndExecute(request, (response) => {
+    submitAndExecute(wordBlock, request, (response) => {
       wordBlock._toLookUpMode();
     });
   } else {
@@ -58,7 +58,7 @@ export const submitNewContext = (
       action: 'addNewContextForSavedWord',
       newContext,
     };
-    submitAndExecute(request, (response) => {
+    submitAndExecute(wordBlock, request, (response) => {
       store.dispatch(
         getContextsDataFromDB({ wordId: wordBlock.wordObj.id, force: true })
       );

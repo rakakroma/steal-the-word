@@ -1,8 +1,14 @@
 import { store } from '../../../../redux/store';
 import { updateOneWord } from '../../../../redux/wordDataSlice';
 
-export const submitAndExecute = (request, successFunc, backupFunc) => {
+export const submitAndExecute = (
+  wordBlock,
+  request,
+  successFunc,
+  backupFunc
+) => {
   console.log(request);
+  wordBlock._handleUpdateFormStatus('submitting', true);
   chrome.runtime.sendMessage(request, (response) => {
     console.log(response);
     if (!successFunc && !backupFunc) return;
@@ -12,10 +18,3 @@ export const submitAndExecute = (request, successFunc, backupFunc) => {
     if (typeof backupFunc === 'function') backupFunc(response);
   });
 };
-
-// export const updateWordObjToElementsAndWordList = (updatedWordObj) => {
-//   store.dispatch(updateOneWord(updatedWordObj));
-//   document.querySelectorAll(`h-${updatedWordObj.id}`).forEach((ele) => {
-//     ele.wordObj = { ...updatedWordObj };
-//   });
-// };

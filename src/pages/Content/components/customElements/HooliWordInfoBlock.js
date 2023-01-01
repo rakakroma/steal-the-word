@@ -24,7 +24,6 @@ import {
   iconButtonStyle,
   wordInfoBlockStyles,
 } from './WordBlock/wordInfoBlockStyles';
-import { submitAndExecute } from './WordBlock/form/submitAndExecute';
 import { getWordById } from '../../redux/wordDataSlice';
 import { store } from '../../redux/store';
 import { connect } from 'pwa-helpers';
@@ -45,6 +44,7 @@ export const initialFormInputStatus = {
   openMatchRule: false,
   newDefinitionWhenDefinitionSelecting: false,
   helperText: '',
+  submitting: false,
 };
 
 class HooliWordInfoBlock extends connect(store)(LitElement) {
@@ -254,8 +254,7 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
         context,
         selectedDefinitionId,
         annotation,
-        wordNote,
-        submitAndExecute
+        wordNote
       );
     }
     if (this.mode === 'editWord') {

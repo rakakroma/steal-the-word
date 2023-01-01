@@ -56,6 +56,7 @@ export const submitNewWord = (
   };
 
   submitAndExecute(
+    wordBlock,
     {
       action: 'saveWordAndContext',
       newWord: theNewWord,

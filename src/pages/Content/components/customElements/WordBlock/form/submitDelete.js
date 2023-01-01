@@ -54,7 +54,7 @@ export const submitDelete = (wordBlock, formObj) => {
     } else {
       request.action = 'deleteContexts';
     }
-    submitAndExecute(request, () => {
+    submitAndExecute(wordBlock, request, () => {
       // store.dispatch(
       //   updateOneWord({
       //     ...wordBlock.wordObj,
