@@ -1,22 +1,27 @@
-import { LabelsIcon } from '@spectrum-web-components/icons-workflow';
 import { html } from 'lit';
-import { store } from '../../../../redux/store';
-import { getTagList } from '../../../../redux/wordDataSlice';
+import { submitTags } from '../form/submitTags';
 import { openTagsInputButton } from './contextForLookUp';
 
 export const definitionTags = (wordBlock, tags, definitionId) => {
-  const tagList = getTagList(store.getState());
+  const { tagList } = wordBlock;
+  const allTagLabels = tagList.map((tagObj) => tagObj.tag);
+  const tagObjs = tags.map(
+    (tagId) =>
+      tagList.find((tagObj) => tagObj.id === tagId) || { id: tagId, tag: tagId }
+  );
+  const selectedTagLabels = tagObjs.map((tagObj) => tagObj.tag);
 
   const handleSubmitTags = (e) => {
-    console.log(e.detail);
     const { selectedOptions, newAddedOptions } = e.detail;
-
-    wordBlock._toLookUpMode();
+    submitTags(
+      wordBlock,
+      tagList,
+      tagObjs,
+      selectedOptions,
+      newAddedOptions,
+      definitionId
+    );
   };
-  const allTagLabels = tagList.map((tagObj) => tagObj.tag);
-  const selectedTagLabels = tags.map(
-    (tagId) => tagList.find((tagObj) => tagObj.id === tagId).tag
-  );
 
   const tagsBox = () => {
     return html` <div class="tags-button-container">
@@ -34,7 +39,6 @@ export const definitionTags = (wordBlock, tags, definitionId) => {
       .selectedoptions=${selectedTagLabels}
       @cancel-input=${wordBlock._toLookUpMode}
       @submit-tags=${handleSubmitTags}
-      @cancelediting=${(e) => console.log(e)}
       id="tags-input-${definitionId}"
     >
     </hooli-selectable-tags-input>`;

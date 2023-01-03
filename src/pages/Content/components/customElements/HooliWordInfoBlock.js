@@ -24,7 +24,7 @@ import {
   iconButtonStyle,
   wordInfoBlockStyles,
 } from './WordBlock/wordInfoBlockStyles';
-import { getWordById } from '../../redux/wordDataSlice';
+import { getTagList, getWordById } from '../../redux/wordDataSlice';
 import { store } from '../../redux/store';
 import { connect } from 'pwa-helpers';
 import {
@@ -56,6 +56,7 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
       contextHere: { type: String },
       imgSrcs: { type: Array },
       mode: { type: String },
+      tagList: { type: Array },
       _currentSiteIcoSrc: { state: true },
       _formInputStatus: { state: true },
     };
@@ -77,6 +78,7 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
     this.contexts = getWordContexts(state);
     this.imgSrcs = getWordImgSrcs(state);
     this._currentSiteIcoSrc = getCurrentSiteImgSrc(state);
+    this.tagList = getTagList(state);
   }
 
   static styles = [wordInfoBlockStyles, iconButtonStyle];
@@ -86,6 +88,9 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
   }
 
   render() {
+    if (!this.wordObj && this.mode !== 'newWord') {
+      return html`<div id="container">Loading</div>`;
+    }
     return html`<div id="container">
       <form>
         <div id="heading-container">${headingElement(this)}</div>

@@ -50,6 +50,9 @@ export const submitNewContext = (
       newContext,
     };
     submitAndExecute(wordBlock, request, (response) => {
+      store.dispatch(
+        getContextsDataFromDB({ wordId: wordBlock.wordObj.id, force: true })
+      );
       wordBlock._toLookUpMode();
     });
   } else {

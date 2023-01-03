@@ -84,13 +84,10 @@ export const checkAndUpdateNewTagList = (state, newTagList) => {
 };
 
 export const checkAndUpdateNewWordListAndReRender = (state, newWordList) => {
-  //for performance concern, it is not updating data if the length did not change (add or delete),
-  //because background would send the non-update data sometimes.
-
   const wordList = getWordList(state);
-  if (wordList.length < newWordList.length) {
+  if (wordList.length <= newWordList.length) {
     store.dispatch(replaceWholeList({ wordList: newWordList }));
-    renderRuby(document.body, true);
+    if (wordList.length < newWordList.length) renderRuby(document.body, true);
   }
   if (wordList.length > newWordList.length) {
     store.dispatch(replaceWholeList({ wordList: newWordList }));

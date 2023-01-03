@@ -314,9 +314,9 @@ class HooliSelectableTagsInput extends LitElement {
     };
 
     const wordBlock = document.querySelector('hooli-wordinfo-block');
-    this.requestUpdate().then(() => {
-      wordBlock.addEventListener('click', handleClickOutside);
-    });
+    // this.requestUpdate().then(() => {
+    wordBlock.addEventListener('click', handleClickOutside);
+    // });
   }
 }
 customElements.define('hooli-selectable-tags-input', HooliSelectableTagsInput);

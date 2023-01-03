@@ -21,12 +21,14 @@ import {
   getDisplayingWordList,
   getWordObjsOfDisplayingWordList,
 } from '../../redux/displayingWordListSlice';
+import { getTagList } from '../../redux/wordDataSlice';
 
 class HooliFloatingWordList extends connect(store)(LitElement) {
   static get properties() {
     return {
       wordInPageList: { type: Array },
       lookingWord: { state: true },
+      tagList: { type: Array },
       _openWordBlockWhenMatching: { state: true },
     };
   }
@@ -39,6 +41,7 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
 
   stateChanged(state) {
     this.wordInPageList = getWordObjsOfDisplayingWordList(state);
+    this.tagList = getTagList(state);
   }
 
   static styles = [
@@ -170,13 +173,27 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
                 class="word-span"
                 @click="${() => this._handleStartScrollToWord(wordObj)}"
               >
-                ${wordObj.word}
+                ${wordObj.word}${wordObj.stars || null}
                 <span class="word-count" id="count-${wordObj.id}"
                   >${wordObj.countInCurrentPage}</span
                 >
               </span>
             </h3>
-            <h6>${wordObj.definitions[0].annotation}</h6>
+            ${wordObj.definitions.map((definition) => {
+              const tagLabels = definition.tags.map(
+                (tagId) =>
+                  this.tagList.find((tagObj) => tagObj.id === tagId)?.tag ||
+                  tagId
+              );
+              return html`
+                <h6>
+                  ${definition.annotation}
+                  ${tagLabels.map((tagLabel) => {
+                    return html`<hooli-tag .taglabel=${tagLabel}></hooli-tag>`;
+                  })}
+                </h6>
+              `;
+            })}
           </li>
           ${this._lookingForMatchBar(wordObj.id)} `;
       })}

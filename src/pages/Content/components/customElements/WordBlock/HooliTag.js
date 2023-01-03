@@ -1,5 +1,6 @@
 import { CloseIcon } from '@spectrum-web-components/icons-workflow';
 import { LitElement, html, css } from 'lit';
+import { classMap } from 'lit/directives/class-map.js';
 import { rgbFromString } from '../../../../../utilsForAll/rgbFromString';
 
 class HooliTag extends LitElement {
@@ -28,6 +29,7 @@ class HooliTag extends LitElement {
         margin-right: 4px;
         padding-left: 4px;
         padding-right: 4px;
+        font-size: 12px;
         transition: all 0.15s ease-in-out 0s;
       }
       .selectable {
@@ -53,15 +55,21 @@ class HooliTag extends LitElement {
 
   render() {
     const stringColor = rgbFromString(this.taglabel, 0.2);
-    const eleClassName = () => {
-      const initialClassName = ['tag'];
-      if (this.selectable) initialClassName.push('selectable');
-      if (this.selecting) initialClassName.push('selecting');
-      // if (this.deletable) initialClassName.push('deletable');
-      return initialClassName.join(' ');
+    // const eleClassName = () => {
+
+    //   const initialClassName = ['tag'];
+    //   if (this.selectable) initialClassName.push('selectable');
+    //   if (this.selecting) initialClassName.push('selecting');
+    //   // if (this.deletable) initialClassName.push('deletable');
+    //   return initialClassName.join(' ');
+    // };
+    const eleClassName = {
+      tag: true,
+      selectable: this.selectable,
+      selecting: this.selecting,
     };
     return html`<span
-      class=${eleClassName()}
+      class=${classMap(eleClassName)}
       style="background-color:${stringColor}"
       >${this.taglabel}
       ${this.deletable

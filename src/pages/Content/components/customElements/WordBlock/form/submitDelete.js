@@ -1,3 +1,7 @@
+import {
+  checkSameRef,
+  getShouldUpdateTagsFromDeleteDefs,
+} from '../../../../../../utilsForAll/handleTags';
 import { getContextsDataFromDB } from '../../../../redux/messageWithBackground';
 import { store } from '../../../../redux/store';
 import { updateOneWord } from '../../../../redux/wordDataSlice';
@@ -10,12 +14,22 @@ export const submitDelete = (wordBlock, formObj) => {
   if (!wordBlock._formValidation(null, { allCheckedName }, ['delete'])) return;
 
   if (allCheckedName.includes('delete-all')) {
+    const { tagShouldBeDelete, tagShouldUpdateItsRefs } =
+      getShouldUpdateTagsFromDeleteDefs(
+        wordBlock.wordObj.id,
+        wordBlock.wordObj.definitions,
+        wordBlock.tagList
+      );
+
     const wordId = wordBlock.wordObj.id;
     submitAndExecute(
+      wordBlock,
       {
         action: 'deleteThisWordObjAndAllItsContexts',
         wordId,
         contextIdsToDelete: wordBlock.contexts.map((context) => context.id),
+        tagShouldBeDelete,
+        tagShouldUpdateItsRefs,
       },
       () => {
         wordBlock.remove();
@@ -51,6 +65,17 @@ export const submitDelete = (wordBlock, formObj) => {
       );
       request.action = 'deleteContextsAndDefinitions';
       request.wordId = wordBlock.wordObj.id;
+
+      const { tagShouldBeDelete, tagShouldUpdateItsRefs } =
+        getShouldUpdateTagsFromDeleteDefs(
+          wordBlock.wordObj.id,
+          wordBlock.wordObj.definitions.filter((definition) =>
+            definitionsToDelete.includes(definition.definitionId)
+          ),
+          wordBlock.tagList
+        );
+      request.tagShouldBeDelete = tagShouldBeDelete;
+      request.tagShouldUpdateItsRefs = tagShouldUpdateItsRefs;
     } else {
       request.action = 'deleteContexts';
     }

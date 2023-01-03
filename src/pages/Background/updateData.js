@@ -154,6 +154,35 @@ updateHandlers.set(
   }
 );
 
+const updateTags = 'updateTags';
+updateHandlers.set(
+  updateTags,
+  (
+    {
+      refData,
+      newDefinitions,
+      newTagsToTagList,
+      shouldUpdateTags,
+      shouldDeleteTagIds,
+    },
+    senderId,
+    sendResponse
+  ) => {
+    (async () => {
+      await db.wordList.update(refData.wordId, { definitions: newDefinitions });
+      await db.tagList.bulkAdd(newTagsToTagList);
+      await db.tagList.bulkDelete(shouldDeleteTagIds);
+      await Promise.all(
+        shouldUpdateTags.map(async (tagData) => {
+          const { wordDefRefs } = tagData;
+          await db.tagList.update(tagData.id, { wordDefRefs });
+        })
+      );
+      sendResponse(successMessage());
+    })();
+  }
+);
+
 export {
   updateHandlers,
   saveWordAndContext,
@@ -163,4 +192,5 @@ export {
   editWord,
   editContext,
   updateWordRating,
+  updateTags,
 };

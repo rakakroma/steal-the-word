@@ -13,6 +13,7 @@ export const submitAndExecute = (
     console.log(response);
     if (!successFunc && !backupFunc) return;
     if (response.status === 'success') {
+      console.log(response);
       successFunc(response);
     }
     if (typeof backupFunc === 'function') backupFunc(response);

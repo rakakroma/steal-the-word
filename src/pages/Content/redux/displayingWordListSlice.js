@@ -96,12 +96,12 @@ export const addOrUpdatePageWordAndGetCount = ({ id, countInCurrentPage }) => {
   );
 
   if (indexInCurrentList === -1) {
+    clearListIfUrlChange();
     store.dispatch(addOnePageWord({ id, countInCurrentPage }));
     chrome.runtime.sendMessage({
       action: updateWordCount,
-      count: currentDisplayingList.length,
+      count: currentDisplayingList.length + 1,
     });
-    clearListIfUrlChange();
     handleCountingListUI();
   } else {
     currentCount =

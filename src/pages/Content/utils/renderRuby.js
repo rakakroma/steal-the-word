@@ -140,7 +140,10 @@ export const renderRuby = (target, isStart) => {
       'TH',
       'CITE',
     ];
-    if (good_tags_list.indexOf(node.parentNode.tagName) !== -1) {
+    if (
+      node.parentNode &&
+      good_tags_list.indexOf(node.parentNode.tagName) > -1
+    ) {
       return NodeFilter.FILTER_ACCEPT;
     }
     return NodeFilter.FILTER_SKIP;

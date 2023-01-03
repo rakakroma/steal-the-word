@@ -3,14 +3,7 @@ import { LitElement, html, css } from 'lit';
 import { getSentenceFromSelection } from '../../utils/get-selection-more.ts';
 import './HooliWordInfoBlock.js';
 import { setWordBlockPosition } from '../../utils/setPosition';
-import {
-  computePosition,
-  flip,
-  shift,
-  offset,
-  arrow,
-  inline,
-} from '@floating-ui/dom';
+import { computePosition, shift, offset, inline } from '@floating-ui/dom';
 import { connect } from 'pwa-helpers';
 import { store } from '../../redux/store';
 import { getWordById } from '../../redux/wordDataSlice';
@@ -166,7 +159,6 @@ class HooliText extends connect(store)(LitElement) {
       this.addEventListener(event, listener);
     });
     this.addEventListener('click', this.openWordBlock);
-    update();
   }
 }
 

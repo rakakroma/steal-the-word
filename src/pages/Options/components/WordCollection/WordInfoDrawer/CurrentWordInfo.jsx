@@ -27,6 +27,16 @@ import { VariantsInfo } from './VariantsInfo';
 import { WordRating } from './WordRating';
 import { nanoid } from 'nanoid';
 import { getDataFromName, getDefaultValueFromData } from './getDataFromName';
+import {
+  checkSameRef,
+  getDeletedTagsUpdateInfo,
+  getExistedTagDataUpdateInfo,
+  getRefData,
+  getShouldUpdateTagsFromDeleteDefs,
+  makeTagObj,
+  tagArrayToKeyObjs,
+  updateDefRef,
+} from '../../../../../utilsForAll/handleTags.js';
 
 export const CurrentWordInfo = () => {
   const theme = useTheme();
@@ -78,12 +88,8 @@ export const CurrentWordInfo = () => {
   const onlyOneContext = targetWordContexts?.length === 1;
 
   const deleteWordInDb = (id) => {
-    db.wordList.delete(id);
     changeWordInfoTarget(null);
-  };
-
-  const isNewTagValue = (value) => {
-    return tagList.findIndex((tagObj) => tagObj.tag === value) === -1;
+    db.wordList.delete(id);
   };
 
   const handleFormSubmit = (data) => {
@@ -91,84 +97,75 @@ export const CurrentWordInfo = () => {
     if (controlMode === 'display' && changingTagsWhenDisplay) {
       //handle tag submit
       const tagsData = data[changingTagsWhenDisplay];
-      const checkSameTagData = (firstData, secondData) => {
-        return (
-          firstData.wordId === secondData.wordId &&
-          firstData.defId === secondData.defId
-        );
-      };
-      const refData = {
-        wordId: targetWord.id,
-        defId: getDataFromName(changingTagsWhenDisplay).id,
-      };
-      const tagIdArrayForWord = [];
-
-      tagsData.forEach((tagData) => {
-        const tag = tagData.label;
-
-        if (isNewTagValue(tag)) {
-          const newTagData = {
-            id: nanoid(),
-            tag,
-            wordDefRefs: [refData],
-          };
-          db.tagList.add(newTagData);
-          tagIdArrayForWord.push(newTagData.id);
-        } else {
-          const id = tagData.value;
-          const wordDefRefsBeforeUpdate = tagList.find(
-            (tagObj) => tagObj.id === id
-          ).wordDefRefs;
-
-          const wordRefIsNotInTagData = //the tag is newly added to the word
-            wordDefRefsBeforeUpdate.findIndex((wordDefData) =>
-              checkSameTagData(wordDefData, refData)
-            ) === -1;
-          if (wordRefIsNotInTagData) {
-            db.tagList.update(id, {
-              wordDefRefs: [...wordDefRefsBeforeUpdate, refData],
-            });
-          }
-          tagIdArrayForWord.push(id);
-        }
-      });
-
-      const tagsBeforeUpdate = targetWord.definitions.find(
-        (definition) => definition.definitionId === refData.defId
-      ).tags;
-      const tagsDeletedFromThisDef = tagsBeforeUpdate.filter(
-        (tagId) => !tagIdArrayForWord.includes(tagId)
+      const refData = getRefData(
+        targetWord.id,
+        getDataFromName(changingTagsWhenDisplay).id
       );
 
-      tagsDeletedFromThisDef.forEach((tagId) => {
-        const tagObjInData = tagList.find((tagObj) => tagObj.id === tagId);
-        console.log(tagObjInData.wordDefRefs);
-        // console.log(checkSameTagData(tagObjInData.wordDefRefs[0], refData));
-        console.log();
-        if (
-          tagObjInData.wordDefRefs.length === 1 &&
-          checkSameTagData(tagObjInData.wordDefRefs[0], refData)
-        ) {
-          console.log('delete');
-          db.tagList.delete(tagId);
-        } else {
-          console.log('update');
-          const newDefRefs = tagObjInData.wordDefRefs.filter(
-            (refObj) => !checkSameTagData(refObj, refData)
-          );
-          db.tagList.update(tagId, { wordDefRefs: newDefRefs });
+      const isNewTagValue = (value) => {
+        return tagList.findIndex((tagObj) => tagObj.tag === value) === -1;
+      };
+
+      const divideNewCreatedTagAndExistTag = tagsData.reduce(
+        (accu, curr) => {
+          const tag = curr.label;
+          const tagId = curr.value;
+          if (isNewTagValue(tag)) {
+            const newTagObj = makeTagObj(tag, refData);
+            accu.newTagObjs.push(newTagObj);
+            accu.tagIdArrayForWord.push(newTagObj.id);
+          } else {
+            accu.notNewTagIds.push(tagId);
+            accu.tagIdArrayForWord.push(tagId);
+          }
+          return accu;
+        },
+        {
+          newTagObjs: [],
+          notNewTagIds: [],
+          tagIdArrayForWord: [],
         }
+      );
+
+      const tagUpdateInfo = getExistedTagDataUpdateInfo(
+        tagArrayToKeyObjs(
+          'id',
+          divideNewCreatedTagAndExistTag.notNewTagIds,
+          tagList
+        ),
+        refData
+      );
+
+      const tagIdsBeforeUpdate = targetWord.definitions.find(
+        (definition) => definition.definitionId === refData.defId
+      ).tags;
+      const tagsDeletedFromThisDef = tagIdsBeforeUpdate.filter(
+        (tagId) =>
+          !divideNewCreatedTagAndExistTag.tagIdArrayForWord.includes(tagId)
+      );
+
+      const deletedTagsUpdateInfo = getDeletedTagsUpdateInfo(
+        tagArrayToKeyObjs('id', tagsDeletedFromThisDef, tagList),
+        refData
+      );
+
+      const newDefinitions = updateDefRef(
+        targetWord.definitions,
+        refData.defId,
+        divideNewCreatedTagAndExistTag.tagIdArrayForWord
+      );
+      const shouldUpdateTags = tagUpdateInfo.shouldAddRef.concat(
+        deletedTagsUpdateInfo.shouldDeleteRef
+      );
+
+      db.wordList.update(refData.wordId, { definitions: newDefinitions });
+      db.tagList.bulkAdd(divideNewCreatedTagAndExistTag.newTagObjs);
+      db.tagList.bulkDelete(deletedTagsUpdateInfo.shouldDeleteTagIds);
+      shouldUpdateTags.forEach((tagData) => {
+        const { wordDefRefs } = tagData;
+        db.tagList.update(tagData.id, { wordDefRefs });
       });
 
-      const newDefinitions = targetWord.definitions.map((definition) => {
-        if (definition.definitionId === refData.defId) {
-          definition.tags = tagIdArrayForWord;
-        }
-        return definition;
-      });
-
-      db.wordList.update(targetWord.id, { definitions: newDefinitions });
-      console.log('changing tags');
       setChangingTagsWhenDisplay(null);
 
       return;
@@ -180,13 +177,22 @@ export const CurrentWordInfo = () => {
         );
         db.contextList.bulkDelete(contextIdsToDelete);
         deleteWordInDb(targetWord.id);
+        const { tagShouldBeDelete, tagShouldUpdateItsRefs } =
+          getShouldUpdateTagsFromDeleteDefs(
+            targetWord.id,
+            targetWord.definitions,
+            tagList
+          );
+        db.tagList.bulkDelete(tagShouldBeDelete);
+        tagShouldUpdateItsRefs.forEach((tagData) => {
+          const { wordDefRefs } = tagData;
+          db.tagList.update(tagData.id, { wordDefRefs });
+        });
+
         return;
       }
-      //context data only
       const contextIdsToDelete = Object.keys(data)
-        .filter((name) => {
-          return data[name] === true;
-        })
+        .filter((name) => data[name] === true)
         .map((qualifiedName) => {
           return +getDataFromName(qualifiedName).id;
         });
@@ -199,6 +205,21 @@ export const CurrentWordInfo = () => {
       }, []);
       const defsThatStillExist = targetWord.definitions.filter((definition) => {
         return defRefThatStillExist.indexOf(definition.definitionId) > -1;
+      });
+      const defsThatWouldBeDelete = targetWord.definitions.filter(
+        (definition) => !defRefThatStillExist.includes(definition.definitionId)
+      );
+
+      const { tagShouldBeDelete, tagShouldUpdateItsRefs } =
+        getShouldUpdateTagsFromDeleteDefs(
+          targetWord.id,
+          defsThatWouldBeDelete,
+          tagList
+        );
+      db.tagList.bulkDelete(tagShouldBeDelete);
+      tagShouldUpdateItsRefs.forEach((tagData) => {
+        const { wordDefRefs } = tagData;
+        db.tagList.update(tagData.id, { wordDefRefs });
       });
 
       db.contextList.bulkDelete(contextIdsToDelete);
