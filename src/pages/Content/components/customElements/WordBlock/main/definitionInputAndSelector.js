@@ -11,7 +11,7 @@ const definitionInput = (wordBlock, definitionObj) => {
   }
 
   setTimeout(() => {
-    wordBlock.renderRoot.querySelector('.annotation-input').focus();
+    wordBlock.renderRoot.querySelector('.annotation-input')?.focus();
   });
   // }
   return html`
@@ -22,6 +22,7 @@ const definitionInput = (wordBlock, definitionObj) => {
       autocomplete="off"
       name='annotation'
       class='editable annotation-input' 
+      autofocus
       placeholder='annotation'
       type="text" 
       id=${'annotation-input-' + definitionId}

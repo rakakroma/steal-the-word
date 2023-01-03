@@ -27,7 +27,7 @@ export const definitionTags = (wordBlock, tags, definitionId) => {
     return html` <div class="tags-button-container">
       <div id="tags-${definitionId}">
         ${selectedTagLabels.map((tagLabel) => {
-          return html`<hooli-tag taglabel=${tagLabel}></hooli-tag>`;
+          return html`<hooli-tag .tagLabel=${tagLabel}></hooli-tag>`;
         })}
         ${tags.length > 0 ? openTagsInputButton(wordBlock, definitionId) : null}
       </div>
@@ -36,7 +36,7 @@ export const definitionTags = (wordBlock, tags, definitionId) => {
   const tagsInput = () => {
     return html`<hooli-selectable-tags-input
       .options=${allTagLabels}
-      .selectedoptions=${selectedTagLabels}
+      .selectedOptions=${selectedTagLabels}
       @cancel-input=${wordBlock._toLookUpMode}
       @submit-tags=${handleSubmitTags}
       id="tags-input-${definitionId}"

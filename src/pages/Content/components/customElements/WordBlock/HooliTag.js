@@ -6,7 +6,7 @@ import { rgbFromString } from '../../../../../utilsForAll/rgbFromString';
 class HooliTag extends LitElement {
   static get properties() {
     return {
-      taglabel: { type: String },
+      tagLabel: { type: String },
       selectable: { type: Boolean },
       selecting: { type: Boolean },
       deletable: { type: Boolean },
@@ -15,7 +15,7 @@ class HooliTag extends LitElement {
 
   constructor() {
     super();
-    this.taglabel = '';
+    this.tagLabel = '';
     this.selectable = false;
     this.selecting = false;
     this.deletable = false;
@@ -37,24 +37,24 @@ class HooliTag extends LitElement {
       }
       .selectable:hover {
         filter: contrast(0.5);
-        border: 1px solid black;
+        outline: 1px solid black;
       }
       .selecting {
         box-shadow: 3px 3px 4px;
-        border: 1px solid black;
+        outline: 1px solid black;
       }
       .hide-icon {
         vertical-align: middle;
         display: none;
       }
       .tag:hover .hide-icon {
-        display: inline-block;
+        display: inline;
       }
     `,
   ];
 
   render() {
-    const stringColor = rgbFromString(this.taglabel, 0.2);
+    const stringColor = rgbFromString(this.tagLabel, 0.2);
     // const eleClassName = () => {
 
     //   const initialClassName = ['tag'];
@@ -71,7 +71,7 @@ class HooliTag extends LitElement {
     return html`<span
       class=${classMap(eleClassName)}
       style="background-color:${stringColor}"
-      >${this.taglabel}
+      >${this.tagLabel}
       ${this.deletable
         ? html`<span class="hide-icon">
             ${CloseIcon({ width: 12, height: 12 })}</span

@@ -7,6 +7,7 @@ import {
   ChevronDownIcon,
   VisibilityIcon,
   VisibilityOffIcon,
+  StarIcon,
 } from '@spectrum-web-components/icons-workflow';
 import interact from 'interactjs';
 import {
@@ -160,6 +161,18 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
     </div>`;
   }
 
+  _ratingDisplay(stars) {
+    if (stars > 0) {
+      return html`<span
+        >${Array(stars)
+          .fill(0)
+          .map((zero) => {
+            return StarIcon({ width: 11, height: 11 });
+          })}</span
+      >`;
+    }
+    return null;
+  }
   _wordList() {
     return html`<ul>
       ${this.wordInPageList.map((wordObj) => {
@@ -173,7 +186,7 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
                 class="word-span"
                 @click="${() => this._handleStartScrollToWord(wordObj)}"
               >
-                ${wordObj.word}${wordObj.stars || null}
+                ${wordObj.word}${this._ratingDisplay(wordObj.stars)}
                 <span class="word-count" id="count-${wordObj.id}"
                   >${wordObj.countInCurrentPage}</span
                 >
@@ -189,7 +202,7 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
                 <h6>
                   ${definition.annotation}
                   ${tagLabels.map((tagLabel) => {
-                    return html`<hooli-tag .taglabel=${tagLabel}></hooli-tag>`;
+                    return html`<hooli-tag .tagLabel=${tagLabel}></hooli-tag>`;
                   })}
                 </h6>
               `;

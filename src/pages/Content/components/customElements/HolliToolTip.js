@@ -45,6 +45,7 @@ class HooliToolTip extends LitElement {
         visibility: hidden;
         transition: 0.1s ease-in; 
         z-index:999999999;
+        line-height:1.3;
       }
       #tooltip.show-tooltip{
         opacity:0.9;

@@ -1,3 +1,4 @@
+import { isCJKRegex } from '../../../utilsForAll/regexCheckLang';
 import '../components/customElements/HooliText';
 import '../components/customElements/HooliWordInfoBlock';
 import { addOrUpdatePageWordAndGetCount } from '../redux/displayingWordListSlice';
@@ -20,21 +21,13 @@ const putHooliTextOnNode = (targetNode) => {
   //todo: support variants match, i think extend the list directly instead of check every 'variants' property might get better performance
   //todo: deal with first character capital word
   for (let textPair of newList) {
-    const { matchText } = textPair;
+    const { matchText, wordMatchRule } = textPair;
     if (targetNode.textContent.indexOf(matchText) === -1) continue;
-    const wordObj = myList.find((wordObj) => wordObj.id === textPair.wordIdRef);
-    if (!wordObj) continue;
 
-    const langRegex = new RegExp(
-      /\p{sc=Hani}|\p{sc=Hira}|\p{sc=Kana}|\p{sc=Hang}/,
-      'um'
-    ); //chinese(han), japanese(hiragana, katakana), korean(hangul)
     const boundaryRegex = new RegExp(
-      getRegexByMatchRule(matchText, wordObj.matchRule || 'start'),
+      getRegexByMatchRule(matchText, wordMatchRule),
       'im'
     );
-
-    // const boundaryRegex = new RegExp(`\\b${matchText}`, 'im')
 
     //languages do not  have word separator (which means can't use /b as word boundary):
     //Thai, Lao, Khmer, Chinese, Japanese, Korean
@@ -45,10 +38,12 @@ const putHooliTextOnNode = (targetNode) => {
     //unicode script: Latn, Grek, Cyrl,Geor
 
     if (
-      !langRegex.test(matchText) &&
+      !isCJKRegex.test(matchText) &&
       !boundaryRegex.test(targetNode.textContent)
     )
-      return;
+      continue;
+    const wordObj = myList.find((wordObj) => wordObj.id === textPair.wordIdRef);
+    if (!wordObj) continue;
 
     const sentenceWithoutWord = targetNode.textContent.split(matchText);
     const countMatchedTime = sentenceWithoutWord.length - 1;
@@ -84,7 +79,7 @@ const putHooliTextOnNode = (targetNode) => {
     const span = document.createElement('span');
     targetNode.replaceWith(span);
     span.replaceWith(fragment);
-    console.log(`create! ${matchText}`);
+    // console.log(`create! ${matchText}`);
   }
 };
 

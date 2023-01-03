@@ -23,7 +23,7 @@ class HooliSelectableTagsInput extends LitElement {
   static get properties() {
     return {
       options: { type: Array },
-      selectedoptions: { type: Array },
+      selectedOptions: { type: Array },
       _inputValue: { state: true },
       _selectingOptionIndex: { state: true },
       _showSuggestions: { state: true },
@@ -33,7 +33,7 @@ class HooliSelectableTagsInput extends LitElement {
   constructor() {
     super();
     this.options = [];
-    this.selectedoptions = [];
+    this.selectedOptions = [];
     this._selectingOptionIndex = 0;
     this._showSuggestions = true;
   }
@@ -85,9 +85,9 @@ class HooliSelectableTagsInput extends LitElement {
     };
     return html`
       <div class="text-input-with-options">
-        ${this.selectedoptions.map((option, index) => {
+        ${this.selectedOptions.map((option, index) => {
           return html`<hooli-tag
-            .taglabel=${option}
+            .tagLabel=${option}
             ?selectable=${true}
             @click="${() => this._handleClickDelete(index)}"
             ?deletable=${true}
@@ -117,7 +117,7 @@ class HooliSelectableTagsInput extends LitElement {
           ${this._filteredOptions().map((option, index) => {
             const isSelectedOption = this._selectingOptionIndex === index;
             return html`<hooli-tag
-              .taglabel=${option}
+              .tagLabel=${option}
               ?selectable=${true}
               .selecting=${isSelectedOption}
               @click=${() => this._handleAddSelectedOption(option)}
@@ -128,7 +128,7 @@ class HooliSelectableTagsInput extends LitElement {
             ?selectable=${true}
             .selecting=${this._selectingOptionIndex ===
             this._filteredOptions().length}
-            .taglabel=${'create "' + this._inputValue + '"'}
+            .tagLabel=${'create "' + this._inputValue + '"'}
           ></hooli-tag>
         </div>
       </div>
@@ -136,17 +136,17 @@ class HooliSelectableTagsInput extends LitElement {
   }
 
   _filteredOptions() {
-    if (!this._inputValue && this.selectedoptions.length === 0)
+    if (!this._inputValue && this.selectedOptions.length === 0)
       return this.options;
 
     const getIncludesInputStringOption = (option) =>
       option.toLowerCase().includes(this._inputValue.toLowerCase());
-    const noSelectedOption = (option) => !this.selectedoptions.includes(option);
+    const noSelectedOption = (option) => !this.selectedOptions.includes(option);
 
     if (!this._inputValue)
       return this.options.filter((option) => noSelectedOption(option));
 
-    if (this.selectedoptions.length === 0)
+    if (this.selectedOptions.length === 0)
       return this.options.filter((option) =>
         getIncludesInputStringOption(option)
       );
@@ -161,7 +161,7 @@ class HooliSelectableTagsInput extends LitElement {
     return (
       trimmedValue &&
       !this.options.includes(trimmedValue) &&
-      !this.selectedoptions.includes(trimmedValue)
+      !this.selectedOptions.includes(trimmedValue)
     );
   }
 
@@ -173,31 +173,6 @@ class HooliSelectableTagsInput extends LitElement {
     }
   };
 
-  // _handleKeyUp(e) {
-  //   if (e.key === 'Escape') {
-  //     this._inputValue = '';
-  //     this.shadowRoot.querySelector('#text-input').value = '';
-  //     this._showOptionsList(false);
-  //   }
-  //   if (e.key !== 'Enter') return;
-  // let newSelectedOption = this._filteredOptions()[this._selectingOptionIndex];
-  // if (
-  //   !newSelectedOption &&
-  //   this._selectingOptionIndex === this._filteredOptions().length &&
-  //   this._showNewOption()
-  // ) {
-  //   newSelectedOption = e.target.value.trim();
-  // }
-  // if (!newSelectedOption) {
-  //   this._submitResult();
-  //   return;
-  // }
-  // this._handleAddSelectedOption(newSelectedOption);
-  // this._selectingOptionIndex = 0;
-  // this.shadowRoot.querySelector('#text-input').value = '';
-  // this._inputValue = '';
-  // }
-
   _handleInput(event) {
     this._inputValue = event.target.value;
     this._showOptionsList(true);
@@ -206,7 +181,7 @@ class HooliSelectableTagsInput extends LitElement {
 
   _handleAddSelectedOption(option) {
     console.log(`select ${option}`);
-    this.selectedoptions = this.selectedoptions.concat(option);
+    this.selectedOptions = this.selectedOptions.concat(option);
   }
 
   _handleKeySelectOption(e) {
@@ -238,13 +213,15 @@ class HooliSelectableTagsInput extends LitElement {
       this._selectingOptionIndex = 0;
       this.shadowRoot.querySelector('#text-input').value = '';
       this._inputValue = '';
+      this._showOptionsList(false);
+
       return;
     }
     if (e.key === 'Backspace') {
-      if (this._inputValue || this.selectedoptions.length === 0) return;
-      this.selectedoptions = this.selectedoptions.slice(
+      if (this._inputValue || this.selectedOptions.length === 0) return;
+      this.selectedOptions = this.selectedOptions.slice(
         0,
-        this.selectedoptions.length - 1
+        this.selectedOptions.length - 1
       );
       this._showOptionsList(false);
     }
@@ -280,9 +257,9 @@ class HooliSelectableTagsInput extends LitElement {
   }
 
   _handleClickDelete(index) {
-    const newSelected = [...this.selectedoptions];
+    const newSelected = [...this.selectedOptions];
     newSelected.splice(index, 1);
-    this.selectedoptions = newSelected;
+    this.selectedOptions = newSelected;
     this._showOptionsList(false);
   }
 
@@ -294,11 +271,11 @@ class HooliSelectableTagsInput extends LitElement {
     this.dispatchEvent(new CustomEvent('cancel-input', eventOptions));
   }
   _submitResult() {
-    const newAddedOptions = this.selectedoptions.filter((option) => {
+    const newAddedOptions = this.selectedOptions.filter((option) => {
       return this.options.findIndex((tagName) => tagName === option) === -1;
     });
     const eventOptions = {
-      detail: { selectedOptions: this.selectedoptions, newAddedOptions },
+      detail: { selectedOptions: this.selectedOptions, newAddedOptions },
       bubbles: true,
       composed: true,
     };

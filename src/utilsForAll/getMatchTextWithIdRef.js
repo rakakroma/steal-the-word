@@ -9,7 +9,12 @@ export const getMatchTextWithIdRef = (wordObj) => {
   const allVariants = getMatchTextsFromWordObj(wordObj);
   const wordIdRef = wordObj.id;
   const matchTextWithIdRef = allVariants.map((matchText) => {
-    return { matchText, wordIdRef };
+    return {
+      matchText,
+      wordIdRef,
+      wordMatchRule:
+        matchText === wordObj.stem ? 'start' : wordObj.matchRule || 'start',
+    };
   });
 
   return matchTextWithIdRef;

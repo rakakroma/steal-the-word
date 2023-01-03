@@ -15,6 +15,7 @@ export const contextSection = (wordBlock) => {
     return html`
       ${wordBlock._formInputStatus.openMatchRule
         ? matchRuleSelection(
+            wordBlock.wordObj?.word,
             wordBlock.wordObj?.stem,
             wordBlock.wordObj?.variants,
             wordBlock.wordObj?.matchRule
@@ -41,9 +42,18 @@ export const contextSection = (wordBlock) => {
     )} `;
   }
   if (wordBlock.mode === 'editWord') {
+    if (
+      wordBlock.wordObj.stem ||
+      wordBlock.wordObj.variants?.length > 0 ||
+      wordBlock.wordObj.matchRule
+    ) {
+      wordBlock._handleUpdateFormStatus('openMatchRule', true);
+    }
+
     return html`
       ${wordBlock._formInputStatus.openMatchRule
         ? matchRuleSelection(
+            wordBlock.wordObj?.word,
             wordBlock.wordObj?.stem,
             wordBlock.wordObj?.variants,
             wordBlock.wordObj?.matchRule
