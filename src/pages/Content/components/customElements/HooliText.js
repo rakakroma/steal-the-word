@@ -3,7 +3,14 @@ import { LitElement, html, css } from 'lit';
 import { getSentenceFromSelection } from '../../utils/get-selection-more.ts';
 import './HooliWordInfoBlock.js';
 import { setWordBlockPosition } from '../../utils/setPosition';
-import { computePosition, shift, offset, inline } from '@floating-ui/dom';
+import {
+  computePosition,
+  shift,
+  offset,
+  inline,
+  flip,
+  autoPlacement,
+} from '@floating-ui/dom';
 import { connect } from 'pwa-helpers';
 import { store } from '../../redux/store';
 import { getWordById } from '../../redux/wordDataSlice';
@@ -51,7 +58,7 @@ class HooliText extends connect(store)(LitElement) {
         top: 0;
         position: absolute;
         display: inline-block;
-        z-index: 9999999;
+        z-index: 2147483647;
         padding: 3px; /* 余白 */
         white-space: nowrap; /* テキストを折り返さない */
         font-size: 12px; /* フォントサイズ */
@@ -135,7 +142,12 @@ class HooliText extends connect(store)(LitElement) {
     const update = () => {
       computePosition(this, tooltip, {
         placement: 'top',
-        middleware: [offset(3), inline(), shift({ padding: 5 })],
+        middleware: [
+          flip({ fallbackPlacements: ['bottom', 'right'] }),
+          offset(3),
+          inline(),
+          shift({ padding: 5 }),
+        ],
       }).then(({ x, y }) => {
         Object.assign(tooltip.style, {
           left: `${x}px`,
