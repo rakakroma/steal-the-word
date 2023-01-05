@@ -1,14 +1,13 @@
 import { ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { ResponsiveLine } from '@nivo/line';
-import dayjs from 'dayjs';
 import React from 'react';
 import { InfoBlock } from '../DatabaseInfo';
 import { DirectionButton } from '../WordCollection/CollectionControlPanel/DateArrangementPicker';
-import { useControlChart } from './useControlChart';
+import { useControlLineChart } from './useControlLineChart';
 
-export const ChartContainer = () => {
-  const chartControl = useControlChart();
+export const LineChartContainer = () => {
+  const chartControl = useControlLineChart();
   const {
     noContextData,
     dateOption,
@@ -90,7 +89,6 @@ const LineChart = ({ chartControl }) => {
       setCertainMonth(dateTarget);
     }
   };
-  console.log(chartData);
 
   return (
     <ResponsiveLine

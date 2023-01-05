@@ -1,29 +1,12 @@
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useContext,
-} from 'react';
+import React from 'react';
 
-import {
-  Box,
-  createTheme,
-  CssBaseline,
-  Divider,
-  Switch,
-  TextField,
-  ThemeProvider,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Box } from '@mui/material';
 
-import { WordCollection } from '../WordCollection/WordCollection';
+import { Outlet } from 'react-router-dom';
 import { DatabaseInfo } from '../DatabaseInfo.js';
-import { WordInfoDrawerContext } from '../../Options';
-import { Link as RouterLink, Outlet } from 'react-router-dom';
-import { Virtuoso } from 'react-virtuoso';
-import { ChartContainer, LineChart, MyResponsiveStream } from './Chart';
+import { LineChartContainer } from './LineChart';
+import { PieChartContainer } from './PieChart.jsx';
+import Grid2 from '@mui/material/Unstable_Grid2/Grid2.js';
 
 export const MainPage = () => {
   // const { wordInfoTarget, setWordInfoTarget } = useContext(
@@ -34,11 +17,16 @@ export const MainPage = () => {
 
 export const DefaultMainPage = () => {
   return (
-    <Box>
-      <DatabaseInfo />
-      <Box>
-        <ChartContainer />
-      </Box>
-    </Box>
+    <Grid2 container spacing={1}>
+      <Grid2 md={6}>
+        <DatabaseInfo />
+      </Grid2>
+      <Grid2 md={6}>
+        <LineChartContainer />
+      </Grid2>
+      <Grid2 md={4}>
+        <PieChartContainer />
+      </Grid2>
+    </Grid2>
   );
 };

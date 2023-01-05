@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { ContextListContext } from '../../Options';
 import dayjs from 'dayjs';
 
-export const useControlChart = () => {
+export const useControlLineChart = () => {
   const defaultDateOption = {
     month: {
       datePrecision: 'month',
@@ -104,6 +104,10 @@ export const useControlChart = () => {
       } else {
         accu.contextData.data[contextCountIndexOfThisDate].y += 1;
       }
+
+      //NOTE: This word count can work but the labels would overlap,
+      //choose to disable the point label or to disable word count line
+
       // const wordCountIndexOfThisDate = accu.wordData.data.findIndex(
       //   (dateObj) => dateObj.x === dateData
       // );

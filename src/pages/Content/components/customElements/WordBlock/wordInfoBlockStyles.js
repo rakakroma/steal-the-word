@@ -28,6 +28,7 @@ export const wordInfoBlockStyles = css`
   #container {
     --block-background-color: white;
     --block-text-color: black;
+    --secondary-text-color: #777777;
     background-color: var(--block-background-color);
     color: var(--block-text-color);
     text-align: initial;
@@ -226,6 +227,9 @@ export const wordInfoBlockStyles = css`
 
   #context-textarea {
     outline: 1px solid grey;
+  }
+  .definition-note {
+    color: var(--secondary-text-color);
   }
   .definition-and-contexts-container {
     margin-left: 8px;

@@ -1,5 +1,11 @@
 import { Box, Fade, FormControlLabel, Switch, useTheme } from '@mui/material';
-import React, { forwardRef, useContext, useMemo, useState } from 'react';
+import React, {
+  forwardRef,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 // import relativeTime from 'dayjs/plugin/relativeTime'
 
 import { useContainerQuery } from 'react-container-query';
@@ -153,14 +159,44 @@ export const WordCollection = ({
   );
 };
 
-export const SinglePageWordCollection = ({ defaultOrderMode }) => {
-  const [orderMode, setOrderMode] = useState(defaultOrderMode || 'time');
+export const SinglePageWordCollection = () => {
+  const [orderMode, setOrderMode] = useState('time');
   const [dateArrangement, setDateArrangement] = useState('date');
   const [displayMode, setDisplayMode] = useState('word');
-
   const [filterKanji, setFilterKanji] = useState(false);
   const [filterStars, setFilterStars] = useState(0);
 
+  useEffect(() => {
+    const cookies = document.cookie
+      ?.split(';')
+      .map((cookieString) => cookieString.trim());
+    const displayModeCookie = cookies
+      .find((cookie) => cookie.startsWith('displayMode='))
+      ?.split('=')[1];
+    const orderModeCookie = cookies
+      .find((cookie) => cookie.startsWith('orderMode='))
+      ?.split('=')[1];
+
+    if (
+      displayModeCookie &&
+      ['word', 'phrase', 'context'].includes(displayModeCookie)
+    ) {
+      setDisplayMode(displayModeCookie);
+    }
+    if (
+      orderModeCookie &&
+      ['tags', 'time', 'timeSite', 'alphabeticalOrder'].includes(
+        orderModeCookie
+      )
+    ) {
+      setOrderMode(orderModeCookie);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.cookie = `displayMode=${displayMode}`;
+    document.cookie = `orderMode=${orderMode}`;
+  }, [displayMode, orderMode]);
   return (
     <Box>
       <Box

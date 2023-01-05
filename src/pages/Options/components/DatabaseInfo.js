@@ -52,7 +52,7 @@ export const InfoBlock = styled(Box)(({ theme }) =>
     borderRadius: 2,
     p: 2,
     minWidth: '200px',
-    m: 1,
+    // m: 1,
   })
 );
 

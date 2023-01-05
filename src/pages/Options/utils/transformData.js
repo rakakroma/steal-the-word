@@ -15,37 +15,9 @@ export const pagesWords = (contexts) => {
     return page;
   });
 };
-//not sure if its necessary
-// export const newPageWords = pagesWords.sort((a, b) => getLatestDateInContextInfos(b.words[0], b.url) - getLatestDateInContextInfos(a.words[0], a.url))
-
-// console.log(newPageWords)
-
-// const customMatchUrls = ['developer.mozilla.org/ja'];
-
-// const allDomains = [...new Set(pagesWords.map(page => getDomain(page.url)))]
 
 export const domainPageWords = (words) =>
   pagesWords(words).reduce((acc, curr) => {
-    // const matchedCustomUrl = customMatchUrls.find((matchPart) =>
-    //   curr.url.includes(matchPart)
-    // );
-    // if (matchedCustomUrl) {
-    //   if (
-    //     acc.find(
-    //       (pagesAndMatchRule) => pagesAndMatchRule[0] === matchedCustomUrl
-    //     )
-    //   ) {
-    //     return acc.map((pagesAndMatchRule) => {
-    //       if (pagesAndMatchRule[0] === matchedCustomUrl)
-    //         pagesAndMatchRule[1].push(curr);
-    //       return pagesAndMatchRule;
-    //     });
-    //   } else {
-    //     acc.push([matchedCustomUrl, [curr]]);
-    //     return acc;
-    //   }
-    // } else {
-
     const hostName = new URL(curr.url).hostname || curr.url;
     if (acc.find((pagesAndMatchRule) => pagesAndMatchRule[0] === hostName)) {
       return acc.map((pagesAndMatchRule) => {
