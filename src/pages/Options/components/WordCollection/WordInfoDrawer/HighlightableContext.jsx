@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { db } from '../../../../Background/database';
 import { BorderColor } from '@mui/icons-material';
 import { ContextDate } from './ContextByDefBox';
+import { DateOfContext } from './dateDisplay';
 
 export const HighlightableContext = ({
   contextObj,
@@ -67,7 +68,7 @@ export const HighlightableContext = ({
           text={contextObj.context}
           matchword={selectedPhrase || matchTexts[0]}
         ></hooli-highlighter>
-        {ContextDate(contextObj.date)}
+        <DateOfContext date={contextObj.date} />
         <Typography
           variant="subtitle2"
           sx={{

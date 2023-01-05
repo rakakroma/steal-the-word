@@ -1,3 +1,5 @@
+import { styled } from '@mui/system';
+
 import { Box, Typography } from '@mui/material';
 import React, { useContext } from 'react';
 import {
@@ -43,41 +45,20 @@ export const DatabaseInfo = () => {
   );
 };
 
-// const SimpleInfoBox = ({ title, content, handleClick }) => {
-//   return (
-//     <Box
-//       sx={{
-//         border: '1px solid black',
-//         borderRadius: '7px',
-//         padding: '8px',
-//         minWidth: '120px',
-//         maxWidth: '230px',
-//         margin: '10px',
-//       }}
-//     >
-//       <Typography variant="subtitle1">{title}</Typography>
-//       <Typography
-//         variant="h5"
-//         sx={{ textAlign: 'center' }}
-//         onClick={handleClick}
-//       >
-//         {content}
-//       </Typography>
-//     </Box>
-//   );
-// };
+export const InfoBlock = styled(Box)(({ theme }) =>
+  theme.unstable_sx({
+    backgroundColor: 'background.paper',
+    boxShadow: 1,
+    borderRadius: 2,
+    p: 2,
+    minWidth: '200px',
+    m: 1,
+  })
+);
 
 const CoolInfoBox = ({ title, content, additionalNumber, additionalInfo }) => {
   return (
-    <Box
-      sx={{
-        bgcolor: 'background.paper',
-        boxShadow: 1,
-        borderRadius: 2,
-        p: 2,
-        minWidth: 300,
-      }}
-    >
+    <InfoBlock>
       <Box sx={{ color: 'text.secondary' }}>{title}</Box>
       <Box sx={{ color: 'text.primary', fontSize: 34, fontWeight: 'medium' }}>
         {content}
@@ -96,6 +77,6 @@ const CoolInfoBox = ({ title, content, additionalNumber, additionalInfo }) => {
       <Box sx={{ color: 'text.secondary', display: 'inline', fontSize: 14 }}>
         {additionalInfo}
       </Box>
-    </Box>
+    </InfoBlock>
   );
 };

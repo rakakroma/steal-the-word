@@ -44,7 +44,7 @@ const definitionInput = (wordBlock, definitionObj) => {
       `;
 };
 
-const definitionSelectable = (definitionObj) => {
+const definitionSelectable = (definitionObj, isChecked) => {
   const { definitionId } = definitionObj;
   const annotation = definitionObj.annotation;
 
@@ -58,6 +58,7 @@ const definitionSelectable = (definitionObj) => {
           <input type='radio'  class='definition-selectable-radio'
           id=${'definition-selectable-' + definitionId}
           value=${definitionId}
+          ?checked=${isChecked}
           name='definition-select'>
           </input>
           <label for=${
@@ -149,16 +150,24 @@ export const definitionInputAndSelector = (wordBlock) => {
     </div>`;
   }
   if (wordBlock.mode === 'editContext') {
-    setTimeout(
-      () =>
-        (wordBlock.renderRoot.querySelector(
-          '.definition-selectable-radio'
-        ).checked = true)
-    );
+    // setTimeout(
+    //   () =>
+    //     (wordBlock.renderRoot.querySelector(
+    //       '.definition-selectable-radio'
+    //     ).checked = true)
+    // );
+
+    const selectedDefRef = wordBlock.contexts.find(
+      (contextObj) =>
+        contextObj.id === wordBlock._formInputStatus.workingContext
+    ).definitionRef;
     return html`<div id="definition-selector">
       <div id="selection-or-add">
         ${wordBlock.wordObj.definitions.map((definitionObj) => {
-          return html`${definitionSelectable(definitionObj)}`;
+          return html`${definitionSelectable(
+            definitionObj,
+            selectedDefRef === definitionObj.definitionId
+          )}`;
         })}
       </div>
     </div>`;

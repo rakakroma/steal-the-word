@@ -2,14 +2,13 @@ import React, { useRef } from 'react';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { SiteIconButton } from '../SiteIconButton';
-import { Tooltip, Typography, useMediaQuery } from '@mui/material';
+import { Tooltip, useMediaQuery } from '@mui/material';
 import { TypographyOrInput } from './inputs/TypographyOrInput';
 import { useIsOverflow } from '../../../utils/customHook';
 import { getName } from './getDataFromName';
 import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
 import { pink, red } from '@mui/material/colors';
-import dayjs from 'dayjs';
 import { HighlightableContext } from './HighlightableContext';
 
 const PageTitleAndLink = styled(Box)(({ theme }) => ({
@@ -20,20 +19,6 @@ const PageTitleAndLink = styled(Box)(({ theme }) => ({
   lineHeight: '1rem',
   textOverflow: 'ellipsis',
 }));
-
-export const ContextDate = ({ date }) => {
-  const content = dayjs(date).isSame(dayjs(), 'year')
-    ? dayjs(date).format('MMM D')
-    : dayjs(date).format('MMM D,YY');
-  return (
-    <Typography
-      component="span"
-      sx={{ color: 'text.secondary', fontSize: '12px' }}
-    >
-      {content}
-    </Typography>
-  );
-};
 
 export const ContextByDefBox = ({ contextObj, allMatchText, controlMode }) => {
   const theme = useTheme();

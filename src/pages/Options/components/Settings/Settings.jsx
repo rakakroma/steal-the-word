@@ -15,10 +15,9 @@ import React, { useState } from 'react';
 import { blue } from '@mui/material/colors';
 import { Container } from '@mui/system';
 import { CloudUpload } from '@mui/icons-material';
-import { ImportAndExportBox } from './ImportAndExportBox';
-// import '../Content/components/customElements/HooliText';
 import { useRef } from 'react';
 import { useEffect } from 'react';
+import { ImportAndExportBox } from './backupRestore/ImportAndExportBox';
 
 const StylePanel = ({ selectedStyle, setSelectedStyle }) => {
   const handleChange = (e) => setSelectedStyle(e.target.value);

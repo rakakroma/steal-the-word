@@ -23,6 +23,7 @@ import { DatabaseInfo } from '../DatabaseInfo.js';
 import { WordInfoDrawerContext } from '../../Options';
 import { Link as RouterLink, Outlet } from 'react-router-dom';
 import { Virtuoso } from 'react-virtuoso';
+import { ChartContainer, LineChart, MyResponsiveStream } from './Chart';
 
 export const MainPage = () => {
   // const { wordInfoTarget, setWordInfoTarget } = useContext(
@@ -33,16 +34,10 @@ export const MainPage = () => {
 
 export const DefaultMainPage = () => {
   return (
-    <Box sx={{ width: '90vw' }}>
+    <Box>
       <DatabaseInfo />
-      {/* <Typography component={RouterLink} to="contexts">
-        Contexts Collection:
-      </Typography>
-      <LatestContexts /> */}
       <Box>
-        <Typography component={RouterLink} to="words">
-          Words Collection:
-        </Typography>
+        <ChartContainer />
       </Box>
     </Box>
   );

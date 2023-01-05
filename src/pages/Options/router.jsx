@@ -2,7 +2,7 @@ import React from 'react';
 
 import { createHashRouter as createRouter, Navigate } from 'react-router-dom';
 import { DefaultMainPage, MainPage } from './components/MainPage/MainPage';
-import { Settings } from './Settings';
+import { Settings } from './components/Settings/Settings';
 import Options from './Options';
 import { SinglePageWordCollection } from './components/WordCollection/WordCollection';
 

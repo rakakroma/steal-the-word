@@ -26,7 +26,7 @@ export const TabDataContext = createContext({});
 
 const Popup = () => {
   const tabData = useCurrentTabData();
-  const { currentUrl, currentDomain, favIconUrl, validPlace } = tabData;
+  const { currentDomain, favIconUrl, validPlace } = tabData;
 
   const theme = createTheme({
     typography: {
@@ -47,16 +47,21 @@ const Popup = () => {
 
   if (!validPlace) {
     return (
-      <div className="App">
-        <header className="App-header">
-          <h4>擴充程式外才可使用</h4>
-          <h2>
-            <ruby>
-              hōo lí<rt>予你</rt>Ruby
-            </ruby>
-          </h2>
-        </header>
-      </div>
+      <TabDataContext.Provider value={tabData}>
+        <ThemeProvider theme={theme}>
+          <Box className="App" sx={{ width: '220px' }}>
+            <Typography>cannot work in current tab</Typography>
+            <IconButton
+              LinkComponent={'a'}
+              href={`${chrome.runtime.getURL('options.html')}#/home`}
+              target="_blank"
+              sx={{ width: '20px', height: '20px' }}
+            >
+              <CollectionsBookmark />
+            </IconButton>
+          </Box>
+        </ThemeProvider>
+      </TabDataContext.Provider>
     );
   }
 
@@ -82,34 +87,16 @@ const Popup = () => {
                 </IconButton>
               </Grid>
             </Grid>
+
             <Grid container alignItems="center" justifyContent="center">
               <img width="16px" height="16px" src={favIconUrl} alt=""></img>
               <Typography variant="body1" sx={{ pl: '2px' }}>
                 {currentDomain}
               </Typography>
             </Grid>
-
-            {/* <Grid container alignItems="center" justifyContent="center">
-            <Chip label="Tech" size="small" />
-            <Chip label="news" size="small" />
-            <Chip label="SNS" size="small" />
-            <Chip label="sports" size="small" />
-          </Grid> */}
           </Box>
+
           <Box>
-            {/* <PopupTabs
-            activate={activate}
-            setActivate={setActivate}
-            openMouseTool={openMouseTool}
-            setOpenMouseTool={setOpenMouseTool}
-            openFloatingWindow={openFloatingWindow}
-            setOpenFloatingWindow={setOpenFloatingWindow}
-            customSettingToggle={customSettingToggle}
-            setCustomSettingToggle={setCustomSettingToggle}
-            currentDomain={currentDomain}
-            domainData={domainData}
-            setDomainData={setDomainData}
-          /> */}
             <PopupTabs />
           </Box>
         </Box>

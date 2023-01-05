@@ -32,6 +32,7 @@ export const submitDelete = (wordBlock, formObj) => {
         tagShouldUpdateItsRefs,
       },
       () => {
+        console.log(`i want to remove`);
         wordBlock.remove();
         // restoreAndDeleteHooliText(wordId);
       }

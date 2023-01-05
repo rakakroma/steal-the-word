@@ -88,7 +88,7 @@ const Options = () => {
             onClose={() => setShowNotification(false)}
             message={showNotification.message}
           /> */}
-                      <Sidebar />
+                      {/* <Sidebar /> */}
                       <PersistentDrawerRight>
                         <Outlet />
                       </PersistentDrawerRight>
