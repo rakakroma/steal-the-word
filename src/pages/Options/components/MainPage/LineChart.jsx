@@ -109,7 +109,9 @@ const LineChart = ({ chartControl }) => {
       }}
       axisLeft={{
         legendOffset: 12,
-        tickRotation: -6,
+        tickPadding: 7,
+        tickSize: 2,
+        // tickRotation: -6,
       }}
       axisBottom={{
         format: currentConfig.axisBottomFormat,
@@ -119,7 +121,7 @@ const LineChart = ({ chartControl }) => {
       enableGridX={false}
       enableGridY={false}
       enableArea={true}
-      curve="cardinal"
+      curve={currentConfig.curve}
       enablePointLabel={true}
       // pointSymbol={CustomSymbol}
       //   pointSize={16}

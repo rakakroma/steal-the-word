@@ -12,7 +12,7 @@ export const lightThemeStyle = {
   palette: {
     mode: 'light',
     primary: {
-      light: '#787878',
+      light: '#e2dbdb',
       dark: '#ae9999',
       main: '#b38888',
     },

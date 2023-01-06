@@ -22,12 +22,14 @@ export const useControlLineChart = () => {
       xFormat: '%Y-%m',
       axisBottomFormat: '%b',
       tickValues: 'every 1 month',
+      curve: 'cardinal',
     },
     day: {
       dayJSFormat: 'YYYY-MM-DD',
       xFormat: '%Y-%m-%d',
       axisBottomFormat: '%b %d',
       tickValues: 'every 5 days',
+      curve: 'stepAfter',
     },
   };
   const [dateOption, setDateOption] = useState(defaultDateOption['month']);
