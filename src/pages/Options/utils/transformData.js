@@ -1,8 +1,11 @@
 import dayjs from 'dayjs';
 
+const getAllPages = (contexts) => [
+  ...new Set(contexts.map((contextObj) => contextObj.url)),
+];
+
 export const pagesWords = (contexts) => {
-  const allPages = [...new Set(contexts.map((contextObj) => contextObj.url))];
-  return allPages.map((pageLink) => {
+  return getAllPages(contexts).map((pageLink) => {
     const page = { url: pageLink };
     const wordsInPage = contexts.reduce((acc, currentValue) => {
       if (currentValue.url === pageLink) return acc.concat(currentValue);
