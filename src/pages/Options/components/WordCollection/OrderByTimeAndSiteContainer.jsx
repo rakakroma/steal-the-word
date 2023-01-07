@@ -7,6 +7,18 @@ import { ListSubTitle } from './ListSubTitle';
 import { SiteIconAvatar } from './SiteIconButton';
 import { WordCollectionPageBox } from './WordCollectionPageBox';
 
+export const getDomainIcon = (url, domainList, isDomain) => {
+  if (!url) return '';
+  let hostname;
+  if (!isDomain) {
+    hostname = new URL(url).hostname;
+  }
+  const domainData = domainList.find(
+    (domainAndLinkObj) => domainAndLinkObj.url === (hostname || url)
+  );
+  return domainData?.icon;
+};
+
 export const OrderByTimeAndSiteContainer = memo(
   ({
     phraseMode,
@@ -19,11 +31,6 @@ export const OrderByTimeAndSiteContainer = memo(
     // displayContext,
     // containerWidth,
   }) => {
-    const getDomainIcon = (url) => {
-      return domainAndLinkList.find(
-        (domainAndLinkObj) => domainAndLinkObj.url === url
-      )?.icon;
-    };
     const wordsByDomain = domainPageWords(contextList);
     const domainAndWordCount = wordsByDomain.map((arrayWithDomain) => {
       const wordCount = arrayWithDomain[1].reduce(
@@ -35,7 +42,7 @@ export const OrderByTimeAndSiteContainer = memo(
       return {
         domain: arrayWithDomain[0],
         wordCount,
-        icon: getDomainIcon(arrayWithDomain[0]),
+        icon: getDomainIcon(arrayWithDomain[0], domainAndLinkList, true),
       };
     });
 

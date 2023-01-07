@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import styled from '@emotion/styled';
 import { db } from '../../../../Background/database';
 
-const StyledRating = styled(Rating)({
+export const StyledRating = styled(Rating)({
   '& .MuiRating-iconFilled': {
     color: '#ff6d75',
   },
@@ -21,12 +21,11 @@ export const WordRating = ({ targetWord }) => {
   }, [targetWord]);
 
   const updateWordRatingInDb = (value) => {
-    db.wordList
-      .update({ id: targetWord.id }, { stars: value })
-      .then((updated) => {
-        if (updated) console.log(`update ${targetWord.id} to ${value} stars`);
-        else console.log('Nothing was updated');
-      });
+    db.wordList.update({ id: targetWord.id }, { stars: value });
+    // .then((updated) => {
+    //   if (updated) console.log(`update ${targetWord.id} to ${value} stars`);
+    //   else console.log('Nothing was updated');
+    // });
   };
   const handleWordRating = (e, newValue) => {
     if (newValue === null) {

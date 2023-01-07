@@ -3,7 +3,7 @@ import { Box } from '@mui/system';
 import { ResponsiveLine } from '@nivo/line';
 import React from 'react';
 import { InfoBlock } from '../DatabaseInfo';
-import { DirectionButton } from '../WordCollection/CollectionControlPanel/DateArrangementPicker';
+import { DirectionButton } from '../WordCollection/CollectionControlPanel/DirectionButton';
 import { useControlLineChart } from './useControlLineChart';
 
 export const LineChartContainer = () => {
@@ -27,7 +27,7 @@ export const LineChartContainer = () => {
     (dateOption.datePrecision === 'day' && isMoreThanOneMonth);
 
   return (
-    <InfoBlock sx={{ width: 'fit-content' }}>
+    <InfoBlock sx={{ width: 'auto', height: '300px' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography>Total Savings Over Time</Typography>
         <Typography>{periodTitle}</Typography>
@@ -72,7 +72,7 @@ export const LineChartContainer = () => {
           </>
         )}
       </Box>
-      <Box sx={{ width: '700px', height: '200px' }}>
+      <Box sx={{ height: '210px' }}>
         <LineChart chartControl={chartControl} />
       </Box>
     </InfoBlock>

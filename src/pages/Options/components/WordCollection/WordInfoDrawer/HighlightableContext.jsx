@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { db } from '../../../../Background/database';
 import { BorderColor } from '@mui/icons-material';
 import { ContextDate } from './ContextByDefBox';
-import { DateOfContext } from './dateDisplay';
+import { DateOfContext } from './DateOfContext';
 
 export const HighlightableContext = ({
   contextObj,

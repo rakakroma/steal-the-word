@@ -5,6 +5,7 @@ import { arrayWithUrlsByDateType } from '../../utils/transformData';
 import { WordCollectionPageBox } from './WordCollectionPageBox';
 import { GroupedVirtuoso, Virtuoso } from 'react-virtuoso';
 import { ListSubTitle } from './ListSubTitle';
+import { getDomainIcon } from './OrderByTimeAndSiteContainer';
 
 export const TimeModeContainer = memo(
   ({
@@ -84,17 +85,15 @@ export const TimeModeContainer = memo(
                         {sortByDateData.sortByUrlData
                           .sort((a, b) => a.words.length - b.words.length)
                           .map((arrayWithUrl) => {
-                            const domainInfo =
-                              domainAndLinkList.find(
-                                (domainAndLinkObj) =>
-                                  domainAndLinkObj.url ===
-                                  new URL(arrayWithUrl.url).hostname
-                              ) || '';
+                            const iconSrc = getDomainIcon(
+                              arrayWithUrl.url,
+                              domainAndLinkList
+                            );
                             return (
                               <WordCollectionPageBox
                                 // targetWordRef={targetWordRef}
                                 key={arrayWithUrl.url}
-                                imgUri={domainInfo.icon}
+                                imgUri={iconSrc}
                                 arrayWithUrl={arrayWithUrl}
                                 displayMode={displayMode}
                                 containerWidth={containerWidth}

@@ -37,6 +37,7 @@ import {
   tagArrayToKeyObjs,
   updateDefRef,
 } from '../../../../../utilsForAll/handleTags.js';
+import { useLocation } from 'react-router-dom';
 
 export const CurrentWordInfo = () => {
   const theme = useTheme();
@@ -51,6 +52,12 @@ export const CurrentWordInfo = () => {
 
   const [controlMode, setControlMode] = useState('display');
   const [changingTagsWhenDisplay, setChangingTagsWhenDisplay] = useState(null);
+
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    changeWordInfoTarget(null);
+  }, [pathname, changeWordInfoTarget]);
 
   const handleCloseEdit = () => {
     setControlMode('display');

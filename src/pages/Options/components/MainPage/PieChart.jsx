@@ -8,9 +8,9 @@ import { Typography } from '@mui/material';
 
 export const PieChartContainer = () => {
   return (
-    <InfoBlock sx={{ width: 'fit-content' }}>
+    <InfoBlock sx={{ height: '300px' }}>
       <Typography>Top Ten Sites</Typography>
-      <Box sx={{ width: '380px', height: '280px' }}>
+      <Box sx={{ height: '240px' }}>
         <PieChart />
       </Box>
     </InfoBlock>

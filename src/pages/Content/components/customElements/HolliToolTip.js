@@ -25,10 +25,11 @@ class HooliToolTip extends LitElement {
   }
 
   static styles = [
-    css`#tooltip {
+    css`
+      #tooltip {
         width: max-content;
-        max-width:250px;
-        overflow-wrap:break-word;
+        max-width: 250px;
+        overflow-wrap: break-word;
         position: absolute;
         top: 0;
         left: 0;
@@ -40,20 +41,18 @@ class HooliToolTip extends LitElement {
         font-weight: bold;
         font-size: 12px;
         pointer-events: none;
-        display:block;
-        opacity: 0; 
+        display: block;
+        opacity: 0;
         visibility: hidden;
-        transition: 0.1s ease-in; 
-        z-index:999999999;
-        line-height:1.3;
+        transition: 0.1s ease-in;
+        z-index: 999999999;
+        line-height: 1.3;
       }
-      #tooltip.show-tooltip{
-        opacity:0.9;
-        visibility:visible;
-
-        v
+      #tooltip.show-tooltip {
+        opacity: 0.9;
+        visibility: visible;
       }
-      `,
+    `,
   ];
   render() {
     return html`<span id="container"><slot></slot></span>

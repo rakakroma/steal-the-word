@@ -31,7 +31,7 @@ export const WordCollectionPageBoxContainer = styled(Box)(({ theme }) => ({
   height: 'fit-content',
 }));
 
-const PageTitleSection = ({ pageTitle, imgUri, linkUrl, noIcon }) => {
+export const PageTitleSection = ({ pageTitle, imgUri, linkUrl, noIcon }) => {
   const theme = useTheme();
   return (
     <Box sx={{ display: 'flex' }}>
@@ -55,23 +55,24 @@ const PageTitleSection = ({ pageTitle, imgUri, linkUrl, noIcon }) => {
   );
 };
 
-const HighlightedContext = ({ contextObj }) => {
+export const HighlightedContext = ({ contextObj, wordObj }) => {
   const wordList = useContext(WordListContext);
+  const wordObjFromList = wordList?.find(
+    (wordObj) => wordObj.id === contextObj.wordId
+  );
 
   let matchWord;
   if (contextObj.phrase) {
     matchWord = contextObj.phrase;
   } else {
-    const wordObj = wordList?.find(
-      (wordObj) => wordObj.id === contextObj.wordId
-    );
-    if (!wordObj || !wordObj.word)
+    if (!wordObj && !wordObjFromList)
       return (
         <Typography variant="subtitle1" component="div">
           word data missing
         </Typography>
       );
-    const allMatchText = getAllMatchTextFromWordObj(wordObj);
+
+    const allMatchText = getAllMatchTextFromWordObj(wordObj || wordObjFromList);
     matchWord = allMatchText.find(
       (matchText) => contextObj.context.indexOf(matchText) > -1
     );
@@ -80,7 +81,7 @@ const HighlightedContext = ({ contextObj }) => {
   return (
     <hooli-highlighter
       text={contextObj.context}
-      matchword={matchWord}
+      matchWord={matchWord}
     ></hooli-highlighter>
   );
 };

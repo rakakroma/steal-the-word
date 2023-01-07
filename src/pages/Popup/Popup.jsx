@@ -90,7 +90,10 @@ const Popup = () => {
 
             <Grid container alignItems="center" justifyContent="center">
               <img width="16px" height="16px" src={favIconUrl} alt=""></img>
-              <Typography variant="body1" sx={{ pl: '2px' }}>
+              <Typography
+                variant="body1"
+                sx={{ pl: '2px', wordBreak: 'break-all' }}
+              >
                 {currentDomain}
               </Typography>
             </Grid>
