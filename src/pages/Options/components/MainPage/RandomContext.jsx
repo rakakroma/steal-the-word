@@ -29,15 +29,6 @@ import { DateOfContext } from '../WordCollection/WordInfoDrawer/DateOfContext';
 import { ChevronLeft, Close, Search } from '@mui/icons-material';
 import { useRef } from 'react';
 
-// function shuffle(array) {
-//   const newArray = [...array];
-//   for (let i = array.length - 1; i > 0; i--) {
-//     let j = Math.floor(Math.random() * (i + 1));
-//     [array[i], array[j]] = [array[j], array[i]];
-//   }
-//   return newArray;
-// }
-
 function shuffle(array) {
   let currentIndex = array.length,
     randomIndex;
@@ -57,27 +48,6 @@ function shuffle(array) {
 
   return array;
 }
-
-// const getWordByWeightedShuffle = (list) => {
-//   const countRating = (stars) => (stars * 2 || 0) + 1;
-//   const totalRating = list.reduce(
-//     (sum, wordObj) => sum + countRating(wordObj.stars),
-//     0
-//   );
-
-//   const weights = list.map(
-//     (wordObj) => countRating(wordObj.stars) / totalRating
-//   );
-
-//   const random = Math.random();
-//   let weightSum = 0;
-//   for (let i = 0; i < weights.length; i++) {
-//     weightSum += weights[i];
-//     if (random < weightSum) {
-//       return list[i];
-//     }
-//   }
-// };
 
 const ContextBlock = ({
   targetContext,
@@ -110,6 +80,7 @@ const ContextBlock = ({
       }}
     >
       <Box sx={{ p: 2 }}>
+        <WordRating targetWord={targetWord} />
         <Typography variant={'h6'}>
           <HighlightedContext contextObj={targetContext} wordObj={targetWord} />
           <DateOfContext date={targetContext.date} />
@@ -251,15 +222,33 @@ export const RandomContext = () => {
     ],
     [nextIndex, lastIndex]
   );
-
-  const getShuffledList = useCallback(() => {
+  const getAndSetShuffledList = useCallback(() => {
     if (!wordList || !contextList) return;
-    setShuffledArray(shuffle(contextList));
-  }, [contextList, wordList]);
+    if (shuffledArray && wordList.length > 0 && contextList.length > 0) return;
+
+    const starAndWordIdList = wordList
+      .filter((wordObj) => wordObj.stars && wordObj.stars > 0)
+      .map((wordObj) => ({ wordId: wordObj.id, stars: wordObj.stars }));
+    const weightedContextIdList = contextList.reduce((newList, contextObj) => {
+      const stars = starAndWordIdList?.find(
+        (data) => data.wordId === contextObj.wordId
+      )?.stars;
+      if (stars && stars > 0) {
+        for (let count = 0; count < stars; count++) {
+          newList.push({ contextId: contextObj.id });
+        }
+      } else {
+        newList.push({ contextId: contextObj.id });
+      }
+      return newList;
+    }, []);
+
+    setShuffledArray(shuffle(weightedContextIdList));
+  }, [contextList, wordList, shuffledArray]);
 
   useEffect(() => {
-    getShuffledList();
-  }, [getShuffledList]);
+    getAndSetShuffledList();
+  }, [getAndSetShuffledList]);
 
   useEffect(() => {
     if (!shuffledArray) return;
@@ -279,7 +268,6 @@ export const RandomContext = () => {
         paddingX: 3,
       }}
     >
-      {/* <WordRating targetWord={targetWord} /> */}
       <IconButton
         sx={{
           backgroundColor: '#80808047',
@@ -308,7 +296,10 @@ export const RandomContext = () => {
       </IconButton>
       <Box sx={{ width: '88%', overflow: 'hidden', height: '300px' }}></Box>
       {displayingIndices?.map((selectedIndex, arrayIndex) => {
-        const contextObj = shuffledArray[selectedIndex];
+        const contextObjId = shuffledArray[selectedIndex].contextId;
+        const contextObj = contextList.find(
+          (contextObj) => contextObj.id === contextObjId
+        );
         const wordObj = wordList.find(
           (wordObj) => contextObj.wordId === wordObj.id
         );

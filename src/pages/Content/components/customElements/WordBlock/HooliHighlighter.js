@@ -50,7 +50,6 @@ class HooliHighlighter extends LitElement {
       'dark-mode-word': this.darkmode,
       'light-mode-word': !this.darkmode,
     };
-    console.log(`darkmode ${this.darkmode}`);
     return html`
       ${parts.map((part, i) => {
         if (i === parts.length - 1) {
