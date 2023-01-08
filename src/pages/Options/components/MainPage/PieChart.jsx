@@ -40,10 +40,16 @@ const PieChart = () => {
 
   if (!contextList) return null;
   const topTenDomainCount = domainWordCount.slice(0, 10);
-
+  const othersCount =
+    contextList.length -
+    topTenDomainCount.reduce((accu, curr) => accu + curr.value, 0);
   return (
     <ResponsivePie
-      data={topTenDomainCount}
+      data={topTenDomainCount.concat({
+        id: 'others',
+        label: 'others',
+        value: othersCount,
+      })}
       margin={{ top: 20, right: 90, bottom: 20, left: 90 }}
       padAngle={0.7}
       cornerRadius={3}

@@ -1,13 +1,14 @@
 import { styled } from '@mui/system';
 
 import { Box, Typography } from '@mui/material';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   ContextListContext,
   DomainAndLinkListContext,
   WordInfoDrawerContext,
   WordListContext,
 } from '../Options.jsx';
+import dayjs from 'dayjs';
 
 const randomNumberByDate = () => {
   const date = new Date();
@@ -21,12 +22,38 @@ const wordOfToday = (wordList) => {
 };
 
 export const DatabaseInfo = () => {
+  const [theTodaysWord, setTheTodaysWord] = useState(null);
   const contextList = useContext(ContextListContext);
   //   const domainAndLinkList = useContext(DomainAndLinkListContext);
   const wordList = useContext(WordListContext);
 
   const { handleWordClick } = useContext(WordInfoDrawerContext);
-  const todaysWord = wordOfToday(wordList);
+  // const todaysWord = wordOfToday(wordList);
+
+  useEffect(() => {
+    if (!wordList) return;
+    const wordById = (id) => {
+      return wordList.find((wordObj) => wordObj.id === id);
+    };
+    const cookies = document.cookie
+      ?.split(';')
+      .map((cookieString) => cookieString.trim());
+    const todaysWordIdInCookies = cookies
+      .find((cookie) => cookie.startsWith('todaysWord='))
+      ?.split('=')[1];
+    const todaysWord = wordById(todaysWordIdInCookies);
+    if (todaysWord) {
+      setTheTodaysWord(todaysWord);
+      return;
+    }
+    const generatedTodaysWord = wordOfToday(wordList);
+    const endOfToday = dayjs().endOf('day').format();
+    document.cookie = `todaysWord=${generatedTodaysWord.id}; expires=${endOfToday}`;
+
+    setTheTodaysWord(generatedTodaysWord);
+  }, [setTheTodaysWord, wordList]);
+
+  if (!theTodaysWord) return null;
   return (
     <Box sx={{ display: 'flex' }}>
       <CoolInfoBox
@@ -37,9 +64,9 @@ export const DatabaseInfo = () => {
       />
       {/* <CoolInfoBox title="contexts" content={contextList?.length} /> */}
       <CoolInfoBox
-        handleClick={() => handleWordClick({ wordId: todaysWord.id })}
+        handleClick={() => handleWordClick({ wordId: theTodaysWord.id })}
         title="word Of today"
-        content={todaysWord.word}
+        content={theTodaysWord.word}
       />
     </Box>
   );
@@ -52,7 +79,6 @@ export const InfoBlock = styled(Box)(({ theme }) =>
     borderRadius: 2,
     p: 2,
     minWidth: '200px',
-    // m: 1,
   })
 );
 

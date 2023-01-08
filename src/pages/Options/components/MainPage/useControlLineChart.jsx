@@ -59,7 +59,7 @@ export const useControlLineChart = () => {
   );
 
   const sortedContextList = useMemo(() => {
-    if (!contextList) return null;
+    if (!contextList || contextList.length === 0) return null;
     return [...contextList]
       .map((contextObj) => ({
         wordId: contextObj.wordId,
@@ -75,7 +75,7 @@ export const useControlLineChart = () => {
     setDateOption(getOptionTemplate(latestDate, 'month'));
   }, [sortedContextList, getOptionTemplate]);
 
-  if (!contextList) {
+  if (!contextList || contextList.length === 0) {
     return {
       noContextData: true,
     };

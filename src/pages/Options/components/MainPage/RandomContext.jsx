@@ -197,21 +197,27 @@ export const RandomContext = () => {
 
   const toNextIndex = () => {
     if (displayingIndices.indexOf(currentIndex) === 4) return;
+
     const nextCurrentIndex = nextIndex(currentIndex);
     setCurrentIndex(nextCurrentIndex);
-    setTimeout(() => {
-      setDisplayingIndices(getDisplayingIndices(nextCurrentIndex));
-    }, 500);
+    if (shuffledArray.length > 5) {
+      setTimeout(() => {
+        setDisplayingIndices(getDisplayingIndices(nextCurrentIndex));
+      }, 500);
+    }
   };
   const toLastIndex = () => {
     if (displayingIndices.indexOf(currentIndex) === 0) return;
     const lastCurrentIndex = lastIndex(currentIndex);
     setCurrentIndex(lastCurrentIndex);
-    setTimeout(() => {
-      setDisplayingIndices(getDisplayingIndices(lastCurrentIndex));
-    }, 500);
+    if (shuffledArray.length > 5) {
+      setTimeout(() => {
+        setDisplayingIndices(getDisplayingIndices(lastCurrentIndex));
+      }, 500);
+    }
   };
 
+  console.log(displayingIndices);
   const getDisplayingIndices = useCallback(
     (targetIndex) => [
       lastIndex(lastIndex(targetIndex)),
@@ -223,7 +229,7 @@ export const RandomContext = () => {
     [nextIndex, lastIndex]
   );
   const getAndSetShuffledList = useCallback(() => {
-    if (!wordList || !contextList) return;
+    if (!wordList || !contextList || contextList.length === 0) return;
     if (shuffledArray && wordList.length > 0 && contextList.length > 0) return;
 
     const starAndWordIdList = wordList
@@ -252,12 +258,45 @@ export const RandomContext = () => {
 
   useEffect(() => {
     if (!shuffledArray) return;
+    if (shuffledArray.length < 5) {
+      setDisplayingIndices(
+        Array(shuffledArray.length)
+          .fill()
+          .map((_, i) => i)
+      );
+      return;
+    }
     setDisplayingIndices(getDisplayingIndices(0));
   }, [shuffledArray, getDisplayingIndices, setDisplayingIndices]);
+
+  //FIXME:it did not work well when the context length is under 5
+  const keyDownHandler = (e) => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+    let noTextInput = true;
+    document.querySelectorAll('input').forEach((ele) => {
+      if (ele.type === 'text') {
+        noTextInput = false;
+        return;
+      }
+    });
+    if (!noTextInput) return;
+    if (e.key === 'ArrowLeft') {
+      toLastIndex();
+    } else if (e.key === 'ArrowRight') {
+      toNextIndex();
+    }
+  };
+  useEffect(() => {
+    document.addEventListener('keyup', keyDownHandler);
+    return () => {
+      document.removeEventListener('keyup', keyDownHandler);
+    };
+  });
 
   if (!wordList || !contextList || !shuffledArray || !displayingIndices)
     return null;
 
+  if (contextList.length === 0) return <div>cool</div>;
   return (
     <Box
       sx={{
