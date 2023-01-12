@@ -28,7 +28,7 @@ export const Settings = () => {
           <StylingBox />
         </Box>
         <Divider sx={{ marginY: 2 }} />
-        <Typography variant="h5">API/AutoSearch</Typography>
+        <Typography variant="h5">Languages Dictionary API</Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 7 }}>
           <ApiInfo />
         </Box>

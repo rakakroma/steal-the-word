@@ -27,7 +27,7 @@ const allStyles = {
     background: 'linear-gradient(transparent 20%, #eea3a361 30%)',
   },
   style4: {
-    color: '#5dffc4',
+    color: '',
   },
 };
 
@@ -45,7 +45,7 @@ const StylePanel = ({ selectedStyle, setSelectedStyle }) => {
             label={pair[0]}
             control={<Radio />}
           />
-        ))}{' '}
+        ))}
       </RadioGroup>
     </FormControl>
   );

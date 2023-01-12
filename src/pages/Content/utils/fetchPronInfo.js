@@ -21,7 +21,7 @@ const langOptions = {
     'hak-dabu',
     'hak-raoping',
     'hak-zhaoan',
-    'hak-nansixian',
+    'hak-nan',
   ],
 };
 
