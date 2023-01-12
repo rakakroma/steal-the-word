@@ -1,3 +1,4 @@
+import { Box } from '@mui/system';
 import React, { useContext, useState } from 'react';
 import {
   ContextListContext,
@@ -31,32 +32,24 @@ export const ImportAndExportBox = () => {
       tagList?.length ===
     0;
   return (
-    <>
-      <CurrentDataAndDownload
-        userUploadedData={Boolean(loggedData)}
-        contextList={contextList}
-        domainAndLinkList={domainAndLinkList}
-        wordList={wordList}
-        tagList={tagList}
-        noDataInCurrentDB={noDataInCurrentDB}
-      />
-      {/* <Box
-      sx={{
-        borderRadius: 2,
-        boxShadow: 1,
-        backgroundColor: 'background.paper',
-        width: '1000px',
-
-        // maxWidth: '700px',
-        display: 'flex',
-      }}
-    > */}
-
-      <ImportBox
-        loggedData={loggedData}
-        setLoggedData={setLoggedData}
-        noDataInCurrentDB={noDataInCurrentDB}
-      />
-    </>
+    <Box display="flex" flexDirection="column">
+      <Box width="100%">
+        <CurrentDataAndDownload
+          userUploadedData={Boolean(loggedData)}
+          contextList={contextList}
+          domainAndLinkList={domainAndLinkList}
+          wordList={wordList}
+          tagList={tagList}
+          noDataInCurrentDB={noDataInCurrentDB}
+        />
+      </Box>
+      <Box width="100%" minHeight="200px" my={4}>
+        <ImportBox
+          loggedData={loggedData}
+          setLoggedData={setLoggedData}
+          noDataInCurrentDB={noDataInCurrentDB}
+        />
+      </Box>
+    </Box>
   );
 };

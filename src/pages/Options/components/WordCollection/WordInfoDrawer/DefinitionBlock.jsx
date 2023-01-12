@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import { Button, ButtonBase, Chip, Divider } from '@mui/material';
 import { grey, red } from '@mui/material/colors';
 import { Box } from '@mui/system';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { getAllMatchTextFromWordObj } from '../../../../../utilsForAll/getInfoFromWordObj';
 import { ContextByDefBox } from './ContextByDefBox';
@@ -159,7 +159,7 @@ export const DefinitionBlock = ({
               )}
               {contextObjsOfThisDef.map((contextObj, contextIndex) => {
                 return (
-                  <React.Fragment key={contextObj.id}>
+                  <Fragment key={contextObj.id}>
                     <ContextByDefBox
                       contextObj={contextObj}
                       allMatchText={getAllMatchTextFromWordObj(targetWord)}
@@ -168,7 +168,7 @@ export const DefinitionBlock = ({
                     {contextIndex < contextObjsOfThisDef.length - 1 && (
                       <Divider />
                     )}
-                  </React.Fragment>
+                  </Fragment>
                 );
               })}
             </Box>

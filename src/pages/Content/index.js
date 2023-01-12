@@ -25,9 +25,9 @@ import {
 
 export const body = document.body;
 
-export let myList = [];
-export let newList = [];
-export let tagList = [];
+// export let myList = [];
+// export let newList = [];
+// export let tagList = [];
 // let whiteList = [];
 
 const appendSideListWindow = (foundMatchWord) => {
@@ -97,29 +97,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.wordList) {
     checkAndUpdateNewWordListAndReRender(store.getState(), message.wordList);
   }
-  // if (message.action === 'deleteWord') {
-  // }
-  // if (message.dynamicRendering) {
-  //   whiteList.push(thisDomain);
-  //   // console.log(whiteList);
-  //   chrome.storage.local.set({ whiteDomainList: whiteList }, () => {
-  //     sendResponse({ content: `已加入white list : ${whiteList}` });
-  //     observer.observe(body, {
-  //       childList: true,
-  //       subtree: true,
-  //       characterData: true,
-  //     });
-  //   });
-  //   return true;
-  // } else if (message.dynamicRendering === false) {
-  //   whiteList = whiteList.filter((domainName) => domainName !== thisDomain);
-  //   // console.log(whiteList);
-  //   chrome.storage.local.set({ whiteDomainList: whiteList }, () => {
-  //     observer.disconnect();
-  //     sendResponse({ content: `已移出white list : ${whiteList}` });
-  //   });
-  //   return true;
-  // }
   //  if (message.showWordList === true) {
   //   chrome.storage.local.set({ floatingWindow: true }, () => {
   //     if (body.querySelector('#hooriruby-info-div')) {

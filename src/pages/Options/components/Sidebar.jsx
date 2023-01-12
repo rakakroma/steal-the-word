@@ -42,7 +42,7 @@ export const Sidebar = () => {
         <Link component={RouterLink} to="/">
           <Settings /> Settings
         </Link>
-        <Link component={RouterLink} to="home/words">
+        <Link component={RouterLink} to="home/collection">
           <CollectionsBookmark /> Collections
         </Link>
       </Stack>

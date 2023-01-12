@@ -12,7 +12,8 @@ import { exportToJsonFile } from '../../../utils/ImportExport';
 import { CloudDownload } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { handleClearAll } from './ImportAndExportBox';
-import { SingleDataInfo } from './SingleDataInfo';
+import { DataCountGrid, ButtonContainer } from './DataCountGrid';
+import { grey, red } from '@mui/material/colors';
 
 export const CurrentDataAndDownload = ({
   userUploadedData,
@@ -24,54 +25,36 @@ export const CurrentDataAndDownload = ({
 }) => {
   return (
     <Box sx={{ position: 'relative' }}>
-      {userUploadedData && !noDataInCurrentDB && (
-        <Box
+      <DataCountGrid
+        title="current Data"
+        listLengthData={{
+          words: wordList?.length,
+          contexts: contextList?.length,
+          tags: tagList?.length,
+          domains: domainAndLinkList?.length,
+        }}
+        deleteDecoration={userUploadedData}
+      />
+      {userUploadedData ? (
+        <Typography
+          variant="h6"
           sx={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
             position: 'absolute',
-            zIndex: 'modal',
-            backgroundColor: '#b7b7b791',
-            backdropFilter: 'blur(1px)',
+            width: '107%',
+            p: 1,
+            bottom: '-24px',
+            left: '-23px',
+            backgroundColor: '#ff665e',
+            color: 'white',
+            borderRadius: 1,
           }}
         >
-          <Typography
-            variant="subtitle1"
-            sx={{
-              width: '85%',
-              p: 2,
-              backgroundColor: 'background.paper',
-            }}
-          >
-            ⚠️Warning: Current data will all be cleared if new data is imported
-          </Typography>
-        </Box>
-      )}
-      <Stack
-        direction="column"
-        justifyContent="flex-start"
-        alignItems="stretch"
-        spacing={1}
-        sx={{ width: '260px', p: 1 }}
-      >
-        <Typography variant="subtitle1">
-          Current Data Info
-          <Tooltip title="clear all data from database" placement="right">
-            <IconButton onClick={handleClearAll}>
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
+          ⚠️Warning: Current data will all be cleared if new data is imported
         </Typography>
-        <SingleDataInfo title="words" number={wordList?.length} />
-        <SingleDataInfo title="contexts" number={contextList?.length} />
-        <SingleDataInfo title="tags" number={tagList?.length} />
-        <SingleDataInfo title="domains" number={domainAndLinkList?.length} />
-        <Box>
+      ) : (
+        <ButtonContainer>
           <Button
-            sx={{ width: '100%' }}
+            className="main-button"
             LinkComponent={'a'}
             variant="contained"
             href={exportToJsonFile({
@@ -86,8 +69,14 @@ export const CurrentDataAndDownload = ({
             <CloudDownload />
             download
           </Button>
-        </Box>
-      </Stack>
+          <Tooltip title="clear all data from database" placement="bottom">
+            <Button variant="outlined" color="error" onClick={handleClearAll}>
+              <DeleteIcon />
+              Clear
+            </Button>
+          </Tooltip>
+        </ButtonContainer>
+      )}
     </Box>
   );
 };

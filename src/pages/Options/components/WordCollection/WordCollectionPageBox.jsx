@@ -1,6 +1,6 @@
 import { Divider, IconButton, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import React, { useContext } from 'react';
+import React, { Fragment, useContext } from 'react';
 // import { getDomain } from '../utils/transformData';
 import { styled, useTheme } from '@mui/material/styles';
 import { SiteIconButton } from './SiteIconButton';
@@ -113,7 +113,7 @@ export const WordListInWordCollection = ({
     };
 
     return (
-      <React.Fragment key={dataObj.id}>
+      <Fragment key={dataObj.id}>
         <SmallWord
           id={dataObj.id}
           sx={{
@@ -142,7 +142,7 @@ export const WordListInWordCollection = ({
           index !== wordsArray.length - 1 && (
             <Divider sx={{ pt: '5px', mb: '5px' }} />
           )}
-      </React.Fragment>
+      </Fragment>
     );
   });
 };

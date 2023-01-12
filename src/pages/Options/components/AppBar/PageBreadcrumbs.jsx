@@ -1,6 +1,11 @@
 import { useTheme } from '@mui/material/styles';
 import { Breadcrumbs, Divider, Link, Typography } from '@mui/material';
-import { CollectionsBookmark, Home, Settings } from '@mui/icons-material';
+import {
+  ArrowDropDown,
+  CollectionsBookmark,
+  Home,
+  Settings,
+} from '@mui/icons-material';
 import { useLocation } from 'react-router-dom';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -16,7 +21,7 @@ export const PageBreadcrumbs = () => {
   const pathIcon = {
     home: <HomeIcon />,
     settings: <Settings />,
-    words: <CollectionsBookmark />,
+    collection: <CollectionsBookmark />,
   };
 
   return (
@@ -33,10 +38,10 @@ export const PageBreadcrumbs = () => {
       >
         {pathArray.map((pathTarget, index) => {
           const last = index === pathArray.length - 1;
-          const to = `/${pathArray.slice(0, index + 1).join('/')}`;
           return (
-            <Typography color="text.primary" key={to}>
+            <Typography color="text.primary" key={pathTarget}>
               {pathIcon[pathTarget] || null} {last && pathTarget}
+              {last && <ArrowDropDown />}
             </Typography>
           );
         })}

@@ -1,9 +1,9 @@
 import {
   Box,
-  ButtonBase,
-  Grow,
+  Button,
+  CircularProgress,
   IconButton,
-  Paper,
+  LinearProgress,
   Rating,
   Slide,
   Typography,
@@ -13,21 +13,15 @@ import { useContext } from 'react';
 import {
   ContextListContext,
   DomainAndLinkListContext,
-  WordInfoDrawerContext,
   WordListContext,
 } from '../../Options';
-import { InfoBlock } from '../DatabaseInfo';
 import React from 'react';
-import { WordRating } from '../WordCollection/WordInfoDrawer/WordRating';
-import {
-  HighlightedContext,
-  PageTitleSection,
-} from '../WordCollection/WordCollectionPageBox';
 import { getDomainIcon } from '../WordCollection/OrderByTimeAndSiteContainer';
 import ChevronRight from '@mui/icons-material/ChevronRight';
-import { DateOfContext } from '../WordCollection/WordInfoDrawer/DateOfContext';
-import { ChevronLeft, Close, Search } from '@mui/icons-material';
+import { Autorenew, ChevronLeft, Pause, PlayArrow } from '@mui/icons-material';
 import { useRef } from 'react';
+import { useInterval, useIsVisible, useVisible } from '../../utils/customHook';
+import { ContextBlock } from './ContextBlock';
 
 function shuffle(array) {
   let currentIndex = array.length,
@@ -49,136 +43,13 @@ function shuffle(array) {
   return array;
 }
 
-const ContextBlock = ({
-  targetContext,
-  targetWord,
-  targetDef,
-  iconSrc,
-  relativeIndex,
-}) => {
-  const [showInfo, setShowInfo] = useState(false);
-  const { wordInfoTarget, changeWordInfoTarget } = useContext(
-    WordInfoDrawerContext
-  );
-  const handleShowInfo = (boolean) => {
-    setShowInfo(boolean);
-  };
-
-  return (
-    <InfoBlock
-      sx={{
-        width: '88%',
-        overflow: 'hidden',
-        height: '300px',
-        alignItems: 'center',
-        position: 'absolute',
-        transform: `translate(${
-          relativeIndex * 100 + relativeIndex + 3
-        }%, -100%)`,
-        transition: 'transform 0.4s ease-in-out 0s',
-        display: 'flex',
-      }}
-    >
-      <Box sx={{ p: 2 }}>
-        <WordRating targetWord={targetWord} />
-        <Typography variant={'h6'}>
-          <HighlightedContext contextObj={targetContext} wordObj={targetWord} />
-          <DateOfContext date={targetContext.date} />
-        </Typography>
-        <Typography variant="h6">
-          <PageTitleSection
-            noIcon={false}
-            linkUrl={targetContext.url}
-            imgUri={iconSrc}
-            pageTitle={targetContext.pageTitle}
-          />
-        </Typography>
-      </Box>
-      {relativeIndex === 0 && (
-        <>
-          {' '}
-          <ButtonBase
-            sx={{
-              position: 'absolute',
-              bottom: '10px',
-              right: '5px',
-              boxShadow: 2,
-              borderRadius: 2,
-              padding: 1,
-              backgroundColor: '#f9f5f0',
-              display: showInfo ? 'none' : 'inline-flex',
-            }}
-            onClick={() => {
-              handleShowInfo(true);
-            }}
-          >
-            more info
-          </ButtonBase>
-          <Grow
-            in={showInfo}
-            mountOnEnter
-            unmountOnExit
-            style={{ transformOrigin: 'bottom' }}
-          >
-            <Paper
-              elevation={4}
-              sx={{
-                position: 'absolute',
-                bottom: '0px',
-                width: '100%',
-                left: '0',
-                minHeight: '100px',
-                padding: '9px',
-                backgroundColor: 'background.default',
-                borderRadius: '10%  10% 0 0',
-              }}
-            >
-              <Typography variant="h6">{targetWord.word}</Typography>
-              <Typography variant="subtitle2">
-                {targetDef.annotation}
-              </Typography>
-              <Typography variant="subtitle2">{targetDef.note}</Typography>
-              <Box
-                sx={{
-                  position: 'absolute',
-                  bottom: '10px',
-                  right: '5px',
-                }}
-              >
-                <IconButton
-                  onClick={() => {
-                    if (
-                      wordInfoTarget &&
-                      wordInfoTarget.wordId === targetWord.id
-                    ) {
-                      changeWordInfoTarget(null);
-                      return;
-                    }
-                    changeWordInfoTarget({ wordId: targetWord.id });
-                  }}
-                >
-                  <Search />
-                </IconButton>
-                <IconButton
-                  onClick={() => {
-                    handleShowInfo(false);
-                  }}
-                >
-                  <Close />
-                </IconButton>
-              </Box>
-            </Paper>
-          </Grow>
-        </>
-      )}
-    </InfoBlock>
-  );
-};
-
 export const RandomContext = () => {
   const [shuffledArray, setShuffledArray] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayingIndices, setDisplayingIndices] = useState(null);
+  const [autoUpdateDelay, setAutoUpdateDelay] = useState(4500);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+  const [autoplayProgress, setAutoPlayProgress] = useState(0);
 
   const wordList = useContext(WordListContext);
   const contextList = useContext(ContextListContext);
@@ -197,14 +68,16 @@ export const RandomContext = () => {
 
   const toNextIndex = () => {
     if (displayingIndices.indexOf(currentIndex) === 4) return;
-
     const nextCurrentIndex = nextIndex(currentIndex);
+    console.log(nextCurrentIndex);
+
     setCurrentIndex(nextCurrentIndex);
     if (shuffledArray.length > 5) {
       setTimeout(() => {
         setDisplayingIndices(getDisplayingIndices(nextCurrentIndex));
       }, 500);
     }
+    setAutoPlayProgress(0);
   };
   const toLastIndex = () => {
     if (displayingIndices.indexOf(currentIndex) === 0) return;
@@ -217,7 +90,6 @@ export const RandomContext = () => {
     }
   };
 
-  console.log(displayingIndices);
   const getDisplayingIndices = useCallback(
     (targetIndex) => [
       lastIndex(lastIndex(targetIndex)),
@@ -293,6 +165,33 @@ export const RandomContext = () => {
     };
   });
 
+  const handleAutoUpdate = () => {
+    setAutoPlayProgress(0);
+    setIsAutoPlaying((value) => !value);
+  };
+
+  useInterval(
+    () => {
+      toNextIndex();
+    },
+    isAutoPlaying ? autoUpdateDelay : null
+  );
+
+  useInterval(
+    () => {
+      setAutoPlayProgress((oldValue) => oldValue + 4.15);
+    },
+    isAutoPlaying ? autoUpdateDelay / 25 : null
+  );
+
+  useVisible(
+    () => {},
+    () => {
+      setIsAutoPlaying(false);
+      setAutoPlayProgress(0);
+    }
+  );
+
   if (!wordList || !contextList || !shuffledArray || !displayingIndices)
     return null;
 
@@ -302,7 +201,7 @@ export const RandomContext = () => {
       sx={{
         width: '95vw',
         overflow: 'hidden',
-        height: '350px',
+        height: '450px',
         position: 'relative',
         paddingX: 3,
       }}
@@ -333,6 +232,36 @@ export const RandomContext = () => {
       >
         <ChevronRight />
       </IconButton>
+
+      <Typography variant="h5">Random Context</Typography>
+      {/* <Typography variant="h6"> */}
+
+      {/* </Typography> */}
+      <LinearProgress
+        sx={{
+          width: '93.5%',
+          ml: '3%',
+          '.MuiLinearProgress-bar': {
+            transition: 'transform .2s linear',
+          },
+        }}
+        variant="determinate"
+        value={autoplayProgress}
+      />
+      <Button
+        variant="contained"
+        sx={{
+          //   backgroundColor: '#80808047',
+          transform: 'translate(-50%, -50%)',
+          position: 'absolute',
+          left: '50%',
+          bottom: '30px',
+          zIndex: 1000,
+        }}
+        onClick={handleAutoUpdate}
+      >
+        {isAutoPlaying ? <Pause /> : <PlayArrow />}
+      </Button>
       <Box sx={{ width: '88%', overflow: 'hidden', height: '300px' }}></Box>
       {displayingIndices?.map((selectedIndex, arrayIndex) => {
         const contextObjId = shuffledArray[selectedIndex].contextId;

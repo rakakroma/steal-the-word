@@ -23,7 +23,7 @@ export const router = createRouter([
             element: <Settings />,
           },
           {
-            path: 'words',
+            path: 'collection',
             element: <SinglePageWordCollection />,
           },
         ],

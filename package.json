@@ -20,14 +20,13 @@
     "@mui/lab": "^5.0.0-alpha.92",
     "@mui/material": "^5.9.2",
     "@mui/x-data-grid": "^5.17.2",
+    "@nivo/calendar": "^0.80.0",
     "@nivo/core": "^0.80.0",
     "@nivo/line": "^0.80.0",
     "@nivo/pie": "^0.80.0",
-    "@nivo/stream": "^0.80.0",
     "@reduxjs/toolkit": "^1.9.1",
     "@spectrum-web-components/icons-workflow": "^0.9.0",
     "@webcomponents/custom-elements": "^1.5.0",
-    "chroma-js": "^2.4.2",
     "dayjs": "^1.11.5",
     "dexie": "^3.2.2",
     "dexie-react-hooks": "^1.1.1",
@@ -47,8 +46,7 @@
     "react-select": "^5.7.0",
     "react-virtuoso": "^3.1.5",
     "redux": "^4.2.0",
-    "redux-logger": "^3.0.6",
-    "styled-components": "^5.3.6"
+    "redux-logger": "^3.0.6"
   },
   "devDependencies": {
     "@babel/core": "^7.17.0",

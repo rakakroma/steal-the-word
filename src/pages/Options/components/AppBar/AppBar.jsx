@@ -1,7 +1,7 @@
 import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import { styled, useTheme } from '@mui/material/styles';
-import { Box, Button, ButtonBase, IconButton } from '@mui/material';
+import { Box, Button, ButtonBase, IconButton, Typography } from '@mui/material';
 import { LightMode, ModeNight, SearchOutlined } from '@mui/icons-material';
 import React, { useContext } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -59,6 +59,9 @@ const SearchSection = () => {
         display: 'flex',
         // flexDirection: 'row-reverse',
         padding: '3px',
+        '&:hover': {
+          backgroundColor: '#e6e6e6',
+        },
       }}
       onClick={query.toggle}
     >
@@ -77,19 +80,27 @@ const DarkModeButton = () => {
     </IconButton>
   );
 };
-
+const Logo = () => {
+  const theme = useTheme();
+  return (
+    <Typography variant="h5" sx={{ color: 'text.primary' }}>
+      Steal the Word 🎩
+    </Typography>
+  );
+};
 export const AppBar = ({ open, drawerWidth }) => {
   return (
     <StyledAppBar position="sticky" open={open} drawerWidth={drawerWidth}>
       <Toolbar>
-        <IconButton
+        {/* <Logo /> */}
+        {/* <IconButton
           aria-label="open drawer"
           edge="end"
           // onClick={handleDrawerOpen}
         >
           <MenuIcon />
         </IconButton>
-        <DarkModeButton />
+        <DarkModeButton /> */}
         <PageBreadcrumbs />
         <SearchSection />
       </Toolbar>

@@ -3,7 +3,7 @@ import '@webcomponents/custom-elements';
 import { html, LitElement } from 'lit';
 import { getAllMatchTextFromWordObj } from '../../../../utilsForAll/getInfoFromWordObj';
 import { getContexts } from '../../../Background/getData';
-import { myList } from '../../index';
+// import { myList } from '../../index';
 import { fetchPronInfo } from '../../utils/fetchPronInfo';
 import './HolliToolTip';
 import './WordBlock/HooliMenu';
@@ -158,7 +158,7 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
   _formValidation(targetNames, targetValues, options) {
     if (options) {
       if (options.includes('newWord')) {
-        if (myList.find((wordObj) => wordObj.word === targetValues.word)) {
+        if (findDuplicateWord(targetValues.word, store.getState())) {
           this._handleUpdateFormStatus(
             'helperText',
             'this word is already exist'

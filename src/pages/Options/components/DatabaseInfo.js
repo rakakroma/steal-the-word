@@ -1,6 +1,6 @@
 import { styled } from '@mui/system';
 
-import { Box, Typography } from '@mui/material';
+import { Box, Link, Typography } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import {
   ContextListContext,
@@ -9,6 +9,8 @@ import {
   WordListContext,
 } from '../Options.jsx';
 import dayjs from 'dayjs';
+import { Link as RouterLink } from 'react-router-dom';
+import { ArrowRight, Collections, Settings } from '@mui/icons-material';
 
 const randomNumberByDate = () => {
   const date = new Date();
@@ -21,7 +23,7 @@ const wordOfToday = (wordList) => {
   return wordList[randomIndexByDate];
 };
 
-export const DatabaseInfo = () => {
+export const TodaysWordBox = () => {
   const [theTodaysWord, setTheTodaysWord] = useState(null);
   const contextList = useContext(ContextListContext);
   //   const domainAndLinkList = useContext(DomainAndLinkListContext);
@@ -55,20 +57,11 @@ export const DatabaseInfo = () => {
 
   if (!theTodaysWord) return null;
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CoolInfoBox
-        title="words"
-        content={wordList?.length}
-        additionalNumber={contextList?.length}
-        additionalInfo={'contexts'}
-      />
-      {/* <CoolInfoBox title="contexts" content={contextList?.length} /> */}
-      <CoolInfoBox
-        handleClick={() => handleWordClick({ wordId: theTodaysWord.id })}
-        title="word Of today"
-        content={theTodaysWord.word}
-      />
-    </Box>
+    <CoolInfoBox
+      handleClick={() => handleWordClick({ wordId: theTodaysWord.id })}
+      title="word Of today"
+      content={theTodaysWord.word}
+    />
   );
 };
 
@@ -86,9 +79,9 @@ const CoolInfoBox = ({ title, content, additionalNumber, additionalInfo }) => {
   return (
     <InfoBlock>
       <Box sx={{ color: 'text.secondary' }}>{title}</Box>
-      <Box sx={{ color: 'text.primary', fontSize: 34, fontWeight: 'medium' }}>
+      <Typography variant="h4" sx={{ color: 'text.primary' }}>
         {content}
-      </Box>
+      </Typography>
       <Box
         sx={{
           color: 'success.dark',
@@ -104,5 +97,48 @@ const CoolInfoBox = ({ title, content, additionalNumber, additionalInfo }) => {
         {additionalInfo}
       </Box>
     </InfoBlock>
+  );
+};
+
+export const CountBox = () => {
+  const wordList = useContext(WordListContext);
+  const contextList = useContext(ContextListContext);
+  return (
+    <CoolInfoBox
+      title="words"
+      content={wordList?.length}
+      additionalNumber={contextList?.length}
+      additionalInfo={'contexts'}
+    />
+  );
+};
+
+export const NavToSettingsPage = () => {
+  return (
+    <CoolInfoBox
+      title={<Settings />}
+      content={
+        <Link component={RouterLink} to="/home/settings">
+          Settings
+          <ArrowRight />
+        </Link>
+      }
+      additionalInfo={'backup / customize'}
+    />
+  );
+};
+
+export const NavToCollection = () => {
+  return (
+    <CoolInfoBox
+      title={<Collections />}
+      content={
+        <Link component={RouterLink} to="/home/collection">
+          Collection
+          <ArrowRight />
+        </Link>
+      }
+      additionalInfo={'browse'}
+    />
   );
 };

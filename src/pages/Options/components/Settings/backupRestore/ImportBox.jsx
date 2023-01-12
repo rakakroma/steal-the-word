@@ -4,14 +4,13 @@ import { saveImportDataToDB } from '../../../utils/ImportExport';
 import { demoData } from '../../../../../utilsForAll/demoData';
 import { grey } from '@mui/material/colors';
 import { handleClearAll } from './ImportAndExportBox';
-import { SingleDataInfo } from './SingleDataInfo';
+import { ButtonContainer, DataCountGrid } from './DataCountGrid';
 
 export const ImportBox = ({ loggedData, setLoggedData, noDataInCurrentDB }) => {
   const logFile = (event) => {
     let str = event.target.result;
     let json = JSON.parse(str);
     setLoggedData(json);
-    // saveImportDataToDB(json);
   };
 
   const handleImportToDb = () => {
@@ -24,7 +23,6 @@ export const ImportBox = ({ loggedData, setLoggedData, noDataInCurrentDB }) => {
   const handleNewFileChange = (e) => {
     const file = e.target.files[0];
     console.log(file.name);
-    // if (!file.value.length) return;
     let reader = new FileReader();
     reader.onload = logFile;
     reader.readAsText(file);
@@ -38,16 +36,12 @@ export const ImportBox = ({ loggedData, setLoggedData, noDataInCurrentDB }) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          flexGrow: 1,
           position: 'relative',
+          height: '100%',
+          width: '100%',
+          borderRadius: 2,
         }}
       >
-        <Typography
-          variant="subtitle1"
-          sx={{ position: 'absolute', top: 1, left: 1 }}
-        >
-          Restore
-        </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <label htmlFor="file">
             <Button component="div" variant="contained">
@@ -75,31 +69,28 @@ export const ImportBox = ({ loggedData, setLoggedData, noDataInCurrentDB }) => {
 
   return (
     <Box>
-      {loggedData && (
-        <Stack
-          direction="column"
-          justifyContent="flex-start"
-          alignItems="stretch"
-          spacing={1}
-          sx={{ p: 1, width: '320px', minWidth: '200px' }}
+      <DataCountGrid
+        title="Uploaded Data Info"
+        listLengthData={{
+          words: loggedData.wordList?.length,
+          contexts: loggedData.contextList?.length,
+          tags: loggedData.tagList?.length,
+          domains: loggedData.domainAndLinkList?.length,
+        }}
+        isImportedData={true}
+      />
+      <ButtonContainer>
+        <Button
+          onClick={handleImportToDb}
+          variant="contained"
+          className="main-button"
         >
-          <Typography variant="subtitle1">Uploaded Data Info</Typography>
-          <SingleDataInfo title="words" number={loggedData.wordList?.length} />
-          <SingleDataInfo
-            title="contexts"
-            number={loggedData.contextList?.length}
-          />
-          <SingleDataInfo title="tags" number={loggedData.tagList?.length} />
-          <SingleDataInfo
-            title="domains"
-            number={loggedData.domainAndLinkList?.length}
-          />
-          <Box>
-            <Button onClick={() => setLoggedData(null)}>Cancel</Button>
-            <Button onClick={handleImportToDb}>Import</Button>
-          </Box>
-        </Stack>
-      )}
+          Import
+        </Button>
+        <Button variant="outlined" onClick={() => setLoggedData(null)}>
+          Cancel
+        </Button>
+      </ButtonContainer>
     </Box>
   );
 };

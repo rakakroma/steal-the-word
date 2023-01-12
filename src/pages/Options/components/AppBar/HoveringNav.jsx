@@ -8,7 +8,7 @@ import {
   Tooltip,
   tooltipClasses,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { useEffect } from 'react';
 
 const FloatingNavList = styled(({ className, ...props }) => (
@@ -44,7 +44,7 @@ export const HoveringNav = ({ children, currentPathName, pathIcon }) => {
   useEffect(() => {
     handleClose();
   }, [currentPathName]);
-  const allPath = ['home', 'settings', 'words'];
+  const allPath = ['home', 'settings', 'collection'];
 
   const ListLinkButton = ({
     targetPathName,
@@ -78,19 +78,19 @@ export const HoveringNav = ({ children, currentPathName, pathIcon }) => {
       onClose={handleClose}
       onOpen={handleOpen}
       title={
-        <React.Fragment>
+        <Fragment>
           <List component="nav" disablePadding>
             {allPath.map((oneOfAllPathName, i) => (
-              <React.Fragment key={oneOfAllPathName}>
+              <Fragment key={oneOfAllPathName}>
                 <ListLinkButton
                   targetPathName={oneOfAllPathName}
                   currentPathName={currentPathName}
                   disableDivider={i === allPath.length - 1}
                 />
-              </React.Fragment>
+              </Fragment>
             ))}
           </List>
-        </React.Fragment>
+        </Fragment>
       }
     >
       {children}

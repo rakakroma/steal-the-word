@@ -1,5 +1,5 @@
 import { Box, Chip, Typography, useTheme } from '@mui/material';
-import React, { memo, useRef } from 'react';
+import React, { Fragment, memo, useRef } from 'react';
 import { GroupedVirtuoso } from 'react-virtuoso';
 import { cutUrl, domainPageWords } from '../../utils/transformData';
 import { IndexQuickRefBox } from './IndexQuickRefBox';
@@ -134,7 +134,7 @@ export const OrderByTimeAndSiteContainer = memo(
               >
                 {wordsByPage.map((dataByUrl) => {
                   return (
-                    <React.Fragment key={dataByUrl.url}>
+                    <Fragment key={dataByUrl.url}>
                       <WordCollectionPageBox
                         showDate={true}
                         displayMode={displayMode}
@@ -142,7 +142,7 @@ export const OrderByTimeAndSiteContainer = memo(
                         arrayWithUrl={dataByUrl}
                         // containerWidth={containerWidth}
                       />
-                    </React.Fragment>
+                    </Fragment>
                   );
                 })}
               </Box>
