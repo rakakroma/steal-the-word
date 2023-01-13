@@ -16,6 +16,8 @@ import React, { useState } from 'react';
 import { useEffect } from 'react';
 
 const defaultLangOptions = {
+  enabled: true,
+  auto: true,
   english: true,
   japanese: true,
   chinese: 'nan-tw',
@@ -38,21 +40,56 @@ const allHakOptions = {
   'hak-nan': '南四縣',
 };
 
+const useStorageApiSetting = () => {
+  const [apiSetting, setApiSetting] = useState(defaultLangOptions);
+
+  useEffect(() => {
+    chrome.storage.local.get(['apiSetting'], (obj) => {
+      const apiSettingData = obj.apiSetting;
+      console.log(apiSettingData);
+      if (apiSettingData && Object.keys(apiSettingData).length > 0) {
+        setApiSetting(apiSettingData);
+        return;
+      }
+    });
+  }, []);
+
+  const changeWholeApiSetting = (newData) => {
+    chrome.storage.local.set({
+      apiSetting: newData,
+    });
+    setApiSetting(newData);
+  };
+
+  const changeOneOption = (keyValue) => {
+    changeWholeApiSetting({ ...apiSetting, ...keyValue });
+  };
+  return { apiSetting, changeOneOption };
+};
+
 export const ApiInfo = () => {
-  const [enabled, setEnabled] = useState(false);
-  const [langOptions, setLangOptions] = useState(defaultLangOptions);
+  const { apiSetting, changeOneOption } = useStorageApiSetting();
+  const langOptions = apiSetting;
+  const enabled = apiSetting.enabled;
+  //   const setLangOptions = changeApiSetting;
+  //   const [enabled, setEnabled] = useState(false);
+  //   const [langOptions, setLangOptions] = useState(defaultLangOptions);
 
   const handleLangCheck = (e) => {
-    setLangOptions({ ...langOptions, [e.target.name]: e.target.checked });
+    changeOneOption({ [e.target.name]: e.target.checked });
+    // setLangOptions({ ...langOptions, [e.target.name]: e.target.checked });
   };
 
   const handleChineseChange = (e) => {
-    setLangOptions({ ...langOptions, chinese: e.target.value });
+    changeOneOption({ chinese: e.target.value });
+    // setLangOptions({ ...langOptions, chinese: e.target.value });
   };
 
   const handleHakOptionChange = (e) => {
-    console.log(e.target.value);
-    setLangOptions({ ...langOptions, hakkaOptions: e.target.value });
+    // console.log(e.target.value);
+    changeOneOption({ hakkaOptions: e.target.value });
+
+    // setLangOptions({ ...langOptions, hakkaOptions: e.target.value });
   };
 
   const langLabels = {
@@ -92,7 +129,7 @@ export const ApiInfo = () => {
         control={
           <Switch
             size="small"
-            onChange={() => setEnabled(!enabled)}
+            onChange={() => changeOneOption({ enabled: !enabled })}
             checked={enabled}
           />
         }
@@ -125,8 +162,7 @@ export const ApiInfo = () => {
               checked={Boolean(langOptions.chinese)}
               disabled={!enabled}
               onChange={(e) => {
-                setLangOptions({
-                  ...langOptions,
+                changeOneOption({
                   chinese: langOptions.chinese ? '' : 'nan-tw',
                 });
               }}

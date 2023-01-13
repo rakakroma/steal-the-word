@@ -11,19 +11,19 @@
 //   'hak-nansixian',
 // ];
 
-const langOptions = {
-  english: true,
-  japanese: true,
-  chinese: 'nan-tw',
-  hakkaOptions: [
-    'hak-sixian',
-    'hak-hailu',
-    'hak-dabu',
-    'hak-raoping',
-    'hak-zhaoan',
-    'hak-nan',
-  ],
-};
+// const langOptions = {
+//   english: true,
+//   japanese: true,
+//   chinese: 'nan-tw',
+//   hakkaOptions: [
+//     'hak-sixian',
+//     'hak-hailu',
+//     'hak-dabu',
+//     'hak-raoping',
+//     'hak-zhaoan',
+//     'hak-nan',
+//   ],
+// };
 
 const gooHiraganaAPI = 'https://labs.goo.ne.jp/api/hiragana';
 
@@ -100,8 +100,8 @@ const abbrPair = {
   'hak-zhaoan': '安',
   'hak-nan': '南',
 };
-const getHakka = async (targetWord) => {
-  const selectedHakkaDialects = langOptions.hakkaOptions.map(
+const getHakka = async (targetWord, hakkaOptions) => {
+  const selectedHakkaDialects = hakkaOptions.map(
     (engAbbr) => abbrPair[engAbbr]
   );
   const fetchedData = await fetchMoeApi(targetWord, 'h');
@@ -140,8 +140,10 @@ const getBopomofoOrPinyin = async (targetWord, lang) => {
     .join(', ')
     .toString();
 };
+
 const getEngDictApi = (word) =>
   `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
+
 const getEnglishDefinition = async (targetWord) => {
   const fetchedData = await fetch(getEngDictApi(targetWord)).then((response) =>
     response.json()
@@ -152,14 +154,15 @@ const getEnglishDefinition = async (targetWord) => {
 
   //too many definitions so pick first one only, maybe a selectable list would be great
   const definition = fetchedData[0].meanings[0].definitions[0].definition;
-  return `${pron ? pron + ' ' : ''}${definition}`;
+  // return `${pron ? pron + ' ' : ''}${definition}`;
+  return { pron, definition };
 };
 
-export const fetchPronInfo = async (targetWord, contextHere) => {
+export const fetchPronInfo = async (targetWord, contextHere, langOptions) => {
   let lang;
   const langs = await detectLanguages(contextHere || targetWord);
   const haveKanji = checkKanji(targetWord);
-  console.log(langs);
+  // console.log(langs);
   if ((langOptions.japanese || langOptions.chinese) && haveKanji) {
     if (langOptions.japanese && japaneseInLangs(langs)) {
       lang = 'ja';
@@ -167,27 +170,31 @@ export const fetchPronInfo = async (targetWord, contextHere) => {
       lang = langOptions.chinese;
     }
   }
+  const fetchedResult = {};
   if (!lang && langOptions.english && checkEnglishAlphabet(targetWord)) {
     lang = 'en';
   }
   if (lang === 'en') {
-    const pronAndDefData = await getEnglishDefinition(targetWord);
-    return pronAndDefData;
+    const { pron, definition } = await getEnglishDefinition(targetWord);
+    // return pronAndDefData;
+    fetchedResult.pron = pron;
+    fetchedResult.definition = definition;
   }
   if (lang === 'ja') {
-    const pronData = await getHiragana(targetWord);
-    return pronData;
+    fetchedResult.pron = await getHiragana(targetWord);
+    // return pronData;
   }
   if (lang === 'nan-tw') {
-    const pronData = await getTaiLo(targetWord);
-    return pronData;
+    fetchedResult.pron = await getTaiLo(targetWord);
+    // return pronData;
   }
   if (lang === 'hak') {
-    const pronData = await getHakka(targetWord);
-    return pronData;
+    fetchedResult.pron = await getHakka(targetWord, langOptions.hakkaOptions);
+    // return pronData;
   }
   if (['bopomofo', 'pinyin'].includes(lang)) {
-    const pronData = await getBopomofoOrPinyin(targetWord, lang);
-    return pronData;
+    fetchedResult.pron = await getBopomofoOrPinyin(targetWord, lang);
+    // return pronData;
   }
+  return fetchedResult;
 };

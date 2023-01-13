@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import { classMap } from 'lit/directives/class-map.js';
 
 class HooliTextarea extends LitElement {
   static get properties() {
@@ -7,8 +8,6 @@ class HooliTextarea extends LitElement {
       placeholder: { type: String },
       maxLength: { type: Number },
       minLength: { type: Number },
-      currentLength: { type: Number },
-      // highlightText: { type: String }
     };
   }
 
@@ -18,8 +17,12 @@ class HooliTextarea extends LitElement {
     this.placeholder = '';
     this.maxLength = 460;
     this.minLength = null;
-    this.currentLength = 0;
-    // this.highlightedText = ''
+  }
+  updated(changedProperties) {
+    super.updated(changedProperties);
+    if (changedProperties.has('value')) {
+      this._handleAutoHeight();
+    }
   }
 
   static styles = [
@@ -61,40 +64,28 @@ class HooliTextarea extends LitElement {
   ];
 
   render() {
+    const lengthCountClass = {
+      'invalid-length':
+        this.value.length < this.minLength ||
+        this.value.length > this.maxLength,
+      'max-length': this.value.length === this.maxLength,
+    };
     return html`
       <textarea
         @input="${this._handleAutoHeightAndUpdateValue}"
-        placeholder="${this.placeholder}"
-        maxlength="${this.maxLength}"
+        .placeholder="${this.placeholder}"
+        .maxLength="${this.maxLength}"
         .value=${this.value}
       ></textarea>
-      <span id="count-length">${this.currentLength}/${this.maxLength}</span>
+      <span id="count-length" class=${classMap(lengthCountClass)}
+        >${this.value.length}/${this.maxLength}</span
+      >
     `;
   }
 
   _handleAutoHeightAndUpdateValue(e) {
     this._handleUpdateValue(e);
     this._handleAutoHeight();
-    this._handleCountCharacter(e.target.value);
-  }
-
-  _handleCountCharacter(value) {
-    this.currentLength = value.length;
-    const countLengthSpan = this.renderRoot.querySelector('#count-length');
-
-    if (typeof this.minLength === 'number') {
-      if (this.currentLength < this.minLength) {
-        countLengthSpan.className = 'invalid-length';
-        return;
-      }
-    }
-    if (this.currentLength > this.maxLength) {
-      countLengthSpan.className = 'invalid-length';
-    } else if (this.currentLength === this.maxLength) {
-      countLengthSpan.className = 'max-length';
-    } else if (countLengthSpan.className) {
-      countLengthSpan.className = '';
-    }
   }
 
   _handleUpdateValue(e) {

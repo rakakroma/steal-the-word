@@ -17,6 +17,7 @@ export const workingPreferenceSlice = createSlice({
       styleName: 'default',
       styles: { color: 'white', background: 'green' },
     },
+    apiSetting: { enabled: false },
   },
   extraReducers: (builder) => {
     builder.addCase(
@@ -24,6 +25,7 @@ export const workingPreferenceSlice = createSlice({
       (state, action) => {
         const globalPref = action.payload;
         state.textStyle = globalPref.textStyle;
+        state.apiSetting = globalPref.apiSetting;
         options.forEach((keyName) => {
           state[keyName].global = globalPref[keyName];
         });
@@ -41,6 +43,10 @@ export const workingPreferenceSlice = createSlice({
 });
 
 const getAllSetting = (state) => state.workingPreference;
+export const getCustomTextStyle = (state) =>
+  state.workingPreference.textStyle.styles;
+
+export const getApiSetting = (state) => state.workingPreference.apiSetting;
 
 export const getCertainSetting = createSelector(
   [getAllSetting, (state, optionName) => optionName],

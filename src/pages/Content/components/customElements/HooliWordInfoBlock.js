@@ -2,7 +2,6 @@ import '@webcomponents/custom-elements';
 
 import { html, LitElement } from 'lit';
 import { getAllMatchTextFromWordObj } from '../../../../utilsForAll/getInfoFromWordObj';
-import { getContexts } from '../../../Background/getData';
 // import { myList } from '../../index';
 import { fetchPronInfo } from '../../utils/fetchPronInfo';
 import './HolliToolTip';
@@ -24,7 +23,11 @@ import {
   iconButtonStyle,
   wordInfoBlockStyles,
 } from './WordBlock/wordInfoBlockStyles';
-import { getTagList, getWordById } from '../../redux/wordDataSlice';
+import {
+  findDuplicateWord,
+  getTagList,
+  getWordById,
+} from '../../redux/wordDataSlice';
 import { store } from '../../redux/store';
 import { connect } from 'pwa-helpers';
 import {
@@ -36,6 +39,7 @@ import {
   getWordContexts,
   getWordImgSrcs,
 } from '../../redux/wordBlockSlice';
+import { getApiSetting } from '../../redux/workingPreferenceSlice';
 
 export const initialFormInputStatus = {
   editingTagDefId: null,
@@ -57,6 +61,7 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
       imgSrcs: { type: Array },
       mode: { type: String },
       tagList: { type: Array },
+      apiSetting: { type: Object },
       _currentSiteIcoSrc: { state: true },
       _formInputStatus: { state: true },
     };
@@ -79,6 +84,7 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
     this.imgSrcs = getWordImgSrcs(state);
     this._currentSiteIcoSrc = getCurrentSiteImgSrc(state);
     this.tagList = getTagList(state);
+    this.apiSetting = getApiSetting(state);
   }
 
   static styles = [wordInfoBlockStyles, iconButtonStyle];
@@ -341,17 +347,28 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
     e.stopPropagation();
   }
 
-  _pronSearch = async (language) => {
-    const pronounceDataResult = await fetchPronInfo(
+  _pronSearch = async () => {
+    console.log(this.apiSetting);
+    if (!this.apiSetting.enabled) return;
+    const { pron, definition } = await fetchPronInfo(
       this.newWord,
-      this.contextHere
+      this.contextHere,
+      this.apiSetting
     );
-    if (pronounceDataResult) {
+
+    // const { pron, definition } = fetchedResult;
+    if (pron) {
       const annotationInput =
         this.renderRoot.querySelector('.annotation-input');
+      if (!annotationInput) return;
       const originalAnnotation = annotationInput.value;
-      annotationInput.value = pronounceDataResult + ' ' + originalAnnotation;
+      annotationInput.value = pron + ' ' + originalAnnotation;
       // this._handleEleValidInput(annotationInput)
+    }
+    if (definition) {
+      const noteInput = this.renderRoot.querySelector('.long-note-textarea');
+      if (!noteInput) return;
+      noteInput.value = definition + '' + noteInput.value;
     }
   };
 

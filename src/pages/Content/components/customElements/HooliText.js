@@ -14,6 +14,7 @@ import {
 import { connect } from 'pwa-helpers';
 import { store } from '../../redux/store';
 import { getWordById } from '../../redux/wordDataSlice';
+import { getCustomTextStyle } from '../../redux/workingPreferenceSlice';
 
 const removeWordBlock = () =>
   document.querySelector('hooli-wordinfo-block')?.remove();
@@ -30,8 +31,6 @@ export const openAddNewWord = () => {
   document.getSelection()?.removeAllRanges();
   document.body.appendChild(wordBlock);
 };
-
-const getCustomTextStyle = (state) => state.workingPreference.textStyle.styles;
 
 class HooliText extends connect(store)(LitElement) {
   static get properties() {
