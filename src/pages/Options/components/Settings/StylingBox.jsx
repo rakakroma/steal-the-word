@@ -7,42 +7,74 @@ import {
   FormControlLabel,
   Input,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const allStyles = {
   default: {
     color: 'white',
-    backgroundColor: 'slategray',
+    background: 'slategray',
   },
   style1: {
     color: 'black',
-    backgroundColor: '#d8d8d8',
+    background: '#d8d8d8',
   },
   style2: {
     color: 'white',
-    backgroundImage:
-      'linear-gradient(to right, #F27121cc, #E94057cc, #8A2387cc)',
+    background: 'linear-gradient(to right, #F27121cc, #E94057cc, #8A2387cc)',
   },
   style3: {
     background: 'linear-gradient(transparent 20%, #eea3a361 30%)',
   },
-  style4: {
-    color: '',
-  },
 };
 
-const StylePanel = ({ selectedStyle, setSelectedStyle }) => {
-  const handleChange = (e) => setSelectedStyle(e.target.value);
+const useStorageTextStyle = () => {
+  const [textStyle, setTextStyle] = useState({
+    styleName: 'default',
+    styles: allStyles.default,
+  });
+  const [defaultValue, setDefaultValue] = useState(null);
 
+  useEffect(() => {
+    chrome.storage.local.get(['textStyle'], (obj) => {
+      const textStyleData = obj.textStyle;
+      if (textStyleData && Object.keys(textStyleData).length > 0) {
+        setTextStyle(textStyleData);
+        setDefaultValue(textStyleData.styleName);
+        return;
+      }
+      setDefaultValue('default');
+    });
+  }, []);
+
+  const changeTextStyle = (newStyleName) => {
+    const newData = {
+      styleName: newStyleName,
+      styles: allStyles[newStyleName],
+    };
+    chrome.storage.local.set({
+      textStyle: newData,
+    });
+    setTextStyle(newData);
+  };
+
+  return { defaultValue, textStyle, changeTextStyle };
+};
+
+const StylePanel = ({ defaultValue, changeTextStyle }) => {
+  const handleChange = (e) => {
+    changeTextStyle(e.target.value);
+  };
+
+  // if (!selectedStyle) return null;
   return (
     <FormControl>
       <FormLabel>Text Style</FormLabel>
-      <RadioGroup value={selectedStyle} onChange={handleChange} row>
-        {Object.entries(allStyles).map((pair) => (
+      <RadioGroup defaultValue={defaultValue} onChange={handleChange} row>
+        {Object.keys(allStyles).map((styleName) => (
           <FormControlLabel
-            key={pair[0]}
-            value={pair[0]}
-            label={pair[0]}
+            key={styleName}
+            value={styleName}
+            label={styleName}
             control={<Radio />}
           />
         ))}
@@ -52,11 +84,12 @@ const StylePanel = ({ selectedStyle, setSelectedStyle }) => {
 };
 
 export const StylingBox = () => {
-  const [selectedStyle, setSelectedStyle] = useState('default');
+  const { defaultValue, textStyle, changeTextStyle } = useStorageTextStyle();
 
+  if (!defaultValue) return null;
   const FakeHooliText = (props) => {
     return (
-      <span style={{ cursor: 'pointer', ...allStyles[selectedStyle] }}>
+      <span style={{ cursor: 'pointer', ...textStyle.styles }}>
         {props.children}
       </span>
     );
@@ -100,8 +133,8 @@ export const StylingBox = () => {
         </Box>
       </Box>
       <StylePanel
-        selectedStyle={selectedStyle}
-        setSelectedStyle={setSelectedStyle}
+        defaultValue={defaultValue}
+        changeTextStyle={changeTextStyle}
       />
     </Box>
   );

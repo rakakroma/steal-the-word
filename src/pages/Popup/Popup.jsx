@@ -20,7 +20,7 @@ import { ToggleOptions } from './ToggleOptions';
 import { PopupTabs } from './PopupTabs';
 import { db } from '../Background/database.js';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useCurrentTabData } from './useDataHook';
+import { useCurrentTabData } from './useCurrentTabData';
 
 export const TabDataContext = createContext({});
 

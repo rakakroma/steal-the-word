@@ -2,6 +2,7 @@ import { Box, Divider, Paper, Typography } from '@mui/material';
 import React from 'react';
 import { ApiInfo } from './ApiInfo';
 import { ImportAndExportBox } from './backupRestore/ImportAndExportBox';
+import { SiteDataGrid } from './SiteDataGrid';
 import { StylingBox } from './StylingBox';
 
 export const Settings = () => {
@@ -28,9 +29,13 @@ export const Settings = () => {
           <StylingBox />
         </Box>
         <Divider sx={{ marginY: 2 }} />
-        <Typography variant="h5">Languages Dictionary API</Typography>
+        <Typography variant="h5">Dictionary API</Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 7 }}>
           <ApiInfo />
+        </Box>
+        <Typography variant="h5">Dictionary API</Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 7 }}>
+          <SiteDataGrid />
         </Box>
       </Paper>
     </Box>

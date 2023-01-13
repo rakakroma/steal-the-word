@@ -101,7 +101,7 @@ export const ApiInfo = () => {
       <Typography>
         Using these api services must send the word and context you're searching
         to those service, and except for that, This app would not send any of
-        your data to anywhere.
+        your data to the web.
       </Typography>
 
       <FormGroup>

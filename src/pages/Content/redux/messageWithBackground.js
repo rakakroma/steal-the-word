@@ -15,7 +15,9 @@ export const getGlobalPreferencesFromLocalStorage = createAsyncThunk(
       'activate',
       'mouseTool',
       'floatingWindow',
+      'textStyle',
     ]);
+    console.log(preferences);
     return preferences;
   }
 );

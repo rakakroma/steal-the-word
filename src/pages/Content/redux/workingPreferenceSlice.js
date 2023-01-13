@@ -13,12 +13,17 @@ export const workingPreferenceSlice = createSlice({
     mouseTool: { global: false, custom: false },
     floatingWindow: { global: false, custom: false },
     customRule: false,
+    textStyle: {
+      styleName: 'default',
+      styles: { color: 'white', background: 'green' },
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(
       getGlobalPreferencesFromLocalStorage.fulfilled,
       (state, action) => {
         const globalPref = action.payload;
+        state.textStyle = globalPref.textStyle;
         options.forEach((keyName) => {
           state[keyName].global = globalPref[keyName];
         });

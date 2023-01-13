@@ -1,5 +1,5 @@
 import '@webcomponents/custom-elements';
-import { LitElement, html, css } from 'lit';
+import { LitElement, html, css, unsafeCSS } from 'lit';
 import { getSentenceFromSelection } from '../../utils/get-selection-more.ts';
 import './HooliWordInfoBlock.js';
 import { setWordBlockPosition } from '../../utils/setPosition';
@@ -31,15 +31,30 @@ export const openAddNewWord = () => {
   document.body.appendChild(wordBlock);
 };
 
+const getCustomTextStyle = (state) => state.workingPreference.textStyle.styles;
+
 class HooliText extends connect(store)(LitElement) {
   static get properties() {
     return {
       wordObj: { type: Object },
+      customTextStyle: { type: Object },
     };
   }
   stateChanged(state) {
     this.wordObj = getWordById(state, this.className.slice(2));
+    this.customTextStyle = getCustomTextStyle(state);
   }
+  updated(changedProperties) {
+    super.updated(changedProperties);
+    if (changedProperties.has('customTextStyle')) {
+      this.style.setProperty('--hooli-text-color', this.customTextStyle.color);
+      this.style.setProperty(
+        '--hooli-text-background',
+        this.customTextStyle.background || this.customTextStyle.backgroundColor
+      );
+    }
+  }
+
   static styles = [
     css`
       :host {
@@ -48,8 +63,8 @@ class HooliText extends connect(store)(LitElement) {
         font-family: inherit;
         font-weight: inherit;
         cursor: pointer;
-        color: white;
-        background-color: slategray;
+        color: var(--hooli-text-color);
+        background: var(--hooli-text-background);
         white-space: normal;
         display: inline-block;
       }
@@ -59,14 +74,14 @@ class HooliText extends connect(store)(LitElement) {
         position: absolute;
         display: inline-block;
         z-index: 2147483647;
-        padding: 3px; /* 余白 */
-        white-space: nowrap; /* テキストを折り返さない */
-        font-size: 12px; /* フォントサイズ */
-        line-height: 1.3; /* 行間 */
-        background: rgb(241, 241, 241); /* 背景色 */
-        color: rgb(0, 0, 0); /* 文字色 */
-        border-radius: 3px; /* 角丸 */
-        transition: 0.1s ease-in; /* アニメーション */
+        padding: 3px;
+        white-space: nowrap;
+        font-size: 12px;
+        line-height: 1.3;
+        background: rgb(241, 241, 241);
+        color: rgb(0, 0, 0);
+        border-radius: 3px;
+        transition: 0.1s ease-in;
         opacity: 0;
         visibility: hidden;
         font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
