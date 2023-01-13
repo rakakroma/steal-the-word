@@ -234,9 +234,6 @@ export const RandomContext = () => {
       </IconButton>
 
       <Typography variant="h5">Random Context</Typography>
-      {/* <Typography variant="h6"> */}
-
-      {/* </Typography> */}
       <LinearProgress
         sx={{
           width: '93.5%',

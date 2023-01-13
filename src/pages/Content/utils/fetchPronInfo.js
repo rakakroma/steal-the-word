@@ -1,29 +1,4 @@
-// let kanjiLearningLangs = [
-//   'ja',
-//   'bopomofo',
-//   'pinyin',
-//   'nan-tw',
-//   'hak-sixian',
-//   'hak-hailu',
-//   'hak-dabu',
-//   'hak-raoping',
-//   'hak-zhaoan',
-//   'hak-nansixian',
-// ];
-
-// const langOptions = {
-//   english: true,
-//   japanese: true,
-//   chinese: 'nan-tw',
-//   hakkaOptions: [
-//     'hak-sixian',
-//     'hak-hailu',
-//     'hak-dabu',
-//     'hak-raoping',
-//     'hak-zhaoan',
-//     'hak-nan',
-//   ],
-// };
+import { getLang } from './getLang';
 
 const gooHiraganaAPI = 'https://labs.goo.ne.jp/api/hiragana';
 
@@ -34,25 +9,7 @@ const getMoedictAPI = (word, lang) => {
   return `https://www.moedict.tw/${lang}/${word}.json`;
 };
 
-const detectLanguages = async (textString) => {
-  const { languages } = await chrome.i18n.detectLanguage(textString);
-  return languages;
-};
-
-const checkKanji = (textString) => {
-  const regexKanji = new RegExp(/\p{sc=Hani}/gu);
-  return regexKanji.test(textString);
-};
-const japaneseInLangs = (langs) => {
-  return langs.findIndex((lang) => lang.language === 'ja') > -1;
-};
-
-const checkEnglishAlphabet = (textString) => {
-  return new RegExp(/[a-z]/i).test(textString);
-};
-
 const getHiragana = async (textString) => {
-  // let hiraganaResult = '';
   let urlencoded = new URLSearchParams();
   urlencoded.append('app_id', gooAppId);
   urlencoded.append('sentence', textString);
@@ -154,47 +111,34 @@ const getEnglishDefinition = async (targetWord) => {
 
   //too many definitions so pick first one only, maybe a selectable list would be great
   const definition = fetchedData[0].meanings[0].definitions[0].definition;
-  // return `${pron ? pron + ' ' : ''}${definition}`;
   return { pron, definition };
 };
 
-export const fetchPronInfo = async (targetWord, contextHere, langOptions) => {
-  let lang;
-  const langs = await detectLanguages(contextHere || targetWord);
-  const haveKanji = checkKanji(targetWord);
-  // console.log(langs);
-  if ((langOptions.japanese || langOptions.chinese) && haveKanji) {
-    if (langOptions.japanese && japaneseInLangs(langs)) {
-      lang = 'ja';
-    } else {
-      lang = langOptions.chinese;
-    }
-  }
+export const fetchPronInfo = async (
+  targetWord,
+  contextHere,
+  langOptions,
+  lang
+) => {
+  // const lang = await getLang(targetWord, contextHere, langOptions);
   const fetchedResult = {};
-  if (!lang && langOptions.english && checkEnglishAlphabet(targetWord)) {
-    lang = 'en';
-  }
+
   if (lang === 'en') {
     const { pron, definition } = await getEnglishDefinition(targetWord);
-    // return pronAndDefData;
     fetchedResult.pron = pron;
     fetchedResult.definition = definition;
   }
   if (lang === 'ja') {
     fetchedResult.pron = await getHiragana(targetWord);
-    // return pronData;
   }
   if (lang === 'nan-tw') {
     fetchedResult.pron = await getTaiLo(targetWord);
-    // return pronData;
   }
   if (lang === 'hak') {
     fetchedResult.pron = await getHakka(targetWord, langOptions.hakkaOptions);
-    // return pronData;
   }
   if (['bopomofo', 'pinyin'].includes(lang)) {
     fetchedResult.pron = await getBopomofoOrPinyin(targetWord, lang);
-    // return pronData;
   }
   return fetchedResult;
 };

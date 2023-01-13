@@ -21,8 +21,11 @@ export const actionBar = (wordBlock) => {
     FindAndReplaceIcon({ width: 15, height: 15 }),
     () => wordBlock._handleUpdateFormStatus('openMatchRule')
   );
+
   const searchLinkButton = html`
-              <hooli-tooltip text='search wordBlock word in Google'>
+              <hooli-tooltip text="Google ${
+                wordBlock.newWord || wordBlock.word
+              } in new tab">
               <a href=https://www.google.com/search?q=${
                 wordBlock.newWord || wordBlock.wordObj.word
               } target="_blank" >       
@@ -46,7 +49,7 @@ export const actionBar = (wordBlock) => {
   if (wordBlock.mode === 'newContext') return html`${searchLinkButton}`;
 
   if (wordBlock.mode === 'lookUp')
-    return html` ${searchLinkButton} ${newContextButton}${editIcon}
+    return html` ${searchLinkButton}${newContextButton}${editIcon}
       <hooli-menu>
         <li slot="list-item" @click="${() => (wordBlock.mode = 'deleting')}">
           ${DeleteIcon({ width: 15, height: 15 })} Delete

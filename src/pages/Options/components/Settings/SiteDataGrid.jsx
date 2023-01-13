@@ -179,6 +179,18 @@ export const SiteDataGrid = () => {
   const domainAndLinkList = useContext(DomainAndLinkListContext);
 
   if (!domainAndLinkList) return null;
+
+  const basicCol = {
+    type: 'singleSelect',
+    valueFormatter: (params) => {
+      if (params.value === false) return 'false';
+      if (params.value === true) return 'true';
+      return 'default';
+    },
+    valueOption: ['true', 'false', 'default'],
+    editable: true,
+  };
+
   const domainAndLinkCols = [
     {
       field: 'url',
@@ -190,16 +202,34 @@ export const SiteDataGrid = () => {
         </a>
       ),
     },
-    // {
-    //   field: 'dynamicRendering',
-    //   headerName: '動態更新',
-    //   width: 50,
-    //   type: 'boolean',
-    //   editable: true,
-    // },
+    {
+      field: 'activate',
+      headerName: 'Activate',
+      width: 100,
+      ...basicCol,
+    },
+    {
+      field: 'floatingWindow',
+      headerName: 'Floating Window',
+      width: 130,
+      type: 'singleSelect',
+      valueFormatter: (params) => {
+        if (params.value === false) return 'false';
+        if (params.value === true) return 'true';
+        return 'default';
+      },
+      valueOption: ['true', 'false', 'default'],
+      editable: true,
+    },
+    {
+      field: 'mouseTool',
+      headerName: 'mouse tool',
+      width: 100,
+      ...basicCol,
+    },
     {
       field: 'icon',
-      headerName: '圖示',
+      headerName: 'Icon',
       width: 50,
       renderCell: (params) => <ChildModal params={params} />,
       getApplyQuickFilterFn: undefined,

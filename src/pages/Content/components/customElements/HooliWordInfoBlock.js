@@ -40,6 +40,7 @@ import {
   getWordImgSrcs,
 } from '../../redux/wordBlockSlice';
 import { getApiSetting } from '../../redux/workingPreferenceSlice';
+import { getLang } from '../../utils/getLang';
 
 export const initialFormInputStatus = {
   editingTagDefId: null,
@@ -348,15 +349,17 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
   }
 
   _pronSearch = async () => {
-    console.log(this.apiSetting);
+    // console.log(this.apiSetting);
     if (!this.apiSetting.enabled) return;
+    const lang = await getLang(this.newWord, this.contextHere, this.apiSetting);
+    if (!lang) return;
     const { pron, definition } = await fetchPronInfo(
       this.newWord,
       this.contextHere,
-      this.apiSetting
+      this.apiSetting,
+      lang
     );
 
-    // const { pron, definition } = fetchedResult;
     if (pron) {
       const annotationInput =
         this.renderRoot.querySelector('.annotation-input');

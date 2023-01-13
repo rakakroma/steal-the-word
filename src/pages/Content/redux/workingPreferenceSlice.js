@@ -1,4 +1,5 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
+import { defaultLangOptions } from '../../Options/components/Settings/ApiInfo';
 import {
   getGlobalPreferencesFromLocalStorage,
   getInitialDataFromDb,
@@ -17,7 +18,7 @@ export const workingPreferenceSlice = createSlice({
       styleName: 'default',
       styles: { color: 'white', background: 'green' },
     },
-    apiSetting: { enabled: false },
+    apiSetting: defaultLangOptions,
   },
   extraReducers: (builder) => {
     builder.addCase(

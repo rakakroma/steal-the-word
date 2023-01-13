@@ -101,8 +101,6 @@ class HooliTextarea extends LitElement {
     theTextArea.style.height = theTextArea.scrollHeight + 'px';
   }
 
-  // firstUpdated(){
-  // }
   connectedCallback() {
     super.connectedCallback();
     setTimeout(() => this._handleAutoHeight(), 0);

@@ -15,7 +15,7 @@ import { Box } from '@mui/system';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 
-const defaultLangOptions = {
+export const defaultLangOptions = {
   enabled: true,
   auto: true,
   english: true,
@@ -71,25 +71,17 @@ export const ApiInfo = () => {
   const { apiSetting, changeOneOption } = useStorageApiSetting();
   const langOptions = apiSetting;
   const enabled = apiSetting.enabled;
-  //   const setLangOptions = changeApiSetting;
-  //   const [enabled, setEnabled] = useState(false);
-  //   const [langOptions, setLangOptions] = useState(defaultLangOptions);
 
   const handleLangCheck = (e) => {
     changeOneOption({ [e.target.name]: e.target.checked });
-    // setLangOptions({ ...langOptions, [e.target.name]: e.target.checked });
   };
 
   const handleChineseChange = (e) => {
     changeOneOption({ chinese: e.target.value });
-    // setLangOptions({ ...langOptions, chinese: e.target.value });
   };
 
   const handleHakOptionChange = (e) => {
-    // console.log(e.target.value);
     changeOneOption({ hakkaOptions: e.target.value });
-
-    // setLangOptions({ ...langOptions, hakkaOptions: e.target.value });
   };
 
   const langLabels = {
