@@ -11,31 +11,11 @@ import {
 } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useEffect, useState } from 'react';
-
-export const defaultLangOptions = {
-  enabled: true,
-  auto: true,
-  english: true,
-  japanese: true,
-  chinese: 'nan-tw',
-  hakkaOptions: [
-    'hak-sixian',
-    'hak-hailu',
-    'hak-dabu',
-    'hak-raoping',
-    'hak-zhaoan',
-    'hak-nan',
-  ],
-};
-
-const allHakOptions = {
-  'hak-sixian': '四縣',
-  'hak-hailu': '海陸',
-  'hak-dabu': '大埔',
-  'hak-raoping': '饒平',
-  'hak-zhaoan': '詔安',
-  'hak-nan': '南四縣',
-};
+import {
+  allChineseOptions,
+  allHakOptions,
+  defaultLangOptions,
+} from '../../../../utilsForAll/languageAndApiData';
 
 const useStorageApiSetting = () => {
   const [apiSetting, setApiSetting] = useState(defaultLangOptions);
@@ -166,11 +146,11 @@ export const ApiInfo = () => {
             disabled={!enabled || !langOptions.chinese}
             displayEmpty
           >
-            <MenuItem value="">None</MenuItem>
-            <MenuItem value="nan-tw">Taiwanese</MenuItem>
-            <MenuItem value="hak">Hakka</MenuItem>
-            <MenuItem value="bopomofo">Mandarin Bopomofo </MenuItem>
-            <MenuItem value="pinyin">Mandarin pinyin</MenuItem>
+            {[['', 'None']]
+              .concat(Object.entries(allChineseOptions))
+              .map(([key, value]) => (
+                <MenuItem value={key}>{value}</MenuItem>
+              ))}
           </Select>
         </FormControl>
         {langOptions.chinese === 'hak' && (

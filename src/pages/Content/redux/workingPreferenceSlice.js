@@ -1,5 +1,5 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
-import { defaultLangOptions } from '../../Options/components/Settings/ApiInfo';
+import { defaultLangOptions } from '../../../utilsForAll/languageAndApiData';
 import {
   getGlobalPreferencesFromLocalStorage,
   getInitialDataFromDb,
@@ -25,10 +25,13 @@ export const workingPreferenceSlice = createSlice({
       getGlobalPreferencesFromLocalStorage.fulfilled,
       (state, action) => {
         const globalPref = action.payload;
-        state.textStyle = globalPref.textStyle;
-        state.apiSetting = globalPref.apiSetting;
-        options.forEach((keyName) => {
-          state[keyName].global = globalPref[keyName];
+        Object.entries(globalPref).forEach(([key, value]) => {
+          if (!value) return;
+          if (options.includes(key)) {
+            state[key].global = value;
+            return;
+          }
+          state[key] = value;
         });
       }
     );

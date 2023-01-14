@@ -264,6 +264,7 @@ export const RandomContext = () => {
         const targetDef = wordObj.definitions.find(
           (definition) => definition.definitionId === contextObj.definitionRef
         );
+
         const iconSrc = getDomainIcon(contextObj.url, domainList);
         const relativeIndex =
           arrayIndex - displayingIndices.indexOf(currentIndex);

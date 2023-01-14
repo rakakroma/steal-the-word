@@ -20,6 +20,7 @@ import {
   checkAndUpdateNewTagList,
   checkAndUpdateNewWordListAndReRender,
 } from './redux/wordDataSlice';
+import { myLog } from './utils/customLogger';
 
 export const body = document.body;
 
@@ -37,7 +38,12 @@ const appendSideListWindow = (foundMatchWord) => {
 };
 
 const init = async () => {
-  await store.dispatch(getGlobalPreferencesFromLocalStorage());
+  /* TODO: maybe the webNavigation API works and is better, but the api seems like contain iframe, which this have not yet deal with   */
+  const localData = await store.dispatch(
+    getGlobalPreferencesFromLocalStorage()
+  );
+
+  myLog(localData);
 
   if (!getCertainSetting(store.getState(), 'activate')) {
     chrome.runtime.sendMessage({ action: updateBadgeToNoWork });

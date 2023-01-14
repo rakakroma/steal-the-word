@@ -8,7 +8,7 @@ import { SiteIconAvatar } from './SiteIconButton';
 import { WordCollectionPageBox } from './WordCollectionPageBox';
 
 export const getDomainIcon = (url, domainList, isDomain) => {
-  if (!url) return '';
+  if (!url || !domainList) return '';
   let hostname;
   if (!isDomain) {
     hostname = new URL(url).hostname;

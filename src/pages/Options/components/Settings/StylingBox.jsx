@@ -7,30 +7,13 @@ import {
   RadioGroup,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-
-const allStyles = {
-  default: {
-    color: 'white',
-    background: 'slategray',
-  },
-  style1: {
-    color: 'black',
-    background: '#d8d8d8',
-  },
-  style2: {
-    color: 'white',
-    background: 'linear-gradient(to right, #F27121cc, #E94057cc, #8A2387cc)',
-  },
-  style3: {
-    background: 'linear-gradient(transparent 20%, #eea3a361 30%)',
-  },
-};
+import {
+  allStyles,
+  getTextStyleData,
+} from '../../../../utilsForAll/textStyleData';
 
 const useStorageTextStyle = () => {
-  const [textStyle, setTextStyle] = useState({
-    styleName: 'default',
-    styles: allStyles.default,
-  });
+  const [textStyle, setTextStyle] = useState(getTextStyleData('default'));
   const [defaultValue, setDefaultValue] = useState(null);
 
   useEffect(() => {
@@ -46,10 +29,11 @@ const useStorageTextStyle = () => {
   }, []);
 
   const changeTextStyle = (newStyleName) => {
-    const newData = {
-      styleName: newStyleName,
-      styles: allStyles[newStyleName],
-    };
+    // const newData = {
+    //   styleName: newStyleName,
+    //   styles: allStyles[newStyleName],
+    // };
+    const newData = getTextStyleData(newStyleName);
     chrome.storage.local.set({
       textStyle: newData,
     });
