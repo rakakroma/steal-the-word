@@ -75,15 +75,16 @@ export const PopupTabs = () => {
   const { isCustomSetting } = domainDataAndMethods;
   const { globalPreference } = localStorageDataAndMethods;
 
-  if (isCustomSetting && globalPreference.activate) {
+  if (isCustomSetting && globalPreference.activate && validPlace) {
     setCurrentTab(0);
   }
 
-  const handleChange = (value) => {
+  const handleChange = (e, value) => {
+    if (!validPlace || !globalPreference.activate) return;
     setCurrentTab(value);
   };
   return (
-    <Tabs value={currentTab} onChange={(e, value) => handleChange(value)}>
+    <Tabs value={currentTab} onChange={handleChange}>
       <TabsList>
         {globalPreference.activate && validPlace && (
           <Tab component="span" value={0}>

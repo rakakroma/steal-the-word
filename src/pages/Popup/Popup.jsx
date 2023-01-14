@@ -1,4 +1,4 @@
-import { CollectionsBookmark } from '@mui/icons-material';
+import { CollectionsBookmark, Settings } from '@mui/icons-material';
 import {
   Box,
   createTheme,
@@ -43,9 +43,14 @@ const Popup = () => {
           <Box sx={{ m: '6px' }}>
             <Grid container justifyContent="space-between" alignItems="center">
               <Grid>
-                <Typography variant="h6" sx={{ fontSize: '15px' }}>
-                  Options
-                </Typography>
+                <IconButton
+                  LinkComponent={'a'}
+                  href={`${chrome.runtime.getURL('options.html')}`}
+                  target="_blank"
+                  sx={{ width: '20px', height: '20px' }}
+                >
+                  <Settings />
+                </IconButton>
               </Grid>
               <Grid>
                 <IconButton
@@ -65,7 +70,7 @@ const Popup = () => {
                 variant="body1"
                 sx={{ pl: '2px', wordBreak: 'break-all' }}
               >
-                {currentDomain}
+                {validPlace ? currentDomain : 'not valid'}
               </Typography>
             </Grid>
           </Box>
