@@ -1,8 +1,7 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { updateWordCount } from '../../Background/updateBadge';
 import { currentURL } from '../utils/currentURL';
-import { transformElementId } from '../utils/renderRuby';
-import { addArrayOfData, deleteArrayOfDataByIds, store } from './store';
+import { store } from './store';
 import { getWordList } from './wordDataSlice';
 
 //FIXME:store ref here only,

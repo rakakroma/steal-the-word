@@ -1,19 +1,11 @@
-import {
-  Box,
-  Button,
-  Typography,
-  Stack,
-  IconButton,
-  Tooltip,
-} from '@mui/material';
+import { CloudDownload } from '@mui/icons-material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, Button, Tooltip, Typography } from '@mui/material';
 import React from 'react';
 import { formatDate } from '../../../utils/Date';
 import { exportToJsonFile } from '../../../utils/ImportExport';
-import { CloudDownload } from '@mui/icons-material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { ButtonContainer, DataCountGrid } from './DataCountGrid';
 import { handleClearAll } from './ImportAndExportBox';
-import { DataCountGrid, ButtonContainer } from './DataCountGrid';
-import { grey, red } from '@mui/material/colors';
 
 export const CurrentDataAndDownload = ({
   userUploadedData,

@@ -22,10 +22,6 @@ export const WordRating = ({ targetWord }) => {
 
   const updateWordRatingInDb = (value) => {
     db.wordList.update({ id: targetWord.id }, { stars: value });
-    // .then((updated) => {
-    //   if (updated) console.log(`update ${targetWord.id} to ${value} stars`);
-    //   else console.log('Nothing was updated');
-    // });
   };
   const handleWordRating = (e, newValue) => {
     if (newValue === null) {

@@ -1,5 +1,4 @@
-import { store } from '../../../../redux/store';
-import { updateOneWord } from '../../../../redux/wordDataSlice';
+import { myLog } from '../../../../utils/customLogger';
 
 export const submitAndExecute = (
   wordBlock,
@@ -7,13 +6,13 @@ export const submitAndExecute = (
   successFunc,
   backupFunc
 ) => {
-  console.log(request);
+  myLog(request);
   wordBlock._handleUpdateFormStatus('submitting', true);
   chrome.runtime.sendMessage(request, (response) => {
-    console.log(response);
+    myLog(response);
     if (!successFunc && !backupFunc) return;
     if (response.status === 'success') {
-      console.log(response);
+      myLog(response);
       successFunc(response);
     }
     if (typeof backupFunc === 'function') backupFunc(response);

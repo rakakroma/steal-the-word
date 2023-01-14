@@ -1,5 +1,4 @@
 import {
-  checkSameRef,
   getDeletedTagsUpdateInfo,
   getExistedTagDataUpdateInfo,
   getRefData,

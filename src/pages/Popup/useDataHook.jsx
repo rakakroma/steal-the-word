@@ -37,14 +37,10 @@ export const useDbDomainData = (domainUrl) => {
 
   const updateDataInDb = (newValueObj) => {
     if (!domainData) {
-      console.log('no domain data');
       addNewDomain(newValueObj);
       return;
     }
-    db['domainAndLink'].update(domainData.id, newValueObj).then((update) => {
-      console.log(`update status: ${update}`);
-      console.log(newValueObj);
-    });
+    db['domainAndLink'].update(domainData.id, newValueObj);
   };
 
   const toggleOneDomainData = (key) => {

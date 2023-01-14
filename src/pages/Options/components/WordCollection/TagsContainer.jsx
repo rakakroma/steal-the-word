@@ -8,15 +8,7 @@ import { ListSubTitle } from './ListSubTitle';
 import { WordListInWordCollection } from './WordCollectionPageBox';
 
 export const TagsContainer = memo(
-  ({
-    // contextList,
-    // domainAndLinkList,
-    wordList,
-    columns,
-    height,
-    width,
-    displayMode,
-  }) => {
+  ({ wordList, columns, height, width, displayMode }) => {
     const tagList = useContext(TagListContext);
 
     const tagListAndThereWords = useMemo(

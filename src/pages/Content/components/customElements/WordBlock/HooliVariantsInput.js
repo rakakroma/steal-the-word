@@ -84,7 +84,6 @@ class HooliVariantsInput extends LitElement {
 
   _handleInput(e) {
     this._inputValue = e.target.value;
-    console.log(this._inputValue);
     this.textInput.classList.remove('warning');
   }
 
@@ -108,7 +107,6 @@ class HooliVariantsInput extends LitElement {
       const newTag = this._inputValue.trim();
       if (this.tags.indexOf(newTag) !== -1 || !newTag) {
         this.textInput.classList.add('warning');
-        // console.log('warning, this variant is already in list');
         return;
       }
       this._addNewTag();

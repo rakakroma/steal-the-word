@@ -1,8 +1,5 @@
 import '@webcomponents/custom-elements';
 import { LitElement, html, css } from 'lit';
-// import { showWordList, wordInPageList } from '../infoSection'
-// import { MoreIcon } from '@spectrum-web-components/icons-workflow';
-// import { wordInPageList } from '../../utils/renderRuby';
 import { connect } from 'pwa-helpers/connect-mixin.js';
 import { store } from '../../redux/store';
 

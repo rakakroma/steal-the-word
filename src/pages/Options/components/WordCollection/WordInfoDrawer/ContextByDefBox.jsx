@@ -1,15 +1,15 @@
-import React, { useRef } from 'react';
-import { useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import { SiteIconButton } from '../SiteIconButton';
-import { Tooltip, useMediaQuery } from '@mui/material';
-import { TypographyOrInput } from './inputs/TypographyOrInput';
-import { useIsOverflow } from '../../../utils/customHook';
-import { getName } from './getDataFromName';
 import styled from '@emotion/styled';
+import { Tooltip, useMediaQuery } from '@mui/material';
+import Box from '@mui/material/Box';
+import { red } from '@mui/material/colors';
+import { useTheme } from '@mui/material/styles';
+import React, { useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { pink, red } from '@mui/material/colors';
+import { useIsOverflow } from '../../../utils/customHook';
+import { SiteIconButton } from '../SiteIconButton';
+import { getName } from './getDataFromName';
 import { HighlightableContext } from './HighlightableContext';
+import { TypographyOrInput } from './inputs/TypographyOrInput';
 
 const PageTitleAndLink = styled(Box)(({ theme }) => ({
   fontSize: '0.8rem',

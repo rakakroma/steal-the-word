@@ -11,15 +11,6 @@ export const wordBlockSlice = createSlice({
     currentWordImgSrcs: [],
     currentSiteImgSrc: null,
   },
-  reducers: {
-    // deleteCurrentWordData: (state, action) => {
-    //   return {
-    //     currentWordContexts: [],
-    //     currentWordImgSrcs: [],
-    //     currentSiteImgSrc: state.currentSiteImgSrc,
-    //   };
-    // },
-  },
   extraReducers: (builder) => {
     builder.addCase(getContextsDataFromDB.fulfilled, (state, action) => {
       const { contexts, domainData } = action.payload;

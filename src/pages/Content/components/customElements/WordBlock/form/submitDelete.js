@@ -1,11 +1,7 @@
-import {
-  checkSameRef,
-  getShouldUpdateTagsFromDeleteDefs,
-} from '../../../../../../utilsForAll/handleTags';
+import { getShouldUpdateTagsFromDeleteDefs } from '../../../../../../utilsForAll/handleTags';
 import { getContextsDataFromDB } from '../../../../redux/messageWithBackground';
 import { store } from '../../../../redux/store';
-import { updateOneWord } from '../../../../redux/wordDataSlice';
-import { restoreAndDeleteHooliText } from '../../../../utils/restoreHolliText';
+import { myLog } from '../../../../utils/customLogger';
 import { submitAndExecute } from './submitAndExecute';
 
 export const submitDelete = (wordBlock, formObj) => {
@@ -32,9 +28,7 @@ export const submitDelete = (wordBlock, formObj) => {
         tagShouldUpdateItsRefs,
       },
       () => {
-        console.log(`i want to remove`);
         wordBlock.remove();
-        // restoreAndDeleteHooliText(wordId);
       }
     );
     return;
@@ -55,7 +49,7 @@ export const submitDelete = (wordBlock, formObj) => {
     Object.entries(allDefinitionRefs).forEach((keyPair) => {
       if (keyPair[1] === 0) definitionsToDelete.push(keyPair[0]);
     });
-    console.log(contextIdsToDelete, definitionsToDelete);
+    myLog(contextIdsToDelete, definitionsToDelete);
 
     const request = { contextIdsToDelete };
     if (definitionsToDelete.length > 0) {

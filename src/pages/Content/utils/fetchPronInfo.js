@@ -1,5 +1,3 @@
-import { getLang } from './getLang';
-
 const gooHiraganaAPI = 'https://labs.goo.ne.jp/api/hiragana';
 
 const gooAppId =
@@ -34,7 +32,6 @@ const fetchMoeApi = async (text, lang) => {
   const fetchedData = await fetch(getMoedictAPI(text, lang))
     .then((response) => response.json())
     .catch((err) => console.error(err));
-  console.log(fetchedData);
   return fetchedData;
 };
 const getTaiLo = async (targetWord) => {
@@ -106,7 +103,6 @@ const getEnglishDefinition = async (targetWord) => {
     response.json()
   );
   if (!fetchedData) return '';
-  console.log(fetchedData);
   const pron = fetchedData[0].phonetic || '';
 
   //too many definitions so pick first one only, maybe a selectable list would be great
@@ -120,7 +116,6 @@ export const fetchPronInfo = async (
   langOptions,
   lang
 ) => {
-  // const lang = await getLang(targetWord, contextHere, langOptions);
   const fetchedResult = {};
 
   if (lang === 'en') {

@@ -1,11 +1,10 @@
-import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import { styled, useTheme } from '@mui/material/styles';
-import { Box, Button, ButtonBase, IconButton, Typography } from '@mui/material';
 import { LightMode, ModeNight, SearchOutlined } from '@mui/icons-material';
-import React, { useContext } from 'react';
-import MenuIcon from '@mui/icons-material/Menu';
+import { Box, ButtonBase, IconButton } from '@mui/material';
+import MuiAppBar from '@mui/material/AppBar';
+import { styled, useTheme } from '@mui/material/styles';
+import Toolbar from '@mui/material/Toolbar';
 import { useKBar } from 'kbar';
+import React, { useContext } from 'react';
 import { ColorModeContext } from '../../Options';
 import { PageBreadcrumbs } from './PageBreadcrumbs';
 

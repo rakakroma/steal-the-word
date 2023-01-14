@@ -30,6 +30,3 @@ tagListObservable.subscribe({
   },
   error: (error) => console.error(error),
 });
-
-// Unsubscribe
-//   subsciption.unsubscribe();

@@ -1,15 +1,13 @@
-import { useTheme } from '@mui/material/styles';
-import { Breadcrumbs, Divider, Link, Typography } from '@mui/material';
 import {
   ArrowDropDown,
   CollectionsBookmark,
-  Home,
   Settings,
 } from '@mui/icons-material';
-import { useLocation } from 'react-router-dom';
-import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
+import { Breadcrumbs, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { HoveringNav } from './HoveringNav';
 
 export const PageBreadcrumbs = () => {

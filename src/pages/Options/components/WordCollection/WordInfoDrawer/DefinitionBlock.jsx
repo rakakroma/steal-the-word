@@ -1,19 +1,16 @@
 import { useTheme } from '@emotion/react';
-import { Button, ButtonBase, Chip, Divider } from '@mui/material';
+import { Button, ButtonBase, Divider } from '@mui/material';
 import { grey, red } from '@mui/material/colors';
 import { Box } from '@mui/system';
-import React, { Fragment } from 'react';
+import React, { Fragment, useContext, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { getAllMatchTextFromWordObj } from '../../../../../utilsForAll/getInfoFromWordObj';
-import { ContextByDefBox } from './ContextByDefBox';
-import { CreatableSelectInput } from './inputs/CreatableSelectInput';
-import { getDataFromName, getName } from './getDataFromName';
-import { TypographyOrInput } from './inputs/TypographyOrInput';
 import { TagListContext } from '../../../Options';
-import { useContext } from 'react';
-import { useMemo } from 'react';
-import { rgbFromString } from '../../../../../utilsForAll/rgbFromString';
-import { TagChip, TagLabelChip } from '../../TagChip';
+import { TagLabelChip } from '../../TagChip';
+import { ContextByDefBox } from './ContextByDefBox';
+import { getDataFromName, getName } from './getDataFromName';
+import { CreatableSelectInput } from './inputs/CreatableSelectInput';
+import { TypographyOrInput } from './inputs/TypographyOrInput';
 
 export const DefinitionBlock = ({
   targetWord,

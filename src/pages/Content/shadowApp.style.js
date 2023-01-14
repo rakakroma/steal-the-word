@@ -1,8 +1,4 @@
 export const shadowAppTopStyle = `
-
-  .ejrti3 {
-    background-color: cadetblue;
-  }
   
   #hooliruby-floating-tool {
     position: absolute;

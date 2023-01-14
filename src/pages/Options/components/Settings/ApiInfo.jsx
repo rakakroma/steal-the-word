@@ -3,17 +3,14 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
-  InputLabel,
   Link,
   MenuItem,
-  RadioGroup,
   Select,
   Switch,
   Typography,
 } from '@mui/material';
 import { Box } from '@mui/system';
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export const defaultLangOptions = {
   enabled: true,
@@ -46,7 +43,6 @@ const useStorageApiSetting = () => {
   useEffect(() => {
     chrome.storage.local.get(['apiSetting'], (obj) => {
       const apiSettingData = obj.apiSetting;
-      console.log(apiSettingData);
       if (apiSettingData && Object.keys(apiSettingData).length > 0) {
         setApiSetting(apiSettingData);
         return;

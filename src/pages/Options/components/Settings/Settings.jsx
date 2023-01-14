@@ -1,10 +1,10 @@
 // import { TabPanel } from '@mui/lab';
-import { Box, Divider, Paper, Tab, Tabs, Typography } from '@mui/material';
+import { Box, Paper, Tab, Tabs, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import React, { useState } from 'react';
 import { ApiInfo } from './ApiInfo';
 import { ImportAndExportBox } from './backupRestore/ImportAndExportBox';
-import { SiteDataGrid } from './SiteDataGrid';
+import { OtherInfo } from './OtherInfo';
 import { StylingBox } from './StylingBox';
 
 function TabPanel(props) {
@@ -55,6 +55,7 @@ export const Settings = () => {
           <Tab label="Text Styling" />
           <Tab label="Api Settings" />
           <Tab label="Backup / Restore" />
+          <Tab label="Info" />
         </Tabs>
 
         <TabPanel value={tabValue} index={0}>
@@ -73,6 +74,12 @@ export const Settings = () => {
           <Typography variant="h5">Backup / Restore</Typography>
           <PanelContainerBox>
             <ImportAndExportBox />
+          </PanelContainerBox>
+        </TabPanel>
+        <TabPanel value={tabValue} index={3}>
+          <Typography variant="h5">Info</Typography>
+          <PanelContainerBox>
+            <OtherInfo />
           </PanelContainerBox>
         </TabPanel>
         {/* <Typography variant="h5">Site Preferences</Typography>

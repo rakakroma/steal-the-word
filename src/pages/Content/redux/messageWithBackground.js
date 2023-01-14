@@ -4,8 +4,6 @@ import {
   getFaviconThisSite,
   getStart,
 } from '../../Background/getData';
-import { updateWordRating } from '../../Background/updateData';
-import { currentURL } from '../utils/currentURL';
 import { getCurrentSiteImgSrc, getWordContexts } from './wordBlockSlice';
 
 export const getGlobalPreferencesFromLocalStorage = createAsyncThunk(

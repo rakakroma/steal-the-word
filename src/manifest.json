@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "HooliRuby",
+  "name": "Steal The Word",
   "author": "rakakroma",
   "version": "0.0.1",
-  "description": "To annotate html ruby, notes and save data on vocabularies, which can be shown any website you visit.",
+  "description": "To annotate, save words and contexts from web pages.",
   "options_page": "options.html",
   "permissions": [
     "storage",

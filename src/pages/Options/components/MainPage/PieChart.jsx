@@ -1,10 +1,10 @@
-import React, { useContext, useMemo } from 'react';
+import { Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { ResponsivePie } from '@nivo/pie';
-import { InfoBlock } from '../DatabaseInfo';
-import { ContextListContext, DomainAndLinkListContext } from '../../Options';
+import React, { useContext, useMemo } from 'react';
+import { ContextListContext } from '../../Options';
 import { cutUrl } from '../../utils/transformData';
-import { Typography } from '@mui/material';
+import { InfoBlock } from '../DatabaseInfo';
 
 export const PieChartContainer = () => {
   return (

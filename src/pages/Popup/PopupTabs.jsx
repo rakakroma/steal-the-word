@@ -1,20 +1,19 @@
 // import TabUnstyled from '@mui/base/TabUnstyled';
-import TabUnstyled, { tabUnstyledClasses } from '@mui/base/TabUnstyled';
 import { buttonUnstyledClasses } from '@mui/base/ButtonUnstyled';
+import TabUnstyled, { tabUnstyledClasses } from '@mui/base/TabUnstyled';
 
-import TabsListUnstyled from '@mui/base/TabUnstyled';
 import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import TabsUnstyled from '@mui/base/TabsUnstyled';
-import React, { useEffect, useState, useRef, useContext } from 'react';
+import TabsListUnstyled from '@mui/base/TabUnstyled';
+import { blue } from '@mui/material/colors';
 import { styled } from '@mui/system';
+import React, { useContext, useState } from 'react';
+import { TabDataContext } from './Popup';
 import {
   AllSitesToggleOptions,
   CurrentSiteToggleOptions,
-  ToggleOptions,
 } from './ToggleOptions';
-import { TabDataContext } from './Popup';
 import { useDbDomainData, useLocalStorageData } from './useDataHook';
-import { blue } from '@mui/material/colors';
 
 const TabsList = styled(TabsListUnstyled)`
   width: 220px;
@@ -69,16 +68,16 @@ const Tabs = styled(TabsUnstyled)`
 
 export const PopupTabs = () => {
   const [currentTab, setCurrentTab] = useState(1);
-  const { currentDomain } = useContext(TabDataContext);
+  const { currentDomain, validPlace } = useContext(TabDataContext);
   const domainDataAndMethods = useDbDomainData(currentDomain);
   const localStorageDataAndMethods = useLocalStorageData();
 
   const { isCustomSetting } = domainDataAndMethods;
   const { globalPreference } = localStorageDataAndMethods;
 
-  // if (isCustomSetting) {
-  //   setCurrentTab(0);
-  // }
+  if (isCustomSetting && globalPreference.activate) {
+    setCurrentTab(0);
+  }
 
   const handleChange = (value) => {
     setCurrentTab(value);
@@ -86,7 +85,7 @@ export const PopupTabs = () => {
   return (
     <Tabs value={currentTab} onChange={(e, value) => handleChange(value)}>
       <TabsList>
-        {globalPreference.activate && (
+        {globalPreference.activate && validPlace && (
           <Tab component="span" value={0}>
             current Site
           </Tab>

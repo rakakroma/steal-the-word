@@ -1,20 +1,13 @@
+import { computePosition, flip, inline, offset, shift } from '@floating-ui/dom';
 import '@webcomponents/custom-elements';
-import { LitElement, html, css, unsafeCSS } from 'lit';
-import { getSentenceFromSelection } from '../../utils/get-selection-more.ts';
-import './HooliWordInfoBlock.js';
-import { setWordBlockPosition } from '../../utils/setPosition';
-import {
-  computePosition,
-  shift,
-  offset,
-  inline,
-  flip,
-  autoPlacement,
-} from '@floating-ui/dom';
+import { css, html, LitElement } from 'lit';
 import { connect } from 'pwa-helpers';
 import { store } from '../../redux/store';
 import { getWordById } from '../../redux/wordDataSlice';
 import { getCustomTextStyle } from '../../redux/workingPreferenceSlice';
+import { getSentenceFromSelection } from '../../utils/get-selection-more.ts';
+import { setWordBlockPosition } from '../../utils/setPosition';
+import './HooliWordInfoBlock.js';
 
 const removeWordBlock = () =>
   document.querySelector('hooli-wordinfo-block')?.remove();

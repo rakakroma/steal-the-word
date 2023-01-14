@@ -1,20 +1,12 @@
-import {
-  Box,
-  createTheme,
-  CssBaseline,
-  ThemeProvider,
-  useMediaQuery,
-} from '@mui/material';
-import React, { createContext, useMemo, useState } from 'react';
-import './Options.css';
-import { darkThemeStyle, lightThemeStyle, themeStyle } from './theme.style';
-import { db } from '../Background/database';
+import { Box, createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useCallback } from 'react';
+import React, { createContext, useCallback, useMemo, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Sidebar } from './components/Sidebar';
+import { db } from '../Background/database';
 import PersistentDrawerRight from './components/WordCollection/WordInfoDrawer/WordInfoDrawer';
 import { KBarCommandPalette } from './KBarCommandPalette';
+import './Options.css';
+import { darkThemeStyle, lightThemeStyle } from './theme.style';
 
 export const ContextListContext = createContext([]);
 export const DomainAndLinkListContext = createContext([]);
@@ -49,7 +41,6 @@ const Options = () => {
   const handleWordClick = useCallback(
     (wordAndContextId) => {
       const { wordId, contextId } = wordAndContextId;
-      console.log(`wordInfoTarget ${wordInfoTarget}`);
       if (wordId === wordInfoTarget?.wordId) {
         if (
           !wordInfoTarget.contextId ||
@@ -80,15 +71,6 @@ const Options = () => {
                   <ThemeProvider theme={theme}>
                     <CssBaseline />
                     <KBarCommandPalette>
-                      {/* <Snackbar
-            TransitionComponent={TransitionUp}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            open={Boolean(showNotification)}
-            autoHideDuration="4000"
-            onClose={() => setShowNotification(false)}
-            message={showNotification.message}
-          /> */}
-                      {/* <Sidebar /> */}
                       <PersistentDrawerRight>
                         <Outlet />
                       </PersistentDrawerRight>

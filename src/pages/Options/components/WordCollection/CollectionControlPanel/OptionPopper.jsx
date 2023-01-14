@@ -9,13 +9,6 @@ import {
 import React, { useState } from 'react';
 import { FilterAlt, Star } from '@mui/icons-material';
 
-// const ControlPanel = forwardRef((props, ref) => {
-//   return (
-//     <Box ref={ref} sx={{ display: 'flex' }}>
-//       initial
-//     </Box>
-//   );
-// });
 export const OptionPopper = ({ filterStarsAndSetter }) => {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);

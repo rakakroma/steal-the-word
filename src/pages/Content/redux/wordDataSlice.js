@@ -3,16 +3,10 @@ import { getMatchList } from '../../../utilsForAll/getMatchTextWithIdRef';
 import { renderRuby } from '../utils/renderRuby';
 import { restoreAndDeleteHooliText } from '../utils/restoreHolliText';
 import {
-  clearNoLongerExistWordInWordInPageList,
   deleteOneDisplayingWordById,
-  deletePageWordsByIds,
   getDisplayingWordList,
 } from './displayingWordListSlice';
-import {
-  getInitialDataFromDb,
-  updateOneWordInDb,
-  updateWordPartInDb,
-} from './messageWithBackground';
+import { getInitialDataFromDb } from './messageWithBackground';
 import { store } from './store';
 
 export const wordDataSlice = createSlice({

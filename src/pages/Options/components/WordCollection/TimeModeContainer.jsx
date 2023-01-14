@@ -1,11 +1,11 @@
-import { Box, Portal, Typography, useTheme } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import dayjs from 'dayjs';
 import React, { memo } from 'react';
-import { arrayWithUrlsByDateType } from '../../utils/transformData';
-import { WordCollectionPageBox } from './WordCollectionPageBox';
 import { GroupedVirtuoso, Virtuoso } from 'react-virtuoso';
+import { arrayWithUrlsByDateType } from '../../utils/transformData';
 import { ListSubTitle } from './ListSubTitle';
 import { getDomainIcon } from './OrderByTimeAndSiteContainer';
+import { WordCollectionPageBox } from './WordCollectionPageBox';
 
 export const TimeModeContainer = memo(
   ({

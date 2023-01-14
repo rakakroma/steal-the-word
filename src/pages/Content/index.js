@@ -19,16 +19,9 @@ import { getCertainSetting } from './redux/workingPreferenceSlice';
 import {
   checkAndUpdateNewTagList,
   checkAndUpdateNewWordListAndReRender,
-  checkNewWordListAndReRender,
-  replaceWholeList,
 } from './redux/wordDataSlice';
 
 export const body = document.body;
-
-// export let myList = [];
-// export let newList = [];
-// export let tagList = [];
-// let whiteList = [];
 
 const appendSideListWindow = (foundMatchWord) => {
   if (!foundMatchWord) {
@@ -57,7 +50,6 @@ const init = async () => {
   let loadEvent = false;
 
   const startAfterLoaded = () => {
-    // console.log('page loaded');
     loadEvent = true;
     renderRuby(document.body, true);
 
@@ -83,7 +75,6 @@ const init = async () => {
 init();
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  // console.log(message);
   if (!getCertainSetting(store.getState(), 'activate')) {
     return;
   }
@@ -97,30 +88,4 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.wordList) {
     checkAndUpdateNewWordListAndReRender(store.getState(), message.wordList);
   }
-  //  if (message.showWordList === true) {
-  //   chrome.storage.local.set({ floatingWindow: true }, () => {
-  //     if (body.querySelector('#hooriruby-info-div')) {
-  //       body.querySelector('#hooriruby-info-div').classList.remove('hide');
-  //     }
-  //     renderRuby(document.body);
-  //     // showWordList()
-  //     // console.log('open');
-  //     sendResponse({ content: '已顯示wordList' });
-  //   });
-  //   return true;
-  // } else if (message.showWordList === false) {
-  //   // floatingWindow = false
-  //   chrome.storage.local.set({ floatingWindow: false }, () => {
-  //     if (body.querySelector('#hooriruby-info-div')) {
-  //       // body.removeChild(infoSection)
-  //       body.querySelector('#hooriruby-info-div').classList.add('hide');
-  //     }
-  //     renderRuby(document.body);
-  //     // console.log('close');
-  //     sendResponse({ content: '已關閉wordList' });
-  //   });
-  //   return true;
-  // } else {
-  //   sendResponse({ content: 'content script 已收到訊息' });
-  // }
 });

@@ -1,16 +1,15 @@
 import { styled } from '@mui/system';
 
+import { ArrowRight, Collections, Settings } from '@mui/icons-material';
 import { Box, Link, Typography } from '@mui/material';
+import dayjs from 'dayjs';
 import React, { useContext, useEffect, useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   ContextListContext,
-  DomainAndLinkListContext,
   WordInfoDrawerContext,
   WordListContext,
 } from '../Options.jsx';
-import dayjs from 'dayjs';
-import { Link as RouterLink } from 'react-router-dom';
-import { ArrowRight, Collections, Settings } from '@mui/icons-material';
 
 const randomNumberByDate = () => {
   const date = new Date();

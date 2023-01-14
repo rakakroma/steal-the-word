@@ -1,34 +1,11 @@
-import {
-  Button,
-  ButtonBase,
-  Checkbox,
-  Divider,
-  FormControlLabel,
-  Typography,
-} from '@mui/material';
+import { Divider } from '@mui/material';
 import Box from '@mui/material/Box';
-import { grey, red } from '@mui/material/colors';
+import { red } from '@mui/material/colors';
 import { useTheme } from '@mui/material/styles';
 import React, { useContext, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { db } from '../../../../Background/database.js';
+import { useLocation } from 'react-router-dom';
 import {
-  ContextListContext,
-  DomainAndLinkListContext,
-  TagListContext,
-  WordInfoDrawerContext,
-  WordListContext,
-} from '../../../Options';
-import { CreatableSelectInput } from './inputs/CreatableSelectInput';
-import { DefinitionBlock } from './DefinitionBlock.jsx';
-import { SubmitSection } from './SubmitSection';
-import { TypographyOrInput } from './inputs/TypographyOrInput';
-import { VariantsInfo } from './VariantsInfo';
-import { WordRating } from './WordRating';
-import { nanoid } from 'nanoid';
-import { getDataFromName, getDefaultValueFromData } from './getDataFromName';
-import {
-  checkSameRef,
   getDeletedTagsUpdateInfo,
   getExistedTagDataUpdateInfo,
   getRefData,
@@ -37,7 +14,21 @@ import {
   tagArrayToKeyObjs,
   updateDefRef,
 } from '../../../../../utilsForAll/handleTags.js';
-import { useLocation } from 'react-router-dom';
+import { db } from '../../../../Background/database.js';
+import { myLog } from '../../../../Content/utils/customLogger.js';
+import {
+  ContextListContext,
+  DomainAndLinkListContext,
+  TagListContext,
+  WordInfoDrawerContext,
+  WordListContext,
+} from '../../../Options';
+import { DefinitionBlock } from './DefinitionBlock.jsx';
+import { getDataFromName, getDefaultValueFromData } from './getDataFromName';
+import { TypographyOrInput } from './inputs/TypographyOrInput';
+import { SubmitSection } from './SubmitSection';
+import { VariantsInfo } from './VariantsInfo';
+import { WordRating } from './WordRating';
 
 export const CurrentWordInfo = () => {
   const theme = useTheme();
@@ -100,7 +91,7 @@ export const CurrentWordInfo = () => {
   };
 
   const handleFormSubmit = (data) => {
-    console.log(data);
+    myLog(data);
     if (controlMode === 'display' && changingTagsWhenDisplay) {
       //handle tag submit
       const tagsData = data[changingTagsWhenDisplay];
@@ -268,7 +259,6 @@ export const CurrentWordInfo = () => {
           }
           const [_, inputName, definitionId] = key.split('**');
           if (inputName === 'tags') {
-            console.log(data[key]);
             return;
           }
           const inputResult = data[key].trim();
@@ -288,8 +278,8 @@ export const CurrentWordInfo = () => {
         }
       });
       if (newWordInfo) {
-        console.log('------word info------');
-        console.log(wordObjInfoToUpdate);
+        myLog('------word info------');
+        myLog(wordObjInfoToUpdate);
         db.wordList.update({ id: targetWord.id }, wordObjInfoToUpdate);
         // if (wordObjInfoToUpdate.word) {
         //   targetWordContexts.forEach((contextObj) => {
@@ -301,16 +291,16 @@ export const CurrentWordInfo = () => {
         // }
       }
       if (newDefInfo) {
-        console.log('---defsArrayToUpdate----');
-        console.log(defsArrayToUpdate);
+        myLog('---defsArrayToUpdate----');
+        myLog(defsArrayToUpdate);
         db.wordList.update(
           { id: targetWord.id },
           { definitions: defsArrayToUpdate }
         );
       }
       if (newContextInfo) {
-        console.log('---contextObjsToUpdate----');
-        console.log(contextObjsToUpdate);
+        myLog('---contextObjsToUpdate----');
+        myLog(contextObjsToUpdate);
         contextObjsToUpdate.forEach((idAndContext) => {
           const { id, context } = idAndContext;
           db.contextList.update({ id }, { context });
@@ -318,7 +308,6 @@ export const CurrentWordInfo = () => {
       }
       setControlMode('display');
     } else {
-      console.log('nothing changed');
     }
   };
 

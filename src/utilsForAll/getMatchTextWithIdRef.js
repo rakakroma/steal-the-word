@@ -1,3 +1,5 @@
+import { myLog } from '../pages/Content/utils/customLogger';
+
 const getMatchTextsFromWordObj = (wordObj) => {
   const allVariantsToPush = [wordObj.word];
   if (wordObj.stem) allVariantsToPush.push(wordObj.stem);
@@ -28,7 +30,7 @@ export const getMatchList = (wordList) => {
   });
   matchList = matchList.sort((a, b) => b.matchText.length - a.matchText.length);
   const end = performance.now();
-  console.log(end - start);
+  myLog(end - start);
   return matchList;
 };
 

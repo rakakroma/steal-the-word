@@ -1,11 +1,10 @@
+import { Check, Close, Tag } from '@mui/icons-material';
 import { Chip, IconButton, InputBase } from '@mui/material';
-import { useContext, useState } from 'react';
-import { TagListContext } from '../Options';
-import { rgbFromString } from '../../../utilsForAll/rgbFromString';
-import React from 'react';
-import { Check, Close, Edit, Tag } from '@mui/icons-material';
 import { Box } from '@mui/system';
+import React, { useContext, useState } from 'react';
+import { rgbFromString } from '../../../utilsForAll/rgbFromString';
 import { db } from '../../Background/database';
+import { TagListContext } from '../Options';
 
 export const TagLabelChip = ({ tagLabel, notSmall, onClick, otherInfo }) => {
   return (

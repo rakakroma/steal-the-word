@@ -1,11 +1,8 @@
-import { Chip } from '@mui/material';
-import { Box } from '@mui/system';
+import TagIcon from '@mui/icons-material/Tag';
 import React, { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import CreatableSelect from 'react-select/creatable';
-import { rgbFromString } from '../../../../../../utilsForAll/rgbFromString';
 import { colorStyles } from './selectableInputStyle';
-import TagIcon from '@mui/icons-material/Tag';
 
 export const convertValueToFitCreatableInput = (array) => {
   return array.map((value) => {

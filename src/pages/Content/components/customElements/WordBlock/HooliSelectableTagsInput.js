@@ -180,7 +180,6 @@ class HooliSelectableTagsInput extends LitElement {
   }
 
   _handleAddSelectedOption(option) {
-    console.log(`select ${option}`);
     this.selectedOptions = this.selectedOptions.concat(option);
   }
 
@@ -253,7 +252,6 @@ class HooliSelectableTagsInput extends LitElement {
     if (!isElementInViewport(targetEle, optionsList)) {
       targetEle.scrollIntoView({ block: 'nearest' });
     }
-    console.log(this._selectingOptionIndex, selectableLength);
   }
 
   _handleClickDelete(index) {

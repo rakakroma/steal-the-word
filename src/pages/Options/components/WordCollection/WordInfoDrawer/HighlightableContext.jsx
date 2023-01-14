@@ -1,11 +1,9 @@
-import React from 'react';
-import { useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import { Button, Typography } from '@mui/material';
-import { useState } from 'react';
-import { db } from '../../../../Background/database';
 import { BorderColor } from '@mui/icons-material';
-import { ContextDate } from './ContextByDefBox';
+import { Button, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import { useTheme } from '@mui/material/styles';
+import React, { useState } from 'react';
+import { db } from '../../../../Background/database';
 import { DateOfContext } from './DateOfContext';
 
 export const HighlightableContext = ({

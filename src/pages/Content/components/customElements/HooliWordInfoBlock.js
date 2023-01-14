@@ -349,7 +349,6 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
   }
 
   _pronSearch = async () => {
-    // console.log(this.apiSetting);
     if (!this.apiSetting.enabled) return;
     const lang = await getLang(this.newWord, this.contextHere, this.apiSetting);
     if (!lang) return;

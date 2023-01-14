@@ -1,14 +1,10 @@
-import React, { useMemo } from 'react';
+import { Checkbox, FormControlLabel, InputBase } from '@mui/material';
+import { grey } from '@mui/material/colors';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { Checkbox, FormControlLabel, InputBase } from '@mui/material';
+import React, { useContext, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { grey } from '@mui/material/colors';
-import {
-  getFlatList,
-  getMatchList,
-} from '../../../../../../utilsForAll/getMatchTextWithIdRef';
-import { useContext } from 'react';
+import { getFlatList } from '../../../../../../utilsForAll/getMatchTextWithIdRef';
 import { WordListContext } from '../../../../Options';
 
 export const TypographyOrInput = (props) => {

@@ -1,9 +1,6 @@
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
-import IconButton from '@mui/material/IconButton';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useContext } from 'react';
 import {
@@ -13,7 +10,6 @@ import {
 } from '../../../Options';
 // import { db } from '../../Background/database.js';
 // import { useLiveQuery } from 'dexie-react-hooks';
-import { KeyboardArrowDown } from '@mui/icons-material';
 import { useMediaQuery } from '@mui/material';
 import { useRegisterActions } from 'kbar';
 import '../../../../Content/components/customElements/WordBlock/HooliHighlighter';

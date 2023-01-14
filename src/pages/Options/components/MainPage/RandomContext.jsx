@@ -1,26 +1,20 @@
+import { ChevronLeft, Pause, PlayArrow } from '@mui/icons-material';
+import ChevronRight from '@mui/icons-material/ChevronRight';
 import {
   Box,
   Button,
-  CircularProgress,
   IconButton,
   LinearProgress,
-  Rating,
-  Slide,
   Typography,
 } from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
-import { useContext } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
   ContextListContext,
   DomainAndLinkListContext,
   WordListContext,
 } from '../../Options';
-import React from 'react';
+import { useInterval, useVisible } from '../../utils/customHook';
 import { getDomainIcon } from '../WordCollection/OrderByTimeAndSiteContainer';
-import ChevronRight from '@mui/icons-material/ChevronRight';
-import { Autorenew, ChevronLeft, Pause, PlayArrow } from '@mui/icons-material';
-import { useRef } from 'react';
-import { useInterval, useIsVisible, useVisible } from '../../utils/customHook';
 import { ContextBlock } from './ContextBlock';
 
 function shuffle(array) {
@@ -69,7 +63,6 @@ export const RandomContext = () => {
   const toNextIndex = () => {
     if (displayingIndices.indexOf(currentIndex) === 4) return;
     const nextCurrentIndex = nextIndex(currentIndex);
-    console.log(nextCurrentIndex);
 
     setCurrentIndex(nextCurrentIndex);
     if (shuffledArray.length > 5) {

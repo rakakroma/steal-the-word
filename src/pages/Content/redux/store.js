@@ -28,5 +28,8 @@ const logger = createLogger();
 
 export const store = configureStore({
   reducer: rootReducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+  middleware:
+    process.env.NODE_ENV === 'production'
+      ? (getDefaultMiddleware) => getDefaultMiddleware()
+      : (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });

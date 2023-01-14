@@ -1,5 +1,3 @@
-import { store } from '../../../../redux/store';
-import { updateOneWord } from '../../../../redux/wordDataSlice';
 import { submitAndExecute } from './submitAndExecute';
 
 export const submitEditWord = (wordBlock, word, stem, variants, matchRule) => {

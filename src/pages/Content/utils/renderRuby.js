@@ -4,6 +4,7 @@ import '../components/customElements/HooliWordInfoBlock';
 import { addOrUpdatePageWordAndGetCount } from '../redux/displayingWordListSlice';
 import { store } from '../redux/store';
 import { getMatchRefList, getWordList } from '../redux/wordDataSlice';
+import { myLog } from './customLogger';
 import { getRegexByMatchRule } from './matchRule';
 
 // export let wordInPageList = [];
@@ -79,12 +80,10 @@ const putHooliTextOnNode = (targetNode) => {
     const span = document.createElement('span');
     targetNode.replaceWith(span);
     span.replaceWith(fragment);
-    // console.log(`create! ${matchText}`);
   }
 };
 
 export const renderMultipleRuby = (nodesArray) => {
-  console.log('renderRuby execute');
   const performanceStart = performance.now();
 
   nodesArray.forEach((node) => {
@@ -92,9 +91,7 @@ export const renderMultipleRuby = (nodesArray) => {
   });
 
   const performanceEnd = performance.now();
-  console.log(
-    `RenderRuby time ${(performanceEnd - performanceStart).toFixed(2)} ms`
-  );
+  myLog(`RenderRuby time ${(performanceEnd - performanceStart).toFixed(2)} ms`);
 };
 
 export const renderRuby = (target, isStart) => {
@@ -150,7 +147,7 @@ export const renderRuby = (target, isStart) => {
 
     const time = currentTime - startTime;
     if (time > 3000) {
-      console.log('stop execute renderRuby');
+      myLog('stop execute renderRuby');
       break;
     }
 

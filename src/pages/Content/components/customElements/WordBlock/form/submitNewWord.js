@@ -1,8 +1,6 @@
 import { nanoid } from 'nanoid';
-import { store } from '../../../../redux/store';
-import { addOneWord } from '../../../../redux/wordDataSlice';
 import { currentURL } from '../../../../utils/currentURL';
-import { renderRuby } from '../../../../utils/renderRuby';
+import { myLog } from '../../../../utils/customLogger';
 import { submitAndExecute } from './submitAndExecute';
 
 export const submitNewWord = (
@@ -41,7 +39,7 @@ export const submitNewWord = (
     variants: variants || [],
   };
 
-  console.log(theNewWord);
+  myLog(theNewWord);
 
   const theNewContext = {
     context,

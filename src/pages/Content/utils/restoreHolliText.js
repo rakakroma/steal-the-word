@@ -1,6 +1,3 @@
-import { store } from '../redux/store';
-import { deleteOneWord } from '../redux/wordDataSlice';
-
 export const restoreAndDeleteHooliText = (wordId) => {
   let targetEles;
   if (!wordId) {

@@ -1,10 +1,11 @@
-import { Box, Button, Typography, Stack } from '@mui/material';
-import React from 'react';
-import { saveImportDataToDB } from '../../../utils/ImportExport';
-import { demoData } from '../../../../../utilsForAll/demoData';
+import { Box, Button } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { handleClearAll } from './ImportAndExportBox';
+import React from 'react';
+import { demoData } from '../../../../../utilsForAll/demoData';
+import { myLog } from '../../../../Content/utils/customLogger';
+import { saveImportDataToDB } from '../../../utils/ImportExport';
 import { ButtonContainer, DataCountGrid } from './DataCountGrid';
+import { handleClearAll } from './ImportAndExportBox';
 
 export const ImportBox = ({ loggedData, setLoggedData, noDataInCurrentDB }) => {
   const logFile = (event) => {
@@ -17,12 +18,11 @@ export const ImportBox = ({ loggedData, setLoggedData, noDataInCurrentDB }) => {
     if (!loggedData) return;
     if (!noDataInCurrentDB && !handleClearAll()) return;
     saveImportDataToDB(loggedData);
-    console.log('saved');
     setLoggedData(null);
   };
   const handleNewFileChange = (e) => {
     const file = e.target.files[0];
-    console.log(file.name);
+    myLog(file.name);
     let reader = new FileReader();
     reader.onload = logFile;
     reader.readAsText(file);

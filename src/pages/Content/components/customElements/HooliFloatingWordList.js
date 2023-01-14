@@ -1,28 +1,23 @@
-import { LitElement, html, css } from 'lit';
 import {
-  CloseIcon,
-  RefreshIcon,
-  MinimizeIcon,
-  ChevronUpIcon,
   ChevronDownIcon,
+  ChevronUpIcon,
+  CloseIcon,
+  MinimizeIcon,
+  RefreshIcon,
+  StarIcon,
   VisibilityIcon,
   VisibilityOffIcon,
-  StarIcon,
 } from '@spectrum-web-components/icons-workflow';
 import interact from 'interactjs';
-import {
-  // wordInPageList,
-  // clearNoLongerExistWordInWordInPageList,
-  transformElementId,
-} from '../../utils/renderRuby';
-import { store } from '../../redux/store';
+import { css, html, LitElement } from 'lit';
 import { connect } from 'pwa-helpers';
 import {
   clearNoLongerExistWordInWordInPageList,
-  getDisplayingWordList,
   getWordObjsOfDisplayingWordList,
 } from '../../redux/displayingWordListSlice';
+import { store } from '../../redux/store';
 import { getTagList } from '../../redux/wordDataSlice';
+import { transformElementId } from '../../utils/renderRuby';
 
 class HooliFloatingWordList extends connect(store)(LitElement) {
   static get properties() {
@@ -291,7 +286,6 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
       }
       for (i; i <= this.lookingWord.countInCurrentPage; i++) {
         targetEle = document.getElementById(`h-${this.lookingWord.id}-${i}`);
-        // console.log(`h-${this.lookingWord.id}-${i}`)
         if (targetEle && targetEle.getBoundingClientRect().width > 0) break;
       }
     }
@@ -356,9 +350,6 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
         }),
       ],
       listeners: {
-        //   start (event) {
-        //     console.log(event.type, event.target)
-        //   },
         move(event) {
           position.x += event.dx;
           position.y += event.dy;

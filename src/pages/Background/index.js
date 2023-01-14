@@ -3,6 +3,7 @@ import { updateHandlers } from './updateData';
 import { getHandlers } from './getData';
 import { deleteHandlers } from './deleteData';
 import './databaseSubscription';
+import { myLog } from '../Content/utils/customLogger';
 
 chrome.action.setBadgeBackgroundColor({ color: '#4f4f4f' });
 
@@ -26,12 +27,11 @@ const messageHandlers = new Map([
 ]);
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  // console.log(request, sender);
   const handler = messageHandlers.get(request.action);
   if (handler) {
     handler(request, sender.tab, sendResponse);
   } else {
-    console.log(request);
+    myLog(request);
   }
 
   return true;

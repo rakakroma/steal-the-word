@@ -25,7 +25,6 @@ const FloatingNavList = styled(({ className, ...props }) => (
     color: theme.palette.text.primary,
     boxShadow: theme.shadows[1],
     border: '1px solid #dadde9',
-    // padding: theme.spacing(1),
     padding: '1px',
     cursor: 'pointer',
   },

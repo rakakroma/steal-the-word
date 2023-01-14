@@ -150,13 +150,6 @@ export const definitionInputAndSelector = (wordBlock) => {
     </div>`;
   }
   if (wordBlock.mode === 'editContext') {
-    // setTimeout(
-    //   () =>
-    //     (wordBlock.renderRoot.querySelector(
-    //       '.definition-selectable-radio'
-    //     ).checked = true)
-    // );
-
     const selectedDefRef = wordBlock.contexts.find(
       (contextObj) =>
         contextObj.id === wordBlock._formInputStatus.workingContext

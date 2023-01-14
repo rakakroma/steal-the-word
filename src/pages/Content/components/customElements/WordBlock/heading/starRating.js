@@ -4,8 +4,6 @@ import {
 } from '@spectrum-web-components/icons-workflow';
 import { html } from 'lit';
 import { updateWordRating } from '../../../../../Background/updateData';
-import { store } from '../../../../redux/store';
-import { updateOneWord } from '../../../../redux/wordDataSlice';
 import { submitAndExecute } from '../form/submitAndExecute';
 
 export const starRating = (wordBlock) => {

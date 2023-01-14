@@ -101,7 +101,6 @@ class HooliMenu extends LitElement {
     };
 
     const handleOpenMenu = () => {
-      console.log('open');
       this._updatePosition();
       this.open = true;
       if (this._menuListElement.className === 'hidden')
@@ -114,7 +113,6 @@ class HooliMenu extends LitElement {
     };
 
     const handleCloseMenu = () => {
-      console.log('close');
       this.open = false;
       window.removeEventListener('mouseup', handleCloseMenu);
       if (!this._menuListElement.className)

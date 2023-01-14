@@ -1,7 +1,7 @@
 {
-  "name": "HooliRuby",
+  "name": "Steal The Word",
   "version": "4.3.5",
-  "description": "To annotate vocabularies using html ruby, which can be shown any website you visit later.",
+  "description": "To annotate, save words and contexts from web pages.",
   "license": "MIT",
   "repository": {
     "type": "git"
