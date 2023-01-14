@@ -80,19 +80,16 @@ const DarkModeButton = () => {
     </IconButton>
   );
 };
-const Logo = () => {
-  const theme = useTheme();
-  return (
-    <Typography variant="h5" sx={{ color: 'text.primary' }}>
-      Steal the Word 🎩
-    </Typography>
-  );
-};
+
 export const AppBar = ({ open, drawerWidth }) => {
   return (
     <StyledAppBar position="sticky" open={open} drawerWidth={drawerWidth}>
       <Toolbar>
-        {/* <Logo /> */}
+        <img
+          src={chrome.runtime.getURL('transparent-thief.png')}
+          alt="logo of a thief"
+          style={{ width: '25px', height: '25px' }}
+        />
         {/* <IconButton
           aria-label="open drawer"
           edge="end"

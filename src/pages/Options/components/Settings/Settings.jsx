@@ -52,27 +52,27 @@ export const Settings = () => {
           onChange={handleChange}
           sx={{ borderRight: 1, borderColor: 'divider' }}
         >
-          <Tab label="Backup / Restore" />
           <Tab label="Text Styling" />
           <Tab label="Api Settings" />
+          <Tab label="Backup / Restore" />
         </Tabs>
 
         <TabPanel value={tabValue} index={0}>
-          <Typography variant="h5">Backup / Restore</Typography>
-          <PanelContainerBox>
-            <ImportAndExportBox />
-          </PanelContainerBox>
-        </TabPanel>
-        <TabPanel value={tabValue} index={1}>
           <Typography variant="h5">Style The Marked Text</Typography>
           <PanelContainerBox>
             <StylingBox />
           </PanelContainerBox>
         </TabPanel>
-        <TabPanel value={tabValue} index={2}>
+        <TabPanel value={tabValue} index={1}>
           <Typography variant="h5">Dictionary API</Typography>
           <PanelContainerBox>
             <ApiInfo />
+          </PanelContainerBox>
+        </TabPanel>
+        <TabPanel value={tabValue} index={2}>
+          <Typography variant="h5">Backup / Restore</Typography>
+          <PanelContainerBox>
+            <ImportAndExportBox />
           </PanelContainerBox>
         </TabPanel>
         {/* <Typography variant="h5">Site Preferences</Typography>
