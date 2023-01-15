@@ -87,7 +87,7 @@ export const AppBar = ({ open, drawerWidth }) => {
         <img
           src={chrome.runtime.getURL('transparent-thief.png')}
           alt="logo of a thief"
-          style={{ width: '25px', height: '25px' }}
+          style={{ width: '39px', height: '39px' }}
         />
         {/* <IconButton
           aria-label="open drawer"

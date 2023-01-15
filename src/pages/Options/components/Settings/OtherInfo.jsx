@@ -1,24 +1,54 @@
-import { Box, Typography } from '@mui/material';
+import { GitHub } from '@mui/icons-material';
+import { Box, FormLabel, Typography } from '@mui/material';
 import React from 'react';
+import { ReportForm } from './ReportForm';
 
 export const OtherInfo = () => {
   return (
-    <Box flex>
-      <Box>
-        <Typography>
-          Hi, I am Rakak. This is my first project. I hope it works well. You
-          can submit the form if you want to report any bugs/issues or have any
-          advices.
-        </Typography>
-        <Typography></Typography>
+    <Box>
+      <Box sx={{ display: 'flex' }}>
+        <Box sx={{ my: 'auto' }}>
+          <Typography variant="subtitle1">
+            Hi, <b>Steal the Word</b> is my first personal project. Though there
+            are some known bugs that I have no idea how to fix, I hope it works
+            well in most use cases. Feel free to report bugs/issues by submit
+            this form (to my google sheet) or open an issue on github.
+          </Typography>
+
+          <Typography
+            component="a"
+            target="_blank"
+            href="https://github.com/rakakroma/steal-the-word"
+            sx={{
+              textDecoration: 'none',
+              color: 'text.primary',
+              backgroundColor: '#f8f8f8',
+            }}
+          >
+            <GitHub fontSize="small" />
+            steal-the-word by rakakroma
+          </Typography>
+        </Box>
+        <Box sx={{ width: '200px', mx: 'auto' }}>
+          <img
+            src={chrome.runtime.getURL('transparent-thief.png')}
+            alt="logo of a thief"
+            style={{
+              width: '190px',
+              height: '200px',
+              objectFit: 'cover',
+              objectPosition: '113%',
+            }}
+          />
+          <Typography
+            variant="subtitle2"
+            sx={{ color: 'text.secondary', textAlign: 'center' }}
+          >
+            By Stable Diffusion 2.1 Demo (And I remove its background)
+          </Typography>
+        </Box>
       </Box>
-      <Box>
-        <img
-          src={chrome.runtime.getURL('transparent-thief.png')}
-          alt="logo of a thief"
-          style={{ width: '250px', height: '250px' }}
-        />
-      </Box>
+      <ReportForm />
     </Box>
   );
 };

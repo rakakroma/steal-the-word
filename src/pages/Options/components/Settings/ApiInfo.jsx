@@ -64,7 +64,7 @@ export const ApiInfo = () => {
   const langLabels = {
     japanese: (
       <Typography>
-        Japanese Hiragana from{' '}
+        <b> Japanese</b> Hiragana from{' '}
         <Link
           href="https://labs.goo.ne.jp/api/jp/hiragana-translation/"
           target="_blank"
@@ -75,7 +75,7 @@ export const ApiInfo = () => {
     ),
     english: (
       <Typography>
-        English pronunciation and definition from{' '}
+        <b>English</b> pronunciation and definition from{' '}
         <Link href="https://dictionaryapi.dev/" target="_blank">
           Free Dictionary API
         </Link>
@@ -83,7 +83,7 @@ export const ApiInfo = () => {
     ),
     chinese: (
       <Typography>
-        pronunciation of other languages using Chinese characters from{' '}
+        pronunciation of other languages using <b>Chinese characters</b> from{' '}
         <Link href="https://github.com/g0v/moedict-webkit" target="_blank">
           MOEDICT 萌典
         </Link>
@@ -93,7 +93,7 @@ export const ApiInfo = () => {
 
   return (
     <Box>
-      <Paper elevation={3} sx={{ p: 2 }}>
+      <Paper elevation={3} sx={{ p: 2, mb: 1 }}>
         <FormControlLabel
           control={
             <Switch

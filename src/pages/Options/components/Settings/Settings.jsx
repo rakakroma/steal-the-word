@@ -51,6 +51,8 @@ export const Settings = () => {
           value={tabValue}
           onChange={handleChange}
           sx={{ borderRight: 1, borderColor: 'divider' }}
+          variant="scrollable"
+          scrollButtons="auto"
         >
           <Tab label="Text Styling" />
           <Tab label="Api Settings" />
