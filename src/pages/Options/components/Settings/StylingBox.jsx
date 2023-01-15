@@ -5,7 +5,9 @@ import {
   FormLabel,
   Radio,
   RadioGroup,
+  Typography,
 } from '@mui/material';
+import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import React, { useEffect, useState } from 'react';
 import {
   allStyles,
@@ -29,10 +31,6 @@ const useStorageTextStyle = () => {
   }, []);
 
   const changeTextStyle = (newStyleName) => {
-    // const newData = {
-    //   styleName: newStyleName,
-    //   styles: allStyles[newStyleName],
-    // };
     const newData = getTextStyleData(newStyleName);
     chrome.storage.local.set({
       textStyle: newData,
@@ -48,16 +46,19 @@ const StylePanel = ({ defaultValue, changeTextStyle }) => {
     changeTextStyle(e.target.value);
   };
 
-  // if (!selectedStyle) return null;
   return (
-    <FormControl>
-      <FormLabel>Text Style</FormLabel>
+    <FormControl sx={{ marginX: 'auto', mt: 1 }}>
+      <FormLabel sx={{ textAlign: 'center' }}>Text Style</FormLabel>
       <RadioGroup defaultValue={defaultValue} onChange={handleChange} row>
         {Object.keys(allStyles).map((styleName) => (
           <FormControlLabel
             key={styleName}
             value={styleName}
-            label={styleName}
+            label={
+              <Typography sx={getTextStyleData(styleName).styles}>
+                {styleName}
+              </Typography>
+            }
             control={<Radio />}
           />
         ))}
@@ -82,11 +83,10 @@ export const StylingBox = () => {
     return (
       <Box
         sx={{
-          width: '400px',
+          // width: '400px',
           backgroundColor: bgColor,
           color: color,
           p: 2,
-          // borderRadius: 2,
         }}
       >
         In publishing and graphic design,{' '}
@@ -97,24 +97,21 @@ export const StylingBox = () => {
     );
   };
 
+  const basicColorPair = {
+    white: 'black',
+    black: 'white',
+    '#001E3C': '#b2bac2',
+    '#f7f5ef': 'black',
+  };
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-      <Box
-        sx={{
-          borderRadius: 2,
-          display: 'flex',
-          boxShadow: 2,
-        }}
-      >
-        <Box>
-          <DummyTextBox bgColor="black" color="white" />
-          <DummyTextBox bgColor="white" color="black" />
-        </Box>
-        <Box>
-          <DummyTextBox bgColor="#001E3C" color="#b2bac2" />
-          <DummyTextBox bgColor="#f7f5ef" color="black" />
-        </Box>
-      </Box>
+      <Grid2 container sx={{ boxShadow: 2, borderRadius: 2 }}>
+        {Object.entries(basicColorPair).map(([bgColor, color]) => (
+          <Grid2 xs={12} sm={6} key={bgColor}>
+            <DummyTextBox bgColor={bgColor} color={color} />
+          </Grid2>
+        ))}
+      </Grid2>
       <StylePanel
         defaultValue={defaultValue}
         changeTextStyle={changeTextStyle}

@@ -59,13 +59,13 @@ export const Settings = () => {
         </Tabs>
 
         <TabPanel value={tabValue} index={0}>
-          <Typography variant="h5">Style The Marked Text</Typography>
+          <Typography variant="h5">Text Style</Typography>
           <PanelContainerBox>
             <StylingBox />
           </PanelContainerBox>
         </TabPanel>
         <TabPanel value={tabValue} index={1}>
-          <Typography variant="h5">Dictionary API</Typography>
+          <Typography variant="h5">Languages Dictionary API</Typography>
           <PanelContainerBox>
             <ApiInfo />
           </PanelContainerBox>

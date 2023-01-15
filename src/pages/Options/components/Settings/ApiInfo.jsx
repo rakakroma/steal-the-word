@@ -5,6 +5,7 @@ import {
   FormGroup,
   Link,
   MenuItem,
+  Paper,
   Select,
   Switch,
   Typography,
@@ -63,7 +64,7 @@ export const ApiInfo = () => {
   const langLabels = {
     japanese: (
       <Typography>
-        Japanese Hiragana
+        Japanese Hiragana from{' '}
         <Link
           href="https://labs.goo.ne.jp/api/jp/hiragana-translation/"
           target="_blank"
@@ -74,7 +75,7 @@ export const ApiInfo = () => {
     ),
     english: (
       <Typography>
-        English pronunciation and definition
+        English pronunciation and definition from{' '}
         <Link href="https://dictionaryapi.dev/" target="_blank">
           Free Dictionary API
         </Link>
@@ -82,9 +83,8 @@ export const ApiInfo = () => {
     ),
     chinese: (
       <Typography>
-        pronunciation of other languages using Chinese characters
+        pronunciation of other languages using Chinese characters from{' '}
         <Link href="https://github.com/g0v/moedict-webkit" target="_blank">
-          {' '}
           MOEDICT 萌典
         </Link>
       </Typography>
@@ -93,21 +93,23 @@ export const ApiInfo = () => {
 
   return (
     <Box>
-      <FormControlLabel
-        control={
-          <Switch
-            size="small"
-            onChange={() => changeOneOption({ enabled: !enabled })}
-            checked={enabled}
-          />
-        }
-        label="enable search by api"
-      />
-      <Typography>
-        Using these api services must send the word and context you're searching
-        to those service, and except for that, This app would not send any of
-        your data to the web.
-      </Typography>
+      <Paper elevation={3} sx={{ p: 2 }}>
+        <FormControlLabel
+          control={
+            <Switch
+              size="small"
+              onChange={() => changeOneOption({ enabled: !enabled })}
+              checked={enabled}
+            />
+          }
+          label="enable auto search by api"
+        />
+        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+          ❗Using these api services must send the word and context you're
+          searching to those service, and except for that, This app would not
+          send any of your data to the web.
+        </Typography>
+      </Paper>
 
       <FormGroup>
         {['english', 'japanese'].map((langName) => (
@@ -149,7 +151,9 @@ export const ApiInfo = () => {
             {[['', 'None']]
               .concat(Object.entries(allChineseOptions))
               .map(([key, value]) => (
-                <MenuItem value={key}>{value}</MenuItem>
+                <MenuItem value={key} key={key}>
+                  {value}
+                </MenuItem>
               ))}
           </Select>
         </FormControl>
