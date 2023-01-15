@@ -35,6 +35,13 @@ export const Settings = () => {
   const handleChange = (event, newValue) => {
     setTabValue(newValue);
   };
+
+  const tabInfo = {
+    'Text Styling': <StylingBox />,
+    'Api Settings': <ApiInfo />,
+    'Backup / Restore': <ImportAndExportBox />,
+    'Report / Info': <OtherInfo />,
+  };
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
       <Paper
@@ -54,36 +61,20 @@ export const Settings = () => {
           variant="scrollable"
           scrollButtons="auto"
         >
-          <Tab label="Text Styling" />
-          <Tab label="Api Settings" />
-          <Tab label="Backup / Restore" />
-          <Tab label="Info" />
+          {Object.keys(tabInfo).map((title) => (
+            <Tab key={title} label={title} />
+          ))}
         </Tabs>
 
-        <TabPanel value={tabValue} index={0}>
-          <Typography variant="h5">Text Style</Typography>
-          <PanelContainerBox>
-            <StylingBox />
-          </PanelContainerBox>
-        </TabPanel>
-        <TabPanel value={tabValue} index={1}>
-          <Typography variant="h5">Languages Dictionary API</Typography>
-          <PanelContainerBox>
-            <ApiInfo />
-          </PanelContainerBox>
-        </TabPanel>
-        <TabPanel value={tabValue} index={2}>
-          <Typography variant="h5">Backup / Restore</Typography>
-          <PanelContainerBox>
-            <ImportAndExportBox />
-          </PanelContainerBox>
-        </TabPanel>
-        <TabPanel value={tabValue} index={3}>
-          <Typography variant="h5">Info</Typography>
-          <PanelContainerBox>
-            <OtherInfo />
-          </PanelContainerBox>
-        </TabPanel>
+        {Object.entries(tabInfo).map(([title, component], index) => {
+          return (
+            <TabPanel value={tabValue} index={index}>
+              <Typography variant="h5">{title}</Typography>
+              <PanelContainerBox>{component}</PanelContainerBox>
+            </TabPanel>
+          );
+        })}
+
         {/* <Typography variant="h5">Site Preferences</Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 7 }}>
           <SiteDataGrid />

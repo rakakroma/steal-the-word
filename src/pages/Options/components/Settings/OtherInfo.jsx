@@ -10,9 +10,10 @@ export const OtherInfo = () => {
         <Box sx={{ my: 'auto' }}>
           <Typography variant="subtitle1">
             Hi, <b>Steal the Word</b> is my first personal project. Though there
-            are some known bugs that I have no idea how to fix, I hope it works
-            well in most use cases. Feel free to report bugs/issues by submit
-            this form (to my google sheet) or open an issue on github.
+            are some known issues that I have no idea how to fix, I hope it
+            works well in most use cases. Feel free to report bugs/issues by
+            submit the form below (to my google sheet) or open an issue/ pull
+            request on github.
           </Typography>
 
           <Typography

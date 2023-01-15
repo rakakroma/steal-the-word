@@ -9,59 +9,45 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
+import { Controller, useController, useForm } from 'react-hook-form';
 import { myLog } from '../../../Content/utils/customLogger';
+import { postFormApi } from '../../../../utilsForAll/formApi';
+import { Check, CheckCircle } from '@mui/icons-material';
 
-const postFormApi = `https://script.google.com/macros/s/AKfycbzTWZ3n1QjuRx_8GvDkjkIlBg-eqXJ_HmVoDsP-OWhDB8_2OX_J3MkjMZ2Sa1pCT5-J/exec`;
-export const ReportForm = () => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
+const TextFieldForHook = (props) => {
+  const { name, control, rules, notEmpty, ...otherProps } = props;
+  const checkNotEmpty = (value) => value.trim().length > 0;
+  const { field } = useController({
+    name,
+    control,
+    rules: { ...rules, validate: notEmpty ? checkNotEmpty : null },
+  });
 
-    //title, type, link, content
-    const formData = new FormData(formRef.current);
-    for (const [key, value] of formData.entries()) {
-      myLog(`${key}: ${value}`);
-    }
-    const requestOptions = {
-      method: 'POST',
-      redirect: 'follow',
-      body: JSON.stringify(Object.fromEntries(formData)),
-    };
-    myLog(requestOptions);
-
-    fetch(postFormApi, requestOptions)
-      .then((response) => response.json())
-      .then((result) => console.log(result))
-      .catch((error) => console.log('error', error));
-  };
-
-  const formRef = useRef(null);
   return (
-    <Paper
-      ref={formRef}
-      component="form"
-      sx={{ m: 3, p: 2, border: '1px solid lightgrey' }}
-      elevation={2}
-      onSubmit={handleSubmit}
-    >
-      <Typography variant="h5" sx={{ textAlign: 'center' }}>
-        Report Form
-      </Typography>
-      <Box sx={{ my: 1 }}>
-        <InputLabel htmlFor="title">Title</InputLabel>
-        <TextField
-          id="title"
-          name="title"
-          fullWidth
-          autoComplete="off"
-          required
-          type="text"
-          inputProps={{ maxLength: 350 }}
-        />
-      </Box>
-      <Box sx={{ my: 1 }}>
-        <Typography>Form Type</Typography>
-        <RadioGroup row name="type" defaultValue={'bug'}>
+    <Box sx={{ my: 1 }}>
+      <InputLabel htmlFor={name}>{name}</InputLabel>
+      <TextField
+        {...otherProps}
+        fullWidth
+        autoComplete="off"
+        type="text"
+        id={field.name}
+        onChange={field.onChange}
+        onBlur={field.onBlur}
+        value={field.value}
+        name={field.name}
+        inputRef={field.ref}
+      />
+    </Box>
+  );
+};
+
+const RadioGroupForHook = ({ control }) => {
+  return (
+    <Controller
+      render={({ field }) => (
+        <RadioGroup row {...field}>
           <FormControlLabel value="bug" control={<Radio />} label="bug" />
           <FormControlLabel
             value="suggestion"
@@ -70,26 +56,126 @@ export const ReportForm = () => {
           />
           <FormControlLabel value="other" control={<Radio />} label="Other" />
         </RadioGroup>
-      </Box>
+      )}
+      name="type"
+      control={control}
+    />
+  );
+};
+
+export const ReportForm = () => {
+  const [isWaiting, setIsWaiting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [helperText, setHelperText] = useState('');
+
+  const formRef = useRef(null);
+
+  const { handleSubmit, control, reset } = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      title: '',
+      link: '',
+      content: '',
+      type: 'bug',
+    },
+  });
+  const formSubmit = handleSubmit(async (data) => {
+    setIsWaiting(true);
+
+    const requestOptions = {
+      method: 'POST',
+      redirect: 'follow',
+      body: JSON.stringify(data),
+    };
+    myLog(requestOptions);
+
+    const result = await fetch(postFormApi, requestOptions)
+      .then((response) => response.json())
+      .catch((error) => {
+        myLog('error', error);
+        setHelperText(`⚠️ it's not working, please try again later`);
+      });
+
+    myLog(result);
+    if (result.status === 'success') {
+      reset();
+      setIsWaiting(false);
+      setIsSuccess(true);
+    }
+  });
+
+  if (isSuccess)
+    return (
+      <Paper
+        elevation={2}
+        sx={{
+          bgcolor: 'background.paper',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '500px',
+          m: 3,
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            flexDirection: 'column',
+          }}
+        >
+          <CheckCircle sx={{ color: 'success.main', fontSize: '35px' }} />
+          <Typography sx={{ color: 'success.main' }} variant="h4">
+            success
+          </Typography>
+        </Box>
+      </Paper>
+    );
+  return (
+    <Paper
+      ref={formRef}
+      component="form"
+      sx={{ m: 3, p: 4, border: '1px solid lightgrey', position: 'relative' }}
+      elevation={2}
+      onSubmit={formSubmit}
+    >
+      <TextFieldForHook
+        name="title"
+        control={control}
+        rules={{ required: true, maxLength: 350 }}
+        notEmpty={true}
+        disabled={isWaiting}
+      />
       <Box sx={{ my: 1 }}>
-        <InputLabel htmlFor="link">Link (If needed)</InputLabel>
-        <TextField id="link" name="link" fullWidth autoComplete="off" />
+        <Typography sx={{ color: 'text.secondary' }} variant="subtitle2">
+          type
+        </Typography>
+        <RadioGroupForHook control={control} />
       </Box>
-      <Box sx={{ my: 1 }}>
-        <InputLabel htmlFor="content">Content</InputLabel>
-        <TextField
-          id="content"
-          name="content"
-          multiline
-          minRows={4}
-          fullWidth
-          autoComplete="off"
-          required
-          inputProps={{ maxLength: 2500 }}
-        />
-      </Box>
+      <TextFieldForHook name="link" control={control} disabled={isWaiting} />
+      <TextFieldForHook
+        name="content"
+        control={control}
+        multiline
+        minRows={4}
+        rules={{ required: true, maxLength: 2500 }}
+        notEmpty={true}
+        disabled={isWaiting}
+      />
+
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button type="submit" variant="contained" sx={{ width: '200px' }}>
+        <Typography
+          sx={{ px: 2, mr: 2, color: 'error.main' }}
+          variant="subtitle1"
+        >
+          {helperText}
+        </Typography>
+        <Button
+          type="submit"
+          variant="contained"
+          sx={{ width: '200px' }}
+          disabled={isWaiting}
+        >
           Submit
         </Button>
       </Box>
