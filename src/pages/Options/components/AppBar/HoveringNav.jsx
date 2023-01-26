@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import React, { Fragment, useState } from 'react';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const FloatingNavList = styled(({ className, ...props }) => (
   <Tooltip
@@ -32,6 +33,7 @@ const FloatingNavList = styled(({ className, ...props }) => (
 export const HoveringNav = ({ children, currentPathName, pathIcon }) => {
   const [open, setOpen] = useState(true);
 
+  const { t } = useTranslation();
   const handleClose = () => {
     setOpen(false);
   };
@@ -65,7 +67,7 @@ export const HoveringNav = ({ children, currentPathName, pathIcon }) => {
           disabled={isCurrentPath}
         >
           <ListItemIcon>{pathIcon[targetPathName]}</ListItemIcon>
-          <ListItemText primary={targetPathName} />
+          <ListItemText primary={t(targetPathName)} />
         </ListItemButton>
       </ListItem>
     );

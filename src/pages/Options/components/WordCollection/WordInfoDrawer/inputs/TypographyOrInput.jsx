@@ -6,6 +6,7 @@ import React, { useContext, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { getFlatList } from '../../../../../../utilsForAll/getMatchTextWithIdRef';
 import { WordListContext } from '../../../../Options';
+import { useTranslation } from 'react-i18next';
 
 export const TypographyOrInput = (props) => {
   const {
@@ -41,6 +42,7 @@ export const TypographyOrInput = (props) => {
     }
   };
 
+  const { t } = useTranslation();
   const checkBlankAfterTrim = (value) => value.trim().length > 0;
 
   const wordList = useContext(WordListContext);
@@ -119,7 +121,7 @@ export const TypographyOrInput = (props) => {
             // inputProps={rules}
             multiline
             fullWidth
-            placeholder={inputName}
+            placeholder={t(inputName)}
             inputRef={field.ref}
             value={field.value}
             onChange={field.onChange}

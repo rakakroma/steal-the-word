@@ -11,6 +11,7 @@ import { ContextByDefBox } from './ContextByDefBox';
 import { getDataFromName, getName } from './getDataFromName';
 import { CreatableSelectInput } from './inputs/CreatableSelectInput';
 import { TypographyOrInput } from './inputs/TypographyOrInput';
+import { useTranslation } from 'react-i18next';
 
 export const DefinitionBlock = ({
   targetWord,
@@ -19,6 +20,7 @@ export const DefinitionBlock = ({
   changingTagsWhenDisplay,
   setChangingTagsWhenDisplay,
 }) => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const formMethods = useFormContext();
 
@@ -125,7 +127,7 @@ export const DefinitionBlock = ({
                         )
                       }
                     >
-                      #add tags...
+                      #{t('add tags')}...
                     </ButtonBase>
                   </Box>
                 )}
@@ -133,7 +135,7 @@ export const DefinitionBlock = ({
                 <CreatableSelectInput
                   allOptions={tagListForOption}
                   selectedOptions={convertToTagInputOption(definitionObj.tags)}
-                  placeholder="#select or type tags"
+                  placeholder={t(`#${t('select or type tags')}`)}
                   name={getName('tags', defId, true)}
                 />
               )}
@@ -143,14 +145,14 @@ export const DefinitionBlock = ({
                     size="small"
                     onClick={() => setChangingTagsWhenDisplay(null)}
                   >
-                    Cancel
+                    {t('Cancel')}
                   </Button>
                   <Button
                     size="small"
                     type="submit"
                     disabled={!tagsHaveChanged(getName('tags', defId, true))}
                   >
-                    save tag change
+                    {t('save tag change')}
                   </Button>
                 </Box>
               )}

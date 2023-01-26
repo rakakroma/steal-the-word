@@ -3,6 +3,7 @@ import {
   ButtonBase,
   Grow,
   IconButton,
+  LinearProgress,
   Paper,
   Typography,
 } from '@mui/material';
@@ -18,6 +19,7 @@ import {
 } from '../WordCollection/WordCollectionPageBox';
 import { DateOfContext } from '../WordCollection/WordInfoDrawer/DateOfContext';
 import { Close, Search } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 export const ContextBlock = ({
   targetContext,
@@ -25,6 +27,7 @@ export const ContextBlock = ({
   targetDef,
   iconSrc,
   relativeIndex,
+  autoplayProgress,
 }) => {
   const [showInfo, setShowInfo] = useState(false);
   const { wordInfoTarget, changeWordInfoTarget } = useContext(
@@ -33,6 +36,7 @@ export const ContextBlock = ({
   const handleShowInfo = (boolean) => {
     setShowInfo(boolean);
   };
+  const { t } = useTranslation();
 
   return (
     <InfoBlock
@@ -49,6 +53,21 @@ export const ContextBlock = ({
         display: 'flex',
       }}
     >
+      {relativeIndex === 0 && (
+        <LinearProgress
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            '.MuiLinearProgress-bar': {
+              transition: 'transform .2s linear',
+            },
+          }}
+          variant="determinate"
+          value={autoplayProgress}
+        />
+      )}
       <Box sx={{ p: 2 }}>
         <WordRating targetWord={targetWord} />
         <Typography variant={'h6'}>
@@ -82,7 +101,7 @@ export const ContextBlock = ({
               handleShowInfo(true);
             }}
           >
-            more info
+            {t('more info')}
           </ButtonBase>
           <Grow
             in={showInfo}

@@ -14,6 +14,7 @@ import { Controller, useController, useForm } from 'react-hook-form';
 import { myLog } from '../../../Content/utils/customLogger';
 import { postFormApi } from '../../../../utilsForAll/formApi';
 import { Check, CheckCircle } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 const TextFieldForHook = (props) => {
   const { name, control, rules, notEmpty, ...otherProps } = props;
@@ -24,9 +25,10 @@ const TextFieldForHook = (props) => {
     rules: { ...rules, validate: notEmpty ? checkNotEmpty : null },
   });
 
+  const { t } = useTranslation();
   return (
     <Box sx={{ my: 1 }}>
-      <InputLabel htmlFor={name}>{name}</InputLabel>
+      <InputLabel htmlFor={name}>{t(name)}</InputLabel>
       <TextField
         {...otherProps}
         fullWidth
@@ -44,17 +46,22 @@ const TextFieldForHook = (props) => {
 };
 
 const RadioGroupForHook = ({ control }) => {
+  const { t } = useTranslation();
   return (
     <Controller
       render={({ field }) => (
         <RadioGroup row {...field}>
-          <FormControlLabel value="bug" control={<Radio />} label="bug" />
+          <FormControlLabel value="bug" control={<Radio />} label={t('bug')} />
           <FormControlLabel
             value="suggestion"
             control={<Radio />}
-            label="suggestion"
+            label={t('suggestion')}
           />
-          <FormControlLabel value="other" control={<Radio />} label="Other" />
+          <FormControlLabel
+            value="other"
+            control={<Radio />}
+            label={t('Other')}
+          />
         </RadioGroup>
       )}
       name="type"
@@ -68,6 +75,7 @@ export const ReportForm = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [helperText, setHelperText] = useState('');
 
+  const { t } = useTranslation();
   const formRef = useRef(null);
 
   const { handleSubmit, control, reset } = useForm({
@@ -148,7 +156,7 @@ export const ReportForm = () => {
       />
       <Box sx={{ my: 1 }}>
         <Typography sx={{ color: 'text.secondary' }} variant="subtitle2">
-          type
+          {t('type')}
         </Typography>
         <RadioGroupForHook control={control} />
       </Box>
@@ -176,7 +184,7 @@ export const ReportForm = () => {
           sx={{ width: '200px' }}
           disabled={isWaiting}
         >
-          Submit
+          {t('Submit')}
         </Button>
       </Box>
     </Paper>

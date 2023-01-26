@@ -11,28 +11,29 @@ import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { CreatableTextInput } from './inputs/CreatableSelectInput';
 import { TypographyOrInput } from './inputs/TypographyOrInput';
+import { useTranslation } from 'react-i18next';
 
 const MatchRuleSelect = () => {
   const { control } = useFormContext();
 
+  const { t } = useTranslation();
   return (
     <Controller
       name="matchRule"
       control={control}
       render={({ field }) => (
         <FormControl size="small" sx={{ minWidth: '150px', m: 1 }}>
-          <InputLabel id="select-label">MatchRule</InputLabel>
+          <InputLabel id="select-label">{t('match rule')}</InputLabel>
           <Select
-            // sx={{ height: '25px' }}
             labelId="select-label"
             value={field.value}
             autoWidth
             onChange={(e) => field.onChange(e.target.value)}
           >
-            <MenuItem value={'start'}>Start</MenuItem>
-            <MenuItem value={'end'}>End</MenuItem>
-            <MenuItem value={'independent'}>Independent</MenuItem>
-            <MenuItem value={'any'}>any</MenuItem>
+            <MenuItem value={'start'}>{t('start')}</MenuItem>
+            <MenuItem value={'end'}>{t('end')}</MenuItem>
+            <MenuItem value={'independent'}>{t('independent')}</MenuItem>
+            <MenuItem value={'any'}>{t('any')}</MenuItem>
           </Select>
         </FormControl>
       )}
@@ -51,7 +52,7 @@ const StyledGreySmallInfo = (props) => {
         fontSize: '0.8rem',
       }}
     >
-      {title}
+      {title && `${title}:`}
       {children || (
         <Box component="span" sx={{ ml: 1 }}>
           {Array.isArray(content) ? content.join(', ').toString() : content}
@@ -62,6 +63,7 @@ const StyledGreySmallInfo = (props) => {
 };
 
 export const VariantsInfo = ({ controlMode, variants, stem, matchRule }) => {
+  const { t } = useTranslation();
   const editMode = controlMode === 'edit';
   if ((variants?.length === 0 || !variants) && !stem && !matchRule && !editMode)
     return null;
@@ -83,19 +85,19 @@ export const VariantsInfo = ({ controlMode, variants, stem, matchRule }) => {
             ></TypographyOrInput>
           </StyledGreySmallInfo>
 
-          <CreatableTextInput name="variants" placeholder="variants" />
+          <CreatableTextInput name="variants" placeholder={t('variants')} />
         </>
       ) : (
         <>
           {stem && (
             <>
-              <StyledGreySmallInfo title="stem:" content={stem} />
+              <StyledGreySmallInfo title={t('stem')} content={stem} />
               <Divider />
             </>
           )}
           {variants?.length > 0 && (
             <>
-              <StyledGreySmallInfo title="variants:" content={variants} />
+              <StyledGreySmallInfo title={t('variants')} content={variants} />
               <Divider />
             </>
           )}
@@ -106,7 +108,7 @@ export const VariantsInfo = ({ controlMode, variants, stem, matchRule }) => {
       ) : (
         <>
           {matchRule && (
-            <StyledGreySmallInfo title="match rule:" content={matchRule} />
+            <StyledGreySmallInfo title={t('match rule')} content={matchRule} />
           )}
         </>
       )}

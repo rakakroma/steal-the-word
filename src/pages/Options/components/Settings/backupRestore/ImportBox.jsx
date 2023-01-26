@@ -6,8 +6,11 @@ import { myLog } from '../../../../Content/utils/customLogger';
 import { saveImportDataToDB } from '../../../utils/ImportExport';
 import { ButtonContainer, DataCountGrid } from './DataCountGrid';
 import { handleClearAll } from './ImportAndExportBox';
+import { useTranslation } from 'react-i18next';
 
 export const ImportBox = ({ loggedData, setLoggedData, noDataInCurrentDB }) => {
+  const { t } = useTranslation();
+
   const logFile = (event) => {
     let str = event.target.result;
     let json = JSON.parse(str);
@@ -45,7 +48,7 @@ export const ImportBox = ({ loggedData, setLoggedData, noDataInCurrentDB }) => {
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <label htmlFor="file">
             <Button component="div" variant="contained">
-              Upload data (.json)
+              {t('upload_data')}
             </Button>
           </label>
           <input
@@ -61,7 +64,7 @@ export const ImportBox = ({ loggedData, setLoggedData, noDataInCurrentDB }) => {
               setLoggedData(demoData);
             }}
           >
-            Or Use the Demo Data
+            {t('Or Use the Demo Data')}
           </Button>
         </Box>
       </Box>
@@ -70,7 +73,7 @@ export const ImportBox = ({ loggedData, setLoggedData, noDataInCurrentDB }) => {
   return (
     <Box>
       <DataCountGrid
-        title="Uploaded Data Info"
+        title={t('Uploaded Data Info')}
         listLengthData={{
           words: loggedData.wordList?.length,
           contexts: loggedData.contextList?.length,
@@ -85,10 +88,10 @@ export const ImportBox = ({ loggedData, setLoggedData, noDataInCurrentDB }) => {
           variant="contained"
           className="main-button"
         >
-          Import
+          {t('Import')}
         </Button>
         <Button variant="outlined" onClick={() => setLoggedData(null)}>
-          Cancel
+          {t('Cancel')}
         </Button>
       </ButtonContainer>
     </Box>

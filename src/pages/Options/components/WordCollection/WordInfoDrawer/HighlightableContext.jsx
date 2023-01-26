@@ -72,7 +72,9 @@ export const HighlightableContext = ({
           sx={{
             display: 'none',
             ml: 1,
-            color: theme.palette.warning.main,
+            color: 'white',
+            px: 2,
+            backgroundColor: theme.palette.warning.main,
           }}
           className="highlight-help"
         >

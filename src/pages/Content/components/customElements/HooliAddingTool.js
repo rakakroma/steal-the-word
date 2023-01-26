@@ -30,7 +30,9 @@ class HooliAddingTool extends LitElement {
   _handleAddText(e) {
     // e.preventDefault()
     // e.stopPropagation()
-    openAddNewWord();
+    setTimeout(() => {
+      openAddNewWord();
+    }, 50);
     setTimeout(() => document.querySelector('hooli-adding-tool')?.remove());
   }
 }

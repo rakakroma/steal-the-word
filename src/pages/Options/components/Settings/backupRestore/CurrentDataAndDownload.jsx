@@ -6,6 +6,7 @@ import { formatDate } from '../../../utils/Date';
 import { exportToJsonFile } from '../../../utils/ImportExport';
 import { ButtonContainer, DataCountGrid } from './DataCountGrid';
 import { handleClearAll } from './ImportAndExportBox';
+import { useTranslation } from 'react-i18next';
 
 export const CurrentDataAndDownload = ({
   userUploadedData,
@@ -15,10 +16,11 @@ export const CurrentDataAndDownload = ({
   tagList,
   noDataInCurrentDB,
 }) => {
+  const { t } = useTranslation();
   return (
     <Box sx={{ position: 'relative' }}>
       <DataCountGrid
-        title="current Data"
+        title={t('current Data')}
         listLengthData={{
           words: wordList?.length,
           contexts: contextList?.length,
@@ -41,7 +43,10 @@ export const CurrentDataAndDownload = ({
             borderRadius: 1,
           }}
         >
-          ⚠️Warning: Current data will all be cleared if new data is imported
+          ⚠️
+          {t(
+            'Warning: Current data will all be cleared if new data is imported'
+          )}
         </Typography>
       ) : (
         <ButtonContainer>
@@ -59,12 +64,12 @@ export const CurrentDataAndDownload = ({
             disabled={noDataInCurrentDB}
           >
             <CloudDownload />
-            download
+            {t('download')}
           </Button>
-          <Tooltip title="clear all data from database" placement="bottom">
+          <Tooltip title={t('clear all data from database')} placement="bottom">
             <Button variant="outlined" color="error" onClick={handleClearAll}>
               <DeleteIcon />
-              Clear
+              {t('Clear')}
             </Button>
           </Tooltip>
         </ButtonContainer>

@@ -1,5 +1,6 @@
 import { Paper, Typography } from '@mui/material';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const SingleDataInfo = ({
   title,
@@ -7,6 +8,7 @@ export const SingleDataInfo = ({
   deleteDecoration,
   isImportedData,
 }) => {
+  const { t } = useTranslation();
   return (
     <Paper
       elevation={2}
@@ -20,7 +22,7 @@ export const SingleDataInfo = ({
         }`,
       }}
     >
-      <Typography variant="h6">{title}</Typography>
+      <Typography variant="h6">{t(title)}</Typography>
       <Typography
         variant="h4"
         sx={{

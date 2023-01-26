@@ -9,9 +9,12 @@ import { useTheme } from '@mui/material/styles';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { HoveringNav } from './HoveringNav';
+import { useTranslation } from 'react-i18next';
 
 export const PageBreadcrumbs = () => {
   const { pathname } = useLocation();
+
+  const { t } = useTranslation();
 
   const pathArray = pathname.split('/').slice(1);
   const theme = useTheme();
@@ -38,7 +41,7 @@ export const PageBreadcrumbs = () => {
           const last = index === pathArray.length - 1;
           return (
             <Typography color="text.primary" key={pathTarget}>
-              {pathIcon[pathTarget] || null} {last && pathTarget}
+              {pathIcon[pathTarget] || null} {last && t(pathTarget)}
               {last && <ArrowDropDown />}
             </Typography>
           );

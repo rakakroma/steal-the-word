@@ -5,9 +5,12 @@ import React from 'react';
 import { InfoBlock } from '../DatabaseInfo';
 import { DirectionButton } from '../WordCollection/CollectionControlPanel/DirectionButton';
 import { useControlLineChart } from './useControlLineChart';
+import { useTranslation } from 'react-i18next';
 
 export const LineChartContainer = () => {
   const chartControl = useControlLineChart();
+  const { t } = useTranslation();
+
   const {
     noContextData,
     dateOption,
@@ -29,7 +32,7 @@ export const LineChartContainer = () => {
   return (
     <InfoBlock sx={{ width: 'auto', height: '300px' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Typography>Total Savings Over Time</Typography>
+        <Typography>{t('Total Savings Over Time')}</Typography>
         <Typography>{periodTitle}</Typography>
       </Box>
 
@@ -46,13 +49,13 @@ export const LineChartContainer = () => {
             disabled={dateOption.datePrecision === 'month'}
             value="month"
           >
-            12 months
+            {t('12 months')}
           </ToggleButton>
           <ToggleButton
             disabled={dateOption.datePrecision === 'day'}
             value="day"
           >
-            30 days
+            {t('30 days')}
           </ToggleButton>
         </ToggleButtonGroup>
         {showDirectionButton && (

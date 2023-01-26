@@ -21,6 +21,7 @@ import { OptionPopper } from './CollectionControlPanel/OptionPopper';
 import { OrderByTimeAndSiteContainer } from './OrderByTimeAndSiteContainer';
 import { TagsContainer } from './TagsContainer.jsx';
 import { TimeModeContainer } from './TimeModeContainer';
+import { useTranslation } from 'react-i18next';
 
 const FadeMotionWrapper = (props) => {
   return (
@@ -165,6 +166,7 @@ export const SinglePageWordCollection = () => {
   const [filterKanji, setFilterKanji] = useState(false);
   const [filterStars, setFilterStars] = useState(0);
 
+  const { t } = useTranslation();
   useEffect(() => {
     const cookies = document.cookie
       ?.split(';')
@@ -229,7 +231,7 @@ export const SinglePageWordCollection = () => {
                   checked={filterKanji}
                 />
               }
-              label="include 漢字"
+              label={t('include_kanji')}
               labelPlacement="start"
             />
           )}

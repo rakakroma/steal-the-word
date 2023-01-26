@@ -1,9 +1,8 @@
 import React from 'react';
 import { render } from 'react-dom';
-
-// import './index.css';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
+import '../../utilsForAll/i18n';
 
 render(
   <React.StrictMode>

@@ -3,13 +3,7 @@ import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useContext } from 'react';
-import {
-  ContextListContext,
-  WordInfoDrawerContext,
-  WordListContext,
-} from '../../../Options';
-// import { db } from '../../Background/database.js';
-// import { useLiveQuery } from 'dexie-react-hooks';
+import { WordInfoDrawerContext, WordListContext } from '../../../Options';
 import { useMediaQuery } from '@mui/material';
 import { useRegisterActions } from 'kbar';
 import '../../../../Content/components/customElements/WordBlock/HooliHighlighter';
@@ -17,8 +11,7 @@ import { wordListInAlphabeticalOrder } from '../../../utils/transformData';
 import { AppBar } from '../../AppBar/AppBar';
 import { CurrentWordInfo } from './CurrentWordInfo';
 import { HideDrawerButton } from './HideDrawerButton';
-
-// const drawerWidth = 340;
+import { useTranslation } from 'react-i18next';
 const drawerWidth = 390;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -44,33 +37,17 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   })
 );
 
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-  justifyContent: 'flex-start',
-}));
-
 export default function PersistentDrawerRight(props) {
-  const theme = useTheme();
   const { wordInfoTarget, changeWordInfoTarget, handleWordClick } = useContext(
     WordInfoDrawerContext
   );
-  // const biggerThan600px = useMediaQuery('(min-width:600px)');
+  const { t } = useTranslation();
 
   const breakpointOfDirectionChange = useMediaQuery('(min-width:700px)');
 
   const open = wordInfoTarget?.wordId?.length > 0;
 
-  const handleDrawerClose = () => {
-    // setOpen(false);
-    changeWordInfoTarget(null);
-  };
-
   const wordList = useContext(WordListContext);
-  const contextList = useContext(ContextListContext);
   useRegisterActions(
     wordList
       ? wordListInAlphabeticalOrder(wordList).map((wordObj) => {
@@ -80,7 +57,7 @@ export default function PersistentDrawerRight(props) {
             name: wordObj.word,
             subtitle: wordObj.definitions[0].annotation,
             perform: () => handleWordClick({ wordId: wordObj.id }),
-            section: 'words',
+            section: t('search'),
             parent: 'word-search',
           };
         })

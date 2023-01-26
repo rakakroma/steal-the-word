@@ -1,5 +1,6 @@
 {
   "i18n-ally.localesPaths": [],
   "javascript.preferences.importModuleSpecifier": "non-relative",
-  "typescript.preferences.importModuleSpecifier": "non-relative"
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "i18next.i18nPaths": "/Users/robertchun39/repos/personal-project/hoorirubi-react/src/locales"
 }

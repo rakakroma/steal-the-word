@@ -16,6 +16,7 @@ import {
 import { useInterval, useVisible } from '../../utils/customHook';
 import { getDomainIcon } from '../WordCollection/OrderByTimeAndSiteContainer';
 import { ContextBlock } from './ContextBlock';
+import { useTranslation } from 'react-i18next';
 
 function shuffle(array) {
   let currentIndex = array.length,
@@ -45,6 +46,7 @@ export const RandomContext = () => {
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [autoplayProgress, setAutoPlayProgress] = useState(0);
 
+  const { t } = useTranslation();
   const wordList = useContext(WordListContext);
   const contextList = useContext(ContextListContext);
   const domainList = useContext(DomainAndLinkListContext);
@@ -188,7 +190,7 @@ export const RandomContext = () => {
   if (!wordList || !contextList || !shuffledArray || !displayingIndices)
     return null;
 
-  if (contextList.length === 0) return <div>cool</div>;
+  if (contextList.length === 0) return null;
   return (
     <Box
       sx={{
@@ -226,18 +228,7 @@ export const RandomContext = () => {
         <ChevronRight />
       </IconButton>
 
-      <Typography variant="h5">Random Context</Typography>
-      <LinearProgress
-        sx={{
-          width: '93.5%',
-          ml: '3%',
-          '.MuiLinearProgress-bar': {
-            transition: 'transform .2s linear',
-          },
-        }}
-        variant="determinate"
-        value={autoplayProgress}
-      />
+      <Typography variant="h5">{t('Random Context')}</Typography>
       <Button
         variant="contained"
         sx={{
@@ -277,6 +268,7 @@ export const RandomContext = () => {
             iconSrc={iconSrc}
             selectedIndex={selectedIndex}
             relativeIndex={relativeIndex}
+            autoplayProgress={autoplayProgress}
           />
         );
       })}

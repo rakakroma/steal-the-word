@@ -103,10 +103,10 @@ const getEnglishDefinition = async (targetWord) => {
     response.json()
   );
   if (!fetchedData) return '';
-  const pron = fetchedData[0].phonetic || '';
+  const pron = fetchedData[0]?.phonetic || '';
 
   //too many definitions so pick first one only, maybe a selectable list would be great
-  const definition = fetchedData[0].meanings[0].definitions[0].definition;
+  const definition = fetchedData[0]?.meanings[0]?.definitions[0]?.definition;
   return { pron, definition };
 };
 

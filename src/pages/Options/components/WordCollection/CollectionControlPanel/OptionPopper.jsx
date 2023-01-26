@@ -8,10 +8,15 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import { FilterAlt, Star } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
+
+const SmallSizeStar = () => <Star fontSize="16" />;
 
 export const OptionPopper = ({ filterStarsAndSetter }) => {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const { t } = useTranslation();
 
   const handleClick = (event) => {
     if (!anchorEl) {
@@ -44,6 +49,7 @@ export const OptionPopper = ({ filterStarsAndSetter }) => {
                   p: 2,
                   bgcolor: 'background.paper',
                   minWidth: '190px',
+                  height: '70px',
                 }}
               >
                 <Slider
@@ -61,18 +67,18 @@ export const OptionPopper = ({ filterStarsAndSetter }) => {
                   marks={[
                     {
                       value: 0,
-                      label: 'all',
+                      label: t('all'),
                     },
                     {
                       value: 1,
-                      label: <Star />,
+                      label: <SmallSizeStar />,
                     },
                     {
                       value: 2,
                       label: (
                         <>
                           2
-                          <Star />
+                          <SmallSizeStar />
                         </>
                       ),
                     },
@@ -81,7 +87,7 @@ export const OptionPopper = ({ filterStarsAndSetter }) => {
                       label: (
                         <>
                           3
-                          <Star />
+                          <SmallSizeStar />
                         </>
                       ),
                     },

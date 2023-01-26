@@ -5,11 +5,14 @@ import React, { useContext, useMemo } from 'react';
 import { ContextListContext } from '../../Options';
 import { cutUrl } from '../../utils/transformData';
 import { InfoBlock } from '../DatabaseInfo';
+import { useTranslation } from 'react-i18next';
 
 export const PieChartContainer = () => {
+  const { t } = useTranslation();
+
   return (
     <InfoBlock sx={{ height: '300px' }}>
-      <Typography>Top Ten Sites</Typography>
+      <Typography>{t('Top Ten Sites')}</Typography>
       <Box sx={{ height: '240px' }}>
         <PieChart />
       </Box>

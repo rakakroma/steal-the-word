@@ -338,10 +338,12 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
   }
 
   _handleClose(e) {
+    const thisEle = document.querySelector('hooli-wordinfo-block');
     if (
+      thisEle &&
       !e.composedPath().some((node) => node.tagName === 'HOOLI-WORDINFO-BLOCK')
     ) {
-      document.querySelector('hooli-wordinfo-block').remove();
+      thisEle.remove();
     }
   }
   _stopPropagation(e) {

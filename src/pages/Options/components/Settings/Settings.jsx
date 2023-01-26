@@ -6,6 +6,7 @@ import { ApiInfo } from './ApiInfo';
 import { ImportAndExportBox } from './backupRestore/ImportAndExportBox';
 import { OtherInfo } from './OtherInfo';
 import { StylingBox } from './StylingBox';
+import { useTranslation } from 'react-i18next';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -36,12 +37,15 @@ export const Settings = () => {
     setTabValue(newValue);
   };
 
+  const { t } = useTranslation();
+
   const tabInfo = {
     'Text Styling': <StylingBox />,
-    'Api Settings': <ApiInfo />,
+    'Language / Api Settings': <ApiInfo />,
     'Backup / Restore': <ImportAndExportBox />,
-    'Report / Info': <OtherInfo />,
+    'About / Contact': <OtherInfo />,
   };
+
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
       <Paper
@@ -53,7 +57,7 @@ export const Settings = () => {
         }}
         elevation={5}
       >
-        <Typography variant="h4">Settings / Preferences</Typography>
+        <Typography variant="h4">{t('Preferences')}</Typography>
         <Tabs
           value={tabValue}
           onChange={handleChange}
@@ -62,14 +66,14 @@ export const Settings = () => {
           scrollButtons="auto"
         >
           {Object.keys(tabInfo).map((title) => (
-            <Tab key={title} label={title} />
+            <Tab key={title} label={t(title)} />
           ))}
         </Tabs>
 
         {Object.entries(tabInfo).map(([title, component], index) => {
           return (
-            <TabPanel value={tabValue} index={index}>
-              <Typography variant="h5">{title}</Typography>
+            <TabPanel value={tabValue} index={index} key={title}>
+              <Typography variant="h5">{t(title)}</Typography>
               <PanelContainerBox>{component}</PanelContainerBox>
             </TabPanel>
           );

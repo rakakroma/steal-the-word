@@ -1,12 +1,14 @@
 import { Box, Typography, useTheme } from '@mui/material';
 import React from 'react';
 import { DirectionButton } from './DirectionButton';
+import { useTranslation } from 'react-i18next';
 
 export const DateArrangementPicker = ({
   allArrangementMode,
   setDateArrangement,
   dateArrangement,
 }) => {
+  const { t } = useTranslation();
   const handleUpdateDateArrangement = (isForward) => {
     const currentModePosition = allArrangementMode.indexOf(dateArrangement);
     if (isForward) {
@@ -39,7 +41,7 @@ export const DateArrangementPicker = ({
         variant="h6"
         sx={{ width: 60, textAlign: 'center', textTransform: 'capitalize' }}
       >
-        {dateArrangement}
+        {t(dateArrangement)}
       </Typography>
       <DirectionButton
         isForward={true}

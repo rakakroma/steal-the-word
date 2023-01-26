@@ -17,6 +17,8 @@ import {
   allHakOptions,
   defaultLangOptions,
 } from '../../../../utilsForAll/languageAndApiData';
+import { Trans, useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 
 const useStorageApiSetting = () => {
   const [apiSetting, setApiSetting] = useState(defaultLangOptions);
@@ -49,6 +51,7 @@ export const ApiInfo = () => {
   const langOptions = apiSetting;
   const enabled = apiSetting.enabled;
 
+  const { t } = useTranslation();
   const handleLangCheck = (e) => {
     changeOneOption({ [e.target.name]: e.target.checked });
   };
@@ -64,7 +67,9 @@ export const ApiInfo = () => {
   const langLabels = {
     japanese: (
       <Typography>
-        <b> Japanese</b> Hiragana from{' '}
+        <Trans i18nKey="japaneseHiraganaApi" components={{ bold: <strong /> }}>
+          <strong>Japanese</strong> Hiragana from from
+        </Trans>
         <Link
           href="https://labs.goo.ne.jp/api/jp/hiragana-translation/"
           target="_blank"
@@ -75,7 +80,10 @@ export const ApiInfo = () => {
     ),
     english: (
       <Typography>
-        <b>English</b> pronunciation and definition from{' '}
+        <Trans i18nKey="englishDictApi" components={{ bold: <strong /> }}>
+          <strong>English word</strong> pronunciation and its first definition
+          from
+        </Trans>
         <Link href="https://dictionaryapi.dev/" target="_blank">
           Free Dictionary API
         </Link>
@@ -83,16 +91,44 @@ export const ApiInfo = () => {
     ),
     chinese: (
       <Typography>
-        pronunciation of other languages using <b>Chinese characters</b> from{' '}
+        <Trans i18nKey="chineseApi" components={{ bold: <strong /> }}>
+          word pronunciation of other languages (in Taiwan) using
+          <strong>Traditional Chinese characters</strong> from
+        </Trans>
         <Link href="https://github.com/g0v/moedict-webkit" target="_blank">
           MOEDICT 萌典
         </Link>
       </Typography>
     ),
   };
-
+  const handleLanguageChange = (e) => {
+    i18next.changeLanguage(e.target.value);
+  };
   return (
     <Box>
+      <FormControl sx={{ mb: 3, display: 'flex', flexDirection: 'row' }}>
+        <Typography
+          variant="h6"
+          sx={{ mr: 2, display: 'flex', alignItems: 'center' }}
+        >
+          {t('Language')}:
+        </Typography>
+        <Select
+          sx={{ maxWidth: '200px' }}
+          value={i18next.language}
+          onChange={handleLanguageChange}
+        >
+          {Object.entries({
+            en: 'English',
+            'zh-TW': '繁體中文',
+            ja: '日本語',
+          }).map(([keyId, value]) => (
+            <MenuItem key={keyId} value={keyId}>
+              {value}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
       <Paper elevation={3} sx={{ p: 2, mb: 1 }}>
         <FormControlLabel
           control={
@@ -102,12 +138,10 @@ export const ApiInfo = () => {
               checked={enabled}
             />
           }
-          label="enable auto search by api"
+          label={t('enable auto retrieve info from api')}
         />
         <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-          ❗Using these api services must send the word and context you're
-          searching to those service, and except for that, This app would not
-          send any of your data to the web.
+          ❗{t('api_caution')}
         </Typography>
       </Paper>
 
@@ -152,7 +186,7 @@ export const ApiInfo = () => {
               .concat(Object.entries(allChineseOptions))
               .map(([key, value]) => (
                 <MenuItem value={key} key={key}>
-                  {value}
+                  {t(value)}
                 </MenuItem>
               ))}
           </Select>

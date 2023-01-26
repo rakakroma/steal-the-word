@@ -6,9 +6,12 @@ import DomainIcon from '@mui/icons-material/Domain';
 import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
 import TagIcon from '@mui/icons-material/Tag';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export const ControlOrderToggle = ({ orderMode, setOrderMode }) => {
   const theme = useTheme();
+
+  const { t } = useTranslation();
 
   const handleChange = (event, newOrderMode) => {
     if (!newOrderMode) return;
@@ -26,19 +29,19 @@ export const ControlOrderToggle = ({ orderMode, setOrderMode }) => {
     >
       <ToggleButton value="time">
         <AccessTimeIcon />
-        time
+        {t('time')}
       </ToggleButton>
       <ToggleButton value="timeSite">
         <DomainIcon />
-        Site
+        {t('Site')}
       </ToggleButton>
       <ToggleButton value="alphabeticalOrder">
         <SortByAlphaIcon />
-        alphabetical
+        {t('alphabetical')}
       </ToggleButton>
       <ToggleButton value="tags">
         <TagIcon />
-        tags
+        {t('tags_order')}
       </ToggleButton>
     </ToggleButtonGroup>
   );

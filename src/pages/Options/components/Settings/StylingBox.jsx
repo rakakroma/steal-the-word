@@ -13,6 +13,7 @@ import {
   allStyles,
   getTextStyleData,
 } from '../../../../utilsForAll/textStyleData';
+import { useTranslation } from 'react-i18next';
 
 const useStorageTextStyle = () => {
   const [textStyle, setTextStyle] = useState(getTextStyleData('default'));
@@ -45,10 +46,11 @@ const StylePanel = ({ defaultValue, changeTextStyle }) => {
   const handleChange = (e) => {
     changeTextStyle(e.target.value);
   };
+  const { t } = useTranslation();
 
   return (
     <FormControl sx={{ marginX: 'auto', mt: 1 }}>
-      <FormLabel sx={{ textAlign: 'center' }}>Text Style</FormLabel>
+      <FormLabel sx={{ textAlign: 'center' }}>{t('Text Style')}</FormLabel>
       <RadioGroup defaultValue={defaultValue} onChange={handleChange} row>
         {Object.keys(allStyles).map((styleName) => (
           <FormControlLabel
@@ -56,7 +58,7 @@ const StylePanel = ({ defaultValue, changeTextStyle }) => {
             value={styleName}
             label={
               <Typography sx={getTextStyleData(styleName).styles}>
-                {styleName}
+                {t(styleName)}
               </Typography>
             }
             control={<Radio />}
