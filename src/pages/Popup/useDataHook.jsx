@@ -8,7 +8,9 @@ const allKeySetToValue = (value, keyArray) =>
 
 export const useDbDomainData = (domainUrl) => {
   const domainData = useLiveQuery(() =>
-    db['domainAndLink'].get({ url: domainUrl || '' })
+    db['domainAndLink'].get({
+      url: domainUrl,
+    })
   );
 
   const newDomainData = {
@@ -21,6 +23,8 @@ export const useDbDomainData = (domainUrl) => {
     tags: null,
     lang: null,
   };
+
+  console.log(domainData || 'no domain data');
 
   const addNewDomain = () => {
     if (domainData) {
@@ -40,6 +44,7 @@ export const useDbDomainData = (domainUrl) => {
       addNewDomain(newValueObj);
       return;
     }
+    console.log(domainData.id);
     db['domainAndLink'].update(domainData.id, newValueObj);
   };
 

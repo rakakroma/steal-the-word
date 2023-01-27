@@ -85,7 +85,7 @@ export const contextForLookUp = (wordBlock) => {
           let src;
           if (wordBlock.imgSrcs.length > 0) {
             src = wordBlock.imgSrcs.find((domainObj) => {
-              return domainObj.url === new URL(contextObj.url).hostname;
+              return domainObj?.url === new URL(contextObj.url).hostname;
             })?.icon;
           }
           return html`${contextDisplay(

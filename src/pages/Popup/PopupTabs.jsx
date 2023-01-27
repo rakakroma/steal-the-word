@@ -7,8 +7,7 @@ import TabsUnstyled from '@mui/base/TabsUnstyled';
 import TabsListUnstyled from '@mui/base/TabUnstyled';
 import { blue } from '@mui/material/colors';
 import { styled } from '@mui/system';
-import React, { useContext, useState } from 'react';
-import { TabDataContext } from './Popup';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   AllSitesToggleOptions,
   CurrentSiteToggleOptions,
@@ -66,18 +65,24 @@ const Tabs = styled(TabsUnstyled)`
   padding: 2px;
 `;
 
-export const PopupTabs = () => {
+export const PopupTabs = ({ currentDomain, validPlace }) => {
   const [currentTab, setCurrentTab] = useState(1);
-  const { currentDomain, validPlace } = useContext(TabDataContext);
   const domainDataAndMethods = useDbDomainData(currentDomain);
   const localStorageDataAndMethods = useLocalStorageData();
 
-  const { isCustomSetting } = domainDataAndMethods;
+  const { domainData } = domainDataAndMethods;
   const { globalPreference } = localStorageDataAndMethods;
 
-  if (isCustomSetting && globalPreference.activate && validPlace) {
-    setCurrentTab(0);
-  }
+  useEffect(() => {
+    if (
+      domainData &&
+      domainData.customRule &&
+      globalPreference.activate &&
+      validPlace
+    ) {
+      setCurrentTab(0);
+    }
+  }, [domainData, validPlace, globalPreference]);
 
   const handleChange = (e, value) => {
     if (!validPlace || !globalPreference.activate) return;
