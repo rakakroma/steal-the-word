@@ -7,12 +7,13 @@ import TabsUnstyled from '@mui/base/TabsUnstyled';
 import TabsListUnstyled from '@mui/base/TabUnstyled';
 import { blue } from '@mui/material/colors';
 import { styled } from '@mui/system';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   AllSitesToggleOptions,
   CurrentSiteToggleOptions,
 } from './ToggleOptions';
 import { useDbDomainData, useLocalStorageData } from './useDataHook';
+import { useTranslation } from 'react-i18next';
 
 const TabsList = styled(TabsListUnstyled)`
   width: 220px;
@@ -70,6 +71,7 @@ export const PopupTabs = ({ currentDomain, validPlace }) => {
   const domainDataAndMethods = useDbDomainData(currentDomain);
   const localStorageDataAndMethods = useLocalStorageData();
 
+  const { t } = useTranslation();
   const { domainData } = domainDataAndMethods;
   const { globalPreference } = localStorageDataAndMethods;
 
@@ -93,11 +95,11 @@ export const PopupTabs = ({ currentDomain, validPlace }) => {
       <TabsList>
         {globalPreference.activate && validPlace && (
           <Tab component="span" value={0}>
-            current Site
+            {t('current Site')}
           </Tab>
         )}
         <Tab component="span" value={1} disabled={!globalPreference.activate}>
-          All Sites
+          {t('All Sites')}
         </Tab>
       </TabsList>
       <TabPanelUnstyled value={0}>

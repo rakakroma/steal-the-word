@@ -89,5 +89,12 @@
   "default": "預設",
   "style1": "樣式1",
   "style2": "樣式2",
-  "style3": "樣式3"
+  "style3": "樣式3",
+  "Word List": "測試",
+  "current Site": "此網站",
+  "All Sites": "所有網站",
+  "Use Custom Setting in Current Site?": "在此網站使用自訂選項？",
+  "Floating Window": "漂浮視窗",
+  "Mouse Tool": "滑鼠選取工具",
+  "Activate": "啟用"
 }

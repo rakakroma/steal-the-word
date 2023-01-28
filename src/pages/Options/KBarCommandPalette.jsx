@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import i18next from 'i18next';
 
-//FIXME: randomly break when looking long list, chrome error code 11, i have no idea what happeneded
+//FIXME: randomly break when looking long list, chrome error code 11, i have no idea what happened
 
 const RenderResults = () => {
   const { results, rootActionId } = useMatches();
@@ -132,7 +132,7 @@ export const KBarCommandPalette = ({ children }) => {
     {
       id: 'change-to-ja',
       name: '日本語',
-      keywords: 'japanese ja 日本語 nihongo ',
+      keywords: 'japanese ja 日本語 nihongo',
       perform: () => {
         i18next.changeLanguage('ja');
       },

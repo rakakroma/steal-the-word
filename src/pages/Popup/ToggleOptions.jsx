@@ -1,8 +1,11 @@
 import { Stack, Switch, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Option = ({ description, checked, handleChange, disabled }) => {
+  const { t } = useTranslation();
+
   return (
     <Box
       sx={{
@@ -11,7 +14,7 @@ const Option = ({ description, checked, handleChange, disabled }) => {
         alignItems: 'center',
       }}
     >
-      <Typography variant="body1">{description}</Typography>
+      <Typography variant="body1">{t(description)}</Typography>
 
       <Switch checked={checked} onChange={handleChange} disabled={disabled} />
     </Box>

@@ -1,6 +1,7 @@
 import { CollectionsBookmark, Settings } from '@mui/icons-material';
 import {
   Box,
+  Button,
   createTheme,
   IconButton,
   ThemeProvider,
@@ -12,6 +13,23 @@ import Grid from '@mui/material/Unstable_Grid2';
 import './Popup.css';
 import { PopupTabs } from './PopupTabs';
 import { useCurrentTabData } from './useCurrentTabData';
+import { styled } from '@mui/system';
+
+const HoverButton = styled(Button)`
+  height: 30px;
+  width: 100px;
+  font-size: 12px;
+  color: grey;
+  .button-text {
+    transition: color 0.1s ease-in;
+    color: white;
+  }
+  &:hover {
+    .button-text {
+      color: grey;
+    }
+  }
+`;
 
 const Popup = () => {
   const { currentDomain, favIconUrl, validPlace } = useCurrentTabData();
@@ -32,7 +50,6 @@ const Popup = () => {
       ].join(','),
     },
   });
-  console.log(currentDomain);
 
   return (
     <ThemeProvider theme={theme}>
@@ -40,24 +57,28 @@ const Popup = () => {
         <Box sx={{ m: '6px' }}>
           <Grid container justifyContent="space-between" alignItems="center">
             <Grid>
-              <IconButton
+              <HoverButton
+                startIcon={<Settings />}
                 LinkComponent={'a'}
                 href={`${chrome.runtime.getURL('options.html')}`}
                 target="_blank"
-                sx={{ width: '20px', height: '20px' }}
+                variant="text"
+                size="small"
               >
-                <Settings />
-              </IconButton>
+                <div class="button-text">Settings</div>
+              </HoverButton>
             </Grid>
             <Grid>
-              <IconButton
+              <HoverButton
+                endIcon={<CollectionsBookmark />}
                 LinkComponent={'a'}
                 href={`${chrome.runtime.getURL('options.html')}#/home`}
                 target="_blank"
-                sx={{ width: '20px', height: '20px' }}
+                variant="text"
+                size="small"
               >
-                <CollectionsBookmark />
-              </IconButton>
+                <div class="button-text">Collection</div>
+              </HoverButton>
             </Grid>
           </Grid>
 

@@ -89,5 +89,12 @@
   "default": "default",
   "style1": "style1",
   "style2": "style2",
-  "style3": "style3"
+  "style3": "style3",
+  "Word List": "Word List",
+  "current Site": "current Site",
+  "All Sites": "All Sites",
+  "Use Custom Setting in Current Site?": "Use Custom Setting in Current Site?",
+  "Floating Window": "Floating Window",
+  "Mouse Tool": "Mouse Tool",
+  "Activate": "Activate"
 }

@@ -1,6 +1,12 @@
 import { Box, createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
-import React, { createContext, useCallback, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  Suspense,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import { Outlet } from 'react-router-dom';
 import { db } from '../Background/database';
 import PersistentDrawerRight from './components/WordCollection/WordInfoDrawer/WordInfoDrawer';
@@ -70,11 +76,13 @@ const Options = () => {
                 <Box sx={{ display: 'flex' }}>
                   <ThemeProvider theme={theme}>
                     <CssBaseline />
-                    <KBarCommandPalette>
-                      <PersistentDrawerRight>
-                        <Outlet />
-                      </PersistentDrawerRight>
-                    </KBarCommandPalette>
+                    <Suspense fallback={<p>Loading...</p>}>
+                      <KBarCommandPalette>
+                        <PersistentDrawerRight>
+                          <Outlet />
+                        </PersistentDrawerRight>
+                      </KBarCommandPalette>
+                    </Suspense>
                   </ThemeProvider>
                 </Box>
               </ColorModeContext.Provider>

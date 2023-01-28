@@ -84,5 +84,12 @@
   "default": "デフォルト",
   "style1": "スタイル1",
   "style2": "スタイル2",
-  "style3": "スタイル3"
+  "style3": "スタイル3",
+  "Word List": "テスト",
+  "current Site": "当サイト",
+  "All Sites": "全サイト",
+  "Use Custom Setting in Current Site?": "当サイトでカスタムの設定を有効にしますか？",
+  "Floating Window": "フローティング ウィンドウ",
+  "Mouse Tool": "マウスツール",
+  "Activate": "有効にする"
 }
