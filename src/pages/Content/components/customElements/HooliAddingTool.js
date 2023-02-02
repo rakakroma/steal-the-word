@@ -35,5 +35,10 @@ class HooliAddingTool extends LitElement {
     }, 50);
     setTimeout(() => document.querySelector('hooli-adding-tool')?.remove());
   }
+  firstUpdated() {
+    setTimeout(() => {
+      this.remove();
+    }, 5000);
+  }
 }
 customElements.define('hooli-adding-tool', HooliAddingTool);

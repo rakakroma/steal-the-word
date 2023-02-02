@@ -98,6 +98,19 @@ const Popup = () => {
             <PopupTabs currentDomain={currentDomain} validPlace={validPlace} />
           )}
         </Box>
+        <Typography
+          sx={{
+            pr: 1,
+            m: 0,
+            color: 'grey',
+            // borderTop: '1px solid lightgray',
+            textAlign: 'right',
+            userSelect: 'none',
+            fontSize: '10px',
+          }}
+        >
+          @Steal the Word v0.1
+        </Typography>
       </Box>
     </ThemeProvider>
   );
