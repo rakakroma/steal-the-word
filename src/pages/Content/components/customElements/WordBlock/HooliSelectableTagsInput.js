@@ -129,6 +129,7 @@ class HooliSelectableTagsInput extends LitElement {
             .selecting=${this._selectingOptionIndex ===
             this._filteredOptions().length}
             .tagLabel=${'create "' + this._inputValue + '"'}
+            @click=${() => this._handleCreateNewOption()}
           ></hooli-tag>
         </div>
       </div>
@@ -183,6 +184,13 @@ class HooliSelectableTagsInput extends LitElement {
     this.selectedOptions = this.selectedOptions.concat(option);
   }
 
+  _handleCreateNewOption() {
+    this._handleAddSelectedOption(this._inputValue);
+    this._selectingOptionIndex = 0;
+    this.shadowRoot.querySelector('#text-input').value = '';
+    this._inputValue = '';
+  }
+
   _handleKeySelectOption(e) {
     if (e.isComposing) {
       return;
@@ -212,7 +220,6 @@ class HooliSelectableTagsInput extends LitElement {
       this._selectingOptionIndex = 0;
       this.shadowRoot.querySelector('#text-input').value = '';
       this._inputValue = '';
-      this._showOptionsList(false);
 
       return;
     }
