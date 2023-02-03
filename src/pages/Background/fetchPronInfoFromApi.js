@@ -1,12 +1,9 @@
 const gooHiraganaAPI = 'https://labs.goo.ne.jp/api/hiragana';
-
 const gooAppId =
   '8732e9655ce0d9734507d59dc5f08c6243192ae556b82e233b8d7394b6517223';
-
 const getMoedictAPI = (word, lang) => {
   return `https://www.moedict.tw/${lang}/${word}.json`;
 };
-
 const getHiragana = async (textString) => {
   let urlencoded = new URLSearchParams();
   urlencoded.append('app_id', gooAppId);
@@ -27,7 +24,6 @@ const getHiragana = async (textString) => {
 
   return hiraganaResult || '';
 };
-
 const fetchMoeApi = async (text, lang) => {
   const fetchedData = await fetch(getMoedictAPI(text, lang))
     .then((response) => response.json())
@@ -45,7 +41,6 @@ const getTaiLo = async (targetWord) => {
     .join(', ')
     .toString();
 };
-
 const abbrPair = {
   'hak-sixian': '四',
   'hak-hailu': '海',
@@ -81,7 +76,6 @@ const getHakka = async (targetWord, hakkaOptions) => {
     })
     .join(' ');
 };
-
 const getBopomofoOrPinyin = async (targetWord, lang) => {
   const fetchedData = await fetchMoeApi(targetWord, 'raw');
   if (!fetchedData) return '';
@@ -94,10 +88,8 @@ const getBopomofoOrPinyin = async (targetWord, lang) => {
     .join(', ')
     .toString();
 };
-
 const getEngDictApi = (word) =>
   `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
-
 const getEnglishDefinition = async (targetWord) => {
   const fetchedData = await fetch(getEngDictApi(targetWord)).then((response) =>
     response.json()
@@ -109,8 +101,7 @@ const getEnglishDefinition = async (targetWord) => {
   const definition = fetchedData[0]?.meanings[0]?.definitions[0]?.definition;
   return { pron, definition };
 };
-
-export const fetchPronInfo = async (
+export const fetchPronInfoFromApi = async (
   targetWord,
   contextHere,
   langOptions,

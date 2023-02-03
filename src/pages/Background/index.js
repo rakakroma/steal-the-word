@@ -5,6 +5,7 @@ import { deleteHandlers } from './deleteData';
 import './databaseSubscription';
 import { getTextStyleData } from '../../utilsForAll/textStyleData';
 import { defaultLangOptions } from '../../utilsForAll/languageAndApiData';
+import { fetchHandlers } from './fetchData';
 
 chrome.action.setBadgeBackgroundColor({ color: '#4f4f4f' });
 
@@ -45,6 +46,7 @@ const messageHandlers = new Map([
   ...updateHandlers,
   ...getHandlers,
   ...deleteHandlers,
+  ...fetchHandlers,
 ]);
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

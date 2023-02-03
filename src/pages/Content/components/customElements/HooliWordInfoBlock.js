@@ -3,7 +3,6 @@ import '@webcomponents/custom-elements';
 import { html, LitElement } from 'lit';
 import { getAllMatchTextFromWordObj } from '../../../../utilsForAll/getInfoFromWordObj';
 // import { myList } from '../../index';
-import { fetchPronInfo } from '../../utils/fetchPronInfo';
 import './HolliToolTip';
 import './WordBlock/HooliMenu';
 import './WordBlock/HooliSelectableTagsInput';
@@ -41,6 +40,7 @@ import {
 } from '../../redux/wordBlockSlice';
 import { getApiSetting } from '../../redux/workingPreferenceSlice';
 import { getLang } from '../../utils/getLang';
+import { fetchPronInfo } from '../../../Background/fetchData';
 
 export const initialFormInputStatus = {
   editingTagDefId: null,
@@ -354,12 +354,19 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
     if (!this.apiSetting.enabled) return;
     const lang = await getLang(this.newWord, this.contextHere, this.apiSetting);
     if (!lang) return;
-    const { pron, definition } = await fetchPronInfo(
-      this.newWord,
-      this.contextHere,
-      this.apiSetting,
-      lang
-    );
+    // const { pron, definition } = await fetchPronInfo(
+    //   this.newWord,
+    //   this.contextHere,
+    //   this.apiSetting,
+    //   lang
+    // );
+    const { pron, definition } = await chrome.runtime.sendMessage({
+      action: fetchPronInfo,
+      targetWord: this.newWord,
+      contextHere: this.contextHere,
+      langOptions: this.apiSetting,
+      lang,
+    });
 
     if (pron) {
       const annotationInput =
