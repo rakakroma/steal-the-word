@@ -1,13 +1,7 @@
 import '@webcomponents/custom-elements';
 import { LitElement, html, css } from 'lit';
-import {
-  computePosition,
-  flip,
-  shift,
-  offset,
-  arrow,
-  inline,
-} from '@floating-ui/dom';
+import { computePosition, flip, shift, offset } from '@floating-ui/dom';
+import { msg } from '@lit/localize';
 
 class HooliToolTip extends LitElement {
   static get properties() {
@@ -54,6 +48,10 @@ class HooliToolTip extends LitElement {
       }
     `,
   ];
+
+  textMessage() {
+    return msg(html`${this.text}`);
+  }
   render() {
     return html`<span id="container"><slot></slot></span>
       <div id="tooltip">

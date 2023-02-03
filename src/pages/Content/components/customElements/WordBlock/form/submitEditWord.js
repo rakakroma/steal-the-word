@@ -13,11 +13,14 @@ export const submitEditWord = (wordBlock, word, stem, variants, matchRule) => {
       const definitionId = splittedEleId[splittedEleId.length - 1];
       const annotation = ele.querySelector('.annotation-input').value.trim();
       const note = ele.querySelector('.long-note-textarea').value.trim();
+      const tags = wordBlock.wordObj.definitions.find(
+        (definitionObj) => definitionObj.definitionId === definitionId
+      )?.tags;
       definitions.push({
         definitionId,
         annotation,
         note,
-        tags: [],
+        tags,
       });
     });
 
@@ -34,9 +37,6 @@ export const submitEditWord = (wordBlock, word, stem, variants, matchRule) => {
         wordObjToUpdate,
       },
       () => {
-        // store.dispatch(
-        //   updateOneWord({ ...wordBlock.wordObj, ...wordObjToUpdate })
-        // );
         wordBlock._toLookUpMode();
       }
     );

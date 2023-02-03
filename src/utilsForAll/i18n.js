@@ -7,13 +7,7 @@ import { customLangDetector } from './i18nCustomLangDetector';
 
 i18n
   .use(customLangDetector)
-  // detect user language
-  // learn more: https://github.com/i18next/i18next-browser-languageDetector
-  //   .use(LanguageDetector)
-  // pass the i18n instance to react-i18next.
   .use(initReactI18next)
-  // init i18next
-  // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
     fallbackLng: 'en',
     debug: true,
@@ -31,6 +25,9 @@ i18n
       ja: {
         translation: jaTranslation,
       },
+    },
+    react: {
+      useSuspense: true,
     },
   });
 
