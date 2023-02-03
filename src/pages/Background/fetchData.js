@@ -6,7 +6,6 @@ const fetchPronInfo = 'fetchPronInfo';
 
 fetchHandlers.set(fetchPronInfo, (request, senderTab, sendResponse) => {
   const { targetWord, contextHere, langOptions, lang } = request;
-  console.log('hi');
   (async () => {
     const pronInfoResult = await fetchPronInfoFromApi(
       targetWord,
@@ -14,7 +13,6 @@ fetchHandlers.set(fetchPronInfo, (request, senderTab, sendResponse) => {
       langOptions,
       lang
     );
-    console.log(pronInfoResult);
     sendResponse(pronInfoResult);
   })();
 });

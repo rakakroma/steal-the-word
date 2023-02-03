@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { translate } from 'lit-translate';
 
 const definitionInput = (wordBlock, definitionObj) => {
   let definitionId = 'new';
@@ -23,7 +24,7 @@ const definitionInput = (wordBlock, definitionObj) => {
       name='annotation'
       class='editable annotation-input' 
       autofocus
-      placeholder='annotation'
+      placeholder="${translate('placeholder.annotation')}"
       type="text" 
       id=${'annotation-input-' + definitionId}
       .value="${annotation}"
@@ -36,7 +37,7 @@ const definitionInput = (wordBlock, definitionObj) => {
       value=${note}
       class='editable long-note-textarea' 
       id=${'long-note-textarea-' + definitionId} 
-      placeholder="note (optional)"
+      placeholder="${translate('placeholder.note')}"
        @input="${wordBlock._handleValidInput}"
         @keypress="${wordBlock._handleEnterSubmit}">
         </hooli-textarea>

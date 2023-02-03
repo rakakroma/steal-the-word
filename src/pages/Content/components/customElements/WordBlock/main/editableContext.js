@@ -1,9 +1,10 @@
 import { html } from 'lit';
+import { translate } from 'lit-translate';
 
 export const editableContext = (wordBlock, value) => {
   return html` <hooli-textarea
     id="context-textarea"
-    placeholder="context/sentence"
+    placeholder="${translate('placeholder.context')}"
     minlength="1"
     class="editable"
     value=${value}

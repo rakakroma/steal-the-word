@@ -5,6 +5,7 @@ import {
   AnchorSelectIcon,
   EditIcon,
 } from '@spectrum-web-components/icons-workflow';
+import { translate } from 'lit-translate';
 
 const contextOptions = (wordBlock, contextId) => {
   return html`<hooli-menu>
@@ -15,13 +16,14 @@ const contextOptions = (wordBlock, contextId) => {
       slot="list-item"
       @click="${() => wordBlock.handlePhraseSelect(contextId)}"
     >
-      ${AnchorSelectIcon({ width: 13, height: 13 })} highlight context
+      ${AnchorSelectIcon({ width: 13, height: 13 })}
+      ${translate('button.contextHighlight')}
     </li>
     <li
       slot="list-item"
       @click="${() => wordBlock.handleContextEdit(contextId)}"
     >
-      ${EditIcon({ width: 13, height: 13 })} edit context
+      ${EditIcon({ width: 13, height: 13 })} ${translate('button.contextEdit')}
     </li>
   </hooli-menu>`;
 };

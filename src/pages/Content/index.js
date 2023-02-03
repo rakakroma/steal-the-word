@@ -21,6 +21,7 @@ import {
   checkAndUpdateNewWordListAndReRender,
 } from './redux/wordDataSlice';
 import { myLog } from './utils/customLogger';
+import './localize/translate';
 
 export const body = document.body;
 

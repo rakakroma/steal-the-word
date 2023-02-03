@@ -5,6 +5,7 @@ import {
 import { LitElement, html, css } from 'lit';
 import { iconButtonStyle } from './wordInfoBlockStyles';
 import { classMap } from 'lit/directives/class-map.js';
+import { translate } from 'lit-translate';
 
 const isElementInViewport = (element, container) => {
   var containerRect = container.getBoundingClientRect();
@@ -97,7 +98,7 @@ class HooliSelectableTagsInput extends LitElement {
           autocomplete="off"
           id="text-input"
           type="text"
-          placeholder="search/create new tag"
+          placeholder="${translate('placeholder.tagInput')}"
           value=${this._inputValue}
           @input=${this._handleInput}
           @keydown=${this._handleKeySelectOption}

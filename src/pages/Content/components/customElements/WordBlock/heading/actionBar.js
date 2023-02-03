@@ -6,6 +6,7 @@ import {
   GlobeSearchIcon,
 } from '@spectrum-web-components/icons-workflow';
 import { html } from 'lit';
+import { get, translate } from 'lit-translate';
 
 export const actionBar = (wordBlock) => {
   const tooltipedButton = (tooltipText, iconImg, clickFunc) => {
@@ -17,15 +18,15 @@ export const actionBar = (wordBlock) => {
   };
 
   const variantsAndMatchRuleButton = tooltipedButton(
-    'add match rule',
+    get('tooltipText.addMatchRule'),
     FindAndReplaceIcon({ width: 15, height: 15 }),
     () => wordBlock._handleUpdateFormStatus('openMatchRule')
   );
 
   const searchLinkButton = html`
-              <hooli-tooltip text="Google ${
-                wordBlock.newWord || wordBlock.word
-              } in new tab">
+              <hooli-tooltip text="${translate('tooltipText.searchWord', {
+                theWord: wordBlock.newWord || wordBlock.wordObj.word,
+              })}">
               <a href=https://www.google.com/search?q=${
                 wordBlock.newWord || wordBlock.wordObj.word
               } target="_blank" >       
@@ -34,12 +35,12 @@ export const actionBar = (wordBlock) => {
               </a>`;
 
   const newContextButton = tooltipedButton(
-    'add new context',
+    get('tooltipText.addNewContext'),
     BoxAddIcon({ width: 15, height: 15 }),
     () => (wordBlock.mode = 'newContext')
   );
   const editIcon = tooltipedButton(
-    'edit word and annotation',
+    get('tooltipText.editWord'),
     EditIcon({ width: 15, height: 15 }),
     () => (wordBlock.mode = 'editWord')
   );
@@ -52,7 +53,8 @@ export const actionBar = (wordBlock) => {
     return html` ${searchLinkButton}${newContextButton}${editIcon}
       <hooli-menu>
         <li slot="list-item" @click="${() => (wordBlock.mode = 'deleting')}">
-          ${DeleteIcon({ width: 15, height: 15 })} Delete
+          ${DeleteIcon({ width: 15, height: 15 })}
+          ${translate('button.deleting')}
         </li>
       </hooli-menu>`;
 };
