@@ -1,4 +1,3 @@
-// import { TabPanel } from '@mui/lab';
 import { Box, Paper, Tab, Tabs, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import React, { useState } from 'react';

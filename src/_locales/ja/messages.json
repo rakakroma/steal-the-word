@@ -1,0 +1,10 @@
+{
+    "extName": {
+        "message": "Steal the Word",
+        "description": "拡張機能のタイトル"
+    },
+    "extDescription": {
+        "message": "ウエブページでの単語をハイライト、注釈、収集",
+        "description": "拡張機能の説明"
+    }
+}

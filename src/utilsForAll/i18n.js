@@ -1,8 +1,8 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import enTranslation from '../locales/en/translation.json';
-import jaTranslation from '../locales/ja/translation.json';
-import zhTWTranslation from '../locales/zh-TW/translation.json';
+import enTranslation from '../i18next-locales/en/translation.json';
+import jaTranslation from '../i18next-locales/ja/translation.json';
+import zhTWTranslation from '../i18next-locales/zh-TW/translation.json';
 import { customLangDetector } from './i18nCustomLangDetector';
 
 i18n

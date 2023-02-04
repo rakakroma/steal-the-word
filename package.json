@@ -1,6 +1,6 @@
 {
   "name": "Steal The Word",
-  "version": "4.3.5",
+  "version": "0.0.1",
   "description": "To annotate, save words and contexts from web pages.",
   "license": "MIT",
   "repository": {
@@ -18,7 +18,6 @@
     "@hot-loader/react-dom": "^17.0.2",
     "@lit/localize": "^0.11.4",
     "@mui/icons-material": "^5.8.4",
-    "@mui/lab": "^5.0.0-alpha.92",
     "@mui/material": "^5.9.2",
     "@mui/x-data-grid": "^5.17.2",
     "@nivo/core": "^0.80.0",
@@ -32,7 +31,7 @@
     "dexie-react-hooks": "^1.1.1",
     "i18next": "^22.4.9",
     "interactjs": "^1.10.17",
-    "kbar": "github:rakakroma/kbar",
+    "kbar": "^0.1.0-beta.40",
     "lit": "^2.3.1",
     "lit-translate": "^2.0.1",
     "nanoid": "^4.0.0",

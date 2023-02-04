@@ -50,8 +50,12 @@ export const TodaysWordBox = () => {
       return;
     }
     const generatedTodaysWord = wordOfToday(wordList);
-    const endOfToday = dayjs().endOf('day').utc().format();
-    document.cookie = `todaysWord=${generatedTodaysWord.id}; expires=${endOfToday}`;
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999);
+
+    document.cookie = `todaysWord=${
+      generatedTodaysWord.id
+    }; expires=${endOfToday.toUTCString()};`;
 
     setTheTodaysWord(generatedTodaysWord);
   }, [setTheTodaysWord, wordList]);

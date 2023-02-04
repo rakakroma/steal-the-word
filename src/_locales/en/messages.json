@@ -1,0 +1,10 @@
+{
+    "extName": {
+        "message": "Steal the Word",
+        "description": "extension name"
+    },
+    "extDescription": {
+        "message": "highlight, annotate, collect word from web pages",
+        "description": "extension description"
+    }
+}
