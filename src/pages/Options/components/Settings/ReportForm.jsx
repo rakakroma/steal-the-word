@@ -12,9 +12,11 @@ import {
 import React, { useRef, useState } from 'react';
 import { Controller, useController, useForm } from 'react-hook-form';
 import { myLog } from '../../../Content/utils/customLogger';
-import { postFormApi } from '../../../../utilsForAll/formApi';
 import { Check, CheckCircle } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
+import { reportFormApi } from '../../../../utilsForAll/allEnv';
+
+// const postFormApi = process.env.FORM_API;
 
 const TextFieldForHook = (props) => {
   const { name, control, rules, notEmpty, ...otherProps } = props;
@@ -97,7 +99,7 @@ export const ReportForm = () => {
     };
     myLog(requestOptions);
 
-    const result = await fetch(postFormApi, requestOptions)
+    const result = await fetch(reportFormApi, requestOptions)
       .then((response) => response.json())
       .catch((error) => {
         myLog('error', error);

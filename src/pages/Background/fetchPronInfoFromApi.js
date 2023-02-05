@@ -1,12 +1,12 @@
+import { gooApiKey } from '../../utilsForAll/allEnv';
+
 const gooHiraganaAPI = 'https://labs.goo.ne.jp/api/hiragana';
-const gooAppId =
-  '8732e9655ce0d9734507d59dc5f08c6243192ae556b82e233b8d7394b6517223';
 const getMoedictAPI = (word, lang) => {
   return `https://www.moedict.tw/${lang}/${word}.json`;
 };
 const getHiragana = async (textString) => {
   let urlencoded = new URLSearchParams();
-  urlencoded.append('app_id', gooAppId);
+  urlencoded.append('app_id', gooApiKey);
   urlencoded.append('sentence', textString);
   urlencoded.append('output_type', 'hiragana');
 
@@ -108,7 +108,6 @@ export const fetchPronInfoFromApi = async (
   lang
 ) => {
   const fetchedResult = {};
-
   if (lang === 'en') {
     const { pron, definition } = await getEnglishDefinition(targetWord);
     fetchedResult.pron = pron;

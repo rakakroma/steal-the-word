@@ -1,8 +1,9 @@
 import { GitHub } from '@mui/icons-material';
 import { Box, FormLabel, Typography } from '@mui/material';
 import React from 'react';
-import { ReportForm } from './ReportForm';
+// import { ReportForm } from './ReportForm';
 import { Trans, useTranslation } from 'react-i18next';
+import { currentVersion } from '../../../../utilsForAll/allEnv';
 
 export const OtherInfo = () => {
   const { t } = useTranslation();
@@ -11,16 +12,16 @@ export const OtherInfo = () => {
       <Box sx={{ display: 'flex' }}>
         <Box sx={{ my: 'auto' }}>
           <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-            {t('version')} : beta 0.1
+            {t('version')} : beta {currentVersion}
           </Typography>
           <Typography variant="subtitle1">
             <Trans i18nKey="aboutText" components={{ bold: <strong /> }}>
-              Hi, <bold>Steal the Word</bold> is a free software licensed under
+              {/* Hi, <bold>Steal the Word</bold> is a free software licensed under
               the MIT. This browser extension is currently in beta version, and
               there are some known issues that I have yet to fix, but I hope it
               works well in most use cases. Feel free to report bugs/issues or
               give me some advices through the form below (to here) or by
-              opening an issue/ pull request on github.
+              opening an issue/ pull request on github. */}
             </Trans>
           </Typography>
 
@@ -57,7 +58,7 @@ export const OtherInfo = () => {
           </Typography>
         </Box>
       </Box>
-      <ReportForm />
+      {/* <ReportForm /> */}
     </Box>
   );
 };

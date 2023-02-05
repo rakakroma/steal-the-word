@@ -4,7 +4,6 @@ import { currentURL } from '../utils/currentURL';
 import { store } from './store';
 import { getWordList } from './wordDataSlice';
 
-//FIXME:store ref here only,
 export const displayingWordListSlice = createSlice({
   name: `displayingWordList`,
   initialState: [],
@@ -87,7 +86,6 @@ const clearListIfUrlChange = () => {
 };
 
 export const addOrUpdatePageWordAndGetCount = ({ id, countInCurrentPage }) => {
-  // const { countInCurrentPage } = wordObjAndCount;
   let currentCount = countInCurrentPage;
   const currentDisplayingList = getDisplayingWordList(store.getState());
   const indexInCurrentList = currentDisplayingList.findIndex(

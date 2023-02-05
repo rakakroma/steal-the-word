@@ -66,16 +66,3 @@ export const getFaviconThisSiteFromDB = createAsyncThunk(
     },
   }
 );
-
-// export const addWordToDB = createAsyncThunk(
-//   'wordBlock/addWordToDB',
-//   async (request) => {
-//     const { newWord, newContext } = request;
-//     const response = await chrome.runtime.sendMessage({
-//       action: 'saveWordAndContext',
-//       newWord,
-//       newContext,
-//     });
-//     return request;
-//   }
-// );

@@ -14,6 +14,7 @@ import './Popup.css';
 import { PopupTabs } from './PopupTabs';
 import { useCurrentTabData } from './useCurrentTabData';
 import { styled } from '@mui/system';
+import { currentVersion } from '../../utilsForAll/allEnv';
 
 const HoverButton = styled(Button)`
   height: 30px;
@@ -109,7 +110,7 @@ const Popup = () => {
             fontSize: '10px',
           }}
         >
-          @Steal the Word v0.1
+          @Steal the Word v{currentVersion}
         </Typography>
       </Box>
     </ThemeProvider>

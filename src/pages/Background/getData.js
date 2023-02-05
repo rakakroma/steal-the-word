@@ -20,7 +20,6 @@ getHandlers.set(getStart, (request, senderTab, sendResponse) => {
     const stopInThisPage =
       domainData?.activate === false && domainData?.customRule === true;
     if (stopInThisPage) {
-      // sendResponse({ stop: true });
       sendResponse({ domainData });
       setStopBadge(senderTab.id);
       return;
