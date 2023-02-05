@@ -1,4 +1,4 @@
-import { isCJKRegex } from '../../../utilsForAll/regexCheckLang';
+import { isLangsNotUseSpaceRegex } from '../../../utilsForAll/regexCheckLang';
 import '../components/customElements/HooliText';
 import '../components/customElements/HooliWordInfoBlock';
 import { addOrUpdatePageWordAndGetCount } from '../redux/displayingWordListSlice';
@@ -39,7 +39,7 @@ const putHooliTextOnNode = (targetNode) => {
     //unicode script: Latn, Grek, Cyrl,Geor
 
     if (
-      !isCJKRegex.test(matchText) &&
+      !isLangsNotUseSpaceRegex.test(matchText) &&
       !boundaryRegex.test(targetNode.textContent)
     )
       continue;

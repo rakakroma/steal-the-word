@@ -85,7 +85,7 @@
   "Mandarin Bopomofo": "華語注音",
   "Mandarin pinyin": "華語拼音",
   "None": "無",
-  "aboutText": "<bold>Steal the Word</bold>是一個瀏覽器筆記。他可以降低你對新詞的陌生感，有助於學習新領域的知識或不同語言。<bold>Steal the Word</bold>免費、開源、資料只儲存在本機，僅在查詢字詞時透過網路API傳送資料。不過，它僅是我第一個完整的專案作品，目前仍處於 beta 版中，可能不夠成熟，存在會損害儲存資料的bug。請記得備份資料並承擔損壞的風險。如果你遇到bug或有新的建議，可以去Chrome Web Store的商品頁面中取得支援，或是利用 github 提出 issue 及 pull request，。",
+  "aboutText": "<bold>Steal the Word</bold>是一個瀏覽器筆記。他可以降低你對新詞的陌生感，有助於學習新領域的知識或不同語言。<bold>Steal the Word</bold>免費、開源、資料只儲存在本機，僅在查詢字詞時透過網路API傳送資料。不過，它也僅是我第一個完整的專案作品，目前仍處於 beta 版中，可能不夠成熟，存在會損害儲存資料的bug。請記得備份資料並承擔損壞的風險。如果你遇到bug或有新的建議，可以去Chrome Web Store的商品頁面中取得支援，或是利用 github 提出 issue 及 pull request。可以到下述github頁面查看更多資訊。",
   "default": "預設",
   "style1": "樣式1",
   "style2": "樣式2",

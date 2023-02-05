@@ -5,32 +5,70 @@ import {
   createTheme,
   IconButton,
   ThemeProvider,
+  Tooltip,
   Typography,
 } from '@mui/material';
-import React from 'react';
 import Grid from '@mui/material/Unstable_Grid2';
+import React, { Suspense } from 'react';
 
+import { styled } from '@mui/system';
+import { currentVersion } from '../../utilsForAll/allEnv';
 import './Popup.css';
 import { PopupTabs } from './PopupTabs';
 import { useCurrentTabData } from './useCurrentTabData';
-import { styled } from '@mui/system';
-import { currentVersion } from '../../utilsForAll/allEnv';
+import { useTranslation } from 'react-i18next';
 
-const HoverButton = styled(Button)`
-  height: 30px;
-  width: 100px;
-  font-size: 12px;
-  color: grey;
-  .button-text {
-    transition: color 0.1s ease-in;
-    color: white;
-  }
-  &:hover {
-    .button-text {
-      color: grey;
-    }
-  }
-`;
+// const HoverButton = styled(Button)`
+//   height: 30px;
+//   width: 100px;
+//   font-size: 12px;
+//   color: grey;
+//   .button-text {
+//     transition: color 0.1s ease-in;
+//     color: white;
+//   }
+//   &:hover {
+//     .button-text {
+//       color: grey;
+//     }
+//   }
+// `;
+
+const LinkButtonsGrid = () => {
+  const { t } = useTranslation();
+
+  return (
+    <Box
+      sx={{
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}
+    >
+      <Tooltip title={t('settings')} placement="right">
+        <IconButton
+          LinkComponent={'a'}
+          href={`${chrome.runtime.getURL('options.html')}`}
+          target="_blank"
+          size="small"
+        >
+          <Settings />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title={t('collection')} placement="left">
+        <IconButton
+          LinkComponent={'a'}
+          href={`${chrome.runtime.getURL('options.html')}#/home`}
+          target="_blank"
+          size="small"
+        >
+          <CollectionsBookmark />
+        </IconButton>
+      </Tooltip>
+    </Box>
+  );
+};
 
 const Popup = () => {
   const { currentDomain, favIconUrl, validPlace } = useCurrentTabData();
@@ -56,41 +94,23 @@ const Popup = () => {
     <ThemeProvider theme={theme}>
       <Box className="App" sx={{ width: '220px' }}>
         <Box sx={{ m: '6px' }}>
-          <Grid container justifyContent="space-between" alignItems="center">
-            <Grid>
-              <HoverButton
-                startIcon={<Settings />}
-                LinkComponent={'a'}
-                href={`${chrome.runtime.getURL('options.html')}`}
-                target="_blank"
-                variant="text"
-                size="small"
-              >
-                <div class="button-text">Settings</div>
-              </HoverButton>
-            </Grid>
-            <Grid>
-              <HoverButton
-                endIcon={<CollectionsBookmark />}
-                LinkComponent={'a'}
-                href={`${chrome.runtime.getURL('options.html')}#/home`}
-                target="_blank"
-                variant="text"
-                size="small"
-              >
-                <div class="button-text">Collection</div>
-              </HoverButton>
-            </Grid>
-          </Grid>
-
           <Grid container alignItems="center" justifyContent="center">
-            <img width="16px" height="16px" src={favIconUrl} alt=""></img>
-            <Typography
-              variant="body1"
-              sx={{ pl: '2px', wordBreak: 'break-all' }}
-            >
-              {validPlace ? currentDomain : 'not valid'}
-            </Typography>
+            <Suspense fallback="Loading">
+              <LinkButtonsGrid />
+            </Suspense>
+            {validPlace ? (
+              <>
+                <img width="16px" height="16px" src={favIconUrl} alt="" />
+                <Typography
+                  variant="body1"
+                  sx={{ pl: '2px', wordBreak: 'break-all' }}
+                >
+                  {currentDomain}
+                </Typography>
+              </>
+            ) : (
+              ''
+            )}
           </Grid>
         </Box>
 

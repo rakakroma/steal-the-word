@@ -35,6 +35,6 @@ export const jaTranslation = {
     ❗: 単語、変異形、語幹は全部大文字と小文字を識別する.
 
     `,
-    CJKMatchRuleExplanation: ` CJK (漢字と韓国語の文字) はいつも「任意」のマッチルールを適用しています.`,
+    CJKMatchRuleExplanation: ` CJK (漢字と韓国語の文字)、タイ語文字、ジャワ文字はいつも「任意」のマッチルールを適用しています.`,
   },
 };

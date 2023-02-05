@@ -34,6 +34,6 @@ export const enTranslation = {
     ❗: "stem" means the text string that always use 'start' as its match rule.
     ❗: "stem", "word" and "variants" are all case sensitive.
     `,
-    CJKMatchRuleExplanation: `Text string contains CJK (Chinese /Japanese/ Korean) characters always use 'any' as match rule.`,
+    CJKMatchRuleExplanation: `Text string contains CJK (Chinese /Japanese/ Korean) characters, Thai characters and Javanese characters always use 'any' as match rule.`,
   },
 };

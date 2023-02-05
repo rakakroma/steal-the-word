@@ -1,7 +1,7 @@
 import { InfoIcon } from '@spectrum-web-components/icons-workflow';
 import { html } from 'lit';
 import { translate } from 'lit-translate';
-import { isCJKRegex } from '../../../../../../utilsForAll/regexCheckLang';
+import { isLangsNotUseSpaceRegex } from '../../../../../../utilsForAll/regexCheckLang';
 
 const variantsInput = (stem, variants) => {
   return html`
@@ -33,7 +33,7 @@ export const matchRuleSelection = (word, stem, variants, matchRule) => {
   let isDisabled = false;
 
   let text = 'tooltipText.defaultMatchRuleExplanation';
-  if (isCJKRegex.test(word)) {
+  if (isLangsNotUseSpaceRegex.test(word)) {
     isDisabled = true;
     text = 'tooltipText.CJKMatchRuleExplanation';
   }
