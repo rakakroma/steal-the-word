@@ -15,7 +15,7 @@ export const contextSection = (wordBlock) => {
     return html`
       ${wordBlock._formInputStatus.openMatchRule
         ? matchRuleSelection(
-            wordBlock.wordObj?.word,
+            wordBlock.wordObj?.word || wordBlock.newWord,
             wordBlock.wordObj?.stem,
             wordBlock.wordObj?.variants,
             wordBlock.wordObj?.matchRule
