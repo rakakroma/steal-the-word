@@ -1,6 +1,7 @@
 export const enTranslation = {
   button: {
     cancel: 'Cancel',
+    newContext: 'Save',
     newWord: 'Save',
     editWord: 'Edit',
     editContext: 'Edit',

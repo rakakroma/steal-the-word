@@ -2,6 +2,7 @@ export const zhTWTranslation = {
   button: {
     cancel: '取消',
     newWord: '儲存',
+    newContext: '儲存',
     editWord: '編輯',
     editContext: '編輯',
     deleting: '刪除',

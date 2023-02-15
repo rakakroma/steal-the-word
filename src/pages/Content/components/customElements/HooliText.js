@@ -54,6 +54,7 @@ class HooliText extends connect(store)(LitElement) {
         font-size: inherit;
         font-family: inherit;
         font-weight: inherit;
+        writing-mode: inherit;
         cursor: pointer;
         color: var(--hooli-text-color);
         background: var(--hooli-text-background);
@@ -67,7 +68,6 @@ class HooliText extends connect(store)(LitElement) {
         display: inline-block;
         z-index: 2147483647;
         padding: 3px;
-        white-space: nowrap;
         font-size: 12px;
         line-height: 1.3;
         background: rgb(241, 241, 241);
@@ -79,6 +79,7 @@ class HooliText extends connect(store)(LitElement) {
         font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
           'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
         font-style: normal;
+        max-width: 450px;
       }
 
       #annotation-tip.show-tooltip {

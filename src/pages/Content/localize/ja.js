@@ -1,6 +1,7 @@
 export const jaTranslation = {
   button: {
-    cancel: '取り消し',
+    cancel: 'キャンセル',
+    newContext: '保存',
     newWord: '保存',
     editWord: '編集',
     editContext: '編集',
