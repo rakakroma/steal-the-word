@@ -27,4 +27,8 @@ export const saveImportDataToDB = (importedData) => {
   }
 };
 
-export const clearDB = () => db.delete().then(() => db.open());
+export const clearDB = () =>
+  db
+    .delete()
+    .then(() => db.open())
+    .then(() => window.location.reload());
