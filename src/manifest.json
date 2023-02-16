@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_extName__",
   "author": "rakakroma",
-  "version": "0.0.1",
+  "version": "0.0.11",
   "description": "__MSG_appDesc__",
   "options_page": "options.html",
   "default_locale": "en",
