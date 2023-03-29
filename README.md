@@ -1,43 +1,31 @@
-嗨，Steal the Word 是一個 Chrome 擴充功能。它能夠建立一個會幫你自動提示的詞庫，降低閱讀原文及陌生詞彙的困難。
-這個程式主要想要讓 1)存單字懶得看，2)字典意思太難例句太多懶得看、3）單字懶得背 的人也能努力不倚賴翻譯軟體看原文。
-此程式致力於使您 1)勾起對單字似曾相識的感覺、2）滿足收集和自訂癖好、 3）觀賞自己的數位足跡。
 
-主要功能特色：
+# Steal The Word
 
-1. 儲存單字、短句及其脈絡（例句、時間、網址、網頁標題、標籤、釋義），支援一字多義，一義多句，任何文字。
-2. 直覺但不智慧的於網頁中自動標出已儲存過的單字，檢視並進行操作。
-3. 在單字本中用不同的排序和分類方式檢視儲存資訊，具備份、還原、輸出 CSV 功能。
-4. 資料完全在客戶端，無同步，不需帳號，自動查詢的 API 會傳送當前選取文字，可關閉。
+### A Chrome Extension for highlighting, collecting, annotating text in web pages.
+### Go to [Chrome Web Store](https://chrome.google.com/webstore/detail/steal-the-word/lolkalfaocfklgolbfblhdblhdppoaoa) for Installation & Introduction
 
-使用時須注意事項及已知問題：
+---
+## Tools / Packages
+### Boilerplate:
+ [Chrome Extension (MV3), React & Webpack Boilerplate by lxieyang ](https://github.com/lxieyang/chrome-extension-boilerplate-react)
 
-1. 基本上只要是文字都可以存。可設定自動透過 API 取得漢字日文假名、台客語讀音。但無法自動辨識出詞的原形和變化形，故變化型態只能手動調整。
-2. 自動文字標注可能會影響部分文字編輯器及網站的正常使用。建議用戶也可在 Popup 中針對特定網站關閉此擴充功能，以免造成非預期的後果。
-3. 浮動視窗在部分網站可能會有錯誤的顯示，。
-4. 儲存過多單字及瀏覽某些文字內容特別多的網站（如 w3c 的文件）可能會造成 lag。
-5. 清除瀏覽器資料、使用 DevTools 刪除 IndexedDB 資料等都會造成儲存資訊消失，我不知道某些清除軟體會不會造成此結果，在意請備份。
+### Whole app:
+1. Dexie.js for IndexedDB
+2. dayjs 
 
-使用工具
-整個 app：
+### Content Script:
+1. lit web component
+2. interactjs 
+3. floating-ui 
+4. [get-selection-more](https://github.com/crimx/get-selection-more) 
+5. API: 台客語[萌典](https://github.com/g0v/moedict-webkit)、[goo 辞書 ひらがな化API](https://labs.goo.ne.jp/api/jp/hiragana-translation/)、[dictionaryapi](https://dictionaryapi.dev/)
 
-1. 用 Dexie 將用戶所存資料放在 IndexedDB。
-2. dayjs 處理日期儲存格式
-
-Content Script 頁面工具:
-
-1. 用 lit 寫 web component
-2. interactjs 讓列表工具可以拖曳
-3. floating-ui 處理浮動元件的顯示位置
-4. get-selection-more 取得被選取文字的段落文字（略作更改以使用在 custom element 上，未從 npm 引入）
-5. API:台客語萌典、goo 辞書読み仮名変換
-
-Options（單字本）：
-
+### Options:
 1. React
 2. Material UI
 3. react-router-dom
-4. kbar 作搜尋及導覽
-5. react-virtuoso 處理單字列表
-6. react-select 輸入標籤
-7. react-hook-form 處理表單
-8. react-i18next 英文、日文、繁中語系
+4. [kbar](https://github.com/timc1/kbar) 
+5. react-virtuoso 
+6. react-select 
+7. react-hook-form 
+8. react-i18next
