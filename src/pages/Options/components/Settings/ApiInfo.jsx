@@ -74,6 +74,7 @@ export const ApiInfo = () => {
           href="https://labs.goo.ne.jp/api/jp/hiragana-translation/"
           target="_blank"
         >
+          {' '}
           goo辞書ひらがな化API
         </Link>
       </Typography>
@@ -85,6 +86,7 @@ export const ApiInfo = () => {
           from
         </Trans>
         <Link href="https://dictionaryapi.dev/" target="_blank">
+          {' '}
           Free Dictionary API
         </Link>
       </Typography>
@@ -96,6 +98,7 @@ export const ApiInfo = () => {
           <strong>Traditional Chinese characters</strong> from
         </Trans>
         <Link href="https://github.com/g0v/moedict-webkit" target="_blank">
+          {' '}
           MOEDICT 萌典
         </Link>
       </Typography>

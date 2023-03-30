@@ -7,7 +7,15 @@ import { getMatchRefList, getWordList } from '../redux/wordDataSlice';
 import { myLog } from './customLogger';
 import { getRegexByMatchRule } from './matchRule';
 
-// export let wordInPageList = [];
+const isAscendantContentEditable = (element) => {
+  while (element) {
+    if (element.contentEditable === 'true') {
+      return true;
+    }
+    element = element.parentElement;
+  }
+  return false;
+};
 
 export const transformElementId = (eleId, target) => {
   const splittedEleId = eleId.split('-');
@@ -19,7 +27,6 @@ export const transformElementId = (eleId, target) => {
 const putHooliTextOnNode = (targetNode) => {
   const myList = getWordList(store.getState());
   const newList = getMatchRefList(store.getState());
-  //todo: support variants match, i think extend the list directly instead of check every 'variants' property might get better performance
   //todo: deal with first character capital word
   for (let textPair of newList) {
     const { matchText, wordMatchRule } = textPair;
@@ -29,7 +36,6 @@ const putHooliTextOnNode = (targetNode) => {
       getRegexByMatchRule(matchText, wordMatchRule),
       'im'
     );
-
     //languages do not  have word separator (which means can't use /b as word boundary):
     //Thai, Lao, Khmer, Chinese, Japanese, Korean
     //further reading: https://www.w3.org/International/articles/typography/linebreak
@@ -43,6 +49,8 @@ const putHooliTextOnNode = (targetNode) => {
       !boundaryRegex.test(targetNode.textContent)
     )
       continue;
+    if (isAscendantContentEditable(targetNode)) continue;
+
     const wordObj = myList.find((wordObj) => wordObj.id === textPair.wordIdRef);
     if (!wordObj) continue;
 
