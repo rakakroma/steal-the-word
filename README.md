@@ -29,10 +29,12 @@
 ### Content Script:
 
 1. lit web component
-2. interactjs
-3. floating-ui
-4. [get-selection-more](https://github.com/crimx/get-selection-more)
-5. API: 台客語[萌典](https://github.com/g0v/moedict-webkit)、[goo 辞書 ひらがな化 API](https://labs.goo.ne.jp/api/jp/hiragana-translation/)、[dictionaryapi](https://dictionaryapi.dev/)
+2. lit-translate
+3. redux toolkit
+4. interactjs
+5. floating-ui
+6. [get-selection-more](https://github.com/crimx/get-selection-more)
+7. API: [台客語萌典](https://github.com/g0v/moedict-webkit)、[goo 辞書 ひらがな化 API](https://labs.goo.ne.jp/api/jp/hiragana-translation/)、[dictionaryapi](https://dictionaryapi.dev/)
 
 ### Options:
 
@@ -40,15 +42,18 @@
 2. Material UI
 3. react-router-dom
 4. [kbar](https://github.com/timc1/kbar)
-5. react-virtuoso
-6. react-select
-7. react-hook-form
-8. react-i18next
+5. [nivo](https://nivo.rocks/)
+6. react-virtuoso
+7. react-select
+8. react-hook-form
+9. react-i18next
 
 ---
 
-⚠️ Warning: Bugs in web editor (e.g. Google Docs, Codepen), be sure to disable it in those sites.
+⚠️ Warning: Bugs in some website / web text editor (e.g. CodeSandbox, Codepen), be sure to disable it in those sites.
 
 ---
 
 License: MIT
+
+---
