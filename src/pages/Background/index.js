@@ -34,7 +34,9 @@ chrome.runtime.onInstalled.addListener(async () => {
   );
 
   chrome.storage.local.set(dataToSet);
-  chrome.runtime.openOptionsPage();
+  // chrome.runtime.openOptionsPage();
+  // stop open options automatically because it would be opened whenever this extension got version updated,
+  //which is annoying..
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {

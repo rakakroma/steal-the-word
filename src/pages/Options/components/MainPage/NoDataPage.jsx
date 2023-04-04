@@ -31,8 +31,11 @@ export const NoDataPage = () => {
         add some word and come back to see the changes 🤗
       </Typography>
       <Typography>
-        If you don't know how to do, how about watch the <Link>Tutorial</Link>,
-        or <Button variant="outlined">use the demo data</Button>
+        If you don't know how to do, how about visit the{' '}
+        <Link href="https://rakakroma.github.io/steal-word-landing-page/">
+          Landing Page
+        </Link>
+        , or <Button variant="outlined">use the demo data</Button>
       </Typography>
     </Box>
   );
