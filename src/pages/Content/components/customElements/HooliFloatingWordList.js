@@ -250,7 +250,6 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
       ...this.wordInPageList.find((wordObj) => wordObj.id === wordId),
       currentFocusCount,
     };
-    // this.requestUpdate();
   }
   _handleRefresh() {
     clearNoLongerExistWordInWordInPageList();
@@ -258,7 +257,6 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
       this._handleMinimize('autoOpen');
       return;
     }
-    // this.requestUpdate();
   }
   _handleClose() {
     this.remove();
@@ -340,15 +338,15 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
   connectedCallback() {
     super.connectedCallback();
 
-    //FIXME: problem in wikipedia
     const position = { x: 0, y: 0 };
     interact('#title-bar').draggable({
-      modifiers: [
-        interact.modifiers.restrictRect({
-          restriction: 'body',
-          //   endOnly: true
-        }),
-      ],
+      //comment out to prevent bugs
+      // modifiers: [
+      //   interact.modifiers.restrictRect({
+      //     restriction: 'body',
+      //     //   endOnly: true
+      //   }),
+      // ],
       listeners: {
         move(event) {
           position.x += event.dx;
