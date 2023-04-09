@@ -27,7 +27,9 @@ export const transformElementId = (eleId, target) => {
 const putHooliTextOnNode = (targetNode) => {
   const myList = getWordList(store.getState());
   const newList = getMatchRefList(store.getState());
+
   //todo: deal with first character capital word
+
   for (let textPair of newList) {
     const { matchText, wordMatchRule } = textPair;
     if (targetNode.textContent.indexOf(matchText) === -1) continue;
@@ -36,7 +38,7 @@ const putHooliTextOnNode = (targetNode) => {
       getRegexByMatchRule(matchText, wordMatchRule),
       'im'
     );
-    //languages do not  have word separator (which means can't use /b as word boundary):
+    //languages do not have word separator (which means can't use /b as word boundary):
     //Thai, Lao, Khmer, Chinese, Japanese, Korean
     //further reading: https://www.w3.org/International/articles/typography/linebreak
 
@@ -58,15 +60,13 @@ const putHooliTextOnNode = (targetNode) => {
     const countMatchedTime = sentenceWithoutWord.length - 1;
 
     const currentCount = addOrUpdatePageWordAndGetCount({
-      // ...wordObj,
       id: wordObj.id,
       countInCurrentPage: countMatchedTime,
     });
 
     const createTheWordNode = (wordObj, count) => {
-      const word = matchText;
       const renderNode = document.createElement('hooli-text');
-      renderNode.textContent = word;
+      renderNode.textContent = matchText;
       renderNode.id = `h-${wordObj.id}-${
         currentCount - countMatchedTime + count + 1
       }`;
@@ -95,14 +95,14 @@ export const renderMultipleRuby = (nodesArray) => {
   const performanceStart = performance.now();
 
   nodesArray.forEach((node) => {
-    renderRuby(node, false);
+    renderRuby(node);
   });
 
   const performanceEnd = performance.now();
   myLog(`RenderRuby time ${(performanceEnd - performanceStart).toFixed(2)} ms`);
 };
 
-export const renderRuby = (target, isStart) => {
+export const renderRuby = (target) => {
   const startTime = performance.now();
 
   const nodeIterator = document.createNodeIterator(

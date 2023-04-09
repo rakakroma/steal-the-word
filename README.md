@@ -8,6 +8,11 @@
 
 ## Change Log 🪵🪵🪵
 
+### v0.0.13 🐲
+
+- Fixed: the blank 'Link' of Tutorial
+- Changed: Stop open Options Page automatically
+
 ### v0.0.12 🦑 (2023-03-30)
 
 - Fixed: Check 'contenteditable' attribute of node's ascendant, reduce bugs of the replacement of string inside Javascript text editor.

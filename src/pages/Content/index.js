@@ -58,7 +58,7 @@ const init = async () => {
 
   const startAfterLoaded = () => {
     loadEvent = true;
-    renderRuby(document.body, true);
+    renderRuby(document.body);
 
     if (getCertainSetting(store.getState(), 'floatingWindow')) {
       appendSideListWindow(getDisplayingWordList(store.getState()).length > 0);

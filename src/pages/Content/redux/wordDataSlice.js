@@ -81,7 +81,7 @@ export const checkAndUpdateNewWordListAndReRender = (state, newWordList) => {
   const wordList = getWordList(state);
   if (wordList.length <= newWordList.length) {
     store.dispatch(replaceWholeList({ wordList: newWordList }));
-    if (wordList.length < newWordList.length) renderRuby(document.body, true);
+    if (wordList.length < newWordList.length) renderRuby(document.body);
   }
   if (wordList.length > newWordList.length) {
     store.dispatch(replaceWholeList({ wordList: newWordList }));

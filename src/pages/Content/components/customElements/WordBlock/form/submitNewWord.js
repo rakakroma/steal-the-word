@@ -61,8 +61,6 @@ export const submitNewWord = (
       newContext: theNewContext,
     },
     () => {
-      // store.dispatch(addOneWord(theNewWord));
-      // renderRuby(document.body, true);
       wordBlock.remove();
     },
     (response) => {
