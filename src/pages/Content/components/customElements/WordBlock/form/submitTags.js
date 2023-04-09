@@ -6,7 +6,7 @@ import {
   tagArrayToKeyObjs,
   updateDefRef,
 } from '../../../../../../utilsForAll/handleTags';
-import { updateTags } from '../../../../../Background/updateData';
+import { updateTags } from '../../../../../Background/handler/updateData';
 import { submitAndExecute } from './submitAndExecute';
 
 export const submitTags = (

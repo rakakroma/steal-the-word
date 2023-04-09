@@ -41,7 +41,7 @@ import {
 } from '../../redux/wordBlockSlice';
 import { getApiSetting } from '../../redux/workingPreferenceSlice';
 import { getLang } from '../../utils/getLang';
-import { fetchPronInfo } from '../../../Background/fetchData';
+import { fetchPronInfo } from '../../../Background/handler/fetchData';
 
 export const initialFormInputStatus = {
   editingTagDefId: null,

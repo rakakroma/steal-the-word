@@ -1,5 +1,5 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
-import { updateWordCount } from '../../Background/updateBadge';
+import { updateWordCount } from '../../Background/handler/updateBadge';
 import { currentURL } from '../utils/currentURL';
 import { store } from './store';
 import { getWordList } from './wordDataSlice';

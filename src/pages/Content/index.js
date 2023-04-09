@@ -14,7 +14,7 @@ import {
   getInitialDataFromDb,
 } from './redux/messageWithBackground';
 import { getDisplayingWordList } from './redux/displayingWordListSlice';
-import { updateBadgeToNoWork } from '../Background/updateBadge';
+import { updateBadgeToNoWork } from '../Background/handler/updateBadge';
 import { getCertainSetting } from './redux/workingPreferenceSlice';
 import {
   checkAndUpdateNewTagList,

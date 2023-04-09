@@ -3,7 +3,7 @@ import {
   StarOutlineIcon,
 } from '@spectrum-web-components/icons-workflow';
 import { html } from 'lit';
-import { updateWordRating } from '../../../../../Background/updateData';
+import { updateWordRating } from '../../../../../Background/handler/updateData';
 import { submitAndExecute } from '../form/submitAndExecute';
 
 export const starRating = (wordBlock) => {

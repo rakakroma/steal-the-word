@@ -1,6 +1,6 @@
-import { db } from './database';
-import { blobToBase64 } from './blobToBase64';
-import { successMessage } from './messageTemplate';
+import { db } from '../database';
+import { blobToBase64 } from '../blobToBase64';
+import { successMessage } from '../messageTemplate';
 
 const savingDomainData = async (currentDomain, favIconUrl) => {
   if (favIconUrl) {
@@ -34,31 +34,34 @@ const saveWordAndContext = 'saveWordAndContext';
 
 updateHandlers.set(
   saveWordAndContext,
-  ({ newWord, newContext }, senderTab, sendResponse) => {
+  async ({ newWord, newContext }, senderTab, sendResponse) => {
     const currentDomain = new URL(newContext.url).hostname;
 
-    const saveTheWord = async () => {
-      const sameWordInDB = await db.wordList.get({ word: newWord.word });
+    try {
+      const saveTheWord = async () => {
+        const sameWordInDB = await db.wordList.get({ word: newWord.word });
 
-      if (sameWordInDB) {
-        db.contextList.add(newContext);
-        sendResponse({
-          status: 'existWord',
-          message: `you already have ${newWord.word}`,
-        });
-        return false;
-      }
-
-      db.wordList.add(newWord);
-      db.contextList.add(newContext);
-      return true;
-    };
-    (async () => {
+        if (sameWordInDB) {
+          db.contextList.add(newContext);
+          sendResponse({
+            status: 'existWord',
+            message: `you already have ${newWord.word}`,
+          });
+          return false;
+        }
+        await Promise.all([
+          db.wordList.add(newWord),
+          db.contextList.add(newContext),
+        ]);
+        return true;
+      };
       const saveSuccess = await saveTheWord();
       if (!saveSuccess) return;
       await savingDomainData(currentDomain, senderTab.favIconUrl);
       sendResponse(successMessage(`got ${newWord.word}`));
-    })();
+    } catch (err) {
+      console.error(err);
+    }
   }
 );
 
@@ -67,14 +70,19 @@ const addNewContextForSavedWord = 'addNewContextForSavedWord';
 
 updateHandlers.set(
   addNewContextForSavedWord,
-  ({ newContext }, senderTab, sendResponse) => {
+  async ({ newContext }, senderTab, sendResponse) => {
     const currentDomain = new URL(newContext.url).hostname;
 
-    (async () => {
-      await db.contextList.add(newContext);
-      await savingDomainData(currentDomain, senderTab.favIconUrl);
+    try {
+      await Promise.all([
+        db.contextList.add(newContext),
+        savingDomainData(currentDomain, senderTab.favIconUrl),
+      ]);
+
       sendResponse(successMessage(`saved ${newContext.context}`));
-    })();
+    } catch (err) {
+      console.error(err);
+    }
   }
 );
 
@@ -84,19 +92,23 @@ const addNewContextAndDefinitionForSavedWord =
 
 updateHandlers.set(
   addNewContextAndDefinitionForSavedWord,
-  (
+  async (
     { newContext, updatedDefinitions, definitionCount },
     senderTab,
     sendResponse
   ) => {
-    (async () => {
-      await db.contextList.add(newContext);
-      await db.wordList.update(
-        { id: newContext.wordId },
-        { definitions: updatedDefinitions, definitionCount }
-      );
+    try {
+      await Promise.all([
+        db.contextList.add(newContext),
+        db.wordList.update(
+          { id: newContext.wordId },
+          { definitions: updatedDefinitions, definitionCount }
+        ),
+      ]);
       sendResponse(successMessage(`saved and update definition`));
-    })();
+    } catch (err) {
+      console.error(err);
+    }
   }
 );
 
@@ -105,11 +117,13 @@ const changePhraseToContext = 'changePhraseToContext';
 
 updateHandlers.set(
   changePhraseToContext,
-  ({ contextId, phrase }, senderTab, sendResponse) => {
-    (async () => {
+  async ({ contextId, phrase }, senderTab, sendResponse) => {
+    try {
       await db.contextList.update({ id: contextId }, { phrase });
       sendResponse(successMessage());
-    })();
+    } catch (err) {
+      console.error(err);
+    }
   }
 );
 
@@ -117,11 +131,13 @@ const editWord = 'editWord';
 
 updateHandlers.set(
   editWord,
-  ({ wordId, wordObjToUpdate }, senderTab, sendResponse) => {
-    (async () => {
+  async ({ wordId, wordObjToUpdate }, senderTab, sendResponse) => {
+    try {
       await db.wordList.update({ id: wordId }, wordObjToUpdate);
       sendResponse(successMessage());
-    })();
+    } catch (err) {
+      console.error(err);
+    }
   }
 );
 
@@ -129,8 +145,8 @@ const editContext = 'editContext';
 
 updateHandlers.set(
   editContext,
-  ({ context, contextId, definitionRef }, senderId, sendResponse) => {
-    (async () => {
+  async ({ context, contextId, definitionRef }, senderId, sendResponse) => {
+    try {
       await db.contextList.update(
         { id: contextId },
         { definitionRef, context }
@@ -138,7 +154,9 @@ updateHandlers.set(
       sendResponse({
         status: 'success',
       });
-    })();
+    } catch (err) {
+      console.error(err);
+    }
   }
 );
 
@@ -146,18 +164,20 @@ const updateWordRating = 'updateWordRating';
 
 updateHandlers.set(
   updateWordRating,
-  ({ rating, wordId }, senderId, sendResponse) => {
-    (async () => {
+  async ({ rating, wordId }, senderId, sendResponse) => {
+    try {
       await db.wordList.update({ id: wordId }, { stars: rating });
       sendResponse(successMessage());
-    })();
+    } catch (err) {
+      console.error(err);
+    }
   }
 );
 
 const updateTags = 'updateTags';
 updateHandlers.set(
   updateTags,
-  (
+  async (
     {
       refData,
       newDefinitions,
@@ -168,18 +188,20 @@ updateHandlers.set(
     senderId,
     sendResponse
   ) => {
-    (async () => {
-      await db.wordList.update(refData.wordId, { definitions: newDefinitions });
-      await db.tagList.bulkAdd(newTagsToTagList);
-      await db.tagList.bulkDelete(shouldDeleteTagIds);
-      await Promise.all(
-        shouldUpdateTags.map(async (tagData) => {
+    try {
+      await Promise.all([
+        db.wordList.update(refData.wordId, { definitions: newDefinitions }),
+        db.tagList.bulkAdd(newTagsToTagList),
+        db.tagList.bulkDelete(shouldDeleteTagIds),
+        ...shouldUpdateTags.map(async (tagData) => {
           const { wordDefRefs } = tagData;
           await db.tagList.update(tagData.id, { wordDefRefs });
-        })
-      );
+        }),
+      ]);
       sendResponse(successMessage());
-    })();
+    } catch (err) {
+      console.error(err);
+    }
   }
 );
 

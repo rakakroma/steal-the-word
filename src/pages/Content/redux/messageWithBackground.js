@@ -3,7 +3,7 @@ import {
   getContexts,
   getFaviconThisSite,
   getStart,
-} from '../../Background/getData';
+} from '../../Background/handler/getData';
 import { getCurrentSiteImgSrc, getWordContexts } from './wordBlockSlice';
 
 export const getGlobalPreferencesFromLocalStorage = createAsyncThunk(

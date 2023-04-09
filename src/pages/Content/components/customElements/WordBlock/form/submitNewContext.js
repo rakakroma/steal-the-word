@@ -1,4 +1,4 @@
-import { addNewContextAndDefinitionForSavedWord } from '../../../../../Background/updateData';
+import { addNewContextAndDefinitionForSavedWord } from '../../../../../Background/handler/updateData';
 import { getContextsDataFromDB } from '../../../../redux/messageWithBackground';
 import { store } from '../../../../redux/store';
 import { currentURL } from '../../../../utils/currentURL';

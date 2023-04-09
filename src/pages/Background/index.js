@@ -1,11 +1,11 @@
-import { updateBadgeHandlers } from './updateBadge';
-import { updateHandlers } from './updateData';
-import { getHandlers } from './getData';
-import { deleteHandlers } from './deleteData';
+import { updateBadgeHandlers } from './handler/updateBadge';
+import { updateHandlers } from './handler/updateData';
+import { getHandlers } from './handler/getData';
+import { deleteHandlers } from './handler/deleteData';
 import './databaseSubscription';
 import { getTextStyleData } from '../../utilsForAll/textStyleData';
 import { defaultLangOptions } from '../../utilsForAll/languageAndApiData';
-import { fetchHandlers } from './fetchData';
+import { fetchHandlers } from './handler/fetchData';
 
 chrome.action.setBadgeBackgroundColor({ color: '#4f4f4f' });
 

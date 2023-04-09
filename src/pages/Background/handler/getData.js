@@ -1,5 +1,5 @@
-import { getDataInTableFromIndexedDB } from '../Options/utils/getDataFromDB';
-import { db } from './database';
+import { getDataInTableFromIndexedDB } from '../../Options/utils/getDataFromDB';
+import { db } from '../database';
 import { setStopBadge } from './updateBadge';
 
 const getHandlers = new Map();
@@ -12,9 +12,9 @@ getHandlers.set(getFaviconThisSite, (request, senderTab, sendResponse) => {
 
 const getStart = 'getStart';
 
-getHandlers.set(getStart, (request, senderTab, sendResponse) => {
-  const tabUrl = senderTab.url;
-  (async () => {
+getHandlers.set(getStart, async (request, senderTab, sendResponse) => {
+  try {
+    const tabUrl = senderTab.url;
     const currentDomain = new URL(tabUrl).hostname;
     const domainData = await db.domainAndLink.get({ url: currentDomain });
     const stopInThisPage =
@@ -24,16 +24,22 @@ getHandlers.set(getStart, (request, senderTab, sendResponse) => {
       setStopBadge(senderTab.id);
       return;
     }
-    const wordList = await getDataInTableFromIndexedDB('wordList');
-    const tagList = await getDataInTableFromIndexedDB('tagList');
+
+    const [wordList, tagList] = await Promise.all([
+      getDataInTableFromIndexedDB('wordList'),
+      getDataInTableFromIndexedDB('tagList'),
+    ]);
+
     sendResponse({ wordList, tagList, domainData });
-  })();
+  } catch (err) {
+    console.error(err);
+  }
 });
 
 const getContexts = 'getContexts'; //and icons
 
-getHandlers.set(getContexts, ({ wordId }, senderTab, sendResponse) => {
-  (async () => {
+getHandlers.set(getContexts, async ({ wordId }, senderTab, sendResponse) => {
+  try {
     const contexts = await db.contextList
       .filter((contextObj) => {
         return contextObj.wordId === wordId;
@@ -48,8 +54,10 @@ getHandlers.set(getContexts, ({ wordId }, senderTab, sendResponse) => {
         return gotDomainObj;
       })
     );
-    sendResponse({ contexts, domainData }); //handle error?
-  })();
+    sendResponse({ contexts, domainData });
+  } catch (err) {
+    console.error(err);
+  }
 });
 
 export { getFaviconThisSite, getStart, getContexts, getHandlers };
