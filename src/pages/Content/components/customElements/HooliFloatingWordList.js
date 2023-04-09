@@ -18,6 +18,7 @@ import {
 import { store } from '../../redux/store';
 import { getTagList } from '../../redux/wordDataSlice';
 import { transformElementId } from '../../utils/renderRuby';
+import { zIndexStyle } from './WordBlock/wordInfoBlockStyles';
 
 class HooliFloatingWordList extends connect(store)(LitElement) {
   static get properties() {
@@ -41,6 +42,7 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
   }
 
   static styles = [
+    zIndexStyle,
     css`
       :host {
         all: initial;
@@ -49,7 +51,7 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
         position: fixed;
         top: 50px;
         right: 20px;
-        z-index: 99999999;
+        z-index: var(--lower-z-index);
         overflow-y: overlay;
         display: flex;
         flex-direction: column;

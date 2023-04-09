@@ -21,6 +21,7 @@ import { submitSection } from './WordBlock/submitSection';
 import {
   iconButtonStyle,
   wordInfoBlockStyles,
+  zIndexStyle,
 } from './WordBlock/wordInfoBlockStyles';
 import {
   findDuplicateWord,
@@ -88,7 +89,7 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
     this.apiSetting = getApiSetting(state);
   }
 
-  static styles = [wordInfoBlockStyles, iconButtonStyle];
+  static styles = [zIndexStyle, wordInfoBlockStyles, iconButtonStyle];
 
   _matchWordsArray() {
     return getAllMatchTextFromWordObj(this.wordObj);

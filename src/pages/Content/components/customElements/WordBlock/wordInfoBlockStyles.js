@@ -1,5 +1,12 @@
 import { css } from 'lit';
 
+export const zIndexStyle = css`
+  :host {
+    --max-z-index: 2147483647;
+    --lower-z-index: 2140000000;
+  }
+`;
+
 export const iconButtonStyle = css`
   .icon-button {
     color: grey;
@@ -15,7 +22,7 @@ export const iconButtonStyle = css`
 export const wordInfoBlockStyles = css`
   :host {
     font-size: 12px;
-    z-index: 99999999;
+    z-index: var(--max-z-index);
     position: absolute;
     transform: translateX(-50%);
   }

@@ -8,6 +8,7 @@ import { getCustomTextStyle } from '../../redux/workingPreferenceSlice';
 import { getSentenceFromSelection } from '../../utils/get-selection-more.ts';
 import { setWordBlockPosition } from '../../utils/setPosition';
 import './HooliWordInfoBlock.js';
+import { zIndexStyle } from './WordBlock/wordInfoBlockStyles';
 
 const removeWordBlock = () =>
   document.querySelector('hooli-wordinfo-block')?.remove();
@@ -48,6 +49,7 @@ class HooliText extends connect(store)(LitElement) {
   }
 
   static styles = [
+    zIndexStyle,
     css`
       :host {
         all: initial;
@@ -66,7 +68,7 @@ class HooliText extends connect(store)(LitElement) {
         top: 0;
         position: absolute;
         display: inline-block;
-        z-index: 2147483647;
+        z-index: var(--max-z-index);
         padding: 3px;
         font-size: 12px;
         line-height: 1.3;
@@ -79,6 +81,7 @@ class HooliText extends connect(store)(LitElement) {
         font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
           'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
         font-style: normal;
+        font-weight: 600;
         max-width: 450px;
       }
 

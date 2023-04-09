@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { MoreIcon } from '@spectrum-web-components/icons-workflow';
 import { computePosition, flip, shift, offset } from '@floating-ui/dom';
+import { zIndexStyle } from './wordInfoBlockStyles';
 
 class HooliMenu extends LitElement {
   static get properties() {
@@ -16,6 +17,7 @@ class HooliMenu extends LitElement {
   }
 
   static styles = [
+    zIndexStyle,
     css`
       button {
         border: none;
@@ -34,7 +36,7 @@ class HooliMenu extends LitElement {
         background: #f3f3f3;
         box-shadow: 3px 3.1px 3.1px hsl(0deg 0% 0% / 0.41);
         position: absolute;
-        z-index: 99999991;
+        z-index: var(--lower-z-index);
         cursor: default;
         width: 120px;
         top: 0;

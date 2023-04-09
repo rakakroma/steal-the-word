@@ -2,6 +2,7 @@ import '@webcomponents/custom-elements';
 import { LitElement, html, css } from 'lit';
 import { computePosition, flip, shift, offset } from '@floating-ui/dom';
 import { msg } from '@lit/localize';
+import { zIndexStyle } from './WordBlock/wordInfoBlockStyles';
 
 class HooliToolTip extends LitElement {
   static get properties() {
@@ -19,6 +20,7 @@ class HooliToolTip extends LitElement {
   }
 
   static styles = [
+    zIndexStyle,
     css`
       #tooltip {
         width: max-content;
@@ -39,7 +41,7 @@ class HooliToolTip extends LitElement {
         opacity: 0;
         visibility: hidden;
         transition: 0.1s ease-in;
-        z-index: 999999999;
+        z-index: var(--max-z-index);
         line-height: 1.3;
       }
       #tooltip.show-tooltip {

@@ -1,12 +1,14 @@
 import { BoxAddIcon } from '@spectrum-web-components/icons-workflow';
 import { LitElement, html, css } from 'lit';
 import { openAddNewWord } from './HooliText';
+import { zIndexStyle } from './WordBlock/wordInfoBlockStyles';
 
 class HooliAddingTool extends LitElement {
   static styles = [
+    zIndexStyle,
     css`
       :host {
-        z-index: 99999999;
+        z-index: var(--max-z-index);
         position: absolute;
       }
       button {

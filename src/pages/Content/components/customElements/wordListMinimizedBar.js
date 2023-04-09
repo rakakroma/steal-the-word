@@ -2,6 +2,7 @@ import '@webcomponents/custom-elements';
 import { LitElement, html, css } from 'lit';
 import { connect } from 'pwa-helpers/connect-mixin.js';
 import { store } from '../../redux/store';
+import { zIndexStyle } from './WordBlock/wordInfoBlockStyles';
 
 class HooliWordListMinimizedBar extends connect(store)(LitElement) {
   get properties() {
@@ -20,6 +21,7 @@ class HooliWordListMinimizedBar extends connect(store)(LitElement) {
     this.listLength = state.displayingWordList.length;
   }
   static styles = [
+    zIndexStyle,
     css`
       :host {
         width: fit-content;
@@ -29,7 +31,7 @@ class HooliWordListMinimizedBar extends connect(store)(LitElement) {
         position: fixed;
         right: 64px;
         bottom: 0;
-        z-index: 999999999;
+        z-index: var(--lower-z-index);
         padding: 2px 5px 0 5px;
         border-radius: 3px 3px 0 0;
         color: #0d925b;
