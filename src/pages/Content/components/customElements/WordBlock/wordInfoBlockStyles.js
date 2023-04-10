@@ -3,7 +3,7 @@ import { css } from 'lit';
 export const zIndexStyle = css`
   :host {
     --max-z-index: 2147483647;
-    --lower-z-index: 2140000000;
+    --lower-z-index: 2147483643;
   }
 `;
 
