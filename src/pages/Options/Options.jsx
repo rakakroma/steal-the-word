@@ -21,7 +21,7 @@ export const WordInfoDrawerContext = createContext({});
 export const ColorModeContext = createContext({});
 export const TagListContext = createContext({});
 
-const Options = () => {
+const Options = (props) => {
   // const [isDarkMode, setIsDarkMode] = useState(false);
   // const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   // const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
@@ -80,7 +80,7 @@ const Options = () => {
                   <Suspense fallback={<p>Loading...</p>}>
                     <KBarCommandPalette>
                       <PersistentDrawerRight>
-                        <Outlet />
+                        {props.outlet ? props.outlet : <Outlet />}
                       </PersistentDrawerRight>
                     </KBarCommandPalette>
                   </Suspense>

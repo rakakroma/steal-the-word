@@ -1,6 +1,7 @@
 import {
   ArrowDropDown,
   CollectionsBookmark,
+  Error,
   Settings,
 } from '@mui/icons-material';
 import HomeIcon from '@mui/icons-material/Home';
@@ -25,6 +26,9 @@ export const PageBreadcrumbs = () => {
     collection: <CollectionsBookmark />,
   };
 
+  const isCorrectPathName = (currentPathTargetName) =>
+    Object.keys(pathIcon).includes(currentPathTargetName);
+
   return (
     <HoveringNav
       pathIcon={pathIcon}
@@ -44,13 +48,15 @@ export const PageBreadcrumbs = () => {
       >
         {pathArray.map((pathTarget, index) => {
           const last = index === pathArray.length - 1;
+
           return (
             <Box
               sx={{ display: 'flex', wordBreak: 'keep-all' }}
               color="text.primary"
               key={pathTarget}
             >
-              {pathIcon[pathTarget] || null} {last && t(pathTarget)}
+              {pathIcon[pathTarget] || <Error />}{' '}
+              {last && t(isCorrectPathName(pathTarget) ? pathTarget : 'error')}
               {last && <ArrowDropDown />}
             </Box>
           );

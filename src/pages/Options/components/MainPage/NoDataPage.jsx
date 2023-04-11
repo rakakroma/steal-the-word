@@ -35,7 +35,7 @@ export const NoDataPage = () => {
         <Link href="https://rakakroma.github.io/steal-word-landing-page/">
           Landing Page
         </Link>
-        , or <Button variant="outlined">use the demo data</Button>
+        , or <Button variant="outlined">use the demo data in Settings</Button>
       </Typography>
     </Box>
   );

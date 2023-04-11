@@ -5,13 +5,15 @@ import { DefaultMainPage, MainPage } from './components/MainPage/MainPage';
 import { Settings } from './components/Settings/Settings';
 import Options from './Options';
 import { SinglePageWordCollection } from './components/WordCollection/WordCollection';
+import { ErrorPage } from './components/ErrorPage';
 
 export const router = createRouter([
   {
     path: '/',
     element: <Options />,
+    errorElement: <Options outlet={<ErrorPage />} />,
+
     children: [
-      // errorElement: <ErrorPage />,
       { index: true, element: <Navigate to="/home/settings" replace={true} /> },
       {
         path: 'home',
