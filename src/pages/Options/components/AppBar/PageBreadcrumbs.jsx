@@ -1,7 +1,11 @@
 import {
   ArrowDropDown,
+  Backup,
   CollectionsBookmark,
   Error,
+  FormatColorFill,
+  Info,
+  Language,
   Settings,
 } from '@mui/icons-material';
 import HomeIcon from '@mui/icons-material/Home';
@@ -11,6 +15,17 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { HoveringNav } from './HoveringNav';
 import { useTranslation } from 'react-i18next';
+import { allSettingsRoute } from '../Settings/Settings';
+
+const pathIcon = {
+  home: <HomeIcon />,
+  settings: <Settings />,
+  collection: <CollectionsBookmark />,
+  'text-styling': <FormatColorFill />,
+  'lang-api': <Language />,
+  'backup-restore': <Backup />,
+  about: <Info />,
+};
 
 export const PageBreadcrumbs = () => {
   const { pathname } = useLocation();
@@ -19,12 +34,6 @@ export const PageBreadcrumbs = () => {
 
   const pathArray = pathname.split('/').slice(1);
   const theme = useTheme();
-
-  const pathIcon = {
-    home: <HomeIcon />,
-    settings: <Settings />,
-    collection: <CollectionsBookmark />,
-  };
 
   const isCorrectPathName = (currentPathTargetName) =>
     Object.keys(pathIcon).includes(currentPathTargetName);
@@ -51,12 +60,21 @@ export const PageBreadcrumbs = () => {
 
           return (
             <Box
-              sx={{ display: 'flex', wordBreak: 'keep-all' }}
+              sx={{
+                display: 'flex',
+                wordBreak: 'keep-all',
+                textTransform: 'capitalize',
+              }}
               color="text.primary"
               key={pathTarget}
             >
               {pathIcon[pathTarget] || <Error />}{' '}
-              {last && t(isCorrectPathName(pathTarget) ? pathTarget : 'error')}
+              {last &&
+                t(
+                  isCorrectPathName(pathTarget)
+                    ? allSettingsRoute[pathTarget] || pathTarget
+                    : 'error'
+                )}
               {last && <ArrowDropDown />}
             </Box>
           );

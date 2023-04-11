@@ -59,7 +59,10 @@ export const HoveringNav = ({ children, currentPathName, pathIcon }) => {
     return (
       <ListItem
         disablePadding
-        sx={{ backgroundColor: isCurrentPath ? 'primary.light' : '' }}
+        sx={{
+          backgroundColor: isCurrentPath ? 'primary.light' : '',
+          textTransform: 'capitalize',
+        }}
       >
         <ListItemButton
           href={pathHref}
