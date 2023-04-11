@@ -66,6 +66,7 @@ export const TodaysWordBox = () => {
       handleClick={() => handleWordClick({ wordId: theTodaysWord.id })}
       title={t('word Of today')}
       content={theTodaysWord.word}
+      stopCapitalize={true}
     />
   );
 };
@@ -81,13 +82,25 @@ export const InfoBlock = styled(Box)(({ theme }) =>
   })
 );
 
-const CoolInfoBox = ({ title, content, additionalNumber, additionalInfo }) => {
+const CoolInfoBox = ({
+  title,
+  content,
+  additionalNumber,
+  additionalInfo,
+  stopCapitalize,
+  handleClick,
+}) => {
   return (
-    <InfoBlock>
+    <InfoBlock onClick={handleClick}>
       <Box sx={{ color: 'text.secondary' }}>{title}</Box>
       <Typography
         variant="h5"
-        sx={{ color: 'text.primary', textTransform: 'capitalize' }}
+        sx={{
+          color: 'text.primary',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          textTransform: stopCapitalize ? 'none' : 'capitalize',
+        }}
       >
         {content}
       </Typography>

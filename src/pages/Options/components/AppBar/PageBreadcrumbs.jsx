@@ -4,7 +4,7 @@ import {
   Settings,
 } from '@mui/icons-material';
 import HomeIcon from '@mui/icons-material/Home';
-import { Breadcrumbs, Typography } from '@mui/material';
+import { Box, Breadcrumbs, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
@@ -32,18 +32,27 @@ export const PageBreadcrumbs = () => {
     >
       <Breadcrumbs
         sx={{
+          width: 'max-content',
           marginX: theme.spacing(2),
           alignItems: 'normal',
           cursor: 'default',
+          flexGrow: 0,
+          '& .MuiBreadcrumbs-ol': {
+            flexWrap: 'nowrap',
+          },
         }}
       >
         {pathArray.map((pathTarget, index) => {
           const last = index === pathArray.length - 1;
           return (
-            <Typography color="text.primary" key={pathTarget}>
+            <Box
+              sx={{ display: 'flex', wordBreak: 'keep-all' }}
+              color="text.primary"
+              key={pathTarget}
+            >
               {pathIcon[pathTarget] || null} {last && t(pathTarget)}
               {last && <ArrowDropDown />}
-            </Typography>
+            </Box>
           );
         })}
       </Breadcrumbs>

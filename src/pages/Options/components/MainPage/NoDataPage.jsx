@@ -23,7 +23,7 @@ export const NoDataPage = () => {
       </Typography>
       <img
         src={imgPath}
-        alt="just a welcome image"
+        alt="welcome"
         style={{ width: '300px', height: '300px' }}
       />
       <Typography variant="h3">You Haven't add any data yet</Typography>
@@ -31,7 +31,7 @@ export const NoDataPage = () => {
         add some word and come back to see the changes 🤗
       </Typography>
       <Typography>
-        If you don't know how to do, how about visit the{' '}
+        If you don't know how to do, please visit the{' '}
         <Link href="https://rakakroma.github.io/steal-word-landing-page/">
           Landing Page
         </Link>

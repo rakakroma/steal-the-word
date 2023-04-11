@@ -25,7 +25,7 @@ export const DefaultMainPage = () => {
     <Grid2
       container
       rowSpacing={2}
-      columns={{ xs: 4, sm: 8, md: 12 }}
+      columns={{ xs: 4, sm: 4, md: 12 }}
       columnSpacing={{ xs: 1, sm: 2, md: 3 }}
     >
       <Grid2 xs={2} sm={2} md={3}>

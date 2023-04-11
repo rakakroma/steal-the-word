@@ -1,13 +1,20 @@
-import { LightMode, ModeNight, SearchOutlined } from '@mui/icons-material';
-import { Box, ButtonBase, IconButton } from '@mui/material';
+import { SearchOutlined } from '@mui/icons-material';
+import { Box, ButtonBase, Typography, useMediaQuery } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
-import { styled, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
+import { styled, useTheme } from '@mui/material/styles';
 import { useKBar } from 'kbar';
-import React, { useContext } from 'react';
-import { ColorModeContext } from '../../Options';
+import React, { useEffect, useState } from 'react';
 import { PageBreadcrumbs } from './PageBreadcrumbs';
 
+const useUserAgentIsMacOS = () => {
+  const [isMacOS, setIsMacOS] = useState(false);
+
+  useEffect(() => {
+    if (navigator.userAgent.indexOf('Mac OS X') !== -1) setIsMacOS(true);
+  }, []);
+  return isMacOS;
+};
 const StyledAppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => !['open', 'drawerWidth'].includes(prop),
 })(({ theme, open, drawerWidth }) => ({
@@ -34,11 +41,14 @@ const ShortCutKey = ({ keyContent }) => {
         fontSize: '0.75rem',
         fontWeight: '700',
         lineHeight: '20px',
-        marginLeft: '5px',
-        border: '1px solid rgb(30, 73, 118)',
+        marginLeft: 'auto',
+        marginRight: '3px',
+        // borderWidth: '1px',
+        // borderStyle: 'solid',
+        // borderColor: 'palette.primary.light',
         padding: '0px 8px',
         borderRadius: '5px',
-        color: 'black',
+        color: 'palette.primary.light',
       }}
     >
       {keyContent}
@@ -47,38 +57,64 @@ const ShortCutKey = ({ keyContent }) => {
 };
 
 const SearchSection = () => {
+  const theme = useTheme();
+  const isMacOS = useUserAgentIsMacOS();
+
   const { query } = useKBar();
+  const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
   return (
     <ButtonBase
       sx={{
-        borderRadius: '8px',
+        marginLeft: 'auto',
         minWidth: '95px',
-        width: '100px',
-        display: 'flex',
-        // flexDirection: 'row-reverse',
+        maxWidth: '350px',
         padding: '3px',
-        '&:hover': {
-          backgroundColor: '#e6e6e6',
-        },
+        display: 'flex',
+        flexGrow: matches ? 1 : 0,
+        alignItems: 'center',
       }}
       onClick={query.toggle}
     >
-      <ShortCutKey keyContent="⌘k" />
-      <SearchOutlined sx={{ color: 'black' }} />
+      <Box
+        sx={{
+          borderRadius: '8px',
+          padding: '3px',
+          // border: '1px solid gray',
+          backgroundColor: 'white',
+          width: '100%',
+          height: '30px',
+          display: 'flex',
+          color: 'gray',
+          '&:hover': {
+            // backgroundColor: '#e6e6e6',
+            outline: '1px solid gray',
+          },
+        }}
+      >
+        <SearchOutlined sx={{ color: 'palette.primary.light' }} />
+        {matches && (
+          <Typography
+            sx={{ ml: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}
+          >
+            Search / Navigation...
+          </Typography>
+        )}
+        <ShortCutKey keyContent={isMacOS ? 'cmd+k' : 'ctrl+k'} />
+      </Box>
     </ButtonBase>
   );
 };
 
-const DarkModeButton = () => {
-  const theme = useTheme();
-  const { toggleDarkMode } = useContext(ColorModeContext);
-  return (
-    <IconButton onClick={toggleDarkMode}>
-      {theme.palette.mode === 'dark' ? <LightMode /> : <ModeNight />}
-    </IconButton>
-  );
-};
+// const DarkModeButton = () => {
+//   const theme = useTheme();
+//   const { toggleDarkMode } = useContext(ColorModeContext);
+//   return (
+//     <IconButton onClick={toggleDarkMode}>
+//       {theme.palette.mode === 'dark' ? <LightMode /> : <ModeNight />}
+//     </IconButton>
+//   );
+// };
 
 export const AppBar = ({ open, drawerWidth }) => {
   return (
@@ -87,7 +123,7 @@ export const AppBar = ({ open, drawerWidth }) => {
         <img
           src={chrome.runtime.getURL('transparent-thief.png')}
           alt="logo of a thief"
-          style={{ width: '39px', height: '39px' }}
+          style={{ width: '39px', height: '39px', flexGrow: 0 }}
         />
         {/* <IconButton
           aria-label="open drawer"

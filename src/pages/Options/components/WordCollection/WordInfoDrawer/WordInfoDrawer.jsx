@@ -12,7 +12,9 @@ import { AppBar } from '../../AppBar/AppBar';
 import { CurrentWordInfo } from './CurrentWordInfo';
 import { HideDrawerButton } from './HideDrawerButton';
 import { useTranslation } from 'react-i18next';
+
 const drawerWidth = 390;
+export const drawerDirectionBreakpoint = 'md';
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -23,10 +25,10 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
       duration: theme.transitions.duration.leavingScreen,
     }),
     ...(open && {
-      [theme.breakpoints.up('sm')]: {
+      [theme.breakpoints.up('md')]: {
         width: `calc(100% - ${drawerWidth}px)`,
       },
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('md')]: {
         width: '100%',
       },
       transition: theme.transitions.create('width', {
@@ -43,7 +45,10 @@ export default function PersistentDrawerRight(props) {
   );
   const { t } = useTranslation();
 
-  const breakpointOfDirectionChange = useMediaQuery('(min-width:700px)');
+  const theme = useTheme();
+  const matches = useMediaQuery(
+    theme.breakpoints.up(drawerDirectionBreakpoint)
+  );
 
   const open = wordInfoTarget?.wordId?.length > 0;
 
@@ -84,21 +89,18 @@ export default function PersistentDrawerRight(props) {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <AppBar
-        open={breakpointOfDirectionChange ? open : false}
-        drawerWidth={drawerWidth}
-      />
+      <AppBar open={matches ? open : false} drawerWidth={drawerWidth} />
       <Main open={open}>{props.children}</Main>
       <Drawer
         sx={{
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: breakpointOfDirectionChange ? drawerWidth : '100%',
+            width: matches ? drawerWidth : '100%',
             overflowX: 'hidden',
           },
         }}
         variant="persistent"
-        anchor={breakpointOfDirectionChange ? 'right' : 'bottom'}
+        anchor={matches ? 'right' : 'bottom'}
         open={open}
       >
         <HideDrawerButton />

@@ -2,9 +2,14 @@ import { ChevronRight, KeyboardArrowDown } from '@mui/icons-material';
 import { IconButton, useMediaQuery } from '@mui/material';
 import React, { useContext } from 'react';
 import { WordInfoDrawerContext } from '../../../Options';
+import { drawerDirectionBreakpoint } from './WordInfoDrawer';
+import { useTheme } from '@emotion/react';
 
 export const HideDrawerButton = () => {
-  const breakpointOfDirectionChange = useMediaQuery('(min-width:700px)');
+  const theme = useTheme();
+  const matches = useMediaQuery(
+    theme.breakpoints.up(drawerDirectionBreakpoint)
+  );
 
   const { changeWordInfoTarget } = useContext(WordInfoDrawerContext);
 
@@ -15,7 +20,7 @@ export const HideDrawerButton = () => {
 
   return (
     <IconButton sx={{ width: '30px' }} onClick={handleDrawerClose}>
-      {breakpointOfDirectionChange ? <ChevronRight /> : <KeyboardArrowDown />}
+      {matches ? <ChevronRight /> : <KeyboardArrowDown />}
     </IconButton>
   );
 };

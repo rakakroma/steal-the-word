@@ -22,14 +22,15 @@ export const ColorModeContext = createContext({});
 export const TagListContext = createContext({});
 
 const Options = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  // const [isDarkMode, setIsDarkMode] = useState(false);
   // const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
+  // const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
-  const theme = useMemo(
-    () => createTheme(isDarkMode ? darkThemeStyle : lightThemeStyle),
-    [isDarkMode]
-  );
+  // const theme = useMemo(
+  //   () => createTheme(isDarkMode ? darkThemeStyle : lightThemeStyle),
+  //   [isDarkMode]
+  // );
+  const theme = createTheme(lightThemeStyle);
 
   const contextList = useLiveQuery(() =>
     db['contextList'].orderBy('date').reverse().toArray()
@@ -72,20 +73,20 @@ const Options = () => {
         <WordListContext.Provider value={wordList}>
           <WordInfoDrawerContext.Provider value={infoTargetAndSetter}>
             <TagListContext.Provider value={tagList}>
-              <ColorModeContext.Provider value={{ toggleDarkMode }}>
-                <Box sx={{ display: 'flex' }}>
-                  <ThemeProvider theme={theme}>
-                    <CssBaseline />
-                    <Suspense fallback={<p>Loading...</p>}>
-                      <KBarCommandPalette>
-                        <PersistentDrawerRight>
-                          <Outlet />
-                        </PersistentDrawerRight>
-                      </KBarCommandPalette>
-                    </Suspense>
-                  </ThemeProvider>
-                </Box>
-              </ColorModeContext.Provider>
+              {/* <ColorModeContext.Provider value={{ toggleDarkMode }}> */}
+              <Box sx={{ display: 'flex' }}>
+                <ThemeProvider theme={theme}>
+                  <CssBaseline />
+                  <Suspense fallback={<p>Loading...</p>}>
+                    <KBarCommandPalette>
+                      <PersistentDrawerRight>
+                        <Outlet />
+                      </PersistentDrawerRight>
+                    </KBarCommandPalette>
+                  </Suspense>
+                </ThemeProvider>
+              </Box>
+              {/* </ColorModeContext.Provider> */}
             </TagListContext.Provider>
           </WordInfoDrawerContext.Provider>
         </WordListContext.Provider>

@@ -166,7 +166,8 @@ export const KBarCommandPalette = ({ children }) => {
             style={{
               boxSizing: 'content-box',
               backgroundColor: 'white',
-              minWidth: '500px',
+              minWidth: '270px',
+              maxWidth: '800px',
               width: '60vw',
               borderRadius: '5px',
               padding: '5px',
