@@ -1,6 +1,7 @@
 {
-  "i18n-ally.localesPaths": [],
+  "i18n-ally.defaultNamespace": "translation",
   "javascript.preferences.importModuleSpecifier": "non-relative",
   "typescript.preferences.importModuleSpecifier": "non-relative",
-  "i18next.i18nPaths": "/Users/robertchun39/repos/personal-project/hoorirubi-react/src/locales"
+  "i18next.i18nPaths": "/Users/robertchun39/repos/personal-project/hoorirubi-react/src/i18next-locales",
+  "i18n-ally.keystyle": "flat"
 }

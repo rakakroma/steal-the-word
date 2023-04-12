@@ -1,9 +1,9 @@
 {
   "Preferences": "設定",
   "Text Styling": "文字スタイル",
-  "Language / Api Settings": "言語／API設定",
+  "Language / API": "言語／API",
   "Backup / Restore": "バックアップ／リストア",
-  "About / Contact": "情報／連絡先",
+  "About": "情報",
   "Text Style": "文字スタイル",
   "words": "単語",
   "contexts": "文脈",
@@ -95,5 +95,14 @@
   "Use Custom Setting in Current Site?": "当サイトでカスタムの設定を有効にしますか？",
   "Floating Window": "フローティング ウィンドウ",
   "Mouse Tool": "マウスツール",
-  "Activate": "有効にする"
+  "Activate": "有効にする",
+  "add some word and come back to see the changes": "追加した後、ここに戻ってください",
+  "no-word-yet": "単語を追加しましょう",
+  "no-data-long-before": "操作の方法が知りたいなら、",
+  "no-data-long-middle": "へ、または",
+  "use the demo data in Settings": "DEMOデータを使ってみて",
+  "no-data-long-after": "。",
+  "select phrase contains target text to highlight": "単語が含まれるテキストを選択したら、ハイライトできます",
+  "Highlight This": "ハイライト",
+  "Search / Navigation": "検索／ナビ…"
 }

@@ -69,12 +69,15 @@ export const PageBreadcrumbs = () => {
               key={pathTarget}
             >
               {pathIcon[pathTarget] || <Error />}{' '}
-              {last &&
-                t(
-                  isCorrectPathName(pathTarget)
-                    ? allSettingsRoute[pathTarget] || pathTarget
-                    : 'error'
-                )}
+              <Typography variant="subtitle1" sx={{ ml: 1 }}>
+                {' '}
+                {last &&
+                  t(
+                    isCorrectPathName(pathTarget)
+                      ? allSettingsRoute[pathTarget] || pathTarget
+                      : 'error'
+                  )}
+              </Typography>
               {last && <ArrowDropDown />}
             </Box>
           );

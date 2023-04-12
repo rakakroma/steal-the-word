@@ -1,9 +1,13 @@
+import { Box, Link, Typography } from '@mui/material';
 import React from 'react';
-import { Box, Button, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export const NoDataPage = () => {
   const imgPath = chrome.runtime.getURL('flame-welcome.png');
+
+  const { t } = useTranslation();
+
   return (
     <Box
       sx={{
@@ -24,18 +28,22 @@ export const NoDataPage = () => {
       <img
         src={imgPath}
         alt="welcome"
-        style={{ width: '300px', height: '300px' }}
+        style={{ width: '150px', height: '150px' }}
       />
-      <Typography variant="h3">You Haven't add any data yet</Typography>
+      <Typography variant="h3">{t(`no-word-yet`)}</Typography>
       <Typography variant="h6">
-        add some word and come back to see the changes 🤗
+        {t('add some word and come back to see the changes')} 🤗
       </Typography>
       <Typography>
-        If you don't know how to do, please visit the{' '}
+        {t('no-data-long-before')}{' '}
         <Link href="https://rakakroma.github.io/steal-word-landing-page/">
           Landing Page
-        </Link>
-        , or <Button variant="outlined">use the demo data in Settings</Button>
+        </Link>{' '}
+        {t('no-data-long-middle')}{' '}
+        <RouterLink to="/home/settings/backup-restore">
+          {t('use the demo data in Settings')}
+        </RouterLink>
+        {t('no-data-long-after')}
       </Typography>
     </Box>
   );

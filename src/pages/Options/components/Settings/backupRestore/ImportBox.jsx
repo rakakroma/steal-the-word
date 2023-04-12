@@ -1,15 +1,28 @@
-import { Box, Button } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import React from 'react';
-import { demoData } from '../../../../../utilsForAll/demoData';
+import React, { useState } from 'react';
+// import { demoData } from '../../../../../utilsForAll/demoData';
 import { myLog } from '../../../../Content/utils/customLogger';
 import { saveImportDataToDB } from '../../../utils/ImportExport';
 import { ButtonContainer, DataCountGrid } from './DataCountGrid';
 import { handleClearAll } from './ImportAndExportBox';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
+
+// 'https://api.github.com/repos/rakakroma/steal-the-word/contents/demoData.json'
+// ('https://raw.githubusercontent.com/rakakroma/steal-the-word/main/demoData.json');
+
+const fetchDemoData = () =>
+  axios
+    .get(
+      'https://raw.githubusercontent.com/rakakroma/steal-the-word/main/demoData.json'
+    )
+    .then((response) => response.data);
 
 export const ImportBox = ({ loggedData, setLoggedData, noDataInCurrentDB }) => {
   const { t } = useTranslation();
+
+  const [fetchStatus, setFetchStatus] = useState('');
 
   const logFile = (event) => {
     let str = event.target.result;
@@ -45,7 +58,13 @@ export const ImportBox = ({ loggedData, setLoggedData, noDataInCurrentDB }) => {
           borderRadius: 2,
         }}
       >
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
           <label htmlFor="file">
             <Button component="div" variant="contained">
               {t('upload_data')}
@@ -61,11 +80,30 @@ export const ImportBox = ({ loggedData, setLoggedData, noDataInCurrentDB }) => {
 
           <Button
             onClick={() => {
-              setLoggedData(demoData);
+              setFetchStatus('fetching');
+              fetchDemoData()
+                .then((demoData) => {
+                  setLoggedData(demoData);
+                  setFetchStatus('');
+                })
+                .catch((err) => {
+                  console.error(err);
+                  setFetchStatus('failed');
+                });
             }}
           >
             {t('Or Use the Demo Data')}
           </Button>
+          {fetchStatus === 'failed' && (
+            <Typography variant="subtitle1">
+              ⚠️{t('cannot-fetch-the-demo-data-please-try-again')}
+            </Typography>
+          )}
+          {fetchStatus === 'fetching' && (
+            <Typography variant="subtitle1">
+              {t('Demo data is fetching...')}
+            </Typography>
+          )}
         </Box>
       </Box>
     );

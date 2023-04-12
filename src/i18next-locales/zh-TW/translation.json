@@ -1,9 +1,9 @@
 {
   "Preferences": "設定",
   "Text Styling": "文字樣式",
-  "Language / Api Settings": "語言／API查詢設定",
+  "Language / API": "語言／API查詢",
   "Backup / Restore": "備份／復原",
-  "About / Contact": "關於／聯絡作者",
+  "About": "關於",
   "Text Style": "文字樣式",
   "words": "單字",
   "contexts": "段落",
@@ -96,5 +96,15 @@
   "Use Custom Setting in Current Site?": "在此網站使用自訂選項？",
   "Floating Window": "漂浮視窗",
   "Mouse Tool": "滑鼠選取工具",
-  "Activate": "啟用"
+  "Activate": "啟用",
+  "cannot-fetch-the-demo-data-please-try-again": "無法取得範例檔案，請再試一次",
+  "no-word-yet": "你還沒有加入任何單字",
+  "add some word and come back to see the changes": "加入一些單字之後再回來看發生什麼事八",
+  "no-data-long-before": "如果你不知道如何操作，可以參考",
+  "no-data-long-middle": "或",
+  "no-data-long-after": "。",
+  "use the demo data in Settings": "在設定中輸入範例資料",
+  "select phrase contains target text to highlight": "選取一段包含對象單字的短句（片語），以螢光筆標註。",
+  "Highlight This": "以螢光筆標註",
+  "Search / Navigation": "搜尋／導航..."
 }

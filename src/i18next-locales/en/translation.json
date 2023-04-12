@@ -1,9 +1,9 @@
 {
   "Preferences": "Preferences",
   "Text Styling": "Text Styling",
-  "Language / Api Settings": "Language / Api Settings",
+  "Language / API": "Language / API",
   "Backup / Restore": "Backup / Restore",
-  "About / Contact": "About / Contact",
+  "About": "About",
   "Text Style": "Text Style",
   "words": "words",
   "contexts": "contexts",
@@ -96,5 +96,15 @@
   "Use Custom Setting in Current Site?": "Use Custom Setting in Current Site?",
   "Floating Window": "Floating Window",
   "Mouse Tool": "Mouse Tool",
-  "Activate": "Activate"
+  "Activate": "Activate",
+  "cannot-fetch-the-demo-data-please-try-again": "Cannot fetch the demo data, please try again",
+  "no-word-yet": "You have not add any word yet",
+  "add some word and come back to see the changes": "add some word and come back to see the changes",
+  "no-data-long-before": " If you don't know how to do, please visit the",
+  "no-data-long-middle": "or",
+  "no-data-long-after": ".",
+  "use the demo data in Settings": " use the demo data in Settings",
+  "select phrase contains target text to highlight": "select phrase contains target text to highlight",
+  "Highlight This": "Highlight this",
+  "Search / Navigation": "Search / Navigation..."
 }

@@ -20,6 +20,7 @@ export const allSettingsRoute = {
 };
 
 const MyTabs = ({ currentPath }) => {
+  const { t } = useTranslation();
   return (
     <Tabs
       value={currentPath}
@@ -28,7 +29,13 @@ const MyTabs = ({ currentPath }) => {
       scrollButtons="auto"
     >
       {Object.entries(allSettingsRoute).map(([path, label]) => (
-        <Tab label={label} value={path} to={path} component={Link} />
+        <Tab
+          key={path}
+          label={t(label)}
+          value={path}
+          to={path}
+          component={Link}
+        />
       ))}
     </Tabs>
   );
@@ -38,7 +45,11 @@ export const Settings = () => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const pathArray = pathname.split('/');
-  const currentPath = pathArray[pathArray.length - 1];
+  const currentPath = Object.keys(allSettingsRoute).includes(
+    pathArray[pathArray.length - 1]
+  )
+    ? pathArray[pathArray.length - 1]
+    : 'text-styling';
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>

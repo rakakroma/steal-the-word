@@ -35,6 +35,6 @@ export const zhTWTranslation = {
     ❗: 所有（詞彙、詞根、詞的變異形）都會區分大小寫。
 
     `,
-    CJKMatchRuleExplanation: `因為比對規則是看單字前後是否有空白，所以包含CJK文字（漢字、韓文）、泰文、爪哇文的字串僅適用"任何"作為比對規則`,
+    CJKMatchRuleExplanation: `因為比對規則是看單字前後是否有空白，所以包含CJK文字（漢字、韓文、日文假名）、泰文、爪哇文的字串僅適用"任何"作為比對規則`,
   },
 };

@@ -5,6 +5,7 @@ import { useTheme } from '@mui/material/styles';
 import React, { useState } from 'react';
 import { db } from '../../../../Background/database';
 import { DateOfContext } from './DateOfContext';
+import { useTranslation } from 'react-i18next';
 
 export const HighlightableContext = ({
   contextObj,
@@ -13,7 +14,8 @@ export const HighlightableContext = ({
 }) => {
   const [selectedPhrase, setSelectedPhrase] = useState(contextObj.phrase || '');
   const [askIfSubmit, setAskIfSubmit] = useState(false);
-  const theme = useTheme();
+
+  const { t } = useTranslation();
 
   if (!highlightable)
     return (
@@ -52,7 +54,7 @@ export const HighlightableContext = ({
   return (
     <>
       <Tooltip
-        title="✏️ select phrase contains target text to highlight"
+        title={t('select phrase contains target text to highlight')}
         placement="top"
       >
         <Box
@@ -78,7 +80,7 @@ export const HighlightableContext = ({
             sx={{ mr: 1 }}
             onClick={cancelNewPhrase}
           >
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button
             variant="contained"
@@ -86,7 +88,7 @@ export const HighlightableContext = ({
             sx={{ mr: 1 }}
             onClick={submitNewPhrase}
           >
-            Highlight This
+            {t('Highlight This')}
           </Button>
         </Box>
       )}

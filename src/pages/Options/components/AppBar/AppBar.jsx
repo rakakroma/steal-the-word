@@ -6,6 +6,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import { useKBar } from 'kbar';
 import React, { useEffect, useState } from 'react';
 import { PageBreadcrumbs } from './PageBreadcrumbs';
+import { useTranslation } from 'react-i18next';
 
 const useUserAgentIsMacOS = () => {
   const [isMacOS, setIsMacOS] = useState(false);
@@ -43,9 +44,6 @@ const ShortCutKey = ({ keyContent }) => {
         lineHeight: '20px',
         marginLeft: 'auto',
         marginRight: '3px',
-        // borderWidth: '1px',
-        // borderStyle: 'solid',
-        // borderColor: 'palette.primary.light',
         padding: '0px 8px',
         borderRadius: '5px',
         color: 'palette.primary.light',
@@ -63,6 +61,7 @@ const SearchSection = () => {
   const { query } = useKBar();
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
+  const { t } = useTranslation();
   return (
     <ButtonBase
       sx={{
@@ -80,14 +79,12 @@ const SearchSection = () => {
         sx={{
           borderRadius: '8px',
           padding: '3px',
-          // border: '1px solid gray',
           backgroundColor: 'white',
           width: '100%',
           height: '30px',
           display: 'flex',
           color: 'gray',
           '&:hover': {
-            // backgroundColor: '#e6e6e6',
             outline: '1px solid gray',
           },
         }}
@@ -97,7 +94,7 @@ const SearchSection = () => {
           <Typography
             sx={{ ml: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}
           >
-            Search / Navigation...
+            {t('Search / Navigation')}
           </Typography>
         )}
         <ShortCutKey keyContent={isMacOS ? 'cmd+k' : 'ctrl+k'} />
