@@ -8,7 +8,7 @@
 
 ## Change Log 🪵🪵🪵
 
-### v0.0.13 🐲
+### v0.0.13 🐲 (2023-04-12)
 
 - Fixed: translation
 - Fixed: the blank Link of Tutorial
