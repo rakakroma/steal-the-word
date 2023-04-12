@@ -10,7 +10,14 @@
 
 ### v0.0.13 🐲
 
-- Fixed: the blank 'Link' of Tutorial
+- Fixed: translation
+- Fixed: the blank Link of Tutorial
+- Fixed: weird default icon of page favicon
+- Added: Add Error Page
+- Changed: option's breakpoint of layout
+- Changed: redesign search button in Options
+- Changed: Router Support of tabs in Settings
+- Changed: demoData.json is stored in this github repo, can be fetched by internet, not be stored inside the extension itself
 - Changed: Stop open Options Page automatically
 
 ### v0.0.12 🦑 (2023-03-30)
