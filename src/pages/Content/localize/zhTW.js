@@ -9,6 +9,8 @@ export const zhTWTranslation = {
     highlighting: '畫螢光線',
     contextHighlight: '畫螢光線',
     contextEdit: '編輯段落',
+    definitionChooseNew: '輸入新的詞義',
+    definitionChooseOld: '選擇原有的詞義',
   },
   placeholder: {
     note: '筆記（需要的話）',

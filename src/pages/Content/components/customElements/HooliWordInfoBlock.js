@@ -42,6 +42,7 @@ import {
 import { getApiSetting } from '../../redux/workingPreferenceSlice';
 import { getLang } from '../../utils/getLang';
 import { fetchPronInfo } from '../../../Background/handler/fetchData';
+import { myLog } from '../../utils/customLogger';
 
 export const initialFormInputStatus = {
   editingTagDefId: null,
@@ -132,7 +133,7 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
         if (allTrue) mainCheckEle.checked = true;
       }
     }
-    // this.requestUpdate();
+    this.requestUpdate();
   }
 
   _handleValidInput(e) {
@@ -164,6 +165,8 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
   }
 
   _formValidation(targetNames, targetValues, options) {
+    myLog(targetNames, targetValues, options);
+
     if (options) {
       if (options.includes('newWord')) {
         if (findDuplicateWord(targetValues.word, store.getState())) {
@@ -221,12 +224,15 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
     const formData = new FormData(this.renderRoot.querySelector('form'));
     const formObj = Object.fromEntries(formData.entries());
 
+    myLog(formObj);
     if (this.mode === 'deleting') {
       submitDelete(this, formObj);
     }
 
     const word = formObj.word?.trim();
-    const annotation = formObj.annotation?.trim();
+    const annotation = this.renderRoot
+      .querySelector('.annotation-input')
+      ?.value.trim();
     const stem = formObj.stem?.trim();
     const matchRule = formObj['match-rule'];
     const selectedDefinitionId = formObj['definition-select'];
@@ -237,16 +243,6 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
       .querySelector('.long-note-textarea')
       ?.value.trim();
     const variants = this.renderRoot.querySelector('#variants-input')?.tags;
-    // console.log({
-    //   word,
-    //   annotation,
-    //   stem,
-    //   matchRule,
-    //   selectedDefinitionId,
-    //   context,
-    //   wordNote,
-    //   variants,
-    // });
 
     if (this.mode === 'newWord') {
       submitNewWord(

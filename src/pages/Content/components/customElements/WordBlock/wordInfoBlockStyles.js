@@ -256,6 +256,9 @@ export const wordInfoBlockStyles = css`
     margin-top: 3px;
     margin-bottom: 1px;
   }
+  #match-rule-selection-container {
+    margin-bottom: 4px;
+  }
   .vertical-line {
     position: absolute;
     left: -7px;
@@ -273,11 +276,6 @@ export const wordInfoBlockStyles = css`
   select {
     background-color: var(--block-background-color);
     color: var(--block-text-color);
-  }
-  .annotation-input {
-    border: none;
-    margin-bottom: 5px;
-    padding-left: 5px;
   }
   #word-input {
     font-size: 16px;

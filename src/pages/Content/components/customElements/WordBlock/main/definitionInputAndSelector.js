@@ -16,33 +16,29 @@ const definitionInput = (wordBlock, definitionObj) => {
   });
   // }
   return html`
-              <div id=${
-                'definition-input-container-' + definitionId
-              } class='definition-input-container'>
-      <input 
-      autocomplete="off"
-      name='annotation'
-      class='editable annotation-input' 
-      autofocus
-      placeholder="${translate('placeholder.annotation')}"
-      type="text" 
-      id=${'annotation-input-' + definitionId}
-      .value="${annotation}"
-      @input="${wordBlock._handleValidInput}"
-      @keypress="${wordBlock._handleEnterSubmit}"
-      @change="${wordBlock._handleShortNote}">
-      </input>
+    <div
+      id=${'definition-input-container-' + definitionId}
+      class="definition-input-container"
+    >
+      <hooli-textarea
+        id=${'annotation-input-' + definitionId}
+        placeholder="${translate('placeholder.annotation')}"
+        class="editable annotation-input"
+        value=${annotation}
+        @keypress="${wordBlock._handleEnterSubmit}"
+        @input="${wordBlock._handleValidInput}"
+      ></hooli-textarea>
 
-      <hooli-textarea 
-      value=${note}
-      class='editable long-note-textarea' 
-      id=${'long-note-textarea-' + definitionId} 
-      placeholder="${translate('placeholder.note')}"
-       @input="${wordBlock._handleValidInput}"
-        @keypress="${wordBlock._handleEnterSubmit}">
-        </hooli-textarea>
-        </div>
-      `;
+      <hooli-textarea
+        value=${note}
+        class="editable long-note-textarea"
+        id=${'long-note-textarea-' + definitionId}
+        placeholder="${translate('placeholder.note')}"
+        @input="${wordBlock._handleValidInput}"
+        @keypress="${wordBlock._handleEnterSubmit}"
+      ></hooli-textarea>
+    </div>
+  `;
 };
 
 const definitionSelectable = (definitionObj, isChecked) => {
@@ -138,14 +134,14 @@ export const definitionInputAndSelector = (wordBlock) => {
                 type="button"
                 @click="${handleChangeToSelectMode}"
               >
-                choose old one
+                ${translate('button.definitionChooseOld')}
               </button> `
           : html`<button
               class="text-button"
               type="button"
               @click="${handleChangeToAddMode}"
             >
-              choose new definition
+              ${translate('button.definitionChooseNew')}
             </button>`}
       </div>
     </div>`;

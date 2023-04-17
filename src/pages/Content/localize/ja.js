@@ -9,6 +9,8 @@ export const jaTranslation = {
     highlighting: 'ハイライト',
     contextHighlight: 'ハイライト',
     contextEdit: '文脈編集',
+    definitionChooseNew: '新しい説明を追加する',
+    definitionChooseOld: '元の説明を選択する',
   },
   placeholder: {
     note: 'ノート (任意)',

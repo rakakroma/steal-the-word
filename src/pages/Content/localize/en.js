@@ -9,6 +9,8 @@ export const enTranslation = {
     highlighting: 'Highlight',
     contextHighlight: 'highlight context',
     contextEdit: 'edit context',
+    definitionChooseNew: 'add new definition',
+    definitionChooseOld: 'choose old definition',
   },
   placeholder: {
     note: 'note (optional)',

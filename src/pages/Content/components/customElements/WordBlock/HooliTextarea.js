@@ -29,9 +29,11 @@ class HooliTextarea extends LitElement {
     css`
       div {
         position: relative;
+        color: inherit;
+        background-color: inherit;
+        font-family: inherit;
       }
       textarea {
-        position: relative;
         font-family: inherit;
         font-size: 13px;
         resize: none;
@@ -44,10 +46,15 @@ class HooliTextarea extends LitElement {
         color: inherit;
         background-color: inherit;
         border: none;
+        padding-bottom: 4px;
       }
-      textarea:focus {
-        outline: none;
+
+      textarea:focus,
+      textarea:focus-within,
+      textarea:hover {
+        outline: 1.5px solid #cecdcd;
       }
+
       #count-length.invalid-length {
         color: #ff7676;
       }
@@ -57,7 +64,7 @@ class HooliTextarea extends LitElement {
       #count-length {
         color: rgb(208 204 204);
         position: absolute;
-        bottom: -4px;
+        bottom: 0px;
         right: 10px;
       }
     `,
@@ -71,15 +78,17 @@ class HooliTextarea extends LitElement {
       'max-length': this.value.length === this.maxLength,
     };
     return html`
-      <textarea
-        @input="${this._handleAutoHeightAndUpdateValue}"
-        .placeholder="${this.placeholder}"
-        .maxLength="${this.maxLength}"
-        .value=${this.value}
-      ></textarea>
-      <span id="count-length" class=${classMap(lengthCountClass)}
-        >${this.value.length}/${this.maxLength}</span
-      >
+      <div>
+        <textarea
+          @input="${this._handleAutoHeightAndUpdateValue}"
+          .placeholder="${this.placeholder}"
+          .maxLength="${this.maxLength}"
+          .value=${this.value}
+        ></textarea>
+        <span id="count-length" class=${classMap(lengthCountClass)}
+          >${this.value.length}/${this.maxLength}</span
+        >
+      </div>
     `;
   }
 

@@ -23,7 +23,7 @@ const contextDisplay = (
       <div class="vertical-line"></div>
       <div class="inner-context-container">
         ${mode === 'deleting' && contexts.length > 1
-          ? html`<input type='checkbox' class='checkbox context-delete-checkbox' name=${contextObj.id} id='c-${contextObj.id}' @change="${wordBlock.handleCheckboxSelect}"></input>`
+          ? html`<input type='checkbox' class='checkbox context-delete-checkbox' name=${contextObj.id} id='c-${contextObj.id}' @change="${wordBlock._handleCheckboxSelect}"></input>`
           : null}
         <h5 class="phrase">${contextObj.phrase}</h5>
         <p id="p-${contextObj.id}">
