@@ -76,15 +76,10 @@ export const PopupTabs = ({ currentDomain, validPlace }) => {
   const { globalPreference } = localStorageDataAndMethods;
 
   useEffect(() => {
-    if (
-      domainData &&
-      domainData.customRule &&
-      globalPreference.activate &&
-      validPlace
-    ) {
+    if (domainData && domainData.customRule && validPlace) {
       setCurrentTab(0);
     }
-  }, [domainData, validPlace, globalPreference]);
+  }, [domainData, validPlace]);
 
   const handleChange = (e, value) => {
     if (!validPlace || !globalPreference.activate) return;

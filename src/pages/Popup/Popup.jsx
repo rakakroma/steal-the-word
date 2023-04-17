@@ -1,22 +1,20 @@
 import { CollectionsBookmark, Settings } from '@mui/icons-material';
 import {
   Box,
-  Button,
-  createTheme,
   IconButton,
   ThemeProvider,
   Tooltip,
   Typography,
+  createTheme,
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import React, { Suspense } from 'react';
 
-import { styled } from '@mui/system';
+import { useTranslation } from 'react-i18next';
 import { currentVersion } from '../../utilsForAll/allEnv';
 import './Popup.css';
 import { PopupTabs } from './PopupTabs';
 import { useCurrentTabData } from './useCurrentTabData';
-import { useTranslation } from 'react-i18next';
 
 // const HoverButton = styled(Button)`
 //   height: 30px;

@@ -19,7 +19,7 @@ export const getDataFromName = (name) => {
 export const getDefaultValueFromData = (wordObj, contextObjs) => {
   const values = {
     word: wordObj.word,
-    variants: convertValueToFitCreatableInput(wordObj.variants),
+    variants: convertValueToFitCreatableInput(wordObj.variants || []),
     stem: wordObj.stem,
     matchRule: wordObj.matchRule,
   };

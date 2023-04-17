@@ -72,6 +72,7 @@ export const CurrentWordInfo = () => {
   const targetWord = targetWordId
     ? wordList.find((wordObj) => wordObj.id === targetWordId)
     : null;
+
   const targetWordContexts = contextList
     ?.filter((contextObj) => contextObj.wordId === targetWordId)
     ?.map((contextObj) => {

@@ -102,7 +102,7 @@ export const WordListInWordCollection = ({
         : wordList?.find((wordObj) => wordObj.id === dataObj.wordId);
 
     if (!wordObj) {
-      console.error(dataObj.wordId);
+      console.error('no word!:' + dataObj.wordId);
       //FIXME: maybe i should just delete that data?
       return null;
     }

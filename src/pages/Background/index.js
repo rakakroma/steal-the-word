@@ -25,15 +25,21 @@ chrome.runtime.onInstalled.addListener(async () => {
   });
   const currentData = await chrome.storage.local.get(Object.keys(initialData));
 
-  const dataToSet = Object.entries(initialData).reduce(
-    (accu, [key, initialValue]) => {
-      if (currentData[key]) accu[key] = currentData[key];
-      return accu;
-    },
-    initialData
-  );
+  if (Object.keys(currentData).length !== Object.keys(initialData).length) {
+    let dataToSet = null;
+    if (Object.keys(currentData).length === 0) {
+      dataToSet = initialData;
+    } else {
+      Object.entries(initialData).forEach(([key, initialValue]) => {
+        if (!currentData.hasOwnProperty(key)) {
+          dataToSet[key] = initialValue;
+        }
+      });
+    }
 
-  chrome.storage.local.set(dataToSet);
+    chrome.storage.local.set(dataToSet);
+  }
+
   // chrome.runtime.openOptionsPage();
   // stop open options automatically because it would be opened whenever this extension got version updated,
   //which is annoying..
