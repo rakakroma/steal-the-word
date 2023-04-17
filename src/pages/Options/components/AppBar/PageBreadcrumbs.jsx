@@ -39,10 +39,7 @@ export const PageBreadcrumbs = () => {
     Object.keys(pathIcon).includes(currentPathTargetName);
 
   return (
-    <HoveringNav
-      pathIcon={pathIcon}
-      currentPathName={pathArray[pathArray.length - 1]}
-    >
+    <HoveringNav pathIcon={pathIcon} pathArray={pathArray}>
       <Breadcrumbs
         sx={{
           width: 'max-content',

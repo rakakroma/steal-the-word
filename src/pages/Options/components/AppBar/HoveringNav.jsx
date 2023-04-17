@@ -30,10 +30,13 @@ const FloatingNavList = styled(({ className, ...props }) => (
     cursor: 'pointer',
   },
 }));
-export const HoveringNav = ({ children, currentPathName, pathIcon }) => {
+export const HoveringNav = ({ children, pathArray, pathIcon }) => {
   const [open, setOpen] = useState(true);
 
   const { t } = useTranslation();
+
+  const currentPathName = pathArray[pathArray.length - 1];
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -54,8 +57,11 @@ export const HoveringNav = ({ children, currentPathName, pathIcon }) => {
   }) => {
     const pathHref =
       targetPathName === 'home' ? '#/home' : `#/home/${targetPathName}`;
+    const isCurrentPath =
+      currentPathName === targetPathName ||
+      (targetPathName === 'settings' &&
+        pathArray[pathArray.length - 2] === 'settings');
 
-    const isCurrentPath = currentPathName === targetPathName;
     return (
       <ListItem
         disablePadding
