@@ -1,10 +1,9 @@
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import React from 'react';
 
 export const ListSubTitle = ({ content, fontSize }) => {
-  const theme = useTheme();
   return (
-    <Box sx={{ backgroundColor: theme.palette.background.default }}>
+    <Box>
       <fieldset
         style={{
           border: 'none',

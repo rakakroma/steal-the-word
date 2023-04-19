@@ -75,12 +75,6 @@ export const submitDelete = (wordBlock, formObj) => {
       request.action = 'deleteContexts';
     }
     submitAndExecute(wordBlock, request, () => {
-      // store.dispatch(
-      //   updateOneWord({
-      //     ...wordBlock.wordObj,
-      //     definitions: request.newDefinitions,
-      //   })
-      // );
       store.dispatch(
         getContextsDataFromDB({ wordId: wordBlock.wordObj.id, force: true })
       );

@@ -8,6 +8,14 @@
 
 ## Change Log 🪵🪵🪵
 
+### v0.0.14 🛣️ (2023-04-19)
+
+- Fixed: Delete Checkbox Bug (Content Script)
+- Fixed: Translation
+- Fixed: preferences overwritten when onInstalled
+- Fixed: NavLink in Settings
+- Changed: Annotation Input is now using hooli-textarea
+
 ### v0.0.13 🐲 (2023-04-12)
 
 - Fixed: translation
