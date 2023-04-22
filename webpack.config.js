@@ -86,18 +86,23 @@ var options = {
         loader: 'html-loader',
         exclude: /node_modules/,
       },
-      { test: /\.(ts|tsx)$/, loader: 'ts-loader', exclude: /node_modules/ },
+      {
+        test: /\.(ts)$/,
+        loader: 'esbuild-loader',
+        exclude: /node_modules/,
+        options: {
+          loader: 'ts',
+          target: 'es2015',
+          tsconfig: './tsconfig.json',
+        },
+      },
       {
         test: /\.(js|jsx)$/,
         use: [
           {
             loader: 'source-map-loader',
           },
-          // {
-          //   loader: 'babel-loader',
-          // },
           {
-            // test: /\.js$/,
             loader: 'esbuild-loader',
             options: {
               loader: 'jsx', // Remove this if you're not using JSX
@@ -124,11 +129,26 @@ var options = {
     new CopyWebpackPlugin({
       patterns: [
         {
+          from: 'src/pages/Content/content.styles.css',
+          to: path.join(__dirname, 'build'),
+          force: true,
+        },
+        {
+          from: 'src/assets/img',
+          to: path.join(__dirname, 'build'),
+          force: false,
+        },
+        {
+          from: 'src/_locales',
+          to: path.join(__dirname, 'build', '_locales'),
+          force: true,
+        },
+        {
           from: 'src/manifest.json',
           to: path.join(__dirname, 'build'),
           force: true,
           transform: function (content, path) {
-            // generates the manifest file using the package.json informations
+            // generates the manifest file using the package.json information
             return Buffer.from(
               JSON.stringify({
                 description: process.env.npm_package_description,
@@ -140,60 +160,7 @@ var options = {
         },
       ],
     }),
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: 'src/pages/Content/content.styles.css',
-          to: path.join(__dirname, 'build'),
-          force: true,
-        },
-      ],
-    }),
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: 'src/assets/img/icon-128.png',
-          to: path.join(__dirname, 'build'),
-          force: true,
-        },
-      ],
-    }),
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: 'src/assets/img/transparent-thief.png',
-          to: path.join(__dirname, 'build'),
-          force: true,
-        },
-      ],
-    }),
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: 'src/assets/img/icon-48.png',
-          to: path.join(__dirname, 'build'),
-          force: true,
-        },
-      ],
-    }),
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: 'src/_locales',
-          to: path.join(__dirname, 'build', '_locales'),
-          force: true,
-        },
-      ],
-    }),
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: 'src/assets/img/flame-welcome.png',
-          to: path.join(__dirname, 'build'),
-          force: true,
-        },
-      ],
-    }),
+
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'src', 'pages', 'Options', 'index.html'),
       filename: 'options.html',
