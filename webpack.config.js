@@ -93,7 +93,6 @@ var options = {
         options: {
           loader: 'ts',
           target: 'es2015',
-          tsconfig: './tsconfig.json',
         },
       },
       {

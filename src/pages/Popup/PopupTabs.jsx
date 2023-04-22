@@ -1,11 +1,8 @@
-// import TabUnstyled from '@mui/base/TabUnstyled';
+import TabsUnstyled from '@mui/base/TabsUnstyled';
+import TabsListUnstyled from '@mui/base/TabsListUnstyled';
+import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import { buttonUnstyledClasses } from '@mui/base/ButtonUnstyled';
 import TabUnstyled, { tabUnstyledClasses } from '@mui/base/TabUnstyled';
-
-import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
-import TabsUnstyled from '@mui/base/TabsUnstyled';
-import TabsListUnstyled from '@mui/base/TabUnstyled';
-import { blue } from '@mui/material/colors';
 import { styled } from '@mui/system';
 import React, { useEffect, useState } from 'react';
 import {
@@ -14,11 +11,15 @@ import {
 } from './ToggleOptions';
 import { useDbDomainData, useLocalStorageData } from './useDataHook';
 import { useTranslation } from 'react-i18next';
+import { blue } from '@mui/material/colors';
 
 const TabsList = styled(TabsListUnstyled)`
-  width: 220px;
+  width: calc(100% - 10px);
   border-radius: 4px;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
+  background-color: lightgray;
+  padding-left: 4px;
+  padding-right: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,6 +62,7 @@ const Tab = styled(TabUnstyled)`
 `;
 
 const Tabs = styled(TabsUnstyled)`
+  user-select: none;
   width: 100%;
   margin: 0;
   padding: 2px;
@@ -85,6 +87,7 @@ export const PopupTabs = ({ currentDomain, validPlace }) => {
     if (!validPlace || !globalPreference.activate) return;
     setCurrentTab(value);
   };
+
   return (
     <Tabs value={currentTab} onChange={handleChange}>
       <TabsList>
@@ -97,6 +100,7 @@ export const PopupTabs = ({ currentDomain, validPlace }) => {
           {t('All Sites')}
         </Tab>
       </TabsList>
+
       <TabPanelUnstyled value={0}>
         <CurrentSiteToggleOptions
           domainDataAndMethods={domainDataAndMethods}

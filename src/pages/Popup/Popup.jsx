@@ -122,7 +122,6 @@ const Popup = () => {
             pr: 1,
             m: 0,
             color: 'grey',
-            // borderTop: '1px solid lightgray',
             textAlign: 'right',
             userSelect: 'none',
             fontSize: '10px',

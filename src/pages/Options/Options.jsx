@@ -18,20 +18,21 @@ export const ContextListContext = createContext([]);
 export const DomainAndLinkListContext = createContext([]);
 export const WordListContext = createContext([]);
 export const WordInfoDrawerContext = createContext({});
-export const ColorModeContext = createContext({});
 export const TagListContext = createContext({});
 
-const Options = (props) => {
-  // const [isDarkMode, setIsDarkMode] = useState(false);
+const MyThemeProvider = (props) => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
   // const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   // const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
-  // const theme = useMemo(
-  //   () => createTheme(isDarkMode ? darkThemeStyle : lightThemeStyle),
-  //   [isDarkMode]
-  // );
-  const theme = createTheme(lightThemeStyle);
+  const theme = useMemo(
+    () => createTheme(isDarkMode ? darkThemeStyle : lightThemeStyle),
+    [isDarkMode]
+  );
+  return <ThemeProvider theme={theme}>{props.children}</ThemeProvider>;
+};
 
+const WordDataProvider = (props) => {
   const contextList = useLiveQuery(() =>
     db['contextList'].orderBy('date').reverse().toArray()
   );
@@ -39,6 +40,20 @@ const Options = (props) => {
   const wordList = useLiveQuery(() => db.wordList.toArray());
   const tagList = useLiveQuery(() => db.tagList.toArray());
 
+  return (
+    <ContextListContext.Provider value={contextList}>
+      <DomainAndLinkListContext.Provider value={domainAndLinkList}>
+        <WordListContext.Provider value={wordList}>
+          <TagListContext.Provider value={tagList}>
+            {props.children}
+          </TagListContext.Provider>
+        </WordListContext.Provider>
+      </DomainAndLinkListContext.Provider>
+    </ContextListContext.Provider>
+  );
+};
+
+const Options = (props) => {
   const [wordInfoTarget, setWordInfoTarget] = useState(null);
 
   const changeWordInfoTarget = useCallback((wordAndContextId) => {
@@ -68,30 +83,22 @@ const Options = (props) => {
   );
 
   return (
-    <ContextListContext.Provider value={contextList}>
-      <DomainAndLinkListContext.Provider value={domainAndLinkList}>
-        <WordListContext.Provider value={wordList}>
-          <WordInfoDrawerContext.Provider value={infoTargetAndSetter}>
-            <TagListContext.Provider value={tagList}>
-              {/* <ColorModeContext.Provider value={{ toggleDarkMode }}> */}
-              <Box sx={{ display: 'flex' }}>
-                <ThemeProvider theme={theme}>
-                  <CssBaseline />
-                  <Suspense fallback={<p>Loading...</p>}>
-                    <KBarCommandPalette>
-                      <PersistentDrawerRight>
-                        {props.outlet ? props.outlet : <Outlet />}
-                      </PersistentDrawerRight>
-                    </KBarCommandPalette>
-                  </Suspense>
-                </ThemeProvider>
-              </Box>
-              {/* </ColorModeContext.Provider> */}
-            </TagListContext.Provider>
-          </WordInfoDrawerContext.Provider>
-        </WordListContext.Provider>
-      </DomainAndLinkListContext.Provider>
-    </ContextListContext.Provider>
+    <WordDataProvider>
+      <WordInfoDrawerContext.Provider value={infoTargetAndSetter}>
+        <Box sx={{ display: 'flex' }}>
+          <MyThemeProvider>
+            <CssBaseline />
+            <Suspense fallback={<p>Loading...</p>}>
+              <KBarCommandPalette>
+                <PersistentDrawerRight>
+                  {props.outlet ? props.outlet : <Outlet />}
+                </PersistentDrawerRight>
+              </KBarCommandPalette>
+            </Suspense>
+          </MyThemeProvider>
+        </Box>
+      </WordInfoDrawerContext.Provider>
+    </WordDataProvider>
   );
 };
 
