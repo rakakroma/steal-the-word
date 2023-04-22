@@ -2,7 +2,10 @@ import '@webcomponents/custom-elements';
 import { LitElement, html, css } from 'lit';
 import { connect } from 'pwa-helpers/connect-mixin.js';
 import { store } from '../../redux/store';
-import { zIndexStyle } from './WordBlock/wordInfoBlockStyles';
+import {
+  colorAndTextStyle,
+  zIndexStyle,
+} from './WordBlock/wordInfoBlockStyles';
 
 class HooliWordListMinimizedBar extends connect(store)(LitElement) {
   get properties() {
@@ -22,10 +25,11 @@ class HooliWordListMinimizedBar extends connect(store)(LitElement) {
   }
   static styles = [
     zIndexStyle,
+    colorAndTextStyle,
     css`
       :host {
-        width: fit-content;
-        height: 28px;
+        width: 60px;
+        height: 25px;
         background-color: rgb(213 213 213);
         box-shadow: rgb(0 0 0 / 41%) 0px 3.1px 7.1px;
         position: fixed;
@@ -34,7 +38,6 @@ class HooliWordListMinimizedBar extends connect(store)(LitElement) {
         z-index: var(--lower-z-index);
         padding: 2px 5px 0 5px;
         border-radius: 3px 3px 0 0;
-        color: #0d925b;
         font-weight: 600;
       }
       :host(:hover) {
@@ -46,14 +49,13 @@ class HooliWordListMinimizedBar extends connect(store)(LitElement) {
         padding-left: 3px;
         padding-right: 3px;
         border-radius: 5px;
-        border: 1px solid white;
         font-size: 12px;
         margin-left: 3px;
       }
       div {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica,
-          Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
-        font-size: 19px;
+        font-family: var(--hooli-font-family);
+        font-size: 17px;
+        color: #0d925b;
       }
     `,
   ];

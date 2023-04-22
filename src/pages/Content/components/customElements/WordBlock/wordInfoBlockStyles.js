@@ -6,6 +6,16 @@ export const zIndexStyle = css`
     --lower-z-index: 2147483643;
   }
 `;
+export const colorAndTextStyle = css`
+  :host {
+    --block-background-color: white;
+    --block-text-color: black;
+    --secondary-text-color: #777777;
+    --hooli-font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial,
+      sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    accent-color: #74992e;
+  }
+`;
 
 export const iconButtonStyle = css`
   .icon-button {
@@ -26,18 +36,11 @@ export const wordInfoBlockStyles = css`
     position: absolute;
     transform: translateX(-50%);
   }
-  * {
-    font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
-      'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-    accent-color: #74992e;
-  }
 
   #container {
-    --block-background-color: white;
-    --block-text-color: black;
-    --secondary-text-color: #777777;
     background-color: var(--block-background-color);
     color: var(--block-text-color);
+    font-family: var(--hooli-font-family);
     text-align: initial;
     width: 390px;
     max-height: 400px;

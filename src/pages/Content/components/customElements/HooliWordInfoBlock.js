@@ -2,7 +2,6 @@ import '@webcomponents/custom-elements';
 
 import { html, LitElement } from 'lit';
 import { getAllMatchTextFromWordObj } from '../../../../utilsForAll/getInfoFromWordObj';
-// import { myList } from '../../index';
 import './HolliToolTip';
 import './WordBlock/HooliMenu';
 import './WordBlock/HooliSelectableTagsInput';
@@ -19,6 +18,7 @@ import { headingElement } from './WordBlock/heading/headingElement';
 import { contextSection } from './WordBlock/main/contextBlock';
 import { submitSection } from './WordBlock/submitSection';
 import {
+  colorAndTextStyle,
   iconButtonStyle,
   wordInfoBlockStyles,
   zIndexStyle,
@@ -90,7 +90,12 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
     this.apiSetting = getApiSetting(state);
   }
 
-  static styles = [zIndexStyle, wordInfoBlockStyles, iconButtonStyle];
+  static styles = [
+    zIndexStyle,
+    colorAndTextStyle,
+    wordInfoBlockStyles,
+    iconButtonStyle,
+  ];
 
   _matchWordsArray() {
     return getAllMatchTextFromWordObj(this.wordObj);
