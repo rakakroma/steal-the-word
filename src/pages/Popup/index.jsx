@@ -1,10 +1,10 @@
 import React from 'react';
-import { render } from 'react-dom';
-
+import { createRoot } from 'react-dom/client';
 import Popup from './Popup';
 import './index.css';
 import '../../utilsForAll/i18n';
 
-render(<Popup />, window.document.querySelector('#app-container'));
+const root = createRoot(window.document.querySelector('#app-container'));
+root.render(<Popup />);
 
 if (module.hot) module.hot.accept();
