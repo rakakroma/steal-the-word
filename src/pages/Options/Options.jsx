@@ -20,7 +20,7 @@ export const WordListContext = createContext([]);
 export const WordInfoDrawerContext = createContext({});
 export const TagListContext = createContext({});
 
-const MyThemeProvider = (props) => {
+const MyThemeProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   // const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   // const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
@@ -29,10 +29,10 @@ const MyThemeProvider = (props) => {
     () => createTheme(isDarkMode ? darkThemeStyle : lightThemeStyle),
     [isDarkMode]
   );
-  return <ThemeProvider theme={theme}>{props.children}</ThemeProvider>;
+  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 };
 
-const WordDataProvider = (props) => {
+const WordDataProvider = ({ children }) => {
   const contextList = useLiveQuery(() =>
     db['contextList'].orderBy('date').reverse().toArray()
   );
@@ -45,7 +45,7 @@ const WordDataProvider = (props) => {
       <DomainAndLinkListContext.Provider value={domainAndLinkList}>
         <WordListContext.Provider value={wordList}>
           <TagListContext.Provider value={tagList}>
-            {props.children}
+            {children}
           </TagListContext.Provider>
         </WordListContext.Provider>
       </DomainAndLinkListContext.Provider>
@@ -53,7 +53,7 @@ const WordDataProvider = (props) => {
   );
 };
 
-const Options = (props) => {
+const WordTargetProvider = ({ children }) => {
   const [wordInfoTarget, setWordInfoTarget] = useState(null);
 
   const changeWordInfoTarget = useCallback((wordAndContextId) => {
@@ -83,8 +83,16 @@ const Options = (props) => {
   );
 
   return (
+    <WordInfoDrawerContext.Provider value={infoTargetAndSetter}>
+      {children}
+    </WordInfoDrawerContext.Provider>
+  );
+};
+
+const Options = (props) => {
+  return (
     <WordDataProvider>
-      <WordInfoDrawerContext.Provider value={infoTargetAndSetter}>
+      <WordTargetProvider>
         <Box sx={{ display: 'flex' }}>
           <MyThemeProvider>
             <CssBaseline />
@@ -97,7 +105,7 @@ const Options = (props) => {
             </Suspense>
           </MyThemeProvider>
         </Box>
-      </WordInfoDrawerContext.Provider>
+      </WordTargetProvider>
     </WordDataProvider>
   );
 };

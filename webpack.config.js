@@ -7,15 +7,16 @@ const webpack = require('webpack'),
   TerserPlugin = require('terser-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
+var ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
-var alias = {
-  'react-dom': '@hot-loader/react-dom',
-};
+var alias = {};
 
 // load the secrets
 var secretsPath = path.join(__dirname, 'secrets.' + env.NODE_ENV + '.js');
+
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
 var fileExtensions = [
   'jpg',
@@ -120,6 +121,7 @@ var options = {
       .concat(['.js', '.jsx', '.ts', '.tsx', '.css']),
   },
   plugins: [
+    isDevelopment && new ReactRefreshWebpackPlugin(),
     new Dotenv(),
     new CleanWebpackPlugin({ verbose: false }),
     new webpack.ProgressPlugin(),
