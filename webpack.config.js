@@ -3,11 +3,11 @@ const webpack = require('webpack'),
   fileSystem = require('fs-extra'),
   env = require('./utils/env'),
   CopyWebpackPlugin = require('copy-webpack-plugin'),
-  HtmlWebpackPlugin = require('html-webpack-plugin'),
-  TerserPlugin = require('terser-webpack-plugin');
+  HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 var ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const { EsbuildPlugin } = require('esbuild-loader');
 
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
@@ -186,8 +186,8 @@ if (env.NODE_ENV === 'development') {
   options.optimization = {
     minimize: true,
     minimizer: [
-      new TerserPlugin({
-        extractComments: false,
+      new EsbuildPlugin({
+        target: 'es2015',
       }),
     ],
   };
