@@ -104,5 +104,8 @@
   "no-data-long-after": "。",
   "select phrase contains target text to highlight": "",
   "Highlight This": "ハイライト",
-  "Search / Navigation": "検索／ナビ…"
+  "Search / Navigation": "検索／ナビ…",
+  "select context text and highlight": "テキストを選択して、ハイライトしましょう",
+  "all sites": "全サイト",
+  "top 10 sites": "トップ１０"
 }

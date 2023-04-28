@@ -321,6 +321,9 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
 
     if (!targetEle && !loop) this._handleScrollToWord(direction, true);
 
+    if (!targetEle) {
+      this._handleRefresh();
+    }
     if (targetEle) {
       this.lookingWord.currentFocusCount = i;
       this.requestUpdate();

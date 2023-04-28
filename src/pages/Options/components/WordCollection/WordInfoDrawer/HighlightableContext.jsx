@@ -49,15 +49,7 @@ export const HighlightableContext = ({
 
   return (
     <>
-      <Tooltip
-        title={t('select context text and highlight')}
-        placement="top"
-        sx={{
-          '& .MuiTooltip-tooltip': {
-            backgroundColor: 'black',
-          },
-        }}
-      >
+      <Tooltip title={t('select context text and highlight')} placement="top">
         <Box
           onMouseUp={handleHighlightSelect}
           sx={{

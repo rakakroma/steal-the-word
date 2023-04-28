@@ -106,5 +106,8 @@
   "use the demo data in Settings": " use the demo data in Settings",
   "select phrase contains target text to highlight": "",
   "Highlight This": "Highlight this",
-  "Search / Navigation": "Search / Navigation..."
+  "Search / Navigation": "Search / Navigation...",
+  "select context text and highlight": "select context text and highlight",
+  "all sites": "all sites",
+  "top 10 sites": "top 10 sites"
 }

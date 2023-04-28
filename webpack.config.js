@@ -88,11 +88,11 @@ var options = {
         exclude: /node_modules/,
       },
       {
-        test: /\.(ts)$/,
+        test: /\.(ts|tsx)$/,
         loader: 'esbuild-loader',
         exclude: /node_modules/,
         options: {
-          loader: 'ts',
+          loader: 'tsx',
           target: 'es2015',
         },
       },
