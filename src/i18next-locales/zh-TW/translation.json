@@ -104,7 +104,7 @@
   "no-data-long-middle": "或",
   "no-data-long-after": "。",
   "use the demo data in Settings": "在設定中輸入範例資料",
-  "select phrase contains target text to highlight": "選取一段包含對象單字的短句（片語），以螢光筆標註。",
+  "select phrase contains target text to highlight": "",
   "Highlight This": "以螢光筆標註",
   "Search / Navigation": "搜尋／導航..."
 }

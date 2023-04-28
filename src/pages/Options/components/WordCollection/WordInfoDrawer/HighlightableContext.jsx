@@ -31,11 +31,7 @@ export const HighlightableContext = ({
 
   const handleHighlightSelect = () => {
     const selectedString = window.getSelection().toString().trim();
-    if (
-      !selectedString ||
-      contextObj.context.indexOf(selectedString) < 0 ||
-      !matchTexts.find((text) => selectedString.indexOf(text) > 0)
-    )
+    if (!selectedString || contextObj.context.indexOf(selectedString) < 0)
       return;
     setSelectedPhrase(selectedString);
     setAskIfSubmit(true);
@@ -54,8 +50,13 @@ export const HighlightableContext = ({
   return (
     <>
       <Tooltip
-        title={t('select phrase contains target text to highlight')}
+        title={t('select context text and highlight')}
         placement="top"
+        sx={{
+          '& .MuiTooltip-tooltip': {
+            backgroundColor: 'black',
+          },
+        }}
       >
         <Box
           onMouseUp={handleHighlightSelect}

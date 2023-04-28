@@ -17,11 +17,11 @@ import {
 } from '../../redux/displayingWordListSlice';
 import { store } from '../../redux/store';
 import { getTagList } from '../../redux/wordDataSlice';
-import { transformElementId } from '../../utils/renderRuby';
 import {
   colorAndTextStyle,
   zIndexStyle,
 } from './WordBlock/wordInfoBlockStyles';
+import { transformElementId } from '../../utils/transformElementId';
 
 class HooliFloatingWordList extends connect(store)(LitElement) {
   static get properties() {
@@ -117,8 +117,7 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
 
       .word-count {
         font-size: 12px;
-        background: rgb(212 243 201);
-        color: black;
+        color: gray;
         border-radius: 5px;
         border: 1px solid black;
         position: absolute;
@@ -151,15 +150,21 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
 
   _titleBar() {
     return html`<div id="title-bar">
-      <button class="title-action" @click="${this._handleRefresh}">
-        ${RefreshIcon({ width: 15, height: 15 })}
-      </button>
-      <button class="title-action" @click="${this._handleMinimize}">
-        ${MinimizeIcon({ width: 15, height: 15 })}
-      </button>
-      <button class="title-action" @click="${this._handleClose}">
-        ${CloseIcon({ width: 15, height: 15 })}
-      </button>
+      <hooli-tooltip text="refresh">
+        <button class="title-action" @click="${this._handleRefresh}">
+          ${RefreshIcon({ width: 15, height: 15 })}
+        </button>
+      </hooli-tooltip>
+      <hooli-tooltip text="minimize">
+        <button class="title-action" @click="${this._handleMinimize}">
+          ${MinimizeIcon({ width: 15, height: 15 })}
+        </button>
+      </hooli-tooltip>
+      <hooli-tooltip text="close">
+        <button class="title-action" @click="${this._handleClose}">
+          ${CloseIcon({ width: 15, height: 15 })}
+        </button>
+      </hooli-tooltip>
     </div>`;
   }
 
@@ -222,23 +227,31 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
       ).map((ele) => +transformElementId(ele.id, 'count'));
 
       return html`<div id="looking-for-match-bar">
-        <h5>
+        <hooli-tooltip
+          text=${this._openWordBlockWhenMatching
+            ? 'stop auto show word info'
+            : 'auto show word info'}
+        >
           <button @click="${this._handleOpenWordBlock}">
             ${this._openWordBlockWhenMatching
               ? VisibilityIcon({ width: 15, height: 15 })
               : VisibilityOffIcon({ width: 15, height: 15 })}
           </button>
-        </h5>
+        </hooli-tooltip>
         <h6>
           ${existingEleIdsCount.indexOf(this.lookingWord.currentFocusCount) +
           1}/${existingEleIdsCount.length}
         </h6>
-        <button @click="${() => this._handleScrollToWord('prev')}">
-          ${ChevronUpIcon({ width: 15, height: 15 })}
-        </button>
-        <button @click="${() => this._handleScrollToWord('next')}">
-          ${ChevronDownIcon({ width: 15, height: 15 })}
-        </button>
+        <hooli-tooltip text="scroll to prev">
+          <button @click="${() => this._handleScrollToWord('prev')}">
+            ${ChevronUpIcon({ width: 15, height: 15 })}
+          </button>
+        </hooli-tooltip>
+        <hooli-tooltip text="scroll to next">
+          <button @click="${() => this._handleScrollToWord('next')}">
+            ${ChevronDownIcon({ width: 15, height: 15 })}
+          </button>
+        </hooli-tooltip>
         <button @click="${this._handleStopLooking}">
           ${CloseIcon({ width: 15, height: 15 })}
         </button>

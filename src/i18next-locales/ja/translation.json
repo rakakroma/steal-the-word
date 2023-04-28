@@ -102,7 +102,7 @@
   "no-data-long-middle": "へ、または",
   "use the demo data in Settings": "DEMOデータを使ってみて",
   "no-data-long-after": "。",
-  "select phrase contains target text to highlight": "単語が含まれるテキストを選択したら、ハイライトできます",
+  "select phrase contains target text to highlight": "",
   "Highlight This": "ハイライト",
   "Search / Navigation": "検索／ナビ…"
 }
