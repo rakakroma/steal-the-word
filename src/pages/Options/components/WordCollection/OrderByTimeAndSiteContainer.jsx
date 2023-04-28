@@ -28,8 +28,6 @@ export const OrderByTimeAndSiteContainer = memo(
     height,
     width,
     displayMode,
-    // displayContext,
-    // containerWidth,
   }) => {
     const wordsByDomain = domainPageWords(contextList);
     const domainAndWordCount = wordsByDomain.map((arrayWithDomain) => {
@@ -50,8 +48,6 @@ export const OrderByTimeAndSiteContainer = memo(
 
     const siteModeVirtuoso = useRef(null);
     const groupCounts = Array(domainAndWordCount.length).fill(1);
-
-    // .sort((a, b) => b.wordCount - a.wordCount)
 
     return (
       <Box>
@@ -126,25 +122,25 @@ export const OrderByTimeAndSiteContainer = memo(
             return (
               <Box
                 sx={{
-                  // columnCount: columns,
                   display: 'flex',
                   flexWrap: 'wrap',
                   pl: '24px',
                 }}
               >
-                {wordsByPage.map((dataByUrl) => {
-                  return (
-                    <Fragment key={dataByUrl.url}>
-                      <WordCollectionPageBox
-                        showDate={true}
-                        displayMode={displayMode}
-                        noIcon={true}
-                        arrayWithUrl={dataByUrl}
-                        // containerWidth={containerWidth}
-                      />
-                    </Fragment>
-                  );
-                })}
+                {wordsByPage
+                  .sort((a, b) => a.words.length - b.words.length)
+                  .map((dataByUrl) => {
+                    return (
+                      <Fragment key={dataByUrl.url}>
+                        <WordCollectionPageBox
+                          showDate={true}
+                          displayMode={displayMode}
+                          noIcon={true}
+                          arrayWithUrl={dataByUrl}
+                        />
+                      </Fragment>
+                    );
+                  })}
               </Box>
             );
           }}

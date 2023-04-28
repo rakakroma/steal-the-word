@@ -1,7 +1,6 @@
 import { Box, Button, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import React, { useState } from 'react';
-// import { demoData } from '../../../../../utilsForAll/demoData';
 import { myLog } from '../../../../Content/utils/customLogger';
 import { saveImportDataToDB } from '../../../utils/ImportExport';
 import { ButtonContainer, DataCountGrid } from './DataCountGrid';
@@ -79,6 +78,7 @@ export const ImportBox = ({ loggedData, setLoggedData, noDataInCurrentDB }) => {
           />
 
           <Button
+            disabled={fetchStatus === 'fetching'}
             onClick={() => {
               setFetchStatus('fetching');
               fetchDemoData()

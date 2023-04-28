@@ -31,7 +31,6 @@ export const domainPageWords = (words) =>
       acc.push([hostName, [curr]]);
       return acc;
     }
-    // }
   }, []);
 
 export const arrayWithUrlsByDateType = (dateType, words) => {
@@ -39,30 +38,21 @@ export const arrayWithUrlsByDateType = (dateType, words) => {
     const dateData = dayjs(currentValue.words[0].date)
       .startOf(dateType)
       .format('YYYY/MM/DD');
-    const dateDataYearForObjectKey = `y${dateData.slice(0, 4)}`;
-    const matchCurrentAccYear = acc.hasOwnProperty(dateDataYearForObjectKey);
     const initialDataForCurrentDate = {
       dateData,
       sortByUrlData: [currentValue],
     };
-    if (!matchCurrentAccYear) {
-      Object.assign(acc, {
-        [dateDataYearForObjectKey]: [initialDataForCurrentDate],
-      });
-      return acc;
-    }
-    const targetAccYearValue = acc[dateDataYearForObjectKey];
-    const sameDateDataIndex = targetAccYearValue.findIndex(
+    const sameDateDataIndex = acc.findIndex(
       (sortByDateData) => sortByDateData.dateData === dateData
     );
     if (sameDateDataIndex === -1) {
-      targetAccYearValue.push(initialDataForCurrentDate);
+      acc.push(initialDataForCurrentDate);
       return acc;
     } else {
-      targetAccYearValue[sameDateDataIndex].sortByUrlData.push(currentValue);
+      acc[sameDateDataIndex].sortByUrlData.push(currentValue);
       return acc;
     }
-  }, {});
+  }, []);
 };
 
 export const wordListInAlphabeticalOrder = (wordList) => {

@@ -20,18 +20,15 @@ const SmallWord = styled(Box)(({ theme }) => ({
 }));
 
 export const WordCollectionPageBoxContainer = styled(Box)(({ theme }) => ({
-  // border: '1px solid #bebebe',
   padding: '5px',
   margin: theme.spacing(1),
   borderRadius: theme.shape.borderRadius,
   boxShadow: theme.shadows[2],
-  // width: '20%',
   minWidth: '200px',
   height: 'fit-content',
 }));
 
 export const PageTitleSection = ({ pageTitle, imgUri, linkUrl, noIcon }) => {
-  const theme = useTheme();
   return (
     <Box sx={{ display: 'flex' }}>
       {!noIcon && (
@@ -120,12 +117,13 @@ export const WordListInWordCollection = ({
           }}
           onClick={() => handleWordClick(wordClickData)}
         >
-          {displayMode === 'context' && (
+          {displayMode === 'context' ? (
             <HighlightedContext contextObj={dataObj} />
+          ) : displayMode === 'phrase' ? (
+            dataObj.phrase || wordObj.word
+          ) : (
+            wordObj.word
           )}
-          {displayMode === 'phrase'
-            ? dataObj.phrase || wordObj.word
-            : wordObj.word}
           {wordObj.stars ? (
             <>
               {Array(wordObj.stars)
