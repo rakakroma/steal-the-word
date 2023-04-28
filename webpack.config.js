@@ -3,11 +3,12 @@ const webpack = require('webpack'),
   fileSystem = require('fs-extra'),
   env = require('./utils/env'),
   CopyWebpackPlugin = require('copy-webpack-plugin'),
-  HtmlWebpackPlugin = require('html-webpack-plugin'),
-  TerserPlugin = require('terser-webpack-plugin');
+  HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 var ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const { EsbuildPlugin } = require('esbuild-loader');
+
 
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
@@ -88,11 +89,11 @@ var options = {
         exclude: /node_modules/,
       },
       {
-        test: /\.(ts)$/,
+        test: /\.(ts|tsx)$/,
         loader: 'esbuild-loader',
         exclude: /node_modules/,
         options: {
-          loader: 'ts',
+          loader: 'tsx',
           target: 'es2015',
         },
       },
@@ -121,7 +122,7 @@ var options = {
       .concat(['.js', '.jsx', '.ts', '.tsx', '.css']),
   },
   plugins: [
-    isDevelopment && new ReactRefreshWebpackPlugin(),
+    isDevelopment && new ReactRefreshWebpackPlugin({ overlay: false }),
     new Dotenv(),
     new CleanWebpackPlugin({ verbose: false }),
     new webpack.ProgressPlugin(),
@@ -174,7 +175,7 @@ var options = {
       chunks: ['popup'],
       cache: false,
     }),
-  ],
+  ].filter(Boolean),
   infrastructureLogging: {
     level: 'info',
   },
@@ -186,8 +187,8 @@ if (env.NODE_ENV === 'development') {
   options.optimization = {
     minimize: true,
     minimizer: [
-      new TerserPlugin({
-        extractComments: false,
+      new EsbuildPlugin({
+        target: 'es2015',
       }),
     ],
   };

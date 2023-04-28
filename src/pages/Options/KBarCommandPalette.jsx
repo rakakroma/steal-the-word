@@ -6,9 +6,9 @@ import {
   KBarPositioner,
   KBarProvider,
   KBarResults,
-  KBarSearch,
   useMatches,
 } from 'kbar';
+import { KBarSearch } from './KBarSearch';
 
 import { Collections, Home, Search, Settings } from '@mui/icons-material';
 import { Box, Typography, useTheme } from '@mui/material';

@@ -3,7 +3,6 @@ export const restoreAndDeleteHooliText = (wordId) => {
   if (!wordId) {
     targetEles = document.querySelectorAll('holli-text');
   } else {
-    // store.dispatch(deleteOneWord(wordId));
     targetEles = document.querySelectorAll(`.h-${wordId}`);
   }
   targetEles.forEach((ele) => {

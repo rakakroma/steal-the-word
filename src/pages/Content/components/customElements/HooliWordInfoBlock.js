@@ -315,16 +315,7 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
       const selectedText = selection.toString().trim();
       if (selectedText.length === 0) return;
       if (targetContext.includes(selectedText)) {
-        const matched = this._matchWordsArray().find((variant) => {
-          const regex = new RegExp(variant, 'i');
-          return regex.test(targetContext);
-        });
-        if (matched) {
-          const regex = new RegExp(matched, 'i');
-          if (!regex.test(selectedText)) return;
-          // this._formInputStatus.phraseSelection = selectedText;
-          this._handleUpdateFormStatus('phraseSelection', selectedText);
-        }
+        this._handleUpdateFormStatus('phraseSelection', selectedText);
       }
     };
     if (state === false) {
@@ -334,7 +325,6 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
     thisShadowRoot.addEventListener('mouseup', getSelectText);
     this._formInputStatus.phraseSelection =
       targetContextObj.phrase || this.wordObj.word;
-    // this._formInputStatus.workingContext = contextId;
     this._handleUpdateFormStatus('workingContext', contextId);
     this.mode = 'highlighting';
   }
@@ -356,12 +346,6 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
     if (!this.apiSetting.enabled) return;
     const lang = await getLang(this.newWord, this.contextHere, this.apiSetting);
     if (!lang) return;
-    // const { pron, definition } = await fetchPronInfo(
-    //   this.newWord,
-    //   this.contextHere,
-    //   this.apiSetting,
-    //   lang
-    // );
     const { pron, definition } = await chrome.runtime.sendMessage({
       action: fetchPronInfo,
       targetWord: this.newWord,
@@ -376,7 +360,6 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
       if (!annotationInput) return;
       const originalAnnotation = annotationInput.value;
       annotationInput.value = pron + ' ' + originalAnnotation;
-      // this._handleEleValidInput(annotationInput)
     }
     if (definition) {
       const noteInput = this.renderRoot.querySelector('.long-note-textarea');
@@ -410,9 +393,6 @@ class HooliWordInfoBlock extends connect(store)(LitElement) {
         this._handleUpdateFormStatus('openMatchRule', true);
       }
     }
-    // this.renderRoot.querySelectorAll('.editable').forEach(ele => {
-    //     this._handleEleValidInput(ele)
-    // })
   }
   connectedCallback() {
     super.connectedCallback();
