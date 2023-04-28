@@ -9,6 +9,7 @@ const Dotenv = require('dotenv-webpack');
 var ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const { EsbuildPlugin } = require('esbuild-loader');
 
+
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
 var alias = {};
