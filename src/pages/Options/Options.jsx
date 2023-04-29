@@ -1,4 +1,10 @@
-import { Box, createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import {
+  Box,
+  createTheme,
+  CssBaseline,
+  ThemeProvider,
+  useMediaQuery,
+} from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
 import React, {
   createContext,
@@ -22,8 +28,8 @@ export const TagListContext = createContext(null);
 
 const MyThemeProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  // const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  // const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
   const theme = useMemo(
     () => createTheme(isDarkMode ? darkThemeStyle : lightThemeStyle),

@@ -134,7 +134,7 @@ export const WordListInWordCollection = ({ wordsArray, showDivider }) => {
               {Array(wordObj.stars)
                 .fill(0)
                 .map((d, i) => (
-                  <Star fontSize="13px" key={i} />
+                  <Star fontSize="13px" key={i} sx={{ color: '#f76583' }} />
                 ))}
             </>
           )}

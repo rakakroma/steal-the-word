@@ -4,7 +4,6 @@ import {
   CloseIcon,
   MinimizeIcon,
   RefreshIcon,
-  StarIcon,
   VisibilityIcon,
   VisibilityOffIcon,
 } from '@spectrum-web-components/icons-workflow';
@@ -22,6 +21,7 @@ import {
   zIndexStyle,
 } from './WordBlock/wordInfoBlockStyles';
 import { transformElementId } from '../../utils/transformElementId';
+import './HooliStarDisplay';
 
 class HooliFloatingWordList extends connect(store)(LitElement) {
   static get properties() {
@@ -168,18 +168,6 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
     </div>`;
   }
 
-  _ratingDisplay(stars) {
-    if (stars > 0) {
-      return html`<span
-        >${Array(stars)
-          .fill(0)
-          .map((zero) => {
-            return StarIcon({ width: 11, height: 11 });
-          })}</span
-      >`;
-    }
-    return null;
-  }
   _wordList() {
     return html`<ul>
       ${this.wordInPageList.map((wordObj) => {
@@ -193,7 +181,10 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
                 class="word-span"
                 @click="${() => this._handleStartScrollToWord(wordObj)}"
               >
-                ${wordObj.word}${this._ratingDisplay(wordObj.stars)}
+                ${wordObj.word}
+                <hooli-star-display
+                  .stars=${wordObj.stars}
+                ></hooli-star-display>
                 <span class="word-count" id="count-${wordObj.id}"
                   >${wordObj.countInCurrentPage}</span
                 >

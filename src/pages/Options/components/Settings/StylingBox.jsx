@@ -5,6 +5,7 @@ import {
   FormLabel,
   Radio,
   RadioGroup,
+  Skeleton,
   Typography,
 } from '@mui/material';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
@@ -69,35 +70,32 @@ const StylePanel = ({ defaultValue, changeTextStyle }) => {
   );
 };
 
+const FakeHooliText = ({ textStyle, children }) => {
+  return (
+    <span style={{ cursor: 'pointer', ...textStyle.styles }}>{children}</span>
+  );
+};
+
+const DummyTextBox = ({ bgColor, color, textStyle }) => {
+  return (
+    <Box
+      sx={{
+        // width: '400px',
+        backgroundColor: bgColor,
+        color: color,
+        p: 2,
+      }}
+    >
+      In publishing and graphic design,{' '}
+      <FakeHooliText textStyle={textStyle}>Lorem ipsum</FakeHooliText> is a
+      placeholder text commonly used to demonstrate the visual form of a
+      document or a typeface without relying on meaningful content.
+    </Box>
+  );
+};
+
 export const StylingBox = () => {
   const { defaultValue, textStyle, changeTextStyle } = useStorageTextStyle();
-
-  if (!defaultValue) return null;
-  const FakeHooliText = (props) => {
-    return (
-      <span style={{ cursor: 'pointer', ...textStyle.styles }}>
-        {props.children}
-      </span>
-    );
-  };
-
-  const DummyTextBox = ({ bgColor, color }) => {
-    return (
-      <Box
-        sx={{
-          // width: '400px',
-          backgroundColor: bgColor,
-          color: color,
-          p: 2,
-        }}
-      >
-        In publishing and graphic design,{' '}
-        <FakeHooliText>Lorem ipsum</FakeHooliText> is a placeholder text
-        commonly used to demonstrate the visual form of a document or a typeface
-        without relying on meaningful content.
-      </Box>
-    );
-  };
 
   const basicColorPair = {
     white: 'black',
@@ -110,14 +108,22 @@ export const StylingBox = () => {
       <Grid2 container sx={{ boxShadow: 2, borderRadius: 2 }}>
         {Object.entries(basicColorPair).map(([bgColor, color]) => (
           <Grid2 xs={12} sm={6} key={bgColor}>
-            <DummyTextBox bgColor={bgColor} color={color} />
+            <DummyTextBox
+              bgColor={bgColor}
+              color={color}
+              textStyle={textStyle}
+            />
           </Grid2>
         ))}
       </Grid2>
-      <StylePanel
-        defaultValue={defaultValue}
-        changeTextStyle={changeTextStyle}
-      />
+      {defaultValue ? (
+        <StylePanel
+          defaultValue={defaultValue}
+          changeTextStyle={changeTextStyle}
+        />
+      ) : (
+        <Skeleton variant="rectangular" height={30} />
+      )}
     </Box>
   );
 };

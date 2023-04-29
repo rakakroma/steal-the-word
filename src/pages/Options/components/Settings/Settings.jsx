@@ -54,7 +54,6 @@ export const Settings = () => {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
       <Box>
-        <Typography variant="h4">{t('Preferences')}</Typography>
         <Paper
           sx={{
             maxWidth: '900px',
@@ -64,6 +63,8 @@ export const Settings = () => {
           }}
           elevation={5}
         >
+          {' '}
+          <Typography variant="h4">{t('Preferences')}</Typography>
           <MyTabs currentPath={currentPath} />
           <Box sx={{ p: 3 }}>
             <Typography variant="h5">
