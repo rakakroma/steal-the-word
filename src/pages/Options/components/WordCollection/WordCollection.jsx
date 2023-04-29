@@ -85,8 +85,10 @@ export const SinglePageWordCollection = () => {
     const orderModeCookie = cookies
       .find((cookie) => cookie.startsWith('orderMode='))
       ?.split('=')[1];
+    const showAnnotationCookie = cookies
+      .find((cookie) => cookie.startsWith('showAnno='))
+      ?.split('=')[1];
 
-    myLog(cookies);
     if (
       displayModeCookie &&
       ['word', 'phrase', 'context'].includes(displayModeCookie)
@@ -100,6 +102,9 @@ export const SinglePageWordCollection = () => {
       )
     ) {
       setOrderMode(orderModeCookie);
+    }
+    if (['true', 'false'].includes(showAnnotationCookie)) {
+      setShowAnnotation(showAnnotationCookie === 'true');
     }
   }, []);
 
@@ -118,7 +123,10 @@ export const SinglePageWordCollection = () => {
             <FormControlLabel
               control={
                 <Switch
-                  onChange={() => setShowAnnotation(!showAnnotation)}
+                  onChange={() => {
+                    document.cookie = `showAnno=${!showAnnotation}`;
+                    setShowAnnotation(!showAnnotation);
+                  }}
                   checked={showAnnotation}
                 />
               }
