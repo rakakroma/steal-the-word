@@ -129,7 +129,7 @@ export const WordListInWordCollection = ({ wordsArray, showDivider }) => {
           ) : (
             wordObj.word
           )}
-          {wordObj.stars && wordObj.stars > 0 && (
+          {wordObj?.stars > 0 && (
             <>
               {Array(wordObj.stars)
                 .fill(0)
