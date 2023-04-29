@@ -67,7 +67,7 @@ export const HighlightedContext = ({ contextObj, wordObj }) => {
     if (!wordObj && !wordObjFromList)
       return (
         <Typography variant="subtitle1" component="div">
-          word data missing
+          ⁉️word data missing
         </Typography>
       );
 
@@ -88,7 +88,14 @@ export const HighlightedContext = ({ contextObj, wordObj }) => {
 export const WordListInWordCollection = ({ wordsArray, showDivider }) => {
   const { wordInfoTarget, handleWordClick } = useContext(WordInfoDrawerContext);
   const wordList = useContext(WordListContext);
-  const { showAnnotation, displayMode } = useContext(CollectionSettingContext);
+  const { showAnnotation, displayMode, orderMode } = useContext(
+    CollectionSettingContext
+  );
+
+  const showHighlightedContext =
+    ['time', 'timeSite'].includes(orderMode) && displayMode === 'context';
+  const showPhraseFirst =
+    ['time', 'timeSite'].includes(orderMode) && displayMode === 'phrase';
 
   const dataType = wordsArray[0]?.wordId ? 'contextObj' : 'wordObj';
 
@@ -122,13 +129,10 @@ export const WordListInWordCollection = ({ wordsArray, showDivider }) => {
           }}
           onClick={() => handleWordClick(wordClickData)}
         >
-          {displayMode === 'context' ? (
+          {showHighlightedContext && (
             <HighlightedContext contextObj={dataObj} />
-          ) : displayMode === 'phrase' ? (
-            dataObj.phrase || wordObj.word
-          ) : (
-            wordObj.word
           )}
+          {showPhraseFirst ? dataObj.phrase || wordObj.word : wordObj.word}
           {wordObj?.stars > 0 && (
             <>
               {Array(wordObj.stars)

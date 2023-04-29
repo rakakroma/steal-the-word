@@ -177,6 +177,7 @@ export const SinglePageWordCollection = () => {
       </Box>
       <CollectionSettingContext.Provider
         value={{
+          orderMode,
           displayMode,
           dateArrangement,
           filterKanji,
