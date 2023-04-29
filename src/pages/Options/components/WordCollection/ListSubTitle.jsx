@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import React from 'react';
 
-export const ListSubTitle = ({ content, fontSize }) => {
+export const ListSubTitle = ({ content, fontSize, isUrl }) => {
   return (
     <Box>
       <fieldset

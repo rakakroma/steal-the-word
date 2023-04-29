@@ -49,7 +49,11 @@ export const HighlightableContext = ({
 
   return (
     <>
-      <Tooltip title={t('select context text and highlight')} placement="top">
+      <Tooltip
+        title={t('select context text and highlight')}
+        placement="top"
+        disableInteractive
+      >
         <Box
           onMouseUp={handleHighlightSelect}
           sx={{

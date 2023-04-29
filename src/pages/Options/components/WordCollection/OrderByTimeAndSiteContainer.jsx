@@ -4,7 +4,7 @@ import { GroupedVirtuoso } from 'react-virtuoso';
 import { cutUrl, domainPageWords } from '../../utils/transformData';
 import { IndexQuickRefBox } from './IndexQuickRefBox';
 import { ListSubTitle } from './ListSubTitle';
-import { SiteIconAvatar } from './SiteIconButton';
+import { SiteIconButton } from './SiteIconButton';
 import { WordCollectionPageBox } from './WordCollectionPageBox';
 
 export const getDomainIcon = (url, domainList, isDomain) => {
@@ -20,15 +20,7 @@ export const getDomainIcon = (url, domainList, isDomain) => {
 };
 
 export const OrderByTimeAndSiteContainer = memo(
-  ({
-    phraseMode,
-    contextList,
-    domainAndLinkList,
-    columns,
-    height,
-    width,
-    displayMode,
-  }) => {
+  ({ contextList, domainAndLinkList, width }) => {
     const wordsByDomain = domainPageWords(contextList);
     const domainAndWordCount = wordsByDomain.map((arrayWithDomain) => {
       const wordCount = arrayWithDomain[1].reduce(
@@ -63,7 +55,6 @@ export const OrderByTimeAndSiteContainer = memo(
                 sx={{
                   mr: theme.spacing(1),
                   mt: theme.spacing(1),
-                  // height: '26px',
                 }}
                 variant="outlined"
                 onClick={(e) => {
@@ -74,9 +65,11 @@ export const OrderByTimeAndSiteContainer = memo(
                 }}
                 icon={
                   <>
-                    <SiteIconAvatar
-                      imgSrc={domainData.icon}
+                    <SiteIconButton
+                      iconUri={domainData.icon}
                       linkUrl={domainData.domain}
+                      iconSize={20}
+                      isCircle={true}
                     />
                     <Typography
                       component="span"
@@ -105,9 +98,10 @@ export const OrderByTimeAndSiteContainer = memo(
               <ListSubTitle
                 content={
                   <>
-                    <SiteIconAvatar
-                      imgSrc={domainData.icon}
-                      linkUrl={domainData.domain}
+                    <SiteIconButton
+                      iconUri={domainData.icon}
+                      linkUrl={`https://${domainData.domain}`}
+                      iconSize={25}
                     />
                     {cutUrl(domainData.domain)}
                   </>
@@ -134,7 +128,6 @@ export const OrderByTimeAndSiteContainer = memo(
                       <Fragment key={dataByUrl.url}>
                         <WordCollectionPageBox
                           showDate={true}
-                          displayMode={displayMode}
                           noIcon={true}
                           arrayWithUrl={dataByUrl}
                         />

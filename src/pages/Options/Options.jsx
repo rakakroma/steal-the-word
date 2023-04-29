@@ -14,11 +14,11 @@ import { KBarCommandPalette } from './KBarCommandPalette';
 import './Options.css';
 import { darkThemeStyle, lightThemeStyle } from './theme.style';
 
-export const ContextListContext = createContext([]);
-export const DomainAndLinkListContext = createContext([]);
-export const WordListContext = createContext([]);
-export const WordInfoDrawerContext = createContext({});
-export const TagListContext = createContext({});
+export const ContextListContext = createContext(null);
+export const DomainAndLinkListContext = createContext(null);
+export const WordListContext = createContext(null);
+export const WordInfoDrawerContext = createContext(null);
+export const TagListContext = createContext(null);
 
 const MyThemeProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);

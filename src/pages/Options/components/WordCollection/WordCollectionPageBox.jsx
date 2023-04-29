@@ -1,5 +1,5 @@
 import { Star } from '@mui/icons-material';
-import { Divider, Typography } from '@mui/material';
+import { Divider, Tooltip, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
 import dayjs from 'dayjs';
@@ -8,10 +8,11 @@ import { getAllMatchTextFromWordObj } from '../../../../utilsForAll/getInfoFromW
 import '../../../Content/components/customElements/WordBlock/HooliHighlighter';
 import { WordInfoDrawerContext, WordListContext } from '../../Options';
 import { SiteIconButton } from './SiteIconButton';
+import { CollectionSettingContext } from './WordCollection';
 
 const SmallWord = styled(Box)(({ theme }) => ({
   wordBreak: 'break-word',
-  p: '5px',
+  fontWeight: 500,
   ' &:hover': {
     color: 'indianred',
     textDecoration: 'underline',
@@ -34,19 +35,21 @@ export const PageTitleSection = ({ pageTitle, imgUri, linkUrl, noIcon }) => {
       {!noIcon && (
         <SiteIconButton iconUri={imgUri} linkUrl={linkUrl} iconSize={20} />
       )}
-      <Typography
-        variant="body2"
-        sx={{
-          pl: '2px',
-          display: 'inline-block',
-          color: 'gray',
-          height: '1.5rem',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-        }}
-      >
-        {pageTitle}
-      </Typography>
+      <Tooltip title={pageTitle} placement="right" arrow disableInteractive>
+        <Typography
+          variant="body2"
+          sx={{
+            pl: '2px',
+            display: 'inline-block',
+            color: 'gray',
+            height: '1.5rem',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {pageTitle}
+        </Typography>
+      </Tooltip>
     </Box>
   );
 };
@@ -82,13 +85,10 @@ export const HighlightedContext = ({ contextObj, wordObj }) => {
   );
 };
 
-export const WordListInWordCollection = ({
-  wordsArray,
-  displayMode,
-  showDivider,
-}) => {
+export const WordListInWordCollection = ({ wordsArray, showDivider }) => {
   const { wordInfoTarget, handleWordClick } = useContext(WordInfoDrawerContext);
   const wordList = useContext(WordListContext);
+  const { showAnnotation, displayMode } = useContext(CollectionSettingContext);
 
   const dataType = wordsArray[0]?.wordId ? 'contextObj' : 'wordObj';
 
@@ -108,12 +108,17 @@ export const WordListInWordCollection = ({
       contextId: dataType === 'contextObj' ? dataObj.id : null,
     };
 
+    const currentDefId =
+      dataType === 'contextObj'
+        ? dataObj.definitionRef
+        : dataObj.targetDefId || null;
     return (
       <Fragment key={dataObj.id}>
         <SmallWord
           id={dataObj.id}
           sx={{
-            color: wordInfoTarget?.wordId === wordObj.id ? 'primary.dark' : '',
+            color: wordInfoTarget?.wordId === wordObj.id && 'primary.dark',
+            backgroundColor: wordInfoTarget?.wordId === wordObj.id && '#f9f9f9',
           }}
           onClick={() => handleWordClick(wordClickData)}
         >
@@ -124,7 +129,7 @@ export const WordListInWordCollection = ({
           ) : (
             wordObj.word
           )}
-          {wordObj.stars ? (
+          {wordObj.stars && wordObj.stars > 0 && (
             <>
               {Array(wordObj.stars)
                 .fill(0)
@@ -132,8 +137,32 @@ export const WordListInWordCollection = ({
                   <Star fontSize="13px" key={i} />
                 ))}
             </>
-          ) : null}
+          )}
+          {showAnnotation &&
+            (currentDefId !== null ? (
+              <Typography sx={{ color: 'gray' }}>
+                {
+                  wordObj.definitions.find(
+                    (def) => def.definitionId === currentDefId
+                  )?.annotation
+                }
+              </Typography>
+            ) : (
+              wordObj.definitions.map((def, i) => {
+                return (
+                  <Fragment key={def.definitionId}>
+                    <Typography sx={{ color: 'gray' }}>
+                      {def.annotation}
+                    </Typography>
+                    {/* {i !== wordObj.definitions.length - 1 && (
+                      <Divider sx={{ pt: '2px', mb: '2px' }} />
+                    )} */}
+                  </Fragment>
+                );
+              })
+            ))}
         </SmallWord>
+
         {showDivider &&
           displayMode !== 'word' &&
           index !== wordsArray.length - 1 && (
@@ -165,24 +194,25 @@ const DateInfo = ({ date }) => {
 };
 
 export const WordCollectionPageBox = ({
-  displayMode,
   imgUri,
   arrayWithUrl,
-  // containerWidth,
   showDate,
   noIcon,
 }) => {
   const theme = useTheme();
+  const { displayMode, showAnnotation } = useContext(CollectionSettingContext);
   return (
     <WordCollectionPageBoxContainer
       sx={{
         position: 'relative',
-        width:
-          displayMode === 'context'
-            ? '280px'
-            : displayMode === 'phrase'
-            ? '220px'
-            : '180px',
+        width: showAnnotation
+          ? '350px'
+          : displayMode === 'context'
+          ? '280px'
+          : displayMode === 'phrase'
+          ? '220px'
+          : '180px',
+
         backgroundColor: theme.palette.background.paper,
       }}
       key={arrayWithUrl[0]}
@@ -197,7 +227,6 @@ export const WordCollectionPageBox = ({
       <WordListInWordCollection
         showDivider={true}
         wordsArray={arrayWithUrl.words}
-        displayMode={displayMode}
       />
     </WordCollectionPageBoxContainer>
   );

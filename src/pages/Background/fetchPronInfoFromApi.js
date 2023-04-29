@@ -101,6 +101,7 @@ const getEnglishDefinition = async (targetWord) => {
   const definition = fetchedData[0]?.meanings[0]?.definitions[0]?.definition;
   return { pron, definition };
 };
+
 export const fetchPronInfoFromApi = async (
   targetWord,
   contextHere,

@@ -1,13 +1,14 @@
 import { Box } from '@mui/material';
 import dayjs from 'dayjs';
-import React, { memo } from 'react';
+import React, { memo, useContext } from 'react';
 import { Virtuoso } from 'react-virtuoso';
 import { arrayWithUrlsByDateType } from '../../utils/transformData';
 import { ListSubTitle } from './ListSubTitle';
 import { getDomainIcon } from './OrderByTimeAndSiteContainer';
 import { WordCollectionPageBox } from './WordCollectionPageBox';
+import { CollectionSettingContext } from './WordCollection';
 
-const dateTitle = (dateArrangement, dateData) => {
+const getDateTitle = (dateArrangement, dateData) => {
   const dateFormatRule = {
     date: 'MMM D',
     week: 'MM/D',
@@ -31,14 +32,9 @@ const dateTitle = (dateArrangement, dateData) => {
 };
 
 export const TimeModeContainer = memo(
-  ({
-    displayMode,
-    dateArrangement,
-    contextList,
-    domainAndLinkList,
-    containerWidth,
-    width,
-  }) => {
+  ({ contextList, domainAndLinkList, containerWidth, width }) => {
+    const { dateArrangement } = useContext(CollectionSettingContext);
+
     const orderedData = arrayWithUrlsByDateType(
       dateArrangement || 'date',
       contextList
@@ -53,7 +49,10 @@ export const TimeModeContainer = memo(
             return (
               <Box>
                 <ListSubTitle
-                  content={dateTitle(dateArrangement, sortByDateData.dateData)}
+                  content={getDateTitle(
+                    dateArrangement,
+                    sortByDateData.dateData
+                  )}
                 />
                 <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                   {sortByDateData.sortByUrlData
@@ -68,7 +67,6 @@ export const TimeModeContainer = memo(
                           key={arrayWithUrl.url}
                           imgUri={iconSrc}
                           arrayWithUrl={arrayWithUrl}
-                          displayMode={displayMode}
                           containerWidth={containerWidth}
                         />
                       );

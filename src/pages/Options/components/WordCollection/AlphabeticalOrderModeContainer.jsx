@@ -1,13 +1,15 @@
 import { Box, Button } from '@mui/material';
-import React, { memo, useRef } from 'react';
+import React, { memo, useContext, useRef } from 'react';
 import { wordListInAlphabeticalOrder } from '../../utils/transformData';
 import { WordListInWordCollection } from './WordCollectionPageBox';
 import { GroupedVirtuoso } from 'react-virtuoso';
 import { ListSubTitle } from './ListSubTitle';
 import { IndexQuickRefBox } from './IndexQuickRefBox';
+import { CollectionSettingContext } from './WordCollection';
 
 export const AlphabeticalOrderModeContainer = memo(
-  ({ wordList, width, columns, filterKanji }) => {
+  ({ wordList, width, columns }) => {
+    const { filterKanji } = useContext(CollectionSettingContext);
     const myListInAlphabeticalOrder = wordListInAlphabeticalOrder(wordList);
     const regexHan = new RegExp(/\p{sc=Hani}/gu);
 

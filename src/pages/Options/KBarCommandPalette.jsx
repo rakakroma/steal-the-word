@@ -8,6 +8,7 @@ import {
   KBarResults,
   useMatches,
 } from 'kbar';
+
 import { KBarSearch } from './KBarSearch';
 
 import { Collections, Home, Search, Settings } from '@mui/icons-material';

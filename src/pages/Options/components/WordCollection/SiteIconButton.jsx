@@ -14,7 +14,13 @@ export const SiteIconAvatar = ({ imgSrc, linkUrl }) => {
   );
 };
 
-export const SiteIconButton = ({ iconUri, linkUrl, iconSize, pageTitle }) => {
+export const SiteIconButton = ({
+  iconUri,
+  linkUrl,
+  iconSize,
+  pageTitle,
+  isCircle,
+}) => {
   const theme = useTheme();
 
   const [gotImg, setGotImg] = useState(true);
@@ -34,6 +40,10 @@ export const SiteIconButton = ({ iconUri, linkUrl, iconSize, pageTitle }) => {
     >
       {gotImg ? (
         <img
+          style={{
+            filter: 'drop-shadow(lightgray 1px 2px 2px)',
+            borderRadius: isCircle && '9px',
+          }}
           src={iconUri}
           height={iconSize}
           width={iconSize}

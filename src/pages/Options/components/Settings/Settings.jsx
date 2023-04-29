@@ -53,26 +53,28 @@ export const Settings = () => {
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-      <Paper
-        sx={{
-          maxWidth: '900px',
-          p: 4,
-          borderRadius: 1,
-          width: 'fill-available',
-        }}
-        elevation={5}
-      >
+      <Box>
         <Typography variant="h4">{t('Preferences')}</Typography>
-        <MyTabs currentPath={currentPath} />
-        <Box sx={{ p: 3 }}>
-          <Typography variant="h5">
-            {t(allSettingsRoute[currentPath])}
-          </Typography>
-          <PanelContainerBox>
-            <Outlet />
-          </PanelContainerBox>
-        </Box>
-      </Paper>
+        <Paper
+          sx={{
+            maxWidth: '900px',
+            p: 4,
+            borderRadius: 1,
+            width: 'fill-available',
+          }}
+          elevation={5}
+        >
+          <MyTabs currentPath={currentPath} />
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h5">
+              {t(allSettingsRoute[currentPath])}
+            </Typography>
+            <PanelContainerBox>
+              <Outlet />
+            </PanelContainerBox>
+          </Box>
+        </Paper>
+      </Box>
     </Box>
   );
 };
