@@ -32,6 +32,7 @@ import { TagsContainer } from './TagsContainer.jsx';
 import { TimeModeContainer } from './TimeModeContainer';
 import { useTranslation } from 'react-i18next';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
+import { myLog } from '../../../Content/utils/customLogger.js';
 const FadeMotionWrapper = (props) => {
   return (
     <Fade in={props.in || true}>
@@ -73,6 +74,7 @@ export const SinglePageWordCollection = () => {
   const [showAnnotation, setShowAnnotation] = useState(true);
 
   const { t } = useTranslation();
+
   useEffect(() => {
     const cookies = document.cookie
       ?.split(';')
@@ -84,6 +86,7 @@ export const SinglePageWordCollection = () => {
       .find((cookie) => cookie.startsWith('orderMode='))
       ?.split('=')[1];
 
+    myLog(cookies);
     if (
       displayModeCookie &&
       ['word', 'phrase', 'context'].includes(displayModeCookie)
@@ -100,10 +103,6 @@ export const SinglePageWordCollection = () => {
     }
   }, []);
 
-  useEffect(() => {
-    document.cookie = `displayMode=${displayMode}`;
-    document.cookie = `orderMode=${orderMode}`;
-  }, [displayMode, orderMode]);
   return (
     <Box>
       <Box

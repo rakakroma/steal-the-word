@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 export const DisplayModeSelect = ({ setDisplayMode, displayMode }) => {
   const handleDisplayModeChange = (e) => {
+    document.cookie = `displayMode=${e.target.value}`;
     setDisplayMode(e.target.value);
   };
 

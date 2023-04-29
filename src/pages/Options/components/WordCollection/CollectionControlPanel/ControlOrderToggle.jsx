@@ -15,6 +15,7 @@ export const ControlOrderToggle = ({ orderMode, setOrderMode }) => {
 
   const handleChange = (event, newOrderMode) => {
     if (!newOrderMode) return;
+    document.cookie = `orderMode=${newOrderMode}`;
     setOrderMode(newOrderMode);
   };
 
