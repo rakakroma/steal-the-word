@@ -132,7 +132,7 @@ export const SinglePageWordCollection = () => {
               }
               label={
                 <TextSnippetIcon
-                  sx={{ color: 'gray', verticalAlign: 'middle' }}
+                  sx={{ color: 'text.secondary', verticalAlign: 'middle' }}
                 />
               }
               labelPlacement="end"
@@ -160,7 +160,9 @@ export const SinglePageWordCollection = () => {
                     checked={filterKanji}
                   />
                 }
-                label={<Typography sx={{ color: 'gray' }}>漢</Typography>}
+                label={
+                  <Typography sx={{ color: 'text.secondary' }}>漢</Typography>
+                }
                 labelPlacement="end"
               />
             </Tooltip>

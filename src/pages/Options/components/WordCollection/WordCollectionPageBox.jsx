@@ -41,7 +41,7 @@ export const PageTitleSection = ({ pageTitle, imgUri, linkUrl, noIcon }) => {
           sx={{
             pl: '2px',
             display: 'inline-block',
-            color: 'gray',
+            color: 'text.secondary',
             height: '1.5rem',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -140,7 +140,7 @@ export const WordListInWordCollection = ({ wordsArray, showDivider }) => {
           )}
           {showAnnotation &&
             (currentDefId !== null ? (
-              <Typography sx={{ color: 'gray' }}>
+              <Typography sx={{ color: 'text.secondary' }}>
                 {
                   wordObj.definitions.find(
                     (def) => def.definitionId === currentDefId
@@ -151,7 +151,7 @@ export const WordListInWordCollection = ({ wordsArray, showDivider }) => {
               wordObj.definitions.map((def, i) => {
                 return (
                   <Fragment key={def.definitionId}>
-                    <Typography sx={{ color: 'gray' }}>
+                    <Typography sx={{ color: 'text.secondary' }}>
                       {def.annotation}
                     </Typography>
                     {/* {i !== wordObj.definitions.length - 1 && (

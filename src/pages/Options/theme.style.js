@@ -16,9 +16,9 @@ export const lightThemeStyle = {
       dark: '#ae9999',
       main: '#b38888',
     },
-    // secondary: {
-    //   main: '#a23f60',
-    // },
+    secondary: {
+      main: '#a23f60',
+    },
     background: {
       default: '#F8F9FA',
     },

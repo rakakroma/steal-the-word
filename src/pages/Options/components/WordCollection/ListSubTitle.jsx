@@ -18,7 +18,6 @@ export const ListSubTitle = ({ content, fontSize, isUrl }) => {
           <Typography
             variant="subtitle1"
             component="span"
-            color={'#7f7f7f'}
             sx={{
               fontSize: fontSize || 'inherit',
               display: 'flex',
@@ -26,6 +25,7 @@ export const ListSubTitle = ({ content, fontSize, isUrl }) => {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               lineHeight: '1.9rem',
+              color: 'text.secondary',
             }}
           >
             {content}

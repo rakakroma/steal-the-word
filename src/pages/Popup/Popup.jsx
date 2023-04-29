@@ -16,22 +16,6 @@ import './Popup.css';
 import { PopupTabs } from './PopupTabs';
 import { useCurrentTabData } from './useCurrentTabData';
 
-// const HoverButton = styled(Button)`
-//   height: 30px;
-//   width: 100px;
-//   font-size: 12px;
-//   color: grey;
-//   .button-text {
-//     transition: color 0.1s ease-in;
-//     color: white;
-//   }
-//   &:hover {
-//     .button-text {
-//       color: grey;
-//     }
-//   }
-// `;
-
 const LinkButtonsGrid = () => {
   const { t } = useTranslation();
 

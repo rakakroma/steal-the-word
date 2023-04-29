@@ -1,4 +1,3 @@
-import TagIcon from '@mui/icons-material/Tag';
 import React, { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import CreatableSelect from 'react-select/creatable';
@@ -40,30 +39,8 @@ export const CreatableSelectInput = ({
 }) => {
   const [options, setOptions] = useState(allOptions || defaultOptions);
 
-  const CustomPlaceHolder = () => {
-    return (
-      // <Chip
-      //   sx={{
-      //     position: 'absolute',
-      //     left: '5px',
-      //     bgcolor: rgbFromString('addtags', 0.1),
-      //     color: rgbFromString('addtags'),
-      //     '&:focus-within': {
-      //       bgcolor: rgbFromString('addtags', 0.4),
-      //     },
-      //   }}
-      //   label="add tags"
-      //   variant="filled"
-      //   size="small"
-      // />
-      <>
-        <TagIcon />
-      </>
-    );
-  };
   const components = {
     DropdownIndicator: null,
-    // Placeholder: CustomPlaceHolder,
   };
 
   const handleChange = (field, newValue) => {
@@ -94,7 +71,6 @@ export const CreatableSelectInput = ({
   return (
     <Controller
       control={control}
-      // defaultValue={selectedOptions}
       name={name}
       render={({ field }) => (
         <CreatableSelect
