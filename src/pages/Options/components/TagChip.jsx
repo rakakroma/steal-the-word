@@ -1,4 +1,4 @@
-import { Check, Close, Tag } from '@mui/icons-material';
+import { Check, Close, Edit, Tag } from '@mui/icons-material';
 import { Chip, IconButton, InputBase } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useContext, useState } from 'react';
@@ -6,11 +6,26 @@ import { rgbFromString } from '../../../utilsForAll/rgbFromString';
 import { db } from '../../Background/database';
 import { TagListContext } from '../Options';
 
-export const TagLabelChip = ({ tagLabel, notSmall, onClick, otherInfo }) => {
+export const TagLabelChip = ({
+  tagLabel,
+  notSmall,
+  onClick,
+  otherInfo,
+  editable,
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
   return (
     <Chip
-      icon={<Tag fontSize="13px" />}
+      icon={
+        editable && isHovered ? (
+          <Edit fontSize="13px" />
+        ) : (
+          <Tag fontSize="13px" />
+        )
+      }
       onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       size={notSmall ? undefined : 'small'}
       label={tagLabel}
       sx={{
@@ -73,15 +88,11 @@ export const EditableTagChip = ({ tagLabel, tagId }) => {
       </Box>
     );
   return (
-    <Box>
-      <TagLabelChip
-        tagLabel={tagLabel}
-        notSmall={true}
-        onClick={handleEditTag}
-      />
-      {/* <IconButton size="small" onClick={handleEditTag}>
-        <Edit />
-      </IconButton> */}
-    </Box>
+    <TagLabelChip
+      tagLabel={tagLabel}
+      notSmall={true}
+      onClick={handleEditTag}
+      editable={true}
+    />
   );
 };
