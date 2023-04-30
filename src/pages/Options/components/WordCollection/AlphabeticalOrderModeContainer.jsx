@@ -30,7 +30,14 @@ export const AlphabeticalOrderModeContainer = memo(
         <IndexQuickRefBox>
           {firstAlphabetArray.map((itemIndex, groupIndex) => (
             <Button
-              sx={{ minWidth: 'auto', textTransform: 'none' }}
+              sx={{
+                minWidth: 'auto',
+                textTransform: 'none',
+                mr: 1,
+                height: '20px',
+                border: '1px solid lightgray',
+                borderRadius: '10px',
+              }}
               key={groupIndex}
               onClick={(e) => {
                 e.preventDefault();

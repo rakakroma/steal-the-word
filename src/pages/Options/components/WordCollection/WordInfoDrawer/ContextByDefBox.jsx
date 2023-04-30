@@ -1,15 +1,16 @@
 import styled from '@emotion/styled';
-import { Tooltip, useMediaQuery } from '@mui/material';
+import { Link, Tooltip, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import { red } from '@mui/material/colors';
-import { useTheme } from '@mui/material/styles';
-import React, { useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { OrderModeANdSiteTargetContext } from '../../../Options';
 import { useIsOverflow } from '../../../utils/customHook';
 import { SiteIconButton } from '../SiteIconButton';
-import { getName } from './getDataFromName';
 import { HighlightableContext } from './HighlightableContext';
+import { getName } from './getDataFromName';
 import { TypographyOrInput } from './inputs/TypographyOrInput';
+import { getHostName } from '../../../utils/transformData';
 
 const PageTitleAndLink = styled(Box)(({ theme }) => ({
   fontSize: '0.8rem',
@@ -21,14 +22,11 @@ const PageTitleAndLink = styled(Box)(({ theme }) => ({
 }));
 
 export const ContextByDefBox = ({ contextObj, allMatchText, controlMode }) => {
-  const theme = useTheme();
-
   const matchTexts = allMatchText.filter(
     (matchText) => contextObj.context.indexOf(matchText) > -1
   );
   const pageTitleRef = useRef(null);
   const isOverflow = useIsOverflow(pageTitleRef);
-  // const biggerThan600px = useMediaQuery('(min-width:600px)');
   const breakpointOfDirectionChange = useMediaQuery('(min-width:700px)');
   const tooltipPlacement = breakpointOfDirectionChange ? 'left-start' : 'top';
 
@@ -39,6 +37,19 @@ export const ContextByDefBox = ({ contextObj, allMatchText, controlMode }) => {
     watch(nameForForm) === true &&
     watch('word') === false;
 
+  const { toCertainSite } = useContext(OrderModeANdSiteTargetContext);
+
+  const CurrentPageTitle = () => (
+    <Link
+      href={contextObj.url}
+      target="_blank"
+      underline="hover"
+      sx={{ color: 'text.secondary' }}
+    >
+      {' '}
+      {contextObj.pageTitle}
+    </Link>
+  );
   return (
     <Box
       sx={{
@@ -65,28 +76,23 @@ export const ContextByDefBox = ({ contextObj, allMatchText, controlMode }) => {
         />
       </TypographyOrInput>
       <Box>
-        {isOverflow ? (
-          <Tooltip title={contextObj.pageTitle} placement={tooltipPlacement}>
-            <PageTitleAndLink ref={pageTitleRef}>
-              <SiteIconButton
-                pageTitle={contextObj.pageTitle}
-                iconUri={contextObj.icon}
-                linkUrl={contextObj.url}
-                iconSize={16}
-              />
-              {contextObj.pageTitle}
-            </PageTitleAndLink>
-          </Tooltip>
-        ) : (
-          <PageTitleAndLink ref={pageTitleRef}>
-            <SiteIconButton
-              iconUri={contextObj.icon}
-              linkUrl={contextObj.url}
-              iconSize={16}
-            />
-            {contextObj.pageTitle}
-          </PageTitleAndLink>
-        )}
+        <PageTitleAndLink ref={pageTitleRef}>
+          <SiteIconButton
+            domainName={getHostName(contextObj.url)}
+            iconUri={contextObj.icon}
+            onClick={() => {
+              toCertainSite(contextObj.url);
+            }}
+            iconSize={16}
+          />
+          {isOverflow ? (
+            <Tooltip title={contextObj.pageTitle} placement={tooltipPlacement}>
+              <CurrentPageTitle />
+            </Tooltip>
+          ) : (
+            <CurrentPageTitle />
+          )}
+        </PageTitleAndLink>
       </Box>
     </Box>
   );

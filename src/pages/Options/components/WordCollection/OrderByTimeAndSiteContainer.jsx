@@ -1,11 +1,16 @@
 import { Box, Chip, Typography, useTheme } from '@mui/material';
-import React, { Fragment, memo, useRef } from 'react';
+import React, { Fragment, memo, useContext, useEffect, useRef } from 'react';
 import { GroupedVirtuoso } from 'react-virtuoso';
-import { cutUrl, domainPageWords } from '../../utils/transformData';
+import {
+  cutUrl,
+  domainPageWords,
+  getHostName,
+} from '../../utils/transformData';
 import { IndexQuickRefBox } from './IndexQuickRefBox';
 import { ListSubTitle } from './ListSubTitle';
 import { SiteIconButton } from './SiteIconButton';
 import { WordCollectionPageBox } from './WordCollectionPageBox';
+import { OrderModeANdSiteTargetContext } from '../../Options';
 
 export const getDomainIcon = (url, domainList, isDomain) => {
   if (!url || !domainList) return '';
@@ -22,6 +27,7 @@ export const getDomainIcon = (url, domainList, isDomain) => {
 export const OrderByTimeAndSiteContainer = memo(
   ({ contextList, domainAndLinkList, width }) => {
     const wordsByDomain = domainPageWords(contextList);
+
     const domainAndWordCount = wordsByDomain.map((arrayWithDomain) => {
       const wordCount = arrayWithDomain[1].reduce(
         (accumulatedWordCount, currentUrlData) => {
@@ -38,8 +44,29 @@ export const OrderByTimeAndSiteContainer = memo(
 
     const theme = useTheme();
 
+    const { targetSite, setTargetSite } = useContext(
+      OrderModeANdSiteTargetContext
+    );
     const siteModeVirtuoso = useRef(null);
     const groupCounts = Array(domainAndWordCount.length).fill(1);
+
+    useEffect(() => {
+      const targetIndex = targetSite
+        ? domainAndWordCount.findIndex(
+            (domainData) => domainData.domain === targetSite
+          )
+        : null;
+      if (targetIndex) {
+        setTimeout(() => {
+          if (siteModeVirtuoso.current) {
+            siteModeVirtuoso.current.scrollToIndex({
+              index: targetIndex,
+            });
+          }
+        }, 300);
+      }
+      setTargetSite(null);
+    }, [domainAndWordCount, targetSite, setTargetSite]);
 
     return (
       <Box>

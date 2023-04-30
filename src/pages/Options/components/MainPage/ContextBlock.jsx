@@ -13,10 +13,8 @@ import { WordInfoDrawerContext } from '../../Options';
 import { InfoBlock } from '../DatabaseInfo';
 import React from 'react';
 import { WordRating } from '../WordCollection/WordInfoDrawer/WordRating';
-import {
-  HighlightedContext,
-  PageTitleSection,
-} from '../WordCollection/WordCollectionPageBox';
+import { PageTitleSection } from '../WordCollection/PageTitleSection';
+import { HighlightedContext } from '../WordCollection/HighlightedContext';
 import { DateOfContext } from '../WordCollection/WordInfoDrawer/DateOfContext';
 import { Close, Search } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';

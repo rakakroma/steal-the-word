@@ -10,21 +10,24 @@ import React, {
   createContext,
   Suspense,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { db } from '../Background/database';
 import PersistentDrawerRight from './components/WordCollection/WordInfoDrawer/WordInfoDrawer';
 import { KBarCommandPalette } from './KBarCommandPalette';
 import './Options.css';
 import { darkThemeStyle, lightThemeStyle } from './theme.style';
+import { getHostName } from './utils/transformData';
 
 export const ContextListContext = createContext(null);
 export const DomainAndLinkListContext = createContext(null);
 export const WordListContext = createContext(null);
 export const WordInfoDrawerContext = createContext(null);
 export const TagListContext = createContext(null);
+export const OrderModeANdSiteTargetContext = createContext(null);
 
 const MyThemeProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -95,22 +98,78 @@ const WordTargetProvider = ({ children }) => {
   );
 };
 
+const OrderModeAndSiteTargetProvider = ({ children }) => {
+  const [targetSite, setTargetSite] = useState('');
+  const [orderMode, setOrderMode] = useState('time');
+
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  const toCertainSite = useCallback(
+    (url) => {
+      const domainName = getHostName(url);
+
+      if (!pathname.includes('collection')) {
+        navigate('/home/collection');
+      }
+      setOrderMode('timeSite');
+      setTargetSite(domainName);
+    },
+    [navigate, pathname]
+  );
+
+  // get order mode cookie
+  useEffect(() => {
+    const cookies = document.cookie
+      ?.split(';')
+      .map((cookieString) => cookieString.trim());
+    const orderModeCookie = cookies
+      .find((cookie) => cookie.startsWith('orderMode='))
+      ?.split('=')[1];
+
+    if (
+      orderModeCookie &&
+      ['tags', 'time', 'timeSite', 'alphabeticalOrder'].includes(
+        orderModeCookie
+      )
+    ) {
+      setOrderMode(orderModeCookie);
+    }
+  }, []);
+
+  return (
+    <OrderModeANdSiteTargetContext.Provider
+      value={{
+        targetSite,
+        orderMode,
+        setOrderMode,
+        toCertainSite,
+        setTargetSite,
+      }}
+    >
+      {children}
+    </OrderModeANdSiteTargetContext.Provider>
+  );
+};
+
 const Options = (props) => {
   return (
     <WordDataProvider>
       <WordTargetProvider>
-        <Box sx={{ display: 'flex' }}>
-          <MyThemeProvider>
-            <CssBaseline />
-            <Suspense fallback={<p>Loading...</p>}>
-              <KBarCommandPalette>
-                <PersistentDrawerRight>
-                  {props.outlet ? props.outlet : <Outlet />}
-                </PersistentDrawerRight>
-              </KBarCommandPalette>
-            </Suspense>
-          </MyThemeProvider>
-        </Box>
+        <OrderModeAndSiteTargetProvider>
+          <Box sx={{ display: 'flex' }}>
+            <MyThemeProvider>
+              <CssBaseline />
+              <Suspense fallback={<p>Loading...</p>}>
+                <KBarCommandPalette>
+                  <PersistentDrawerRight>
+                    {props.outlet ? props.outlet : <Outlet />}
+                  </PersistentDrawerRight>
+                </KBarCommandPalette>
+              </Suspense>
+            </MyThemeProvider>
+          </Box>
+        </OrderModeAndSiteTargetProvider>
       </WordTargetProvider>
     </WordDataProvider>
   );

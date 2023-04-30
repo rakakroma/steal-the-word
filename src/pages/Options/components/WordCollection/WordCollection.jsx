@@ -20,6 +20,7 @@ import { useContainerQuery } from 'react-container-query';
 import {
   ContextListContext,
   DomainAndLinkListContext,
+  OrderModeANdSiteTargetContext,
   WordListContext,
 } from '../../Options.jsx';
 import { AlphabeticalOrderModeContainer } from './AlphabeticalOrderModeContainer';
@@ -32,7 +33,6 @@ import { TagsContainer } from './TagsContainer.jsx';
 import { TimeModeContainer } from './TimeModeContainer';
 import { useTranslation } from 'react-i18next';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
-import { myLog } from '../../../Content/utils/customLogger.js';
 const FadeMotionWrapper = (props) => {
   return (
     <Fade in={props.in || true}>
@@ -66,24 +66,22 @@ const query = {
 export const CollectionSettingContext = createContext(null);
 
 export const SinglePageWordCollection = () => {
-  const [orderMode, setOrderMode] = useState('time');
   const [dateArrangement, setDateArrangement] = useState('date');
   const [displayMode, setDisplayMode] = useState('word');
   const [filterKanji, setFilterKanji] = useState(false);
   const [filterStars, setFilterStars] = useState(0);
   const [showAnnotation, setShowAnnotation] = useState(true);
 
+  const { orderMode, setOrderMode } = useContext(OrderModeANdSiteTargetContext);
   const { t } = useTranslation();
 
+  // get cookie
   useEffect(() => {
     const cookies = document.cookie
       ?.split(';')
       .map((cookieString) => cookieString.trim());
     const displayModeCookie = cookies
       .find((cookie) => cookie.startsWith('displayMode='))
-      ?.split('=')[1];
-    const orderModeCookie = cookies
-      .find((cookie) => cookie.startsWith('orderMode='))
       ?.split('=')[1];
     const showAnnotationCookie = cookies
       .find((cookie) => cookie.startsWith('showAnno='))
@@ -94,14 +92,6 @@ export const SinglePageWordCollection = () => {
       ['word', 'phrase', 'context'].includes(displayModeCookie)
     ) {
       setDisplayMode(displayModeCookie);
-    }
-    if (
-      orderModeCookie &&
-      ['tags', 'time', 'timeSite', 'alphabeticalOrder'].includes(
-        orderModeCookie
-      )
-    ) {
-      setOrderMode(orderModeCookie);
     }
     if (['true', 'false'].includes(showAnnotationCookie)) {
       setShowAnnotation(showAnnotationCookie === 'true');
@@ -177,7 +167,6 @@ export const SinglePageWordCollection = () => {
       </Box>
       <CollectionSettingContext.Provider
         value={{
-          orderMode,
           displayMode,
           dateArrangement,
           filterKanji,

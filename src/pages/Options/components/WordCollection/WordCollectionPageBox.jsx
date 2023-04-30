@@ -1,14 +1,18 @@
 import { Star } from '@mui/icons-material';
-import { Divider, Tooltip, Typography } from '@mui/material';
-import { styled, useTheme } from '@mui/material/styles';
+import { Divider, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { Box } from '@mui/system';
 import dayjs from 'dayjs';
 import React, { Fragment, useContext } from 'react';
-import { getAllMatchTextFromWordObj } from '../../../../utilsForAll/getInfoFromWordObj';
 import '../../../Content/components/customElements/WordBlock/HooliHighlighter';
-import { WordInfoDrawerContext, WordListContext } from '../../Options';
-import { SiteIconButton } from './SiteIconButton';
+import {
+  OrderModeANdSiteTargetContext,
+  WordInfoDrawerContext,
+  WordListContext,
+} from '../../Options';
 import { CollectionSettingContext } from './WordCollection';
+import { HighlightedContext } from './HighlightedContext';
+import { PageTitleSection } from './PageTitleSection';
 
 const SmallWord = styled(Box)(({ theme }) => ({
   wordBreak: 'break-word',
@@ -29,68 +33,11 @@ export const WordCollectionPageBoxContainer = styled(Box)(({ theme }) => ({
   height: 'fit-content',
 }));
 
-export const PageTitleSection = ({ pageTitle, imgUri, linkUrl, noIcon }) => {
-  return (
-    <Box sx={{ display: 'flex' }}>
-      {!noIcon && (
-        <SiteIconButton iconUri={imgUri} linkUrl={linkUrl} iconSize={20} />
-      )}
-      <Tooltip title={pageTitle} placement="right" arrow disableInteractive>
-        <Typography
-          variant="body2"
-          sx={{
-            pl: '2px',
-            display: 'inline-block',
-            color: 'text.secondary',
-            height: '1.5rem',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}
-        >
-          {pageTitle}
-        </Typography>
-      </Tooltip>
-    </Box>
-  );
-};
-
-export const HighlightedContext = ({ contextObj, wordObj }) => {
-  const wordList = useContext(WordListContext);
-  const wordObjFromList = wordList?.find(
-    (wordObj) => wordObj.id === contextObj.wordId
-  );
-
-  let matchWord;
-  if (contextObj.phrase) {
-    matchWord = contextObj.phrase;
-  } else {
-    if (!wordObj && !wordObjFromList)
-      return (
-        <Typography variant="subtitle1" component="div">
-          ⁉️word data missing
-        </Typography>
-      );
-
-    const allMatchText = getAllMatchTextFromWordObj(wordObj || wordObjFromList);
-    matchWord = allMatchText.find(
-      (matchText) => contextObj.context.indexOf(matchText) > -1
-    );
-  }
-
-  return (
-    <hooli-highlighter
-      text={contextObj.context}
-      matchWord={matchWord}
-    ></hooli-highlighter>
-  );
-};
-
 export const WordListInWordCollection = ({ wordsArray, showDivider }) => {
   const { wordInfoTarget, handleWordClick } = useContext(WordInfoDrawerContext);
   const wordList = useContext(WordListContext);
-  const { showAnnotation, displayMode, orderMode } = useContext(
-    CollectionSettingContext
-  );
+  const { showAnnotation, displayMode } = useContext(CollectionSettingContext);
+  const { orderMode } = useContext(OrderModeANdSiteTargetContext);
 
   const showHighlightedContext =
     ['time', 'timeSite'].includes(orderMode) && displayMode === 'context';
@@ -203,7 +150,6 @@ export const WordCollectionPageBox = ({
   showDate,
   noIcon,
 }) => {
-  const theme = useTheme();
   const { displayMode, showAnnotation } = useContext(CollectionSettingContext);
   return (
     <WordCollectionPageBoxContainer
@@ -217,7 +163,7 @@ export const WordCollectionPageBox = ({
           ? '220px'
           : '180px',
 
-        backgroundColor: theme.palette.background.paper,
+        backgroundColor: 'background.paper',
       }}
       key={arrayWithUrl[0]}
     >

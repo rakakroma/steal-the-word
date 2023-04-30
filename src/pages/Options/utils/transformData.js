@@ -1,5 +1,7 @@
 import dayjs from 'dayjs';
 
+export const getHostName = (url) => new URL(url).hostname || url;
+
 const getAllPages = (contexts) => [
   ...new Set(contexts.map((contextObj) => contextObj.url)),
 ];
@@ -21,7 +23,7 @@ export const pagesWords = (contexts) => {
 
 export const domainPageWords = (words) =>
   pagesWords(words).reduce((acc, curr) => {
-    const hostName = new URL(curr.url).hostname || curr.url;
+    const hostName = getHostName(curr.url);
     if (acc.find((pagesAndMatchRule) => pagesAndMatchRule[0] === hostName)) {
       return acc.map((pagesAndMatchRule) => {
         if (pagesAndMatchRule[0] === hostName) pagesAndMatchRule[1].push(curr);
