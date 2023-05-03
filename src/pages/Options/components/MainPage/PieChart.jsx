@@ -3,7 +3,7 @@ import { Box } from '@mui/system';
 import { ResponsivePie } from '@nivo/pie';
 import React, { useContext, useMemo, useState } from 'react';
 import { ContextListContext } from '../../Options';
-import { cutUrl } from '../../utils/transformData';
+import { cutUrl, getHostName } from '../../utils/transformData';
 import { InfoBlock } from '../DatabaseInfo';
 import { useTranslation } from 'react-i18next';
 
@@ -16,7 +16,7 @@ export const PieChartContainer = () => {
     if (!contextList) return null;
     return contextList
       .reduce((accu, curr) => {
-        const domainName = new URL(curr.url).hostname || curr.url;
+        const domainName = getHostName(curr.url);
         const indexOfCurrentDomain = accu.findIndex(
           (domainAndCount) => domainAndCount.id === domainName
         );

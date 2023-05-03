@@ -1,3 +1,7 @@
+/* 
+generate an rgba color by counting charCode and length of string;
+it should be not so dark, so it can be used as the background color of black text
+ */
 export const rgbFromString = (str, alpha) => {
   const charCodeRemainder =
     str.split('').reduce((acc, char) => acc + char.charCodeAt(0) * 13, 55) %
@@ -19,7 +23,6 @@ export const rgbFromString = (str, alpha) => {
   const oneNum = twoNum.filter((num) => num !== secondNum);
 
   const resultNum = [firstNum, secondNum, oneNum[0]];
-  // return `${resultNum[0]}, ${resultNum[1]}, ${resultNum[2]} `;
   return `rgba(${resultNum[0]}, ${resultNum[1]}, ${resultNum[2]}, ${
     alpha || 1
   })`;

@@ -60,7 +60,7 @@ export const CurrentDataAndDownload = ({
               wordList,
               tagList,
             })}
-            download={`allList backup ${formatDate(new Date())}.json`}
+            download={`Steal the Word backup ${formatDate(new Date())}.json`}
             disabled={noDataInCurrentDB}
           >
             <CloudDownload />

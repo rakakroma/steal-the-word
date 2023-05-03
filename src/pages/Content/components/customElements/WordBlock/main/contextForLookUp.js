@@ -3,6 +3,7 @@ import { pageTitle } from './pageTitle';
 import { contextDate } from './contextDate';
 import { definitionTags } from './definitionTags';
 import { LabelsIcon } from '@spectrum-web-components/icons-workflow';
+import { getCurrentDomain } from '../../../../../../utilsForAll/checkUrl';
 
 const contextsOfDef = (contexts, definition) => {
   return contexts.filter(
@@ -85,7 +86,7 @@ export const contextForLookUp = (wordBlock) => {
           let src;
           if (wordBlock.imgSrcs.length > 0) {
             src = wordBlock.imgSrcs.find((domainObj) => {
-              return domainObj?.url === new URL(contextObj.url).hostname;
+              return domainObj?.url === getCurrentDomain(contextObj.url);
             })?.icon;
           }
           return html`${contextDisplay(

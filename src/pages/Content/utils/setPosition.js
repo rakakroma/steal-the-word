@@ -1,5 +1,7 @@
 import { computePosition, flip, offset, shift } from '@floating-ui/dom';
 
+// FIXME: bug when using bottom in https://refactoring.guru/refactoring/when
+
 export const setWordBlockPosition = (ref, blockEle) => {
   let type;
   if (ref.constructor.name === 'Range') {

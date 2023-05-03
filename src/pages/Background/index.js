@@ -1,11 +1,11 @@
+import { defaultLangOptions } from '../../utilsForAll/languageAndApiData';
+import { getTextStyleData } from '../../utilsForAll/textStyleData';
+import './databaseSubscription';
+import { deleteHandlers } from './handler/deleteData';
+import { fetchHandlers } from './handler/fetchData';
+import { getHandlers } from './handler/getData';
 import { updateBadgeHandlers } from './handler/updateBadge';
 import { updateHandlers } from './handler/updateData';
-import { getHandlers } from './handler/getData';
-import { deleteHandlers } from './handler/deleteData';
-import './databaseSubscription';
-import { getTextStyleData } from '../../utilsForAll/textStyleData';
-import { defaultLangOptions } from '../../utilsForAll/languageAndApiData';
-import { fetchHandlers } from './handler/fetchData';
 
 chrome.action.setBadgeBackgroundColor({ color: '#4f4f4f' });
 
@@ -49,6 +49,10 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   chrome.tabs.sendMessage(tab.id, { action: 'save word' });
 });
 
+/* 
+i am not sure if using Map is better than using Object, 
+just wanna to try it
+ */
 const messageHandlers = new Map([
   ...updateBadgeHandlers,
   ...updateHandlers,

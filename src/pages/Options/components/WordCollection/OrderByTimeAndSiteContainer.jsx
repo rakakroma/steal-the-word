@@ -1,22 +1,19 @@
 import { Box, Chip, Typography, useTheme } from '@mui/material';
 import React, { Fragment, memo, useContext, useEffect, useRef } from 'react';
 import { GroupedVirtuoso } from 'react-virtuoso';
-import {
-  cutUrl,
-  domainPageWords,
-  getHostName,
-} from '../../utils/transformData';
+import { cutUrl, domainPageWords } from '../../utils/transformData';
 import { IndexQuickRefBox } from './IndexQuickRefBox';
 import { ListSubTitle } from './ListSubTitle';
 import { SiteIconButton } from './SiteIconButton';
 import { WordCollectionPageBox } from './WordCollectionPageBox';
 import { OrderModeANdSiteTargetContext } from '../../Options';
+import { getCurrentDomain } from '../../../../utilsForAll/checkUrl';
 
 export const getDomainIcon = (url, domainList, isDomain) => {
   if (!url || !domainList) return '';
   let hostname;
   if (!isDomain) {
-    hostname = new URL(url).hostname;
+    hostname = getCurrentDomain(url);
   }
   const domainData = domainList.find(
     (domainAndLinkObj) => domainAndLinkObj.url === (hostname || url)

@@ -18,6 +18,9 @@ export const ErrorPage = () => {
         <Typography sx={{ m: 5 }} variant="h3">
           🚧 no such page 🚧
         </Typography>
+        <Typography variant="h5" sx={{ color: 'text.secondary' }}>
+          maybe it goes something wrong? or just the url..
+        </Typography>
         <Typography variant="h6">
           Let's go back to{' '}
           <Link component={RouterLink} to="/home">

@@ -1,3 +1,5 @@
+//fix bug: ttps://github.com/timc1/kbar/issues/237
+
 import { useKBar, VisualState } from 'kbar';
 import * as React from 'react';
 

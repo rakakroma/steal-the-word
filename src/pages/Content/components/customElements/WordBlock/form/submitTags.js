@@ -1,9 +1,9 @@
 import {
   getDeletedTagsUpdateInfo,
   getExistedTagDataUpdateInfo,
-  getRefData,
+  createWordRefInTagObj,
   makeTagObj,
-  tagArrayToKeyObjs,
+  getTagFullDataArray,
   updateDefRef,
 } from '../../../../../../utilsForAll/handleTags';
 import { updateTags } from '../../../../../Background/handler/updateData';
@@ -17,16 +17,16 @@ export const submitTags = (
   newAddedOptions,
   definitionId
 ) => {
-  const notNewCreatedTags = tagArrayToKeyObjs(
+  const notNewCreatedTags = getTagFullDataArray(
     'tag',
     selectedOptions.filter((tagLabel) => !newAddedOptions.includes(tagLabel)),
     tagList
   );
   const notNewCreatedTagIds = notNewCreatedTags.map((tagObj) => tagObj.id);
-  const refData = getRefData(wordBlock.wordObj.id, definitionId);
-  const newTagsToTagList = newAddedOptions.map((tagLabel) => {
-    return makeTagObj(tagLabel, refData);
-  });
+  const refData = createWordRefInTagObj(wordBlock.wordObj.id, definitionId);
+  const newTagsToTagList = newAddedOptions.map((tagLabel) =>
+    makeTagObj(tagLabel, refData)
+  );
 
   const existedTagDataUpdateInfo = getExistedTagDataUpdateInfo(
     notNewCreatedTags,

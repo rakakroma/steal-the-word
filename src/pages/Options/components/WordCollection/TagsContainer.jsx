@@ -12,8 +12,9 @@ export const TagsContainer = memo(({ wordList, columns, width }) => {
 
   const tagListAndThereWords = useMemo(
     () =>
-      tagList.reduce((accu, curr) => {
-        const wordsData = curr.wordDefRefs.reduce(
+      tagList.reduce((accu, currTagObj) => {
+        const copiedTagObj = { ...currTagObj };
+        const wordsData = copiedTagObj.wordDefRefs.reduce(
           (accuWordData, currWordRef) => {
             const wordData = wordList.find(
               (wordObj) => wordObj.id === currWordRef.wordId
@@ -28,8 +29,8 @@ export const TagsContainer = memo(({ wordList, columns, width }) => {
           []
         );
         if (wordsData.length > 0) {
-          curr.wordsData = wordsData;
-          return accu.concat(curr);
+          copiedTagObj.wordsData = wordsData;
+          return accu.concat(copiedTagObj);
         }
         return accu;
       }, []),

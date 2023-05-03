@@ -1,3 +1,4 @@
+import { getCurrentDomain } from '../../../utilsForAll/checkUrl';
 import { getDataInTableFromIndexedDB } from '../../Options/utils/getDataFromDB';
 import { db } from '../database';
 import { setStopBadge } from './updateBadge';
@@ -15,7 +16,7 @@ const getStart = 'getStart';
 getHandlers.set(getStart, async (request, senderTab, sendResponse) => {
   try {
     const tabUrl = senderTab.url;
-    const currentDomain = new URL(tabUrl).hostname;
+    const currentDomain = getCurrentDomain(tabUrl);
     const domainData = await db.domainAndLink.get({ url: currentDomain });
     const stopInThisPage =
       domainData?.activate === false && domainData?.customRule === true;
@@ -46,7 +47,7 @@ getHandlers.set(getContexts, async ({ wordId }, senderTab, sendResponse) => {
       })
       .toArray();
     const allDomains = contexts.map((contextObj) => {
-      return new URL(contextObj.url).hostname;
+      return getCurrentDomain(contextObj.url);
     });
     const domainData = await Promise.all(
       allDomains.map(async (domain) => {

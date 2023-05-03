@@ -30,7 +30,6 @@ export const TagLabelChip = ({
       label={tagLabel}
       sx={{
         mr: 1,
-        // color: rgbFromString(tag),
         backgroundColor: rgbFromString(tagLabel, 0.1),
       }}
     />

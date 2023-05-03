@@ -73,7 +73,6 @@ export const SiteIconButton = ({
         t('see-collection-before') +
         ' ' +
         domainName +
-        ' ' +
         t('see-collection-after')
       }
       disableInteractive

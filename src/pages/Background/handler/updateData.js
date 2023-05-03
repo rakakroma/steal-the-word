@@ -1,9 +1,15 @@
 import { db } from '../database';
 import { blobToBase64 } from '../blobToBase64';
 import { successMessage } from '../messageTemplate';
+import { getCurrentDomain } from '../../../utilsForAll/checkUrl';
 
-const savingDomainData = async (currentDomain, favIconUrl) => {
-  if (favIconUrl) {
+const savingDomainData = async (currentUrl, favIconUrl) => {
+  const currentDomain = getCurrentDomain(currentUrl);
+  /* 
+  only save the domain if it got an icon (or when there are preferences)
+  do not save local path's html favicon.
+ */
+  if (favIconUrl && currentDomain !== 'file') {
     let res;
     let blob;
     const domainInDB = await db.domainAndLink.get({ url: currentDomain }); //and the custom url
@@ -35,8 +41,6 @@ const saveWordAndContext = 'saveWordAndContext';
 updateHandlers.set(
   saveWordAndContext,
   async ({ newWord, newContext }, senderTab, sendResponse) => {
-    const currentDomain = new URL(newContext.url).hostname;
-
     try {
       const saveTheWord = async () => {
         const sameWordInDB = await db.wordList.get({ word: newWord.word });
@@ -57,7 +61,7 @@ updateHandlers.set(
       };
       const saveSuccess = await saveTheWord();
       if (!saveSuccess) return;
-      await savingDomainData(currentDomain, senderTab.favIconUrl);
+      await savingDomainData(newContext.url, senderTab.favIconUrl);
       sendResponse(successMessage(`got ${newWord.word}`));
     } catch (err) {
       console.error(err);
@@ -71,12 +75,10 @@ const addNewContextForSavedWord = 'addNewContextForSavedWord';
 updateHandlers.set(
   addNewContextForSavedWord,
   async ({ newContext }, senderTab, sendResponse) => {
-    const currentDomain = new URL(newContext.url).hostname;
-
     try {
       await Promise.all([
         db.contextList.add(newContext),
-        savingDomainData(currentDomain, senderTab.favIconUrl),
+        savingDomainData(newContext.url, senderTab.favIconUrl),
       ]);
 
       sendResponse(successMessage(`saved ${newContext.context}`));

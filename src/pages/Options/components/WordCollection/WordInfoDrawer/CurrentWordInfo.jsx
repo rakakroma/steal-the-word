@@ -8,10 +8,10 @@ import { useLocation } from 'react-router-dom';
 import {
   getDeletedTagsUpdateInfo,
   getExistedTagDataUpdateInfo,
-  getRefData,
+  createWordRefInTagObj,
   getShouldUpdateTagsFromDeleteDefs,
   makeTagObj,
-  tagArrayToKeyObjs,
+  getTagFullDataArray,
   updateDefRef,
 } from '../../../../../utilsForAll/handleTags.js';
 import { db } from '../../../../Background/database.js';
@@ -29,6 +29,7 @@ import { TypographyOrInput } from './inputs/TypographyOrInput';
 import { SubmitSection } from './SubmitSection';
 import { VariantsInfo } from './VariantsInfo';
 import { WordRating } from './WordRating';
+import { getCurrentDomain } from '../../../../../utilsForAll/checkUrl.js';
 
 export const CurrentWordInfo = () => {
   const theme = useTheme();
@@ -76,7 +77,7 @@ export const CurrentWordInfo = () => {
   const targetWordContexts = contextList
     ?.filter((contextObj) => contextObj.wordId === targetWordId)
     ?.map((contextObj) => {
-      const contextDomain = new URL(contextObj.url).hostname;
+      const contextDomain = getCurrentDomain(contextObj.url);
       const domainObj = domainAndLinkList.find(
         (domainObj) => domainObj.url === contextDomain
       );
@@ -96,7 +97,7 @@ export const CurrentWordInfo = () => {
     if (controlMode === 'display' && changingTagsWhenDisplay) {
       //handle tag submit
       const tagsData = data[changingTagsWhenDisplay];
-      const refData = getRefData(
+      const refData = createWordRefInTagObj(
         targetWord.id,
         getDataFromName(changingTagsWhenDisplay).id
       );
@@ -127,7 +128,7 @@ export const CurrentWordInfo = () => {
       );
 
       const tagUpdateInfo = getExistedTagDataUpdateInfo(
-        tagArrayToKeyObjs(
+        getTagFullDataArray(
           'id',
           divideNewCreatedTagAndExistTag.notNewTagIds,
           tagList
@@ -144,7 +145,7 @@ export const CurrentWordInfo = () => {
       );
 
       const deletedTagsUpdateInfo = getDeletedTagsUpdateInfo(
-        tagArrayToKeyObjs('id', tagsDeletedFromThisDef, tagList),
+        getTagFullDataArray('id', tagsDeletedFromThisDef, tagList),
         refData
       );
 

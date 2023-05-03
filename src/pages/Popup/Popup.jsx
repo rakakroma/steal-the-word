@@ -53,7 +53,8 @@ const LinkButtonsGrid = () => {
 };
 
 const Popup = () => {
-  const { currentDomain, favIconUrl, validPlace } = useCurrentTabData();
+  const { noTabData, currentDomain, favIconUrl, validPlace } =
+    useCurrentTabData();
 
   const theme = createTheme({
     typography: {
@@ -72,6 +73,7 @@ const Popup = () => {
     },
   });
 
+  if (noTabData) return <Typography>loading</Typography>;
   return (
     <ThemeProvider theme={theme}>
       <Box className="App" sx={{ width: '220px' }}>
@@ -91,7 +93,7 @@ const Popup = () => {
                 </Typography>
               </>
             ) : (
-              ''
+              <Typography>🚧 Not working in current tab 🚧</Typography>
             )}
           </Grid>
         </Box>

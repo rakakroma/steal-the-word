@@ -1,4 +1,8 @@
 import { useEffect, useState } from 'react';
+import {
+  checkIsValidEnvironmentByUrl,
+  getCurrentDomain,
+} from '../../utilsForAll/checkUrl';
 
 export const useCurrentTabData = () => {
   const [tabData, setTabData] = useState(null);
@@ -9,16 +13,15 @@ export const useCurrentTabData = () => {
     });
   }, []);
 
-  let currentUrl;
-  let currentDomain;
-  let favIconUrl;
-  let validPlace;
+  if (!tabData) {
+    return { noTabData: true };
+  }
 
   if (tabData) {
-    currentUrl = tabData.url;
-    currentDomain = new URL(tabData.url).hostname;
-    favIconUrl = tabData.favIconUrl;
-    validPlace = !tabData.url.split('//')[0].includes('extension');
+    const currentUrl = tabData.url;
+    const currentDomain = getCurrentDomain(currentUrl);
+    const validPlace = checkIsValidEnvironmentByUrl(currentUrl);
+    const favIconUrl = currentDomain === 'file' ? '' : tabData.favIconUrl;
+    return { currentUrl, currentDomain, favIconUrl, validPlace };
   }
-  return { currentUrl, currentDomain, favIconUrl, validPlace };
 };

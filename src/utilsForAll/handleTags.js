@@ -7,7 +7,7 @@ export const checkSameRef = (firstData, secondData) => {
   );
 };
 
-export const getRefData = (wordId, defId) => ({
+export const createWordRefInTagObj = (wordId, defId) => ({
   wordId,
   defId,
 });
@@ -18,19 +18,23 @@ export const makeTagObj = (tagLabel, refData) => ({
   wordDefRefs: [refData],
 });
 
-export const tagArrayToKeyObjs = (keyType, tagArray, tagList) => {
-  //keyType: 'tag', 'id'
-  return tagArray.map((tagValue) =>
-    tagList.find((tagObj) => tagObj[keyType] === tagValue)
+export const getTagFullDataArray = (
+  currentKeyType,
+  targetTagArray,
+  fullTagList
+) => {
+  //currentKeyType: 'tag', 'id'
+  return targetTagArray.map((tagValue) =>
+    fullTagList.find((tagObj) => tagObj[currentKeyType] === tagValue)
   );
 };
 
-export const updateDefRef = (definitions, targetDefId, newTagRefOfTheWord) => {
+export const updateDefRef = (definitions, targetDefId, newTagRefOfThatDef) => {
   return [...definitions].map((definition) => {
     if (definition.definitionId === targetDefId) {
       return {
         ...definition,
-        tags: newTagRefOfTheWord,
+        tags: newTagRefOfThatDef,
       };
     }
     return definition;
