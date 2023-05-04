@@ -5,15 +5,8 @@ import { useTheme } from '@mui/material/styles';
 import React, { useContext, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation } from 'react-router-dom';
-import {
-  getDeletedTagsUpdateInfo,
-  getExistedTagDataUpdateInfo,
-  createWordRefInTagObj,
-  getShouldUpdateTagsFromDeleteDefs,
-  makeTagObj,
-  getTagFullDataArray,
-  updateDefRef,
-} from '../../../../../utilsForAll/handleTags.js';
+import { getCurrentDomain } from '../../../../../utilsForAll/checkUrl.js';
+import { getShouldUpdateTagsFromDeleteDefs } from '../../../../../utilsForAll/handleTags.js';
 import { db } from '../../../../Background/database.js';
 import { myLog } from '../../../../Content/utils/customLogger.js';
 import {
@@ -24,12 +17,13 @@ import {
   WordListContext,
 } from '../../../Options';
 import { DefinitionBlock } from './DefinitionBlock.jsx';
-import { getDataFromName, getDefaultValueFromData } from './getDataFromName';
-import { TypographyOrInput } from './inputs/TypographyOrInput';
 import { SubmitSection } from './SubmitSection';
 import { VariantsInfo } from './VariantsInfo';
 import { WordRating } from './WordRating';
-import { getCurrentDomain } from '../../../../../utilsForAll/checkUrl.js';
+import { getDataFromName, getDefaultValueFromData } from './getDataFromName';
+import { TypographyOrInput } from './inputs/TypographyOrInput';
+import { updateTagFunc } from '../../../../Background/handler/updateData.js';
+import { getUpdatedTagData } from './getUpdatedTagData.js';
 
 export const CurrentWordInfo = () => {
   const theme = useTheme();
@@ -96,74 +90,31 @@ export const CurrentWordInfo = () => {
     myLog(data);
     if (controlMode === 'display' && changingTagsWhenDisplay) {
       //handle tag submit
-      const tagsData = data[changingTagsWhenDisplay];
-      const refData = createWordRefInTagObj(
-        targetWord.id,
-        getDataFromName(changingTagsWhenDisplay).id
-      );
 
-      const isNewTagValue = (value) => {
-        return tagList.findIndex((tagObj) => tagObj.tag === value) === -1;
-      };
+      const {
+        refData,
+        newDefinitionOfCurrWord,
+        newTagObjs,
+        shouldDeleteTagIds,
+        shouldUpdateTags,
+      } = getUpdatedTagData(data, changingTagsWhenDisplay, targetWord, tagList);
 
-      const divideNewCreatedTagAndExistTag = tagsData.reduce(
-        (accu, curr) => {
-          const tag = curr.label;
-          const tagId = curr.value;
-          if (isNewTagValue(tag)) {
-            const newTagObj = makeTagObj(tag, refData);
-            accu.newTagObjs.push(newTagObj);
-            accu.tagIdArrayForWord.push(newTagObj.id);
-          } else {
-            accu.notNewTagIds.push(tagId);
-            accu.tagIdArrayForWord.push(tagId);
-          }
-          return accu;
-        },
-        {
-          newTagObjs: [],
-          notNewTagIds: [],
-          tagIdArrayForWord: [],
-        }
-      );
+      // db.wordList.update(refData.wordId, {
+      //   definitions: newDefinitionOfCurrWord,
+      // });
+      // db.tagList.bulkAdd(newTagObjs);
+      // db.tagList.bulkDelete(shouldDeleteTagIds);
+      // shouldUpdateTags.forEach((tagData) => {
+      //   const { wordDefRefs } = tagData;
+      //   db.tagList.update(tagData.id, { wordDefRefs });
+      // });
 
-      const tagUpdateInfo = getExistedTagDataUpdateInfo(
-        getTagFullDataArray(
-          'id',
-          divideNewCreatedTagAndExistTag.notNewTagIds,
-          tagList
-        ),
-        refData
-      );
-
-      const tagIdsBeforeUpdate = targetWord.definitions.find(
-        (definition) => definition.definitionId === refData.defId
-      ).tags;
-      const tagsDeletedFromThisDef = tagIdsBeforeUpdate.filter(
-        (tagId) =>
-          !divideNewCreatedTagAndExistTag.tagIdArrayForWord.includes(tagId)
-      );
-
-      const deletedTagsUpdateInfo = getDeletedTagsUpdateInfo(
-        getTagFullDataArray('id', tagsDeletedFromThisDef, tagList),
-        refData
-      );
-
-      const newDefinitions = updateDefRef(
-        targetWord.definitions,
-        refData.defId,
-        divideNewCreatedTagAndExistTag.tagIdArrayForWord
-      );
-      const shouldUpdateTags = tagUpdateInfo.shouldAddRef.concat(
-        deletedTagsUpdateInfo.shouldDeleteRef
-      );
-
-      db.wordList.update(refData.wordId, { definitions: newDefinitions });
-      db.tagList.bulkAdd(divideNewCreatedTagAndExistTag.newTagObjs);
-      db.tagList.bulkDelete(deletedTagsUpdateInfo.shouldDeleteTagIds);
-      shouldUpdateTags.forEach((tagData) => {
-        const { wordDefRefs } = tagData;
-        db.tagList.update(tagData.id, { wordDefRefs });
+      updateTagFunc({
+        refData,
+        newDefinitions: newDefinitionOfCurrWord,
+        newTagsToTagList: newTagObjs,
+        shouldUpdateTags,
+        shouldDeleteTagIds,
       });
 
       setChangingTagsWhenDisplay(null);
@@ -239,7 +190,6 @@ export const CurrentWordInfo = () => {
       const wordObjInfoToUpdate = {};
       const defsArrayToUpdate = [...targetWord.definitions];
       const contextObjsToUpdate = [];
-      const tagsToUpdate = [];
       changedDataKey.forEach((key) => {
         if (['word', 'variants', 'stem', 'matchRule'].includes(key)) {
           if (!newWordInfo) {
@@ -309,7 +259,6 @@ export const CurrentWordInfo = () => {
         });
       }
       setControlMode('display');
-    } else {
     }
   };
 

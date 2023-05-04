@@ -1,10 +1,8 @@
 module.exports = {
-  // 無関係のその他の設定は割愛
-
   transform: {
-    '^.+\\.(j|t)sx?$': 'esbuild-jest', // js ファイルもトランスパイルの対象にしておく
+    '^.+\\.(j|t)sx?$': 'esbuild-jest',
   },
-  transformIgnorePatterns: [`node_modules/(?!nanoid/)`], // nanoid をトランスパイルする
+  transformIgnorePatterns: [`node_modules/(?!nanoid/)`],
 };
 /* 
   https://beyooon.jp/blog/nanoid-v4-fails-jest/

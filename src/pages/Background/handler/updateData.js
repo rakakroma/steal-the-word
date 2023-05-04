@@ -177,35 +177,32 @@ updateHandlers.set(
 );
 
 const updateTags = 'updateTags';
-updateHandlers.set(
-  updateTags,
-  async (
-    {
-      refData,
-      newDefinitions,
-      newTagsToTagList,
-      shouldUpdateTags,
-      shouldDeleteTagIds,
-    },
-    senderId,
-    sendResponse
-  ) => {
-    try {
-      await Promise.all([
-        db.wordList.update(refData.wordId, { definitions: newDefinitions }),
-        db.tagList.bulkAdd(newTagsToTagList),
-        db.tagList.bulkDelete(shouldDeleteTagIds),
-        ...shouldUpdateTags.map(async (tagData) => {
-          const { wordDefRefs } = tagData;
-          await db.tagList.update(tagData.id, { wordDefRefs });
-        }),
-      ]);
-      sendResponse(successMessage());
-    } catch (err) {
-      console.error(err);
-    }
+
+export const updateTagFunc = ({
+  refData,
+  newDefinitions,
+  newTagsToTagList,
+  shouldUpdateTags,
+  shouldDeleteTagIds,
+}) =>
+  Promise.all([
+    db.wordList.update(refData.wordId, { definitions: newDefinitions }),
+    db.tagList.bulkAdd(newTagsToTagList),
+    db.tagList.bulkDelete(shouldDeleteTagIds),
+    ...shouldUpdateTags.map(async (tagData) => {
+      const { wordDefRefs } = tagData;
+      await db.tagList.update(tagData.id, { wordDefRefs });
+    }),
+  ]);
+
+updateHandlers.set(updateTags, async (someTagData, senderId, sendResponse) => {
+  try {
+    await updateTagFunc(someTagData);
+    sendResponse(successMessage());
+  } catch (err) {
+    console.error(err);
   }
-);
+});
 
 export {
   updateHandlers,

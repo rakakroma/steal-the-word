@@ -14,7 +14,6 @@ export const HideDrawerButton = () => {
   const { changeWordInfoTarget } = useContext(WordInfoDrawerContext);
 
   const handleDrawerClose = () => {
-    // setOpen(false);
     changeWordInfoTarget(null);
   };
 

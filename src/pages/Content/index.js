@@ -53,11 +53,9 @@ const init = async () => {
   }
 
   await store.dispatch(getInitialDataFromDb());
-  myLog(`working in ${document.URL}`);
 
   if (!getCertainSetting(store.getState(), 'activate')) return;
 
-  myLog('still working');
   let loadEvent = false;
 
   const startAfterLoaded = () => {

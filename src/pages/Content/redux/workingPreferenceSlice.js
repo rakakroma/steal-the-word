@@ -4,7 +4,6 @@ import {
   getGlobalPreferencesFromLocalStorage,
   getInitialDataFromDb,
 } from './messageWithBackground';
-import { myLog } from '../utils/customLogger';
 
 const options = ['activate', 'mouseTool', 'floatingWindow'];
 
@@ -39,7 +38,6 @@ export const workingPreferenceSlice = createSlice({
     builder.addCase(getInitialDataFromDb.fulfilled, (state, action) => {
       const customPref = action.payload.domainData;
       if (!customPref) return;
-      console.log(customPref);
       state.customRule = customPref.customRule;
       options.forEach((keyName) => {
         state[keyName].custom = customPref[keyName];

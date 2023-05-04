@@ -1,9 +1,9 @@
 import { Stack, Switch, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-const Option = ({ description, checked, handleChange, disabled }) => {
+const SingleOption = ({ description, checked, handleChange, disabled }) => {
   const { t } = useTranslation();
 
   return (
@@ -32,9 +32,9 @@ export const AllSitesToggleOptions = ({ localStorageDataAndMethods }) => {
   const { globalPreference, toggleGlobalPreference } =
     localStorageDataAndMethods;
 
-  const NotMainOption = ({ name }) => {
+  const SecondaryOptionInAllSites = ({ name }) => {
     return (
-      <Option
+      <SingleOption
         description={camelCaseToSpaced(name)}
         checked={globalPreference[name]}
         handleChange={() => toggleGlobalPreference(name)}
@@ -44,9 +44,9 @@ export const AllSitesToggleOptions = ({ localStorageDataAndMethods }) => {
   };
   return (
     <Stack>
-      <NotMainOption name={'floatingWindow'} />
-      <NotMainOption name={'mouseTool'} />
-      <Option
+      <SecondaryOptionInAllSites name="floatingWindow" />
+      <SecondaryOptionInAllSites name="mouseTool" />
+      <SingleOption
         description="Activate"
         checked={globalPreference.activate}
         handleChange={() => toggleGlobalPreference('activate')}
@@ -62,9 +62,9 @@ export const CurrentSiteToggleOptions = ({
   const { domainData, toggleOneDomainData } = domainDataAndMethods;
   const { globalPreference } = localStorageDataAndMethods;
 
-  const SecondaryOption = ({ name }) => {
+  const SecondaryOptionInCurrentSite = ({ name }) => {
     return (
-      <Option
+      <SingleOption
         description={camelCaseToSpaced(name)}
         checked={domainData[name] || false}
         handleChange={() => toggleOneDomainData(name)}
@@ -80,7 +80,7 @@ export const CurrentSiteToggleOptions = ({
 
   return (
     <Stack>
-      <Option
+      <SingleOption
         description="Use Custom Setting in Current Site?"
         checked={domainData.customRule || false}
         handleChange={() => {
@@ -89,9 +89,9 @@ export const CurrentSiteToggleOptions = ({
         disabled={!globalPreference.activate}
       />
 
-      <SecondaryOption name="floatingWindow" />
-      <SecondaryOption name="mouseTool" />
-      <Option
+      <SecondaryOptionInCurrentSite name="floatingWindow" />
+      <SecondaryOptionInCurrentSite name="mouseTool" />
+      <SingleOption
         description="Activate"
         checked={domainData['activate'] || false}
         handleChange={() => {

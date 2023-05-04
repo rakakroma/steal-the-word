@@ -44,7 +44,6 @@ export const useDbDomainData = (domainUrl) => {
       addNewDomain(newValueObj);
       return;
     }
-    console.log(domainData.id);
     db['domainAndLink'].update(domainData.id, newValueObj);
   };
 
@@ -57,7 +56,7 @@ export const useDbDomainData = (domainUrl) => {
   };
 
   return {
-    domainData: domainData || newDomainData,
+    domainData: domainData || newDomainData, //use template domain data if no domain data
     toggleOneDomainData,
   };
 };

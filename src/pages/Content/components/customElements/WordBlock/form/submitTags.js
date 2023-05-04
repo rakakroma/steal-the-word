@@ -1,5 +1,5 @@
 import {
-  getDeletedTagsUpdateInfo,
+  getShouldDeleteTags,
   getExistedTagDataUpdateInfo,
   createWordRefInTagObj,
   makeTagObj,
@@ -33,7 +33,7 @@ export const submitTags = (
     refData
   );
 
-  const deletedTagsUpdateInfo = getDeletedTagsUpdateInfo(
+  const deletedTagsUpdateInfo = getShouldDeleteTags(
     tagObjs.filter(
       (tagObj) =>
         selectedOptions.findIndex((tagLabel) => tagLabel === tagObj.tag) === -1
@@ -50,8 +50,8 @@ export const submitTags = (
     definitionId,
     newTagRefOfTheWord
   );
-  const shouldUpdateTags = existedTagDataUpdateInfo.shouldAddRef.concat(
-    deletedTagsUpdateInfo.shouldDeleteRef
+  const shouldUpdateTags = existedTagDataUpdateInfo.concat(
+    deletedTagsUpdateInfo.updatedTagObjsOfShouldDeleteRef
   );
 
   submitAndExecute(wordBlock, {

@@ -41,25 +41,19 @@ export const updateDefRef = (definitions, targetDefId, newTagRefOfThatDef) => {
   });
 };
 
-export const getExistedTagDataUpdateInfo = (notNewCreatedTags, refData) =>
-  notNewCreatedTags.reduce(
-    (accu, curr) => {
-      const tagObjOfThisTag = curr;
-      if (
-        tagObjOfThisTag.wordDefRefs.findIndex((ref) =>
-          checkSameRef(ref, refData)
-        ) === -1
-      ) {
-        const newDefRefs = [...tagObjOfThisTag.wordDefRefs, refData];
-        accu.shouldAddRef.push({
-          id: tagObjOfThisTag.id,
-          wordDefRefs: newDefRefs,
-        });
-      }
-      return accu;
-    },
-    { shouldAddRef: [] }
-  );
+export const getExistedTagDataUpdateInfo = (oldTags, refData) =>
+  oldTags.reduce((accu, tagObj) => {
+    if (
+      tagObj.wordDefRefs.findIndex((ref) => checkSameRef(ref, refData)) === -1
+    ) {
+      const newDefRefs = [...tagObj.wordDefRefs, refData];
+      accu.push({
+        id: tagObj.id,
+        wordDefRefs: newDefRefs,
+      });
+    }
+    return accu;
+  }, []);
 
 const getFilteredRefs = (oldRefs, shouldDeleteRefData) => {
   return [...oldRefs].filter((ref) => !checkSameRef(ref, shouldDeleteRefData));
@@ -119,8 +113,8 @@ export const getShouldUpdateTagsFromDeleteDefs = (
   );
 };
 
-export const getDeletedTagsUpdateInfo = (deletedTagObjs, refData) => {
-  return deletedTagObjs.reduce(
+export const getShouldDeleteTags = (tagObjsRemovedFromCurrentDef, refData) => {
+  return tagObjsRemovedFromCurrentDef.reduce(
     (accu, curr) => {
       if (
         curr.wordDefRefs.length === 1 &&
@@ -132,13 +126,42 @@ export const getDeletedTagsUpdateInfo = (deletedTagObjs, refData) => {
           (ref) => !checkSameRef(ref, refData)
         );
 
-        accu.shouldDeleteRef.push({ id: curr.id, wordDefRefs: newDefRef });
+        accu.updatedTagObjsOfShouldDeleteRef.push({
+          id: curr.id,
+          wordDefRefs: newDefRef,
+        });
       }
       return accu;
     },
     {
       shouldDeleteTagIds: [],
-      shouldDeleteRef: [],
+      updatedTagObjsOfShouldDeleteRef: [],
     }
   );
 };
+
+export const isNewTagValue = (value, tagList) => {
+  return tagList.findIndex((tagObj) => tagObj.tag === value) === -1;
+};
+
+export const getNewTagsAndOldTags = (tagsData, refData, tagList) =>
+  tagsData.reduce(
+    (accu, curr) => {
+      const tag = curr.label;
+      const tagId = curr.value;
+      if (isNewTagValue(tag, tagList)) {
+        const newTagObj = makeTagObj(tag, refData);
+        accu.newTagObjs.push(newTagObj);
+        accu.tagIdArrayForDef.push(newTagObj.id);
+      } else {
+        accu.notNewTagIds.push(tagId);
+        accu.tagIdArrayForDef.push(tagId);
+      }
+      return accu;
+    },
+    {
+      newTagObjs: [],
+      notNewTagIds: [],
+      tagIdArrayForDef: [],
+    }
+  );

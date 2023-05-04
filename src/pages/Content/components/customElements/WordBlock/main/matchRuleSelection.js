@@ -38,7 +38,6 @@ export const matchRuleSelection = (word, stem, variants, matchRule) => {
     text = 'tooltipText.CJKMatchRuleExplanation';
   }
 
-  console.log(`${word} ${isLangsNotUseSpaceRegex.test(word)}`);
   return html`
     <div id="match-rule-selection-container">
       <h6>
