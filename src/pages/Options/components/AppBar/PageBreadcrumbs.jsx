@@ -54,6 +54,7 @@ export const PageBreadcrumbs = () => {
         {pathArray.map((pathTarget, index) => {
           const last = index === pathArray.length - 1;
           if (error && !last) return null;
+
           return (
             <Box
               sx={{

@@ -12,7 +12,7 @@
   "Random Context": "ランダムな文脈",
   "Total Savings Over Time": "総データ統計",
   "Top Ten Sites": "トップ１０サイト",
-  "Language": "言語",
+  "Language": "表示言語",
   "enable auto retrieve info from api": "自動でAPIから単語データを取得する",
   "api_caution": "APIサービスを有効すると、当時の単語と文脈はAPIサービスに送信する。これ以外、この拡張機能アプリのデータは完全にローカルで保存する、他の場所に送信することがしません。",
   "current Data": "現在のデータ",

@@ -20,6 +20,38 @@ import {
 import { Trans, useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
+const SelectDisplayLanguage = () => {
+  const handleLanguageChange = (e) => {
+    i18next.changeLanguage(e.target.value);
+  };
+  const { t } = useTranslation();
+  return (
+    <FormControl sx={{ mb: 3, display: 'flex', flexDirection: 'row' }}>
+      <Typography
+        variant="h6"
+        sx={{ mr: 2, display: 'flex', alignItems: 'center' }}
+      >
+        {t('Language')}:
+      </Typography>
+      <Select
+        sx={{ maxWidth: '200px' }}
+        value={i18next.language}
+        onChange={handleLanguageChange}
+      >
+        {Object.entries({
+          en: 'English',
+          'zh-TW': '繁體中文',
+          ja: '日本語',
+        }).map(([keyId, value]) => (
+          <MenuItem key={keyId} value={keyId}>
+            {value}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  );
+};
+
 const useStorageApiSetting = () => {
   const [apiSetting, setApiSetting] = useState(defaultLangOptions);
 
@@ -34,111 +66,95 @@ const useStorageApiSetting = () => {
   }, []);
 
   const changeWholeApiSetting = (newData) => {
-    chrome.storage.local.set({
-      apiSetting: newData,
-    });
-    setApiSetting(newData);
+    chrome.storage.local
+      .set({
+        apiSetting: newData,
+      })
+      .then(() => {
+        setApiSetting(newData);
+      });
   };
 
-  const changeOneOption = (keyValue) => {
+  const changeOptions = (keyValue) => {
     changeWholeApiSetting({ ...apiSetting, ...keyValue });
   };
-  return { apiSetting, changeOneOption };
+  return { apiSetting, changeOptions };
+};
+
+const LangLabels = {
+  japanese: (
+    <Typography>
+      <Trans i18nKey="japaneseHiraganaApi" components={{ bold: <strong /> }}>
+        <strong>Japanese</strong> Hiragana from from
+      </Trans>
+      <Link
+        href="https://labs.goo.ne.jp/api/jp/hiragana-translation/"
+        target="_blank"
+      >
+        {' '}
+        goo辞書ひらがな化API
+      </Link>
+    </Typography>
+  ),
+  english: (
+    <Typography>
+      <Trans i18nKey="englishDictApi" components={{ bold: <strong /> }}>
+        <strong>English word</strong> pronunciation and its first definition
+        from
+      </Trans>
+      <Link href="https://dictionaryapi.dev/" target="_blank">
+        {' '}
+        Free Dictionary API
+      </Link>
+    </Typography>
+  ),
+  chinese: (
+    <Typography>
+      <Trans i18nKey="chineseApi" components={{ bold: <strong /> }}>
+        word pronunciation of other languages (in Taiwan) using
+        <strong>Traditional Chinese characters</strong> from
+      </Trans>
+      <Link href="https://github.com/g0v/moedict-webkit" target="_blank">
+        {' '}
+        MOEDICT 萌典
+      </Link>
+    </Typography>
+  ),
 };
 
 export const ApiInfo = () => {
-  const { apiSetting, changeOneOption } = useStorageApiSetting();
-  const langOptions = apiSetting;
-  const enabled = apiSetting.enabled;
+  const { apiSetting, changeOptions } = useStorageApiSetting();
 
   const { t } = useTranslation();
   const handleLangCheck = (e) => {
-    changeOneOption({ [e.target.name]: e.target.checked });
+    changeOptions({ [e.target.name]: e.target.checked });
   };
 
   const handleChineseChange = (e) => {
-    changeOneOption({ chinese: e.target.value });
+    if (e.target.value === 'hak') {
+      changeOptions({
+        hakkaOptions: Object.keys(allHakOptions),
+        chinese: 'hak',
+      });
+      return;
+    }
+    changeOptions({ chinese: e.target.value });
   };
 
   const handleHakOptionChange = (e) => {
-    changeOneOption({ hakkaOptions: e.target.value });
+    changeOptions({ hakkaOptions: e.target.value });
   };
 
-  const langLabels = {
-    japanese: (
-      <Typography>
-        <Trans i18nKey="japaneseHiraganaApi" components={{ bold: <strong /> }}>
-          <strong>Japanese</strong> Hiragana from from
-        </Trans>
-        <Link
-          href="https://labs.goo.ne.jp/api/jp/hiragana-translation/"
-          target="_blank"
-        >
-          {' '}
-          goo辞書ひらがな化API
-        </Link>
-      </Typography>
-    ),
-    english: (
-      <Typography>
-        <Trans i18nKey="englishDictApi" components={{ bold: <strong /> }}>
-          <strong>English word</strong> pronunciation and its first definition
-          from
-        </Trans>
-        <Link href="https://dictionaryapi.dev/" target="_blank">
-          {' '}
-          Free Dictionary API
-        </Link>
-      </Typography>
-    ),
-    chinese: (
-      <Typography>
-        <Trans i18nKey="chineseApi" components={{ bold: <strong /> }}>
-          word pronunciation of other languages (in Taiwan) using
-          <strong>Traditional Chinese characters</strong> from
-        </Trans>
-        <Link href="https://github.com/g0v/moedict-webkit" target="_blank">
-          {' '}
-          MOEDICT 萌典
-        </Link>
-      </Typography>
-    ),
-  };
-  const handleLanguageChange = (e) => {
-    i18next.changeLanguage(e.target.value);
-  };
   return (
     <Box>
-      <FormControl sx={{ mb: 3, display: 'flex', flexDirection: 'row' }}>
-        <Typography
-          variant="h6"
-          sx={{ mr: 2, display: 'flex', alignItems: 'center' }}
-        >
-          {t('Language')}:
-        </Typography>
-        <Select
-          sx={{ maxWidth: '200px' }}
-          value={i18next.language}
-          onChange={handleLanguageChange}
-        >
-          {Object.entries({
-            en: 'English',
-            'zh-TW': '繁體中文',
-            ja: '日本語',
-          }).map(([keyId, value]) => (
-            <MenuItem key={keyId} value={keyId}>
-              {value}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <SelectDisplayLanguage />
       <Paper elevation={3} sx={{ p: 2, mb: 1 }}>
         <FormControlLabel
           control={
             <Switch
               size="small"
-              onChange={() => changeOneOption({ enabled: !enabled })}
-              checked={enabled}
+              onChange={() => changeOptions({ enabled: !apiSetting.enabled })}
+              checked={apiSetting.enabled}
             />
           }
           label={t('enable auto retrieve info from api')}
@@ -154,35 +170,35 @@ export const ApiInfo = () => {
             key={langName}
             control={
               <Checkbox
-                checked={Boolean(langOptions[langName])}
-                disabled={!enabled}
+                checked={Boolean(apiSetting[langName])}
+                disabled={!apiSetting.enabled}
                 onChange={handleLangCheck}
                 name={langName}
               />
             }
-            label={langLabels[langName]}
+            label={LangLabels[langName]}
           />
         ))}
         <FormControlLabel
           control={
             <Checkbox
-              checked={Boolean(langOptions.chinese)}
-              disabled={!enabled}
+              checked={Boolean(apiSetting.chinese)}
+              disabled={!apiSetting.enabled}
               onChange={(e) => {
-                changeOneOption({
-                  chinese: langOptions.chinese ? '' : 'nan-tw',
+                changeOptions({
+                  chinese: Boolean(apiSetting.chinese) ? '' : 'nan-tw',
                 });
               }}
               name={'chinese'}
             />
           }
-          label={langLabels.chinese}
+          label={LangLabels.chinese}
         />
         <FormControl sx={{ m: 1, maxWidth: 250 }}>
           <Select
-            value={langOptions.chinese}
+            value={apiSetting.chinese}
             onChange={handleChineseChange}
-            disabled={!enabled || !langOptions.chinese}
+            disabled={!apiSetting.enabled || !apiSetting.chinese}
             displayEmpty
           >
             {[['', 'None']]
@@ -194,11 +210,12 @@ export const ApiInfo = () => {
               ))}
           </Select>
         </FormControl>
-        {langOptions.chinese === 'hak' && (
+        {apiSetting.chinese === 'hak' && (
           <FormControl sx={{ m: 1, maxWidth: 400 }}>
+            客語選項
             <Select
               multiple
-              value={langOptions.hakkaOptions}
+              value={apiSetting.hakkaOptions}
               onChange={handleHakOptionChange}
             >
               {Object.entries(allHakOptions).map(([keyId, value]) => (

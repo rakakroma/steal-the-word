@@ -4,8 +4,6 @@ import { Link as RouterLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 export const NoDataPage = () => {
-  const imgPath = chrome.runtime.getURL('flame-welcome.png');
-
   const { t } = useTranslation();
 
   return (
@@ -18,23 +16,13 @@ export const NoDataPage = () => {
         alignItems: 'center',
       }}
     >
-      <Typography variant="subtitle2">
-        Illustration by{' '}
-        <Link href="https://icons8.com/illustrations/author/oZpGJx8ts63Q">
-          Thierry Fousse
-        </Link>{' '}
-        from <Link href="https://icons8.com/illustrations">Ouch!</Link>
+      <Typography variant="h4" sx={{ mb: 2 }}>
+        {t(`no-word-yet`)}
       </Typography>
-      <img
-        src={imgPath}
-        alt="welcome"
-        style={{ width: '150px', height: '150px' }}
-      />
-      <Typography variant="h3">{t(`no-word-yet`)}</Typography>
-      <Typography variant="h6">
-        {t('add some word and come back to see the changes')} 🤗
+      <Typography variant="h6" sx={{ mb: 2 }}>
+        {t('add some word and come back to see the changes')}
       </Typography>
-      <Typography>
+      <Typography sx={{ mb: 2 }}>
         {t('no-data-long-before')}{' '}
         <Link href="https://rakakroma.github.io/steal-word-landing-page/">
           Landing Page
