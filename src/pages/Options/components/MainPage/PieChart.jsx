@@ -2,7 +2,7 @@ import { ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { ResponsivePie } from '@nivo/pie';
 import React, { useContext, useMemo, useState } from 'react';
-import { ContextListContext } from '../../Options';
+import { ContextListContext } from '../../allContext';
 import { cutUrl, getHostName } from '../../utils/transformData';
 import { InfoBlock } from '../DatabaseInfo';
 import { useTranslation } from 'react-i18next';

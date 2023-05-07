@@ -9,7 +9,7 @@ import {
   OrderModeANdSiteTargetContext,
   WordInfoDrawerContext,
   WordListContext,
-} from '../../Options';
+} from '../../allContext';
 import { CollectionSettingContext } from './WordCollection';
 import { HighlightedContext } from './HighlightedContext';
 import { PageTitleSection } from './PageTitleSection';

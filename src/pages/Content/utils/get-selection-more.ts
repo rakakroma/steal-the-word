@@ -1,6 +1,6 @@
 /* from crimx/get-selection-more MIT license
-I put it here instead of import by npm because 
-i add a new case of my custom element <HOOLI-TEXT> to count as inline node
+I put it here instead of import by npm  
+i need my custom element <HOOLI-TEXT> to count as inline node
  */
 
 /**

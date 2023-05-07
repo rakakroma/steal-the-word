@@ -15,7 +15,7 @@ import {
   TagListContext,
   WordInfoDrawerContext,
   WordListContext,
-} from '../../../Options';
+} from '../../../allContext.jsx';
 import { DefinitionBlock } from './DefinitionBlock.jsx';
 import { SubmitSection } from './SubmitSection';
 import { VariantsInfo } from './VariantsInfo';
@@ -98,16 +98,6 @@ export const CurrentWordInfo = () => {
         shouldDeleteTagIds,
         shouldUpdateTags,
       } = getUpdatedTagData(data, changingTagsWhenDisplay, targetWord, tagList);
-
-      // db.wordList.update(refData.wordId, {
-      //   definitions: newDefinitionOfCurrWord,
-      // });
-      // db.tagList.bulkAdd(newTagObjs);
-      // db.tagList.bulkDelete(shouldDeleteTagIds);
-      // shouldUpdateTags.forEach((tagData) => {
-      //   const { wordDefRefs } = tagData;
-      //   db.tagList.update(tagData.id, { wordDefRefs });
-      // });
 
       updateTagFunc({
         refData,

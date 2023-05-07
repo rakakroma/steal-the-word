@@ -12,7 +12,7 @@ import {
   ContextListContext,
   DomainAndLinkListContext,
   WordListContext,
-} from '../../Options';
+} from '../../allContext';
 import { useInterval, useVisible } from '../../utils/customHook';
 import { getDomainIcon } from '../WordCollection/OrderByTimeAndSiteContainer';
 import { ContextBlock } from './ContextBlock';

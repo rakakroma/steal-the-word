@@ -30,6 +30,16 @@ it('should update the tag reference of specific word definition', () => {
   expect(result.length).toEqual(2);
   expect(result[0].definitionId).toEqual('1');
   expect(result[1].definitionId).toEqual('6');
+  expect(definitions).toEqual([
+    {
+      definitionId: '1',
+      tags: ['tagId1', 'tagId2'],
+    },
+    {
+      definitionId: '6',
+      tags: ['tagId1'],
+    },
+  ]);
 });
 
 describe('getTagFullDataArray', () => {

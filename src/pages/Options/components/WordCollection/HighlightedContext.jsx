@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material';
 import React, { useContext } from 'react';
 import { getAllMatchTextFromWordObj } from '../../../../utilsForAll/getInfoFromWordObj';
-import { WordListContext } from '../../Options';
+import { WordListContext } from '../../allContext';
 
 export const HighlightedContext = ({ contextObj, wordObj }) => {
   const wordList = useContext(WordListContext);

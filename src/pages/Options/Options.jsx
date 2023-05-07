@@ -7,7 +7,6 @@ import {
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
 import React, {
-  createContext,
   Suspense,
   useCallback,
   useEffect,
@@ -21,13 +20,14 @@ import { KBarCommandPalette } from './KBarCommandPalette';
 import './Options.css';
 import { darkThemeStyle, lightThemeStyle } from './theme.style';
 import { getHostName } from './utils/transformData';
-
-export const ContextListContext = createContext(null);
-export const DomainAndLinkListContext = createContext(null);
-export const WordListContext = createContext(null);
-export const WordInfoDrawerContext = createContext(null);
-export const TagListContext = createContext(null);
-export const OrderModeANdSiteTargetContext = createContext(null);
+import {
+  ContextListContext,
+  DomainAndLinkListContext,
+  WordListContext,
+  TagListContext,
+  WordInfoDrawerContext,
+  OrderModeANdSiteTargetContext,
+} from './allContext';
 
 const MyThemeProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);

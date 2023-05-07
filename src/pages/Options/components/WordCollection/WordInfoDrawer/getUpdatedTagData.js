@@ -6,7 +6,7 @@ import {
   getTagFullDataArray,
   updateDefRef,
 } from '../../../../../utilsForAll/handleTags.js';
-import { getDataFromName } from './getDataFromName';
+import { getDataFromName } from './getDataFromName.js';
 
 export const getUpdatedTagData = (
   data,

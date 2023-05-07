@@ -3,7 +3,7 @@ import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useContext } from 'react';
-import { WordInfoDrawerContext, WordListContext } from '../../../Options';
+import { WordInfoDrawerContext, WordListContext } from '../../../allContext';
 import { useMediaQuery } from '@mui/material';
 import { useRegisterActions } from 'kbar';
 import '../../../../Content/components/customElements/WordBlock/HooliHighlighter';

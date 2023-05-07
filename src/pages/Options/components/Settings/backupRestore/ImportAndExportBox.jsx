@@ -5,7 +5,7 @@ import {
   DomainAndLinkListContext,
   TagListContext,
   WordListContext,
-} from '../../../Options';
+} from '../../../allContext';
 import { clearDB } from '../../../utils/ImportExport';
 import { CurrentDataAndDownload } from './CurrentDataAndDownload';
 import { ImportBox } from './ImportBox';

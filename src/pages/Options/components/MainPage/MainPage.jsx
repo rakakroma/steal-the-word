@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2.js';
 import { Outlet } from 'react-router-dom';
-import { ContextListContext } from '../../Options.jsx';
+import { ContextListContext } from '../../allContext.jsx';
 import {
   CountBox,
   NavToCollection,

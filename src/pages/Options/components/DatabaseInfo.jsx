@@ -10,7 +10,7 @@ import {
   ContextListContext,
   WordInfoDrawerContext,
   WordListContext,
-} from '../Options.jsx';
+} from '../allContext.jsx';
 import { useTranslation } from 'react-i18next';
 
 dayjs.extend(utc);

@@ -1,7 +1,7 @@
 import { Box, useTheme } from '@mui/material';
 import React, { memo, useContext, useMemo, useRef } from 'react';
 import { GroupedVirtuoso } from 'react-virtuoso';
-import { TagListContext } from '../../Options';
+import { TagListContext } from '../../allContext';
 import { EditableTagChip, TagLabelChip } from '../TagChip';
 import { IndexQuickRefBox } from './IndexQuickRefBox';
 import { ListSubTitle } from './ListSubTitle';

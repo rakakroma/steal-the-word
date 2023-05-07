@@ -1,10 +1,12 @@
 import { Box, Link, Typography } from '@mui/material';
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useRouteError } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 export const ErrorPage = () => {
   const { t } = useTranslation();
+  const error = useRouteError();
+
   return (
     <Box
       sx={{
@@ -16,10 +18,10 @@ export const ErrorPage = () => {
     >
       <Box display="flex" flexDirection="column" alignItems="center">
         <Typography sx={{ m: 5 }} variant="h3">
-          🚧 no such page 🚧
+          🚧 {error.status} Error 🚧
         </Typography>
-        <Typography variant="h5" sx={{ color: 'text.secondary' }}>
-          maybe it goes something wrong? or just the url..
+        <Typography variant="h6" sx={{ color: 'text.secondary', my: 2 }}>
+          {error.data}
         </Typography>
         <Typography variant="h6">
           Let's go back to{' '}

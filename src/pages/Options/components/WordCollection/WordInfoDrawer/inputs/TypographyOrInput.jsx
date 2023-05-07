@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import React, { useContext, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { getFlatList } from '../../../../../../utilsForAll/getMatchTextWithIdRef';
-import { WordListContext } from '../../../../Options';
+import { WordListContext } from '../../../../allContext';
 import { useTranslation } from 'react-i18next';
 
 export const TypographyOrInput = (props) => {

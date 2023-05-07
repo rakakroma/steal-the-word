@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useContext } from 'react';
-import { WordInfoDrawerContext } from '../../Options';
+import { WordInfoDrawerContext } from '../../allContext';
 import { InfoBlock } from '../DatabaseInfo';
 import React from 'react';
 import { WordRating } from '../WordCollection/WordInfoDrawer/WordRating';

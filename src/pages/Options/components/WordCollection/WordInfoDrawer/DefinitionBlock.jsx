@@ -5,7 +5,7 @@ import { Box } from '@mui/system';
 import React, { Fragment, useContext, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { getAllMatchTextFromWordObj } from '../../../../../utilsForAll/getInfoFromWordObj';
-import { TagListContext } from '../../../Options';
+import { TagListContext } from '../../../allContext';
 import { TagLabelChip } from '../../TagChip';
 import { ContextByDefBox } from './ContextByDefBox';
 import { getDataFromName, getName } from './getDataFromName';

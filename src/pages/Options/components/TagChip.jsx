@@ -4,7 +4,7 @@ import { Box } from '@mui/system';
 import React, { useContext, useState } from 'react';
 import { rgbFromString } from '../../../utilsForAll/rgbFromString';
 import { db } from '../../Background/database';
-import { TagListContext } from '../Options';
+import { TagListContext } from '../allContext';
 
 export const TagLabelChip = ({
   tagLabel,

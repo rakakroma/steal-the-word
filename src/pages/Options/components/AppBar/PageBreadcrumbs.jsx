@@ -12,7 +12,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import { Box, Breadcrumbs, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useRouteError } from 'react-router-dom';
 import { HoveringNav } from './HoveringNav';
 import { useTranslation } from 'react-i18next';
 import { allSettingsRoute } from '../Settings/Settings';
@@ -29,11 +29,10 @@ const pathIcon = {
 
 export const PageBreadcrumbs = () => {
   const { pathname } = useLocation();
-
   const { t } = useTranslation();
-
   const pathArray = pathname.split('/').slice(1);
   const theme = useTheme();
+  const error = useRouteError();
 
   const isCorrectPathName = (currentPathTargetName) =>
     Object.keys(pathIcon).includes(currentPathTargetName);
@@ -54,7 +53,7 @@ export const PageBreadcrumbs = () => {
       >
         {pathArray.map((pathTarget, index) => {
           const last = index === pathArray.length - 1;
-
+          if (error && !last) return null;
           return (
             <Box
               sx={{

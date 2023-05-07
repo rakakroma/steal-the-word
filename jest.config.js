@@ -1,8 +1,12 @@
 module.exports = {
   transform: {
-    '^.+\\.(j|t)sx?$': 'esbuild-jest',
+    '^.+\\.(t|j)sx?$': 'esbuild-jest',
   },
-  transformIgnorePatterns: [`node_modules/(?!nanoid/)`],
+  transformIgnorePatterns: [
+    `node_modules/(?!(?:@?lit|nanoid/))
+  `,
+  ],
+  testEnvironment: 'jsdom',
 };
 /* 
   https://beyooon.jp/blog/nanoid-v4-fails-jest/

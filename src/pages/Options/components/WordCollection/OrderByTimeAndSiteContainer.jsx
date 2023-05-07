@@ -6,7 +6,7 @@ import { IndexQuickRefBox } from './IndexQuickRefBox';
 import { ListSubTitle } from './ListSubTitle';
 import { SiteIconButton } from './SiteIconButton';
 import { WordCollectionPageBox } from './WordCollectionPageBox';
-import { OrderModeANdSiteTargetContext } from '../../Options';
+import { OrderModeANdSiteTargetContext } from '../../allContext';
 import { getCurrentDomain } from '../../../../utilsForAll/checkUrl';
 
 export const getDomainIcon = (url, domainList, isDomain) => {

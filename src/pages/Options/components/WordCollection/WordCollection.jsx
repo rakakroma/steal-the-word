@@ -22,7 +22,7 @@ import {
   DomainAndLinkListContext,
   OrderModeANdSiteTargetContext,
   WordListContext,
-} from '../../Options.jsx';
+} from '../../allContext.jsx';
 import { AlphabeticalOrderModeContainer } from './AlphabeticalOrderModeContainer';
 import { ControlOrderToggle } from './CollectionControlPanel/ControlOrderToggle.jsx';
 import { DateArrangementPicker } from './CollectionControlPanel/DateArrangementPicker.jsx';
