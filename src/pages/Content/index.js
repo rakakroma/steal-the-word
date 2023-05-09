@@ -22,7 +22,6 @@ import {
 } from './redux/wordDataSlice';
 import { myLog } from './utils/customLogger';
 import './localize/translate';
-import { currentURL } from './utils/currentURL';
 import { updateSpecialSiteType } from './redux/specialSiteSlice';
 
 export const body = document.body;

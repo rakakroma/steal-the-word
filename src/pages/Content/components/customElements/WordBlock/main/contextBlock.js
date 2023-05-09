@@ -7,6 +7,7 @@ import { editableContext } from './editableContext';
 import { highlightingBlock } from './highlightingBlock';
 import { matchRuleSelection } from './matchRuleSelection';
 import { pageTitle } from './pageTitle';
+import { getPageTitle } from '../form/getPageTitle';
 
 export const contextSection = (wordBlock) => {
   //---------definition and note: type: display / input / radio(choose one)-------------------
@@ -27,7 +28,7 @@ export const contextSection = (wordBlock) => {
         wordBlock,
         wordBlock._currentSiteIcoSrc,
         currentURL(),
-        document.title
+        getPageTitle()
       )}
     `;
   }
@@ -38,7 +39,7 @@ export const contextSection = (wordBlock) => {
       wordBlock,
       wordBlock._currentSiteIcoSrc,
       currentURL(),
-      document.title
+      getPageTitle()
     )} `;
   }
   if (wordBlock.mode === 'editWord') {

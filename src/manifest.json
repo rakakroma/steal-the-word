@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_extName__",
   "author": "rakakroma",
-  "version": "0.0.14",
+  "version": "0.0.20",
   "description": "__MSG_appDesc__",
   "options_page": "options.html",
   "default_locale": "en",
@@ -27,9 +27,8 @@
   },
   "content_scripts": [
     {
+      "all_frames": true,
       "matches": [
-        "http://*/*",
-        "https://*/*",
         "<all_urls>"
       ],
       "js": [
