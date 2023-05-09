@@ -28,6 +28,8 @@ export const good_tags_list = [
   'CITE',
 ];
 
+const tagForYoutube = ['YT-FORMATTED-STRING'];
+
 export const myGoodFilter = (node) => {
   if (node.parentNode && good_tags_list.indexOf(node.parentNode.tagName) > -1) {
     return NodeFilter.FILTER_ACCEPT;

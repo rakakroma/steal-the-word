@@ -25,7 +25,7 @@ export const submitEditWord = (wordBlock, word, stem, variants, matchRule) => {
     });
 
     const wordObjToUpdate = { word, definitions };
-    if (stem) wordObjToUpdate.stem = stem;
+    if (typeof stem === 'string') wordObjToUpdate.stem = stem;
     if (variants) wordObjToUpdate.variants = variants;
     if (matchRule) wordObjToUpdate.matchRule = matchRule;
 

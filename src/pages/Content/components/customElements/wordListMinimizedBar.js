@@ -28,7 +28,7 @@ class HooliWordListMinimizedBar extends connect(store)(LitElement) {
     colorAndTextStyle,
     css`
       :host {
-        width: 60px;
+        width: 40px;
         height: 25px;
         background-color: rgb(213 213 213);
         box-shadow: rgb(0 0 0 / 41%) 0px 3.1px 7.1px;
@@ -62,7 +62,7 @@ class HooliWordListMinimizedBar extends connect(store)(LitElement) {
 
   render() {
     return html`<div @click="${this._handleOpenWordList}">
-      Word List <span id="count-word">${this.listLength}</span>
+      <span id="count-word">${this.listLength}</span>
     </div>`;
   }
   _handleOpenWordList() {

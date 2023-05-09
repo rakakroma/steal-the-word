@@ -77,6 +77,8 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
         background: rgb(175, 211, 207);
         padding-top: 6px;
         border-radius: 7px 7px 0 0;
+        display: flex;
+        justify-content: space-between;
       }
       ul {
         padding: 0;
@@ -145,26 +147,34 @@ class HooliFloatingWordList extends connect(store)(LitElement) {
         text-overflow: ellipsis;
         padding-left: 6px;
       }
+      #word-count {
+        padding-right: 7px;
+        padding-bottom: 3px;
+        color: #5e5e5e;
+      }
     `,
   ];
 
   _titleBar() {
     return html`<div id="title-bar">
-      <hooli-tooltip text="refresh">
-        <button class="title-action" @click="${this._handleRefresh}">
-          ${RefreshIcon({ width: 15, height: 15 })}
-        </button>
-      </hooli-tooltip>
-      <hooli-tooltip text="minimize">
-        <button class="title-action" @click="${this._handleMinimize}">
-          ${MinimizeIcon({ width: 15, height: 15 })}
-        </button>
-      </hooli-tooltip>
-      <hooli-tooltip text="close">
-        <button class="title-action" @click="${this._handleClose}">
-          ${CloseIcon({ width: 15, height: 15 })}
-        </button>
-      </hooli-tooltip>
+      <div>
+        <hooli-tooltip text="refresh">
+          <button class="title-action" @click="${this._handleRefresh}">
+            ${RefreshIcon({ width: 15, height: 15 })}
+          </button>
+        </hooli-tooltip>
+        <hooli-tooltip text="minimize">
+          <button class="title-action" @click="${this._handleMinimize}">
+            ${MinimizeIcon({ width: 15, height: 15 })}
+          </button>
+        </hooli-tooltip>
+        <hooli-tooltip text="close">
+          <button class="title-action" @click="${this._handleClose}">
+            ${CloseIcon({ width: 15, height: 15 })}
+          </button>
+        </hooli-tooltip>
+      </div>
+      <div id="word-count">${this.wordInPageList.length}</div>
     </div>`;
   }
 
