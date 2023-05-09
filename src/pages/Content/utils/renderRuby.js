@@ -4,6 +4,7 @@ import { store } from '../redux/store';
 import { getMatchRefList, getWordList } from '../redux/wordDataSlice';
 import { myLog } from './customLogger';
 import { putHooliTextOnNode } from './putHooliTextOnNode';
+import { myGoodFilter } from './myGoodFilter';
 
 export const isAscendantContentEditable = (element) => {
   while (element) {
@@ -16,76 +17,38 @@ export const isAscendantContentEditable = (element) => {
 };
 
 export const renderMultipleRuby = (nodesArray) => {
-  const performanceStart = performance.now();
-
   nodesArray.forEach((node) => {
     renderRuby(node);
   });
-
-  const performanceEnd = performance.now();
-  myLog(`RenderRuby time ${(performanceEnd - performanceStart).toFixed(2)} ms`);
 };
 
 export const renderRuby = (target) => {
-  const startTime = performance.now();
-
   const nodeIterator = document.createNodeIterator(
     target,
     NodeFilter.SHOW_TEXT,
     myGoodFilter
   );
-  // mygoodfilter source:
-  // https://github.com/XQDD/highlight_new_words/blob/12be7a1d79ad209ffffcbfc1038efbb7aa3bbd8c/content_scripts/highlight.js#L329
-  function myGoodFilter(node) {
-    const good_tags_list = [
-      'PRE',
-      'A',
-      'P',
-      'H1',
-      'H2',
-      'H3',
-      'H4',
-      'H5',
-      'H6',
-      'B',
-      'SMALL',
-      'STRONG',
-      'Q',
-      'DIV',
-      'SPAN',
-      'LI',
-      'TD',
-      'OPTION',
-      'I',
-      'BUTTON',
-      'UL',
-      'CODE',
-      'EM',
-      'TH',
-      'CITE',
-    ];
-    if (
-      node.parentNode &&
-      good_tags_list.indexOf(node.parentNode.tagName) > -1
-    ) {
-      return NodeFilter.FILTER_ACCEPT;
-    }
-    return NodeFilter.FILTER_SKIP;
-  }
 
   const myList = getWordList(store.getState());
   const newList = getMatchRefList(store.getState());
 
-  let textNode;
-  while ((textNode = nodeIterator.nextNode())) {
-    const currentTime = performance.now();
-
-    const time = currentTime - startTime;
-    if (time > 3000) {
-      myLog('stop execute renderRuby');
-      break;
+  const processChunk = () => {
+    const startTime = performance.now();
+    let count = 0;
+    const CHUNK_SIZE = 100;
+    let textNode = nodeIterator.nextNode();
+    while (textNode && count < CHUNK_SIZE) {
+      count++;
+      putHooliTextOnNode(textNode, myList, newList);
+      textNode = nodeIterator.nextNode();
+    }
+    if (!textNode) {
+      return;
     }
 
-    putHooliTextOnNode(textNode, myList, newList);
-  }
+    requestAnimationFrame(processChunk);
+
+    myLog('cost time, each animation frame', performance.now() - startTime);
+  };
+  processChunk();
 };

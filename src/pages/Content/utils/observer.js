@@ -55,5 +55,5 @@ export const observer = new MutationObserver((mutations) => {
 
     newAddedNodes = [];
     newRemovedNodes = [];
-  }, 3500);
+  }, 1000);
 });
