@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid';
 import { currentURL } from '../../../../utils/currentURL';
 import { myLog } from '../../../../utils/customLogger';
 import { submitAndExecute } from './submitAndExecute';
+import { getPageTitle } from './getPageTitle';
 
 export const submitNewWord = (
   wordBlock,
@@ -48,7 +49,7 @@ export const submitNewWord = (
     date: Date.now(),
     definitionRef: '0',
     note: '',
-    pageTitle: document.title,
+    pageTitle: getPageTitle(),
     phrase: '',
     url: currentURL(),
   };

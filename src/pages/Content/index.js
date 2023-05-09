@@ -6,7 +6,7 @@ import './components/customElements/WordBlock/HooliHighlighter';
 import { openAddNewWord } from './components/customElements/HooliText';
 
 import './content.styles.css';
-import { observer } from './utils/observer';
+import { observer, youtubeCaptionObserver } from './utils/observer';
 import { setMouseUpToolTip } from './utils/setMouseUpToolTip';
 import { store } from './redux/store';
 import {
@@ -22,6 +22,8 @@ import {
 } from './redux/wordDataSlice';
 import { myLog } from './utils/customLogger';
 import './localize/translate';
+import { currentURL } from './utils/currentURL';
+import { updateSpecialSiteType } from './redux/specialSiteSlice';
 
 export const body = document.body;
 
@@ -53,8 +55,8 @@ const init = async () => {
   }
 
   await store.dispatch(getInitialDataFromDb());
-
   if (!getCertainSetting(store.getState(), 'activate')) return;
+  await updateSpecialSiteType();
 
   let loadEvent = false;
 
@@ -68,11 +70,27 @@ const init = async () => {
     if (getCertainSetting(store.getState(), 'mouseTool')) {
       setMouseUpToolTip();
     }
+    // if (isYoutube) {
+    //   const captionContainer = document.querySelector(
+    //     '.ytp-caption-window-container'
+    //   );
+    //   setTimeout(() => {
+    //     if (captionContainer) {
+    //       youtubeCaptionObserver.observe(captionContainer, {
+    //         childList: true,
+    //         subtree: true,
+    //         characterData: true,
+    //       });
+    //     }
+    //   }, 10000);
+    // } else {
+
     observer.observe(body, {
       childList: true,
       subtree: true,
       characterData: true,
     });
+    // }
     window.removeEventListener('load', startAfterLoaded);
   };
 

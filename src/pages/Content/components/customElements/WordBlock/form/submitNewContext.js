@@ -3,6 +3,7 @@ import { getContextsDataFromDB } from '../../../../redux/messageWithBackground';
 import { store } from '../../../../redux/store';
 import { currentURL } from '../../../../utils/currentURL';
 import { submitAndExecute } from './submitAndExecute';
+import { getPageTitle } from './getPageTitle';
 
 export const submitNewContext = (
   wordBlock,
@@ -26,7 +27,7 @@ export const submitNewContext = (
     date: Date.now(),
     definitionRef: null,
     note: '',
-    pageTitle: document.title,
+    pageTitle: getPageTitle(),
     phrase: '',
     url: currentURL(),
   };

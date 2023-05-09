@@ -4,6 +4,7 @@ import { displayingWordListSlice } from './displayingWordListSlice';
 import { wordBlockSlice } from './wordBlockSlice';
 import { wordDataSlice } from './wordDataSlice';
 import { workingPreferenceSlice } from './workingPreferenceSlice';
+import { specialSiteSlice } from './specialSiteSlice';
 
 export const addArrayOfData = (state, action) => {
   state.push([...action.payload]);
@@ -22,6 +23,7 @@ const rootReducer = {
   workingPreference: workingPreferenceSlice.reducer,
   displayingWordList: displayingWordListSlice.reducer,
   wordBlock: wordBlockSlice.reducer,
+  specialSite: specialSiteSlice.reducer,
 };
 
 const logger = createLogger();

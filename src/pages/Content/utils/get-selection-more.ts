@@ -1,5 +1,6 @@
-/* from crimx/get-selection-more MIT license
-I put it here instead of import by npm  
+/* 
+from crimx/get-selection-more MIT license
+I put it here instead of import by npm is because 
 i need my custom element <HOOLI-TEXT> to count as inline node
  */
 
@@ -272,7 +273,7 @@ function isInlineNode(node?: Node | null): node is Node {
         case 'U':
         case 'VAR':
         case 'WBR':
-        case 'HOOLI-TEXT':
+        case 'HOOLI-TEXT': // I add it
           return true;
       }
     }

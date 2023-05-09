@@ -9,6 +9,7 @@ import { getSentenceFromSelection } from '../../utils/get-selection-more.ts';
 import { setWordBlockPosition } from '../../utils/setPosition';
 import './HooliWordInfoBlock.js';
 import { zIndexStyle } from './WordBlock/wordInfoBlockStyles';
+import { getSpecialSiteType } from '../../redux/specialSiteSlice';
 
 const removeWordBlock = () =>
   document.querySelector('hooli-wordinfo-block')?.remove();
@@ -31,11 +32,14 @@ class HooliText extends connect(store)(LitElement) {
     return {
       wordObj: { type: Object },
       customTextStyle: { type: Object },
+      updatedFontSize: { type: String },
     };
   }
   stateChanged(state) {
     this.wordObj = getWordById(state, this.className.slice(2));
     this.customTextStyle = getCustomTextStyle(state);
+    this.updatedFontSize =
+      getSpecialSiteType(state) === 'pdf2htmlEX' ? 'inherit' : '14px';
   }
   updated(changedProperties) {
     super.updated(changedProperties);
@@ -46,12 +50,16 @@ class HooliText extends connect(store)(LitElement) {
         this.customTextStyle.background || this.customTextStyle.backgroundColor
       );
     }
+    if (changedProperties.has('updatedFontSize')) {
+      this.style.setProperty('--annotation-font-size', this.updatedFontSize);
+    }
   }
 
   static styles = [
     zIndexStyle,
     css`
       :host {
+        --annotation-font-size: 13px;
         all: initial;
         font-size: inherit;
         font-family: inherit;
@@ -69,20 +77,24 @@ class HooliText extends connect(store)(LitElement) {
         position: absolute;
         display: inline-block;
         z-index: var(--max-z-index);
-        padding: 3px;
-        font-size: 12px;
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        font-size: var(--annotation-font-size);
         line-height: 1.3;
         background: rgb(241, 241, 241);
         color: rgb(0, 0, 0);
-        border-radius: 3px;
+        border-radius: 6px;
         transition: 0.1s ease-in;
         opacity: 0;
         visibility: hidden;
         font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
           'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
         font-style: normal;
-        font-weight: 600;
+        font-weight: 500;
         max-width: 450px;
+        user-select: none;
       }
 
       #annotation-tip.show-tooltip {
