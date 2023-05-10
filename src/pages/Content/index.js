@@ -14,7 +14,10 @@ import {
   getInitialDataFromDb,
 } from './redux/messageWithBackground';
 import { getDisplayingWordList } from './redux/displayingWordListSlice';
-import { updateBadgeToNoWork } from '../Background/handler/updateBadge';
+import {
+  updateBadgeToNoWork,
+  updateWordCount,
+} from '../Background/handler/updateBadge';
 import { getCertainSetting } from './redux/workingPreferenceSlice';
 import {
   checkAndUpdateNewTagList,
@@ -25,6 +28,11 @@ import './localize/translate';
 import { updateSpecialSiteType } from './redux/specialSiteSlice';
 
 export const body = document.body;
+
+//this app would throw error in xhtml
+const isXHTML = Boolean(
+  document?.querySelector('html')?.getAttribute('xmlns')?.endsWith('xhtml')
+);
 
 const appendSideListWindow = (foundMatchWord) => {
   if (!foundMatchWord) {
@@ -48,7 +56,7 @@ const init = async () => {
   myLog(localData);
 
   //check localStorage pref
-  if (!getCertainSetting(store.getState(), 'activate')) {
+  if (isXHTML || !getCertainSetting(store.getState(), 'activate')) {
     chrome.runtime.sendMessage({ action: updateBadgeToNoWork });
     return;
   }
@@ -69,20 +77,11 @@ const init = async () => {
     if (getCertainSetting(store.getState(), 'mouseTool')) {
       setMouseUpToolTip();
     }
-    // if (isYoutube) {
-    //   const captionContainer = document.querySelector(
-    //     '.ytp-caption-window-container'
-    //   );
-    //   setTimeout(() => {
-    //     if (captionContainer) {
-    //       youtubeCaptionObserver.observe(captionContainer, {
-    //         childList: true,
-    //         subtree: true,
-    //         characterData: true,
-    //       });
-    //     }
-    //   }, 10000);
-    // } else {
+
+    chrome.runtime.sendMessage({
+      action: updateWordCount,
+      count: '0',
+    });
 
     observer.observe(body, {
       childList: true,

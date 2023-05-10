@@ -21,6 +21,10 @@ export const useCurrentTabData = () => {
     const currentUrl = tabData.url;
     const currentDomain = getCurrentDomain(currentUrl);
     const validPlace = checkIsValidEnvironmentByUrl(currentUrl);
+    if (!validPlace) {
+      //this only been set after user click the popup, so it's kind of weird
+      chrome.action.setBadgeText({ text: `N/A`, tabId: tabData.id });
+    }
     const favIconUrl = currentDomain === 'file' ? '' : tabData.favIconUrl;
     return { currentUrl, currentDomain, favIconUrl, validPlace };
   }

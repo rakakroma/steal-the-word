@@ -5,4 +5,8 @@ export const checkLocalPath = (url) => url.split('//')[0].includes('file');
 export const getCurrentDomain = (url) =>
   checkLocalPath(url) ? 'file' : new URL(url).hostname;
 
-export const checkIsValidEnvironmentByUrl = (url) => !url.startsWith('chrome');
+export const checkIsValidEnvironmentByUrl = (url) => {
+  if (url.startsWith('chrome')) return false;
+  if (url.endsWith('xhtml')) return false;
+  return true;
+};

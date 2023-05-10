@@ -31,6 +31,9 @@
       "matches": [
         "<all_urls>"
       ],
+      "exclude_globs": [
+        "*://*.xhtml"
+      ],
       "js": [
         "contentScript.bundle.js"
       ],

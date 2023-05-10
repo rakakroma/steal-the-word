@@ -35,7 +35,7 @@ export const renderRuby = (target) => {
   const processChunk = () => {
     const startTime = performance.now();
     let count = 0;
-    const CHUNK_SIZE = 100;
+    const CHUNK_SIZE = 25;
     let textNode = nodeIterator.nextNode();
     while (textNode && count < CHUNK_SIZE) {
       count++;
@@ -47,7 +47,7 @@ export const renderRuby = (target) => {
     }
 
     requestAnimationFrame(processChunk);
-
+    //should cost less than 16ms
     myLog('cost time, each animation frame', performance.now() - startTime);
   };
   processChunk();
