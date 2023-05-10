@@ -8,6 +8,22 @@
 
 ## Change Log 🪵🪵🪵
 
+### v0.0.20 🐸 (2023-05-11)
+
+- Fixed: More Performant 🆒 ,the work of searching and replacing text should not block the main thread right now (In Most Cases, Except certain case like txt file)
+- Fixed: Time Mode Virtual List, star shows number zero
+- Fixed: Stem not been edited if no new stem (content script)
+- Feature: Can show annotation in Collection
+- Feature: Show Colored Stars
+- Feature: Navigate to Site Collection by clicking site icon
+- Feature: Google Search button in Collection Word Info
+- Feature: Support Youtube transcript
+- Feature: Support Local File and html file from pdf2htmlEX (partly)
+- Feature: Show '0' in Badge Text at Start
+- Dev: Add Some Unit Test
+- Dev: Update to React 18
+- And Others....
+
 ### v0.0.14 🛣️ (2023-04-19)
 
 - Fixed: Delete Checkbox Bug (Content Script)

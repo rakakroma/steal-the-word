@@ -53,17 +53,14 @@ export const OrderByTimeAndSiteContainer = memo(
             (domainData) => domainData.domain === targetSite
           )
         : null;
-      if (targetIndex) {
-        setTimeout(() => {
-          if (siteModeVirtuoso.current) {
-            siteModeVirtuoso.current.scrollToIndex({
-              index: targetIndex,
-            });
-          }
-        }, 300);
+
+      if (targetIndex !== null && siteModeVirtuoso.current) {
+        siteModeVirtuoso.current.scrollToIndex({
+          index: targetIndex,
+        });
+        setTargetSite(null);
       }
-      setTargetSite(null);
-    }, [domainAndWordCount, targetSite, setTargetSite]);
+    }, [domainAndWordCount, targetSite, setTargetSite, siteModeVirtuoso]);
 
     return (
       <Box>
