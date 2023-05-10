@@ -1,10 +1,11 @@
-import { Delete } from '@mui/icons-material';
+import { Delete, Google, TravelExplore } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import { Button, IconButton, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { WordInfoDrawerContext, WordListContext } from '../../../allContext';
 
 export const SubmitSection = ({
   controlMode,
@@ -22,6 +23,12 @@ export const SubmitSection = ({
   const theme = useTheme();
 
   const { reset, watch } = useFormContext();
+
+  const { wordInfoTarget } = useContext(WordInfoDrawerContext);
+  const wordList = useContext(WordListContext);
+  const { word } = wordList.find(
+    (wordObj) => wordObj.id === wordInfoTarget.wordId
+  );
 
   const noObjToDelete =
     controlMode === 'delete' &&
@@ -47,6 +54,13 @@ export const SubmitSection = ({
   if (controlMode === 'display') {
     return (
       <>
+        <IconButton
+          LinkComponent="a"
+          href={`https://www.google.com/search?q=${word}`}
+          target="_blank"
+        >
+          <Google />
+        </IconButton>
         <IconButton onClick={handleToEditMode}>
           <EditIcon />
         </IconButton>

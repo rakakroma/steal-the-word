@@ -3,9 +3,9 @@ import { addOrUpdatePageWordAndGetCount } from '../redux/displayingWordListSlice
 import { getRegexByMatchRule } from './matchRule';
 import { isAscendantContentEditable } from './renderRuby';
 
-export const putHooliTextOnNode = (targetNode, myList, newList) => {
+export const putHooliTextOnNode = (targetNode, myList, matchList) => {
   //todo: deal with first character capital word
-  for (let textPair of newList) {
+  for (let textPair of matchList) {
     const { matchText, wordMatchRule } = textPair;
     if (targetNode.textContent.indexOf(matchText) === -1) continue;
 

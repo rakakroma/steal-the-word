@@ -11,7 +11,6 @@ import Grid from '@mui/material/Unstable_Grid2';
 import React, { Suspense } from 'react';
 
 import { useTranslation } from 'react-i18next';
-import { currentVersion } from '../../utilsForAll/allEnv';
 import './Popup.css';
 import { PopupTabs } from './PopupTabs';
 import { useCurrentTabData } from './useCurrentTabData';
@@ -55,6 +54,8 @@ const LinkButtonsGrid = () => {
 const Popup = () => {
   const { noTabData, currentDomain, favIconUrl, validPlace } =
     useCurrentTabData();
+
+  const { version } = chrome.runtime.getManifest();
 
   const theme = createTheme({
     typography: {
@@ -113,7 +114,7 @@ const Popup = () => {
             fontSize: '10px',
           }}
         >
-          @Steal the Word v{currentVersion}
+          @Steal the Word v{version}
         </Typography>
       </Box>
     </ThemeProvider>

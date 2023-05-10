@@ -46,11 +46,8 @@ class HooliWordListMinimizedBar extends connect(store)(LitElement) {
         cursor: pointer;
       }
       #count-word {
-        padding-left: 3px;
-        padding-right: 3px;
-        border-radius: 5px;
-        font-size: 12px;
-        margin-left: 3px;
+        font-size: 17px;
+        text-align: center;
       }
       div {
         font-family: var(--hooli-font-family);
@@ -62,7 +59,7 @@ class HooliWordListMinimizedBar extends connect(store)(LitElement) {
 
   render() {
     return html`<div @click="${this._handleOpenWordList}">
-      <span id="count-word">${this.listLength}</span>
+      <div id="count-word">${this.listLength}</div>
     </div>`;
   }
   _handleOpenWordList() {

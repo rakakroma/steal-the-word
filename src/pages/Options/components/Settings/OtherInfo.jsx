@@ -2,16 +2,17 @@ import { GitHub } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { currentVersion } from '../../../../utilsForAll/allEnv';
 
 export const OtherInfo = () => {
   const { t } = useTranslation();
+
+  const { version } = chrome.runtime.getManifest();
   return (
     <Box>
       <Box sx={{ display: 'flex' }}>
         <Box sx={{ my: 'auto' }}>
           <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-            {t('version')} : beta {currentVersion}
+            {t('version')} : beta {version}
           </Typography>
           <Typography variant="subtitle1">
             <Trans

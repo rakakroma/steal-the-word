@@ -1,5 +1,4 @@
 import { updatePosition } from './setPosition';
-import { body } from '../index';
 import '../components/customElements/HooliAddingTool';
 
 const mouseUpListener = (e) => {
@@ -18,12 +17,12 @@ const mouseUpListener = (e) => {
     if (selection.anchorNode?.children) return; //ignore web component e.g. input, textarea, and my lit element
     const addingTool = document.createElement('hooli-adding-tool');
     updatePosition(window.getSelection().getRangeAt(0), addingTool);
-    body.appendChild(addingTool);
+    document.body.appendChild(addingTool);
   }, 5);
 };
 
 export const setMouseUpToolTip = () => {
-  body.addEventListener('mouseup', mouseUpListener);
+  document.body.addEventListener('mouseup', mouseUpListener);
 };
 
 export const stopMouseUpToolTip = () => {
