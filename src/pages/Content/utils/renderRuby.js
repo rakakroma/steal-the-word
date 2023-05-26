@@ -35,20 +35,24 @@ export const renderRuby = (target) => {
   const processChunk = () => {
     const startTime = performance.now();
     let count = 0;
-    const CHUNK_SIZE = 25;
+    const CHUNK_SIZE = 20;
     let textNode = nodeIterator.nextNode();
     while (textNode && count < CHUNK_SIZE) {
       count++;
-      putHooliTextOnNode(textNode, myList, newList);
+      const newHooliTextCount = putHooliTextOnNode(textNode, myList, newList);
+
+      //FIXME: This is for performance but it is causing missing nodes so i comment it out
+      // if (newHooliTextCount > 0 || textNode.textContent.length > 300) {
+      //   break;
+      // }
+
       textNode = nodeIterator.nextNode();
     }
-    if (!textNode) {
-      return;
-    }
+    if (!textNode) return;
 
     requestAnimationFrame(processChunk);
     //should cost less than 16ms
-    myLog('cost time, each animation frame', performance.now() - startTime);
+    // myLog('cost time, each animation frame', performance.now() - startTime);
   };
   processChunk();
 };

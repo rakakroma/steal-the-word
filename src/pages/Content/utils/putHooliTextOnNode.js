@@ -5,6 +5,8 @@ import { isAscendantContentEditable } from './renderRuby';
 
 export const putHooliTextOnNode = (targetNode, myList, matchList) => {
   //todo: deal with first character capital word
+
+  let countNewHooliText = 0;
   for (let textPair of matchList) {
     const { matchText, wordMatchRule } = textPair;
     if (targetNode.textContent.indexOf(matchText) === -1) continue;
@@ -61,5 +63,8 @@ export const putHooliTextOnNode = (targetNode, myList, matchList) => {
     const span = document.createElement('span');
     targetNode.replaceWith(span);
     span.replaceWith(fragment);
+
+    countNewHooliText++;
   }
+  return countNewHooliText;
 };

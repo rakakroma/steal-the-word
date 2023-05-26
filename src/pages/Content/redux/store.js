@@ -6,6 +6,8 @@ import { wordDataSlice } from './wordDataSlice';
 import { workingPreferenceSlice } from './workingPreferenceSlice';
 import { specialSiteSlice } from './specialSiteSlice';
 
+const showLogger = false; //for dev only
+
 export const addArrayOfData = (state, action) => {
   state.push([...action.payload]);
 };
@@ -31,7 +33,7 @@ const logger = createLogger();
 export const store = configureStore({
   reducer: rootReducer,
   middleware:
-    process.env.NODE_ENV === 'production'
-      ? (getDefaultMiddleware) => getDefaultMiddleware()
-      : (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+    process.env.NODE_ENV !== 'production' && showLogger
+      ? (getDefaultMiddleware) => getDefaultMiddleware().concat(logger)
+      : (getDefaultMiddleware) => getDefaultMiddleware(),
 });
