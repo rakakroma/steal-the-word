@@ -1,6 +1,7 @@
 // https://github.com/XQDD/highlight_new_words/blob/12be7a1d79ad209ffffcbfc1038efbb7aa3bbd8c/content_scripts/highlight.js#L329
 
 export const good_tags_list = [
+  'BLOCKQUOTE', //i added
   'PRE',
   'A',
   'P',
