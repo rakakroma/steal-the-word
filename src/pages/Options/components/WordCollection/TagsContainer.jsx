@@ -6,9 +6,12 @@ import { EditableTagChip, TagLabelChip } from '../TagChip';
 import { IndexQuickRefBox } from './IndexQuickRefBox';
 import { ListSubTitle } from './ListSubTitle';
 import { WordListInWordCollection } from './WordCollectionPageBox';
+import { CollectionSettingContext } from './WordCollection';
+import { MultiColumnContainer } from './multiColumnContainer';
 
-export const TagsContainer = memo(({ wordList, columns, width }) => {
+export const TagsContainer = memo(({ wordList, width }) => {
   const tagList = useContext(TagListContext);
+  const { showAnnotation } = useContext(CollectionSettingContext);
 
   const tagListAndThereWords = useMemo(
     () =>
@@ -80,9 +83,9 @@ export const TagsContainer = memo(({ wordList, columns, width }) => {
         itemContent={(index, groupIndex) => {
           const wordObjOfThisTag = tagListAndThereWords[groupIndex].wordsData;
           return (
-            <Box sx={{ columnCount: columns, pl: '24px' }}>
+            <MultiColumnContainer showAnnotation={showAnnotation}>
               <WordListInWordCollection wordsArray={wordObjOfThisTag} />
-            </Box>
+            </MultiColumnContainer>
           );
         }}
       />

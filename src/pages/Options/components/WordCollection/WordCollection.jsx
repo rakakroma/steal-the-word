@@ -16,7 +16,6 @@ import React, {
   useState,
 } from 'react';
 
-import { useContainerQuery } from 'react-container-query';
 import {
   ContextListContext,
   DomainAndLinkListContext,
@@ -40,10 +39,6 @@ const FadeMotionWrapper = (props) => {
     </Fade>
   );
 };
-
-export const ContainerQueryWrapper = forwardRef((props, ref) => {
-  return <div ref={ref}>{props.children}</div>;
-});
 
 const query = {
   300: {
@@ -184,7 +179,7 @@ export const SinglePageWordCollection = () => {
 };
 
 export const WordCollection = ({ height, width, filterStars, orderMode }) => {
-  const [containerWidth, containerRef] = useContainerQuery(query);
+  // const [containerWidth, containerRef] = useContainerQuery(query);
   const theme = useTheme();
 
   const contextList = useContext(ContextListContext);
@@ -213,59 +208,38 @@ export const WordCollection = ({ height, width, filterStars, orderMode }) => {
 
   if (!contextList || !domainAndLinkList) return <h1>nothing</h1>;
 
-  const columnCount = showAnnotation
-    ? 1
-    : containerWidth['720']
-    ? 5
-    : containerWidth['600']
-    ? 4
-    : containerWidth['450']
-    ? 3
-    : containerWidth['300']
-    ? 2
-    : 1;
-
   return (
-    <ContainerQueryWrapper ref={containerRef}>
-      <Box
-        id="word-collection"
-        sx={{
-          height: height || '75vh',
-          width: width || '100%',
-          padding: 2,
-          backgroundColor: theme.palette.background.default,
-        }}
-      >
-        <FadeMotionWrapper>
-          {(orderMode === 'time' || !orderMode) && (
-            <TimeModeContainer
-              contextList={filteredContextList}
-              domainAndLinkList={domainAndLinkList}
-              width={width}
-            />
-          )}
-          {orderMode === 'alphabeticalOrder' && (
-            <AlphabeticalOrderModeContainer
-              wordList={filteredWordList}
-              columns={columnCount}
-            />
-          )}
-          {orderMode === 'timeSite' && (
-            <OrderByTimeAndSiteContainer
-              contextList={filteredContextList}
-              domainAndLinkList={domainAndLinkList}
-              width={width}
-            />
-          )}
-          {orderMode === 'tags' && (
-            <TagsContainer
-              wordList={filteredWordList}
-              columns={columnCount}
-              width={width}
-            />
-          )}
-        </FadeMotionWrapper>
-      </Box>
-    </ContainerQueryWrapper>
+    <Box
+      id="word-collection"
+      sx={{
+        height: height || '75vh',
+        width: width || '100%',
+        padding: 2,
+        backgroundColor: theme.palette.background.default,
+      }}
+    >
+      <FadeMotionWrapper>
+        {(orderMode === 'time' || !orderMode) && (
+          <TimeModeContainer
+            contextList={filteredContextList}
+            domainAndLinkList={domainAndLinkList}
+            width={width}
+          />
+        )}
+        {orderMode === 'alphabeticalOrder' && (
+          <AlphabeticalOrderModeContainer wordList={filteredWordList} />
+        )}
+        {orderMode === 'timeSite' && (
+          <OrderByTimeAndSiteContainer
+            contextList={filteredContextList}
+            domainAndLinkList={domainAndLinkList}
+            width={width}
+          />
+        )}
+        {orderMode === 'tags' && (
+          <TagsContainer wordList={filteredWordList} width={width} />
+        )}
+      </FadeMotionWrapper>
+    </Box>
   );
 };

@@ -8,7 +8,7 @@ import {
 import { CountBox } from '../pages/Options/components/DatabaseInfo';
 
 jest.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (key) => key }),
+  useTranslation: () => ({ t: (key) => key }), //
 }));
 
 describe('CountBox component', () => {
