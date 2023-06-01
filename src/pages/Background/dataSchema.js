@@ -71,5 +71,5 @@ export const WholeDataSchema = z.object({
   tagList: TagListSchema,
   contextList: ContextListSchema,
   wordList: WordListSchema,
-  domainAndLinkList: DomainAndLinkSchema,
+  domainAndLinkList: DomainAndLinkListSchema,
 });
