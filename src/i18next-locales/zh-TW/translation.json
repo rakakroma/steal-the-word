@@ -16,7 +16,7 @@
   "enable auto retrieve info from api": "在儲存新詞時自動從api取得資訊",
   "api_caution": "啟用api搜尋必須傳送詞彙及段落至API。除此功能外，此擴充程式存取的資料僅留在本機。",
   "current Data": "當前資料",
-  "Warning: Current data will all be cleared if new data is imported": "警告：若輸入備份檔，則當前資訊將完全被清除。",
+  "clear-data-warning": "警告：輸入備份檔前，須清除所有當前資訊。",
   "download": "下載備份",
   "Clear": "全部清除",
   "clear all data from database": "清除目前所有資料",
@@ -112,5 +112,7 @@
   "top 10 sites": "前十大網站",
   "show annotation": "顯示註解",
   "see-collection-before": "查看所有在",
-  "see-collection-after": " 的收藏"
+  "see-collection-after": " 的收藏",
+  "fetching-demo-data": "正在取得範例檔案...",
+  "invalid-updated-data": "在此檔案中發現錯誤，請修復錯誤或是使用其他備份檔進行還原。（可以在開發者工具中查看錯誤訊息）"
 }

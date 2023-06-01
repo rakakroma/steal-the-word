@@ -5,8 +5,8 @@ import React from 'react';
 import { formatDate } from '../../../utils/Date';
 import { exportToJsonFile } from '../../../utils/ImportExport';
 import { ButtonContainer, DataCountGrid } from './DataCountGrid';
-import { handleClearAll } from './ImportAndExportBox';
 import { useTranslation } from 'react-i18next';
+import { handleClearAll } from './ImportBox';
 
 export const CurrentDataAndDownload = ({
   userUploadedData,
@@ -44,9 +44,7 @@ export const CurrentDataAndDownload = ({
           }}
         >
           ⚠️
-          {t(
-            'Warning: Current data will all be cleared if new data is imported'
-          )}
+          {t('clear-data-warning')}
         </Typography>
       ) : (
         <ButtonContainer>

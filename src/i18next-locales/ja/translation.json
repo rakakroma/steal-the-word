@@ -16,7 +16,7 @@
   "enable auto retrieve info from api": "自動でAPIから単語データを取得する",
   "api_caution": "APIサービスを有効すると、当時の単語と文脈はAPIサービスに送信する。これ以外、この拡張機能アプリのデータは完全にローカルで保存する、他の場所に送信することがしません。",
   "current Data": "現在のデータ",
-  "Warning: Current data will all be cleared if new data is imported": "注意：データがインポートすると、当前のデータは完全クリアされます。",
+  "clear-data-warning": "注意：データがインポートする前は、当前のデータをクリアします。",
   "download": "ダウンロード",
   "Clear": "クリア",
   "clear all data from database": "データを完全にクリアします",
@@ -111,5 +111,7 @@
   "show annotation": "注釈を表示",
   "see-collection-before": " ",
   "see-collection-after": " からのコレクション",
-  "error": "エラー"
+  "error": "エラー",
+  "fetching-demo-data": "デモデータは取得中...",
+  "invalid-updated-data": "このファイルでエラーが見つかりました。エラーを修正するまたは他のバックアップファイルを利用してください。（エラーメッセージは開発者ツールで確認できます。）"
 }
