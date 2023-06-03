@@ -61,4 +61,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.wordList) {
     checkAndUpdateNewWordListAndReRender(store.getState(), message.wordList);
   }
+  if (message.others) {
+    console.log(message.others);
+  }
 });

@@ -15,6 +15,7 @@ export const getUpdatedTagData = (
   tagList
 ) => {
   const tagsData = data[changingTagsWhenDisplay];
+
   const refData = createWordRefInTagObj(
     targetWord.id,
     getDataFromName(changingTagsWhenDisplay).id
