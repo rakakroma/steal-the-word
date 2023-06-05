@@ -55,6 +55,8 @@ export const ContextSchema = z.object({
   id: z.number(),
 });
 
+export type Context = z.infer<typeof ContextSchema>;
+
 export const ContextListSchema = z.array(ContextSchema);
 
 //------------------tagData-----------------

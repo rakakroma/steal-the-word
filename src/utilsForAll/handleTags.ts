@@ -8,7 +8,7 @@ import {
   WordDefRef,
 } from '../pages/Background/dataSchema';
 
-export const checkSameRef = (
+export const checkTwoWOrdDefRefIsTheSame = (
   firstData: WordDefRef,
   secondData: WordDefRef
 ): boolean => {
@@ -18,17 +18,19 @@ export const checkSameRef = (
   );
 };
 
-const getFilteredRefs = (
+const getNewRefsWithoutTargetRef = (
   oldRefs: WordDefRef[],
   shouldDeleteRefData: WordDefRef
 ): WordDefRef[] => {
-  return [...oldRefs].filter((ref) => !checkSameRef(ref, shouldDeleteRefData));
+  return [...oldRefs].filter(
+    (ref) => !checkTwoWOrdDefRefIsTheSame(ref, shouldDeleteRefData)
+  );
 };
 
 export const createWordRefInTagObj = (
   wordId: WordDefRef['wordId'],
   defId: WordDefRef['defId']
-) => ({
+): WordDefRef => ({
   wordId,
   defId,
 });
@@ -41,57 +43,75 @@ export const makeTagObj = (tagLabel: string, refData: WordDefRef) => ({
 
 export const getTagFullDataArray = (
   currentKeyType: 'tag' | 'id',
-  targetTagArray: [],
+  targetTagArray: Tag['tag'][] | Tag['id'][],
   fullTagList: TagList
-) => {
-  return targetTagArray.map((tagValue) =>
-    fullTagList.find((tagObj) => tagObj[currentKeyType] === tagValue)
+): TagList => {
+  const tagObjArrayContainedUndefined = targetTagArray.map((value) =>
+    fullTagList.find((tagObj) => tagObj[currentKeyType] === value)
   );
+
+  const tagObjIsExist = (tagObj: Tag | undefined): tagObj is Tag =>
+    tagObj !== undefined;
+
+  const arrayWithoutUndefined =
+    tagObjArrayContainedUndefined.filter(tagObjIsExist);
+
+  return arrayWithoutUndefined;
 };
 
-export const updateDefRef = (
+export const updateTagsOfTargetDefinition = (
   definitions: Definition[],
   targetDefId: WordDefRef['defId'],
-  newTagRefOfThatDef: Definition['tags']
+  newTagReferences: Definition['tags']
 ): Definition[] => {
-  return [...definitions].map((definition) => {
+  const getUpdatedDefinition = (definition: Definition): Definition => ({
+    ...definition,
+    tags: newTagReferences,
+  });
+  const updateTagReferencesIfTargetDefinition = (
+    definition: Definition
+  ): Definition => {
     if (definition.definitionId === targetDefId) {
-      return {
-        ...definition,
-        tags: newTagRefOfThatDef,
-      };
+      return getUpdatedDefinition(definition);
     }
     return definition;
-  });
+  };
+  return definitions.map(updateTagReferencesIfTargetDefinition);
 };
-
-//getExistedTagDataUpdateInfo: the update info for tags that are not newly created by current operation
 
 type TagIdAndNewRefs = {
   id: string;
   wordDefRefs: WordDefRef[];
 };
 
-export const getExistedTagDataUpdateInfo = (
-  oldTags: TagList,
+export const getExistingTagDataUpdateInfo = (
+  tagsNotNewCreated: TagList,
   refData: WordDefRef
 ): TagIdAndNewRefs[] => {
-  const result: TagIdAndNewRefs[] = [];
+  const tagNotContainTargetRef = (
+    wordDefsInTag: WordDefRef[],
+    targetRefData: WordDefRef
+  ) =>
+    wordDefsInTag.findIndex((ref) =>
+      checkTwoWOrdDefRefIsTheSame(ref, targetRefData)
+    ) === -1;
 
-  oldTags.forEach((tagObj) => {
-    if (
-      tagObj.wordDefRefs.findIndex((ref) => checkSameRef(ref, refData)) === -1
-    ) {
-      const newDefRefs: WordDefRef[] = [...tagObj.wordDefRefs, refData];
-      const tagIdAndNewRefs: TagIdAndNewRefs = {
-        id: tagObj.id,
-        wordDefRefs: newDefRefs,
-      };
-      result.push(tagIdAndNewRefs);
-    }
-  });
+  const existingTagsNewlyAddedByTheDefinition = tagsNotNewCreated.filter(
+    (tagObj) => tagNotContainTargetRef(tagObj.wordDefRefs, refData)
+  );
 
-  return result;
+  const makeTagIdAndNewRefs = (tagObj: Tag, targetRefData: WordDefRef) => {
+    const newDefRefs: WordDefRef[] = [...tagObj.wordDefRefs, refData];
+    const tagIdAndNewRefs: TagIdAndNewRefs = {
+      id: tagObj.id,
+      wordDefRefs: newDefRefs,
+    };
+    return tagIdAndNewRefs;
+  };
+  const updatedTagsInfo = existingTagsNewlyAddedByTheDefinition.map((tagObj) =>
+    makeTagIdAndNewRefs(tagObj, refData)
+  );
+  return updatedTagsInfo;
 };
 
 export const getShouldUpdateTagsFromDeleteDefs = (
@@ -100,7 +120,7 @@ export const getShouldUpdateTagsFromDeleteDefs = (
   tagList: TagList
 ) => {
   const tagShouldBeDelete: TagId[] = [];
-  const tagShouldUpdateItsRefs: TagIdAndNewRefs[] = [];
+  let tagShouldUpdateItsRefs: TagIdAndNewRefs[] = [];
 
   definitions.forEach((definitionData) => {
     const { definitionId, tags } = definitionData;
@@ -110,36 +130,40 @@ export const getShouldUpdateTagsFromDeleteDefs = (
       const tagObjInShouldBeUpdate = tagShouldUpdateItsRefs.find(
         (idRefInfo) => idRefInfo.id === tagId
       );
-
       if (tagObjInShouldBeUpdate) {
-        const newRefs = getFilteredRefs(
+        const newRefs = getNewRefsWithoutTargetRef(
           tagObjInShouldBeUpdate.wordDefRefs,
           refData
         );
-        if (newRefs.length === 0) {
-          tagShouldBeDelete.push(tagId);
-          tagShouldUpdateItsRefs.filter(
-            (tagIdAndNewRefs) =>
-              tagIdAndNewRefs.id !== tagObjInShouldBeUpdate.id
+        const deleteThisTagFromTagList = (targetTagId: TagId) => {
+          tagShouldBeDelete.push(targetTagId);
+          tagShouldUpdateItsRefs = tagShouldUpdateItsRefs.filter(
+            (tagIdAndNewRefs) => tagIdAndNewRefs.id !== targetTagId
           );
+        };
+
+        if (newRefs.length === 0) {
+          deleteThisTagFromTagList(tagId);
         } else {
           tagObjInShouldBeUpdate.wordDefRefs = newRefs;
         }
-        return;
-      }
-      const tagObjInTagList = tagList.find((tagObj) => tagObj.id === tagId);
-      if (!tagObjInTagList) {
-        console.error('not find deleting tag');
-        return;
       } else {
-        const newRefs = getFilteredRefs(tagObjInTagList.wordDefRefs, refData);
-        if (newRefs.length === 0) {
-          tagShouldBeDelete.push(tagId);
+        const tagObjInTagList = tagList.find((tagObj) => tagObj.id === tagId);
+        if (!tagObjInTagList) {
+          console.error('not find deleting tag');
         } else {
-          tagShouldUpdateItsRefs.push({
-            id: tagObjInTagList.id,
-            wordDefRefs: newRefs,
-          });
+          const newRefs = getNewRefsWithoutTargetRef(
+            tagObjInTagList.wordDefRefs,
+            refData
+          );
+          if (newRefs.length === 0) {
+            tagShouldBeDelete.push(tagId);
+          } else {
+            tagShouldUpdateItsRefs.push({
+              id: tagObjInTagList.id,
+              wordDefRefs: newRefs,
+            });
+          }
         }
       }
     });
@@ -160,12 +184,12 @@ export const getShouldDeleteTags = (
   tagObjsRemovedFromCurrentDef.forEach((tagObj) => {
     if (
       tagObj.wordDefRefs.length === 1 &&
-      checkSameRef(tagObj.wordDefRefs[0], refData)
+      checkTwoWOrdDefRefIsTheSame(tagObj.wordDefRefs[0], refData)
     ) {
       shouldDeleteTagIds.push(tagObj.id);
     } else {
       const newDefRef = tagObj.wordDefRefs.filter(
-        (ref) => !checkSameRef(ref, refData)
+        (ref) => !checkTwoWOrdDefRefIsTheSame(ref, refData)
       );
 
       updatedTagObjsOfShouldDeleteRef.push({

@@ -1,8 +1,8 @@
 import {
-  getExistedTagDataUpdateInfo,
+  getExistingTagDataUpdateInfo,
   getShouldUpdateTagsFromDeleteDefs,
   getTagFullDataArray,
-  updateDefRef,
+  updateTagsOfTargetDefinition,
   getShouldDeleteTags,
   getNewTagsAndOldTags,
 } from '../utilsForAll/handleTags';
@@ -23,7 +23,11 @@ it('should update the tag reference of specific word definition', () => {
   const targetDefId = '1';
   const newTagRefOfTheWord = ['tagId1', 'tagId3'];
 
-  const result = updateDefRef(definitions, targetDefId, newTagRefOfTheWord);
+  const result = updateTagsOfTargetDefinition(
+    definitions,
+    targetDefId,
+    newTagRefOfTheWord
+  );
 
   expect(result[0].tags).toEqual(newTagRefOfTheWord);
   expect(result[1].tags).toEqual(['tagId1']);
@@ -64,7 +68,7 @@ describe('getTagFullDataArray', () => {
   });
 });
 
-describe('getExistedTagDataUpdateInfo', () => {
+describe('getExistingTagDataUpdateInfo', () => {
   const refData = { wordId: 'wordId1', defId: 'defId0' };
   const refData2 = { wordId: 'wordId1231', defId: 'defId000' };
 
@@ -84,12 +88,12 @@ describe('getExistedTagDataUpdateInfo', () => {
   ];
 
   it('only updated tags data return', () => {
-    const result = getExistedTagDataUpdateInfo(oldTags, refData);
+    const result = getExistingTagDataUpdateInfo(oldTags, refData);
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe(2);
     expect(result[0].wordDefRefs).toContainEqual(refData);
 
-    const result2 = getExistedTagDataUpdateInfo(oldTags, refData2);
+    const result2 = getExistingTagDataUpdateInfo(oldTags, refData2);
     expect(result2).toHaveLength(3);
     expect(result2[0].id).toBe(1);
     expect(result2[2].wordDefRefs).toHaveLength(2);

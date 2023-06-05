@@ -1,18 +1,24 @@
 import {
   createWordRefInTagObj,
   getShouldDeleteTags,
-  getExistedTagDataUpdateInfo,
+  getExistingTagDataUpdateInfo,
   getNewTagsAndOldTags,
   getTagFullDataArray,
-  updateDefRef,
-} from '../../../../../utilsForAll/handleTags.js';
-import { getDataFromName } from './getDataFromName.js';
+  updateTagsOfTargetDefinition,
+} from '../../../../../utilsForAll/handleTags';
+import { TagList, Word } from '../../../../Background/dataSchema';
+import { DefinitionName, getDataFromName } from './getDataFromName';
+
+interface WordEditingFormData {
+  [key: string]: any;
+  DefinitionName?: any;
+}
 
 export const getUpdatedTagData = (
-  data,
-  changingTagsWhenDisplay,
-  targetWord,
-  tagList
+  data: WordEditingFormData,
+  changingTagsWhenDisplay: DefinitionName,
+  targetWord: Word,
+  tagList: TagList
 ) => {
   const tagsData = data[changingTagsWhenDisplay];
 
@@ -27,14 +33,22 @@ export const getUpdatedTagData = (
     tagList
   );
 
-  const tagObjsOfShouldUpdateTag = getExistedTagDataUpdateInfo(
+  const tagObjsOfShouldUpdateTag = getExistingTagDataUpdateInfo(
     getTagFullDataArray('id', notNewTagIds, tagList),
     refData
   );
 
-  const tagIdsNotInUpdatedDef = targetWord.definitions
-    .find((definition) => definition.definitionId === refData.defId)
-    .tags.filter((tagId) => !tagIdArrayForDef.includes(tagId));
+  const targetDefinition = targetWord.definitions.find(
+    (definition) => definition.definitionId === refData.defId
+  );
+
+  if (!targetDefinition) {
+    console.error(`lost definition ${targetWord.id}: defId${refData.defId}`);
+    return;
+  }
+  const tagIdsNotInUpdatedDef = targetDefinition.tags.filter(
+    (tagId) => !tagIdArrayForDef.includes(tagId)
+  );
 
   const { shouldDeleteTagIds, updatedTagObjsOfShouldDeleteRef } =
     getShouldDeleteTags(
@@ -46,7 +60,7 @@ export const getUpdatedTagData = (
     updatedTagObjsOfShouldDeleteRef
   );
 
-  const newDefinitionOfCurrWord = updateDefRef(
+  const newDefinitionOfCurrWord = updateTagsOfTargetDefinition(
     targetWord.definitions,
     refData.defId,
     tagIdArrayForDef
