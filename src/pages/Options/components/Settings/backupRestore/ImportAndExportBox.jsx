@@ -6,17 +6,8 @@ import {
   TagListContext,
   WordListContext,
 } from '../../../allContext';
-import { clearDB } from '../../../utils/ImportExport';
 import { CurrentDataAndDownload } from './CurrentDataAndDownload';
 import { ImportBox } from './ImportBox';
-
-export const handleClearAll = () => {
-  if (confirm('delete all?')) {
-    clearDB();
-    return true;
-  }
-  return false;
-};
 
 export const ImportAndExportBox = () => {
   const [loggedData, setLoggedData] = useState(null);

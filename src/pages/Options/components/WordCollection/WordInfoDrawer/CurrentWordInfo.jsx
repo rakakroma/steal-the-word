@@ -6,7 +6,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation } from 'react-router-dom';
 import { getCurrentDomain } from '../../../../../utilsForAll/checkUrl.js';
-import { getShouldUpdateTagsFromDeleteDefs } from '../../../../../utilsForAll/handleTags.js';
+import { getShouldUpdateTagsFromDeleteDefs } from '../../../../../utilsForAll/handleTags';
 import { db } from '../../../../Background/database.js';
 import { myLog } from '../../../../Content/utils/customLogger.js';
 import {
@@ -22,8 +22,8 @@ import { VariantsInfo } from './VariantsInfo';
 import { WordRating } from './WordRating';
 import { getDataFromName, getDefaultValueFromData } from './getDataFromName';
 import { TypographyOrInput } from './inputs/TypographyOrInput';
-import { updateTagFunc } from '../../../../Background/handler/updateData.js';
-import { getUpdatedTagData } from './getUpdatedTagData.js';
+import { updateTagFunc } from '../../../../Background/handler/updateData';
+import { getUpdatedTagData } from './getUpdatedTagData';
 
 export const CurrentWordInfo = () => {
   const theme = useTheme();

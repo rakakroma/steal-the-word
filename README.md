@@ -61,6 +61,7 @@
 
 1. Dexie.js for IndexedDB
 2. dayjs
+3. [Zod](https://zod.dev/)
 
 ### Content Script:
 

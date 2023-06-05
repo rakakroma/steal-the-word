@@ -1,5 +1,5 @@
 const webpack = require('webpack'),
-  path = require('path'),
+  path = require('path-browserify'),
   fileSystem = require('fs-extra'),
   env = require('./utils/env'),
   CopyWebpackPlugin = require('copy-webpack-plugin'),
@@ -8,7 +8,6 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 var ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const { EsbuildPlugin } = require('esbuild-loader');
-
 
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
@@ -116,6 +115,7 @@ var options = {
     ],
   },
   resolve: {
+    fallback: { path: require.resolve('path-browserify') },
     alias: alias,
     extensions: fileExtensions
       .map((extension) => '.' + extension)

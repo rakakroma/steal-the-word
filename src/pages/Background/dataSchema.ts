@@ -1,13 +1,18 @@
 import { z } from 'zod';
 
 //------------------wordData-----------------
+const TagIdSchema = z.string();
+
+export type TagId = z.infer<typeof TagIdSchema>;
 
 export const DefinitionSchema = z.object({
   annotation: z.string(),
   definitionId: z.string(),
   note: z.string(),
-  tags: z.array(z.string()), //array of tag ids
+  tags: z.array(TagIdSchema), //array of tag ids
 });
+
+export type Definition = z.infer<typeof DefinitionSchema>;
 
 export const WordSchema = z.object({
   id: z.string(),
@@ -19,6 +24,8 @@ export const WordSchema = z.object({
   variants: z.array(z.string()).optional(),
   stars: z.number().optional(),
 });
+
+export type Word = z.infer<typeof WordSchema>;
 
 export const WordListSchema = z.array(WordSchema);
 
@@ -48,22 +55,29 @@ export const ContextSchema = z.object({
   id: z.number(),
 });
 
+export type Context = z.infer<typeof ContextSchema>;
+
 export const ContextListSchema = z.array(ContextSchema);
 
 //------------------tagData-----------------
 
-export const wordDefRefSchema = z.object({
+export const WordDefRefSchema = z.object({
   wordId: z.string(),
   defId: z.string(),
 });
 
+export type WordDefRef = z.infer<typeof WordDefRefSchema>;
+
 export const TagSchema = z.object({
   id: z.string(),
   tag: z.string(),
-  wordDefRefs: z.array(wordDefRefSchema),
+  wordDefRefs: z.array(WordDefRefSchema),
 });
 
+export type Tag = z.infer<typeof TagSchema>;
+
 export const TagListSchema = z.array(TagSchema);
+export type TagList = z.infer<typeof TagListSchema>;
 
 //------------------wholeData-----------------
 
@@ -71,5 +85,5 @@ export const WholeDataSchema = z.object({
   tagList: TagListSchema,
   contextList: ContextListSchema,
   wordList: WordListSchema,
-  domainAndLinkList: DomainAndLinkSchema,
+  domainAndLinkList: DomainAndLinkListSchema,
 });

@@ -1,15 +1,18 @@
+import { useTheme } from '@emotion/react';
 import { GitHub } from '@mui/icons-material';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useMediaQuery } from '@mui/material';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 export const OtherInfo = () => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const matches = useMediaQuery(() => theme.breakpoints.down('sm'));
 
   const { version } = chrome.runtime.getManifest();
   return (
     <Box>
-      <Box sx={{ display: 'flex' }}>
+      <Box sx={{ display: 'flex', flexDirection: matches ? 'column' : 'row' }}>
         <Box sx={{ my: 'auto' }}>
           <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
             {t('version')} : beta {version}

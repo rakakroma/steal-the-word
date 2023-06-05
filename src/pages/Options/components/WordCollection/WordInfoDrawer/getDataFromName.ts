@@ -1,6 +1,16 @@
+import { Context, Word } from '../../../../Background/dataSchema';
 import { convertValueToFitCreatableInput } from './inputs/CreatableSelectInput';
 
-export const getName = (inputName, idInfo, isInDefinition) => {
+type ContextName = `context**${string}**${string}`;
+export type DefinitionName = `def**${string}**${string}`;
+
+type ContextAndDefName = DefinitionName | ContextName;
+
+export const getName = (
+  inputName: string,
+  idInfo: string | number,
+  isInDefinition: boolean
+): DefinitionName | ContextName => {
   if (isInDefinition) {
     return `def**${inputName}**${idInfo}`;
   } else {
@@ -8,7 +18,7 @@ export const getName = (inputName, idInfo, isInDefinition) => {
   }
 };
 
-export const getDataFromName = (name) => {
+export const getDataFromName = (name: ContextAndDefName) => {
   const splitted = name.split('**');
   return {
     id: splitted[2],
@@ -16,8 +26,15 @@ export const getDataFromName = (name) => {
     section: splitted[0],
   };
 };
-export const getDefaultValueFromData = (wordObj, contextObjs) => {
-  const values = {
+
+export const getDefaultValueFromData = (
+  wordObj: Word,
+  contextObjs: Context[]
+) => {
+  const values: Record<
+    'word' | 'variants' | 'stem' | 'matchRule' | ContextAndDefName,
+    any
+  > = {
     word: wordObj.word,
     variants: convertValueToFitCreatableInput(wordObj.variants || []),
     stem: wordObj.stem,

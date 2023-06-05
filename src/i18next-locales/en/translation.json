@@ -16,7 +16,7 @@
   "enable auto retrieve info from api": "enable auto retrieve info from api",
   "api_caution": "Using these api services must send the word and context you're searching to those service, and except for that, This app would not send any of your data to the web.",
   "current Data": "current Data",
-  "Warning: Current data will all be cleared if new data is imported": "Warning: Current data will all be cleared if new data is imported",
+  "clear-data-warning": "Warning: We'll clear current data before restore new data.",
   "download": "download",
   "Clear": "Clear",
   "clear all data from database": "clear all data from database",
@@ -113,5 +113,7 @@
   "show annotation": "show annotation",
   "see-collection-before": "see all collection of",
   "see-collection-after": ".",
-  "error": "錯誤"
+  "error": "錯誤",
+  "fetching-demo-data": "Demo data is fetching...",
+  "invalid-updated-data": "Found errors in this data, please fix it or try another file. (error message is logged in devTools)"
 }

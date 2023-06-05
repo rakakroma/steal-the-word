@@ -56,10 +56,9 @@ export const Settings = () => {
       <Box>
         <Paper
           sx={{
-            maxWidth: '900px',
+            width: 'min(90vw, 800px)',
             p: 4,
             borderRadius: 1,
-            width: 'fill-available',
           }}
           elevation={5}
         >
